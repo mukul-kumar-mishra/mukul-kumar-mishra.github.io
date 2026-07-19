@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Design & Architecture Case Studies | Mukul Kumar Mishra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              900: '#0c4a6e',
+              950: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-12">
+    <header class="border-b border-slate-800 pb-10 mb-12">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+          <a href="../index.html" class="inline-flex items-center gap-2 text-xs font-mono text-sky-400 hover:text-sky-300 transition mb-4">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Main Portfolio
+          </a>
+          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Mukul Kumar Mishra</h1>
+          <p class="mt-2 text-lg text-slate-400 font-medium">Tech Lead & SRE • Golang, AWS & Distributed Systems</p>
+        </div>
+        <div class="flex gap-4">
+          <a href="https://github.com" target="_blank" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition">
+            <i data-lucide="github" class="w-5 h-5"></i>
+          </a>
+          <a href="https://linkedin.com" target="_blank" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition">
+            <i data-lucide="linkedin" class="w-5 h-5"></i>
+          </a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-900">
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
+          <div class="text-2xl font-bold text-sky-400 font-mono">1M+ RPS</div>
+          <div class="text-xs text-slate-400 mt-1">Telemetry Ingestion</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
+          <div class="text-2xl font-bold text-sky-400 font-mono">99.99%</div>
+          <div class="text-xs text-slate-400 mt-1">Production Availability</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
+          <div class="text-2xl font-bold text-sky-400 font-mono">5+ Yrs</div>
+          <div class="text-xs text-slate-400 mt-1">Go & Cloud Infra</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
+          <div class="text-2xl font-bold text-sky-400 font-mono">&lt; 50ms</div>
+          <div class="text-xs text-slate-400 mt-1">State Sync Latency</div>
+        </div>
+      </div>
+    </header>
+    <main class="space-y-12">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">System Architecture Case Studies</h2>
+          <p class="text-sm text-slate-400 mt-1">Production post-mortems, trade-off evaluations, and counterfactual redesigns.</p>
+        </div>
+      </div>
+      <div class="grid gap-6">
+        <a href="cell-based-control-plane.html" class="group block p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-900/80 transition duration-200">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Architectural Critique</span>
+                <span class="text-xs text-slate-500 font-mono">• 12 min read</span>
+              </div>
+              <h3 class="text-xl font-semibold text-white group-hover:text-sky-400 transition">
+                Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius
+              </h3>
+              <p class="text-sm text-slate-400 line-clamp-2">
+                An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-400 md:self-end shrink-0">
+              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Go</span>
+              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Raft</span>
+              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">AWS</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </main>
+    <footer class="mt-20 pt-8 border-t border-slate-900 text-center text-sm text-slate-500 font-mono">
+      © 2026 Mukul Kumar Mishra
+    </footer>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html> 

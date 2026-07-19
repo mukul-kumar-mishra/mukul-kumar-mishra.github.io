@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFC: Cell-Based Control Plane Architecture | Mukul Kumar Mishra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#0ea5e9', 600: '#0284c7' }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <nav class="mb-8">
+      <a href="index.html" class="inline-flex items-center gap-2 text-sm font-mono text-sky-400 hover:text-sky-300 transition">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to System Design Index
+      </a>
+    </nav>
+    <header class="space-y-4 border-b border-slate-800 pb-8 mb-10">
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Architectural Critique</span>
+        <span class="text-xs text-slate-500 font-mono">July 2026</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">
+        Rethinking Control Planes: Cell-Based Architecture for Blast-Radius Isolation
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 text-xs font-mono">
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+          <div class="text-slate-500">Target Scale</div>
+          <div class="text-slate-200 font-bold mt-0.5">50k Config Updates/s</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+          <div class="text-slate-500">Max Outage Target</div>
+          <div class="text-slate-200 font-bold mt-0.5">&lt; 5% Total Impact</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+          <div class="text-slate-500">Primary Tech</div>
+          <div class="text-slate-200 font-bold mt-0.5">Golang, Raft, AWS</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+          <div class="text-slate-500">Pattern</div>
+          <div class="text-slate-200 font-bold mt-0.5">Cellular Isolation</div>
+        </div>
+      </div>
+    </header>
+    <article class="prose prose-invert max-w-none space-y-8 text-slate-300 leading-relaxed">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight border-b border-slate-800 pb-2">
+          1. The Problem: Global Configuration Outages
+        </h2>
+        <p>
+          Monolithic control planes that propagate configuration changes globally introduce systemic risks. A single corrupted payload or high-frequency polling spike can cascade across all availability zones simultaneously.
+        </p>
+        <div class="p-4 rounded-xl bg-amber-500/5 border-l-4 border-amber-500 text-amber-200 text-sm">
+          <strong class="font-bold text-amber-400 block mb-1">Architectural Flaw:</strong>
+          In a unified global database setup, a schema locking issue or bad feature flag deployment impacts 100% of tenants simultaneously, violating basic blast-radius constraints required for Tier-0 cloud services.
+        </div>
+      </section>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight border-b border-slate-800 pb-2">
+          2. Proposed Target Architecture
+        </h2>
+        <p>
+          By restructuring the control plane into isolated, self-contained Cells—where each cell operates its own independent state machine—we decouple failures entirely.
+        </p>
+        <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+          <div class="mermaid">
+            graph TD
+              A[Global Edge Router / API Gateway] -->|Tenant Hash Routing| B[Cell 01 - US-East]
+              A -->|Tenant Hash Routing| C[Cell 02 - US-West]
+              A -->|Tenant Hash Routing| D[Cell 03 - EU-Central]
+
+              subgraph Cell 01 Isolation Boundary
+                B --> B1[Go Ingress Proxy]
+                B1 --> B2[Local Raft Cluster]
+                B2 --> B3[Local DynamoDB/Scylla]
+              end
+
+              subgraph Cell 02 Isolation Boundary
+                C --> C1[Go Ingress Proxy]
+                C1 --> C2[Local Raft Cluster]
+                C2 --> C3[Local DynamoDB/Scylla]
+              end
+          </div>
+          <p class="text-xs text-slate-500 font-mono mt-4">Figure 1: Cell-based routing showing zero shared runtime dependencies between regions.</p>
+        </div>
+      </section>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight border-b border-slate-800 pb-2">
+          3. Go Implementation: Partition Hash Router
+        </h2>
+        <p>
+          Below is the core hashing implementation used at the gateway layer to route incoming client requests directly to dedicated cell partitions without shared state calls:
+        </p>
+
+        <pre><code class="language-go">package main
+
+import (
+	"hash/fnv"
+)
+
+type Router struct {
+	TotalCells int
+}
+
+func (r *Router) GetCellID(tenantID string) int {
+	h := fnv.New32a()
+	h.Write([]byte(tenantID))
+	return int(h.Sum32() % uint32(r.TotalCells))
+}
+</code></pre>
+      </section>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight border-b border-slate-800 pb-2">
+          4. Trade-Off Evaluation
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse rounded-lg overflow-hidden">
+            <thead>
+              <tr class="bg-slate-900 border-b border-slate-800 text-sky-400 font-mono">
+                <th class="p-3">Vector</th>
+                <th class="p-3">Monolithic Global Control Plane</th>
+                <th class="p-3">Cell-Based Architecture (Selected)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 bg-slate-900/30">
+              <tr>
+                <td class="p-3 font-semibold text-white">Blast Radius</td>
+                <td class="p-3 text-red-400">100% of global traffic</td>
+                <td class="p-3 text-emerald-400">&lt; 5% (Limited to single cell)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-white">Operational Complexity</td>
+                <td class="p-3 text-emerald-400">Low (Single DB cluster)</td>
+                <td class="p-3 text-amber-400">High (Requires automated cell provisioning)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-white">Cross-Cell Data Sync</td>
+                <td class="p-3 text-slate-400">Centralized</td>
+                <td class="p-3 text-slate-400">Async Event-Driven (EventBridge/Kafka)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </article>
+    <footer class="mt-16 pt-8 border-t border-slate-900 flex justify-between items-center text-sm text-slate-500 font-mono">
+      <span>Mukul Kumar Mishra</span>
+      <a href="#" class="hover:text-sky-400 transition">Back to Top ↑</a>
+    </footer>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
