@@ -1,104 +1,92 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>System Design & Architecture Case Studies | Mukul Kumar Mishra</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              900: '#0c4a6e',
-              950: '#082f49',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
-  <div class="max-w-5xl mx-auto px-4 py-12">
-    <header class="border-b border-slate-800 pb-10 mb-12">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <a href="../index.html" class="inline-flex items-center gap-2 text-xs font-mono text-sky-400 hover:text-sky-300 transition mb-4">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Main Portfolio
-          </a>
-          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Mukul Kumar Mishra</h1>
-          <p class="mt-2 text-lg text-slate-400 font-medium">Tech Lead & SRE • Golang, AWS & Distributed Systems</p>
-        </div>
-        <div class="flex gap-4">
-          <a href="https://github.com" target="_blank" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition">
-            <i data-lucide="github" class="w-5 h-5"></i>
-          </a>
-          <a href="https://linkedin.com" target="_blank" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition">
-            <i data-lucide="linkedin" class="w-5 h-5"></i>
-          </a>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-900">
-        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
-          <div class="text-2xl font-bold text-sky-400 font-mono">1M+ RPS</div>
-          <div class="text-xs text-slate-400 mt-1">Telemetry Ingestion</div>
-        </div>
-        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
-          <div class="text-2xl font-bold text-sky-400 font-mono">99.99%</div>
-          <div class="text-xs text-slate-400 mt-1">Production Availability</div>
-        </div>
-        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
-          <div class="text-2xl font-bold text-sky-400 font-mono">5+ Yrs</div>
-          <div class="text-xs text-slate-400 mt-1">Go & Cloud Infra</div>
-        </div>
-        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800/80">
-          <div class="text-2xl font-bold text-sky-400 font-mono">&lt; 50ms</div>
-          <div class="text-xs text-slate-400 mt-1">State Sync Latency</div>
-        </div>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">mukul<span class="acc">.dev</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="on">System Design</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> Back to Main Portfolio
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design &amp; Architecture Case Studies</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluations, and counterfactual redesigns.</p>
+      <div class="grid4" style="margin-top:26px;">
+        <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Telemetry Ingestion</div></div>
+        <div class="stat"><div class="num">99.99%</div><div class="lbl">Production Availability</div></div>
+        <div class="stat"><div class="num">5+ Yrs</div><div class="lbl">Go &amp; Cloud Infra</div></div>
+        <div class="stat"><div class="num">&lt; 50ms</div><div class="lbl">State Sync Latency</div></div>
       </div>
     </header>
-    <main class="space-y-12">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-white tracking-tight">System Architecture Case Studies</h2>
-          <p class="text-sm text-slate-400 mt-1">Production post-mortems, trade-off evaluations, and counterfactual redesigns.</p>
-        </div>
+
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layers"></i> RFCs &amp; Deep Dives</h2>
       </div>
-      <div class="grid gap-6">
-        <a href="cell-based-control-plane.html" class="group block p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-900/80 transition duration-200">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="space-y-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Architectural Critique</span>
-                <span class="text-xs text-slate-500 font-mono">• 12 min read</span>
-              </div>
-              <h3 class="text-xl font-semibold text-white group-hover:text-sky-400 transition">
-                Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius
-              </h3>
-              <p class="text-sm text-slate-400 line-clamp-2">
-                An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
-              </p>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-mono text-slate-400 md:self-end shrink-0">
-              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Go</span>
-              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Raft</span>
-              <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">AWS</span>
-            </div>
+      <div style="display:grid;gap:16px;">
+        <a class="feature-link" href="cell-based-control-plane.html">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Architectural Critique</span>
+            <span class="chip">12 min read</span>
+          </div>
+          <h3>Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</h3>
+          <p class="fl-desc">
+            An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <span class="chip">Go</span><span class="chip">Raft</span><span class="chip">AWS</span>
           </div>
         </a>
       </div>
-    </main>
-    <footer class="mt-20 pt-8 border-t border-slate-900 text-center text-sm text-slate-500 font-mono">
-      © 2026 Mukul Kumar Mishra
-    </footer>
-  </div>
-  <script>lucide.createIcons();</script>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
+      <span>Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    lucide.createIcons();
+  </script>
 </body>
-</html> 
+</html>
