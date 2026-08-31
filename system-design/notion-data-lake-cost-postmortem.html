@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How Notion scaled 200 billion blocks with PostgreSQL sharding, Kafka, S3, Spark, and vector search. A practical system design postmortem with RPS assumptions, AWS cost estimates, and cost-cutting tactics.">
+  <meta name="keywords" content="Notion system design, Notion architecture, PostgreSQL sharding, data lake architecture, Kafka CDC, vector search cost, AWS cost optimization, system design postmortem">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Workspace That Ate the Warehouse: Notion's Data Architecture">
+  <meta property="og:description" content="A forensic teardown of Notion's 200-billion-block platform, modeled at 100k peak RPS, with the engineering decisions that can make or break the cloud bill.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="The Workspace That Ate the Warehouse">
+  <meta name="twitter:description" content="Notion's 200B-block data architecture, modeled RPS, cloud-cost teardown, and practical ways to cut the bill.">
+  <title>Notion System Design Postmortem: The Workspace That Ate the Warehouse | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"The Workspace That Ate the Warehouse: Notion's Data Architecture",
+    "description":"A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions, and cloud-cost optimization.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-08-31",
+    "dateModified":"2026-08-31",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html"},
+    "keywords":"Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">mukul<span class="acc">.dev</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="on">System Design</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+          <i data-lucide="arrow-left"></i> Back to System Design Index
+        </a>
+      </p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;">
+          <span class="fl-tag">Forensic Architecture</span>
+          <span class="chip">August 2026</span>
+          <span class="chip">18 min read</span>
+        </div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">
+          The Workspace That Ate the Warehouse
+        </h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">
+          Notion built the internet's most deceptively expensive blank page. Behind every block is a distributed database, a change stream, an index, a permission graph, and a bill that grows while nobody is looking.
+        </p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100M+</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Logical Shards</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">480</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated August 31, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;">
+        <strong>Read this like an incident review:</strong> facts from Notion's public engineering posts are marked as disclosed; traffic and cloud costs are explicitly modeled. Skip to <a href="#the-bill">the bill</a> if you came for the numbers, or <a href="#cost-plan">the cost plan</a> if your AWS invoice has started sending you emotional messages.
+      </aside>
+
+      <article class="prose">
+        <section>
+          <h2>1. The Blank Page Is a Trap</h2>
+          <p>Open Notion and the first thing you see is almost nothing: a cursor, a page title, a few quiet controls. That emptiness is the product's magic. It makes a database look like a notebook, a project plan look like a document, and a document look like a conversation.</p>
+          <p>It is also a trap for anyone designing the backend. The visible object is a page. The stored object is a tree of blocks. Text, image, heading, checkbox, database row, relation, child page: all are blocks with identity, parentage, ordering, permissions, history, and downstream consequences. A user changes one word and the system may need to update the canonical row, publish a change event, refresh search, rebuild a permission path, refresh a cache, and eventually regenerate an embedding.</p>
+          <p>The danger is not one spectacular outage. It is a slow, quiet multiplication of work. One edit becomes six workloads. Ten million active users become a stream that never stops. The blank page stays calm while the infrastructure underneath it starts counting.</p>
+          <div class="callout"><strong>The central accusation:</strong> Notion's architecture is not wasteful because it is unsophisticated. It is expensive because a flexible block model turns every feature into another reader of the same mutable tree.</div>
+        </section>
+
+        <section>
+          <h2>2. Why Notion Is the Right Billion-Dollar Autopsy</h2>
+          <p>Notion is not a rumor-driven unicorn anymore. In January 2026, the company announced a private employee tender of about $270 million at an $11 billion valuation, with GIC joining Sequoia and Index. In September 2024, co-founder Ivan Zhao announced that Notion had passed 100 million users. The company has also publicly explained the hard parts of its infrastructure rather than hiding behind a glossy uptime number.</p>
+          <p>That public record gives us something rare: a real architecture to interrogate. Notion says its production database grew from roughly 20 billion blocks in early 2021 to more than 200 billion by 2024. Its PostgreSQL estate moved to 96 physical instances and 480 logical shards. Its data team built a CDC pipeline using Debezium, Kafka, Apache Hudi, Spark, and S3. Its vector-search team says the first architecture reached a cost run rate in the millions of dollars per year before a series of redesigns cut costs by 90 percent over two years.</p>
+          <p>Those figures are disclosures. The daily bill below is not. Notion does not publish its AWS invoice, traffic histogram, cache hit rate, or model-provider contract. So this is a modeled postmortem: public facts at the edges, explicit assumptions in the middle, and arithmetic that another engineer can challenge.</p>
+        </section>
+
+        <section>
+          <h2>3. Reconstructing the Machine</h2>
+          <p>Imagine a request entering the system. A browser opens a workspace. An edge layer terminates TLS and routes the request. An application service checks workspace membership and permissions. The block service reads a page tree from one of the database shards. Redis-like caches may absorb hot reads. Images and attachments live in object storage. A WebSocket path carries collaboration updates. The primary database emits a WAL record. CDC turns that record into Kafka traffic. Offline processors land a durable copy in S3. Search, analytics, and AI consume different materialized views.</p>
+          <p>That is the first important design decision: Notion does not make one database serve every question. The online path needs predictable latency and transactional permissions. The data lake needs cheap, replayable history. Search needs denormalized text. AI needs chunks, embeddings, and access-control filters. Each copy exists because forcing one store to do everything would be worse.</p>
+          <p>The second decision is the block. A block is a wonderfully product-friendly primitive. It lets the UI compose documents, tables, and workflows without inventing a new storage model for each feature. But block flexibility creates an update-heavy workload. Notion reports that roughly 90 percent of block upserts are updates, not inserts. Warehouses love append-only streams. Notion gives them a constantly edited forest.</p>
+          <p>The third decision is sharding by tenant-shaped units. By 2023, the system used 96 physical Postgres instances with five logical shards on each, preserving 480 logical shards. This is a practical escape from the single database. It is also a permanent tax: routing, migrations, backups, rebalancing, schema changes, CDC fan-in, and operational tooling all multiply by the number of shards.</p>
+          <div class="live-diagram" aria-label="Notion-inspired data architecture flow diagram">
+            <div class="diagram-flow"></div>
+            <div class="live-diagram-grid">
+              <div class="diagram-node">Browser clients<small>HTTPS + WebSocket<br>optimistic edits</small></div>
+              <div class="diagram-node">API + permissions<small>auth, routing<br>workspace policy</small></div>
+              <div class="diagram-node gold">480 Postgres shards<small>canonical blocks<br>WAL / transactions</small></div>
+              <div class="diagram-node hot">Kafka CDC<small>Debezium change stream<br>fan-out begins here</small></div>
+              <div class="diagram-node gold">Hudi on S3<small>raw + processed lake<br>cheap replay</small></div>
+              <div class="diagram-node">Search index<small>denormalized text<br>fast retrieval</small></div>
+              <div class="diagram-node green">Vector tier<small>embeddings<br>hot / warm / cold</small></div>
+              <div class="diagram-node hot">AI answer path<small>retrieve, rerank,<br>infer, stream</small></div>
+            </div>
+            <p class="diagram-caption">The terrifying part is not the arrows. It is what one block mutation fans out into after the user has already stopped typing.</p>
+          </div>
+          <div class="tip"><strong>Design tip:</strong> Draw the second-order work, not just the request path. A box labeled “database” hides the replicas, WAL, CDC, indexers, retries, compaction jobs, and invoices that make a system production-grade.</div>
+        </section>
+
+        <section id="rps-model">
+          <h2>4. The Night the Numbers Stop Adding Up</h2>
+          <p>Let us construct a demanding but plausible production day. Notion has 100 million registered users. We will not pretend all of them are active. Assume 10 million daily active users. Assume each active user spends 20 minutes in the product and generates one application request every ten seconds while engaged. That gives 1.2 billion requests per day, or about 13,900 average requests per second.</p>
+          <p>Traffic is not flat. If the busiest hour is eight times the daily average, the peak is approximately 111,000 requests per second. We will use 100,000 RPS as a rounded design target. This is not a claim that Notion's internal peak is exactly 100,000 RPS. It is a transparent stress scenario based on the public user count and ordinary interactive-product behavior.</p>
+          <p>Now the more dangerous number: writes. Suppose each active user produces six block mutations during a session. That is 60 million mutations per day, or 694 per second on average. With the same eight-times peak factor, the mutation path sees roughly 5,600 writes per second. Every mutation can produce a WAL record, a CDC message, a search update, a permission-related invalidation, and a downstream index operation.</p>
+          <p>AI is a separate fuse. Suppose only one percent of daily active users invoke an AI search or answer each day: 100,000 AI requests. That is a modest 1.16 requests per second average, but the request is not equivalent to a page read. It may retrieve dozens of chunks, apply workspace permissions, rerank candidates, call one or more language models, and stream a response. If the average request consumes 8,000 input tokens and 1,000 output tokens, the token bill can dominate the database bill even at low RPS.</p>
+          <table>
+            <thead><tr><th>Modeled workload</th><th>Assumption</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Daily active users</td><td>10% of 100M</td><td>10M</td></tr>
+              <tr><td>Interactive API traffic</td><td>1 request / 10 sec / engaged user</td><td>13.9k avg RPS</td></tr>
+              <tr><td>Peak API traffic</td><td>8x average</td><td>~100k RPS</td></tr>
+              <tr><td>Block mutations</td><td>6 per active user / day</td><td>694 avg writes/s</td></tr>
+              <tr><td>Peak mutations</td><td>8x average</td><td>~5.6k writes/s</td></tr>
+              <tr><td>AI requests</td><td>1% of active users / day</td><td>100k / day</td></tr>
+            </tbody>
+          </table>
+          <div class="tip"><strong>Capacity-planning tip:</strong> Never multiply daily active users by a single “requests per user” number and call it a capacity plan. Split reads, writes, subscriptions, background jobs, and AI requests. Then apply a peak factor. Averages are how dashboards politely lie.</div>
+        </section>
+
+        <section id="the-bill">
+          <h2>5. The Bill: What Could This Cost?</h2>
+          <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
+          <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failover, and operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transfer, and monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply; a larger high-memory mix could exceed it.</p>
+          <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissions, and replication overhead. Assume 300 TB of compressed lake data across raw, processed, and historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storage, and scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>
+          <p><strong>Search and vector infrastructure.</strong> Notion's own vector-search post says the old architecture reached a cost run rate of millions per year and that the first storage-compute decoupling cut peak cost by 50 percent. Before the later 90 percent reduction, a reasonable modeled range is <strong>$150,000-$350,000 per month</strong> for vector storage, indexing, embeddings, EMR, and serving. This is exactly where idle capacity becomes a villain: a rarely queried workspace can still occupy index capacity if storage and compute are welded together.</p>
+          <p><strong>Edge, compute, media, and egress.</strong> Add API compute, WebSockets, CDN, object storage requests, image transformations, logs, metrics, backups, and internet egress. Even with aggressive caching, <strong>$150,000-$400,000 per month</strong> is a defensible range for a globally distributed SaaS at this modeled scale.</p>
+          <p><strong>AI inference.</strong> With 100,000 AI requests per day, 800 million input tokens and 100 million output tokens per day, a blended model price of $2 per million input tokens and $8 per million output tokens produces about $2,400 per day, or $72,000 per month. A premium-model mix can be several times higher. Retrieval, reranking, embedding generation, and retries add more. Model contracts are private, so the honest range is <strong>$75,000-$500,000 per month</strong>.</p>
+          <table>
+            <thead><tr><th>Cost center</th><th>Modeled monthly range</th><th>Modeled daily range</th></tr></thead>
+            <tbody>
+              <tr><td>Sharded database estate</td><td>$500k-$700k</td><td>$16.7k-$23.3k</td></tr>
+              <tr><td>Lake, Kafka, batch compute</td><td>$100k-$250k</td><td>$3.3k-$8.3k</td></tr>
+              <tr><td>Search and vectors</td><td>$150k-$350k</td><td>$5k-$11.7k</td></tr>
+              <tr><td>Edge, media, egress, observability</td><td>$150k-$400k</td><td>$5k-$13.3k</td></tr>
+              <tr><td>AI inference and retrieval</td><td>$75k-$500k</td><td>$2.5k-$16.7k</td></tr>
+              <tr><td><strong>Total infrastructure envelope</strong></td><td><strong>$975k-$2.2M</strong></td><td><strong>$32.5k-$73.3k</strong></td></tr>
+            </tbody>
+          </table>
+          <div class="callout"><strong>What this means:</strong> The modeled platform could cost roughly $33,000-$73,000 per day, or $1.0M-$2.2M per month, before payroll, support, security teams, vendor contracts, and sales infrastructure. This is an estimate, not a Notion disclosure. The company has publicly reported over $1M in data-lake savings in 2022 and proportionally higher savings afterward, which shows that seven-figure annual optimization opportunities are plausible.</div>
+          <div class="tip"><strong>FinOps tip:</strong> Put a cost owner and a usage meter on every expensive noun: shard, index, workspace, pipeline, model, and reindex job. “Shared platform” is often the accounting equivalent of leaving the freezer door open and blaming the weather.</div>
+        </section>
+
+        <section id="cost-plan">
+          <h2>6. The First Escape: Stop Asking the Warehouse to Pretend</h2>
+          <p>Notion's early ELT setup used Fivetran connectors from Postgres WAL into Snowflake. The design was understandable: get data out quickly, centralize it, and let analysts query it. The problem was shape. There were 480 connectors, update-heavy block data, and expensive transformations such as tree traversal and permission construction.</p>
+          <p>The redesign moved incremental changes through Debezium and Kafka, landed them in S3 with Apache Hudi, and processed raw data separately from cleaned data. This is the right separation. S3 becomes the durable truth for offline work; Spark can compute when needed; Snowflake and product stores receive only curated data.</p>
+          <p>Could a team do better? First, use append-friendly event records and compact them into immutable columnar files. Do not rewrite a giant warehouse table for every block edit. Second, partition by workspace and event date, then compact only hot partitions. Third, calculate permission ancestry incrementally when a parent or membership changes, rather than repeatedly traversing every tree during every downstream job. Fourth, use spot capacity for replayable Spark jobs, with on-demand capacity only for the control plane and deadlines.</p>
+          <p>Notion later said its Spot Balancer reduced Spark compute costs by 60-90 percent across workloads. That is not a theoretical trick. It is the direct consequence of admitting that batch compute is interruptible and designing the scheduler around that fact.</p>
+          <div class="tip"><strong>Reliability tip:</strong> Spot capacity is safe only when the job is replayable. Checkpoint by partition, make writes idempotent, and keep a small on-demand lane for deadlines. “We saved 90 percent” is not impressive if the remaining 10 percent is your data-recovery team.</div>
+        </section>
+
+        <section>
+          <h2>7. The Second Escape: Let Cold Data Go Cold</h2>
+          <p>The vector-search story is even more revealing. The first vector architecture bundled storage and compute into pods. That is fast, familiar, and dangerous. Capacity is purchased for the peak, while most workspaces sleep. A quiet index still consumes a machine because the machine cannot tell the difference between a customer who will return in ten seconds and one who will return next month.</p>
+          <p>Notion migrated embeddings to a serverless design that decoupled storage from compute. It reported an immediate 50 percent cost reduction from peak usage and several million dollars in annual savings. Later optimizations included a 60 percent reduction in search-engine spend, a 35 percent reduction in EMR compute, and a 70 percent reduction in indexed data volume. It also began moving embeddings from Spark to Ray, anticipating more than 90 percent lower embedding infrastructure cost.</p>
+          <p>The lesson is not “serverless is always cheaper.” Serverless can be expensive for hot, steady workloads. The lesson is to match cost ownership to access patterns. Keep hot vectors in memory or local SSD. Put warm vectors in a cheaper serving tier. Store cold vectors in object storage and rebuild or hydrate them on demand. Put a budget on every workspace and every index generation. A million rarely used workspaces should not be allowed to masquerade as a million hot applications.</p>
+          <div class="tip"><strong>Vector-search tip:</strong> Measure recall and p95 latency separately for hot, warm, and cold workspaces. A single blended number can hide a cold-start tax large enough to make users think your AI has gone to lunch.</div>
+        </section>
+
+        <section>
+          <h2>8. What I Would Change Before the Next Billion Blocks</h2>
+          <p><strong>First: make the cost unit visible.</strong> Notion has users, seats, and now AI usage, but infrastructure teams need a different ledger: dollars per active workspace, dollars per million block mutations, dollars per indexed block, dollars per AI answer, and dollars per successful search. Without those ratios, an optimization can improve latency while quietly increasing the bill.</p>
+          <p><strong>Second: introduce workload-aware admission control.</strong> A workspace that edits thousands of blocks in a migration should not compete with interactive edits for the same queue. Separate interactive, indexing, export, and AI workloads. Give each a budget, deadline, and degradation policy. If AI indexing is behind, delay embeddings. Do not let it starve page reads.</p>
+          <p><strong>Third: make permissions incremental.</strong> Permission checks are non-negotiable, but recomputing inherited access over a large block tree is expensive. Maintain a compact workspace authorization snapshot and version it. On a membership or parent change, enqueue affected subtrees. On reads, validate against a versioned boundary. The system should pay for the changed branch, not the entire forest.</p>
+          <p><strong>Fourth: compress the mutation stream earlier.</strong> If a user types ten characters, the system should not necessarily persist ten full downstream indexing operations. Coalesce edits over a short window, preserve an audit-quality event log, and publish one searchable document update. The WebSocket path can remain responsive while durable secondary systems receive a compacted representation.</p>
+          <p><strong>Fifth: route AI by difficulty.</strong> Notion has described routing tasks by quality, latency, and cost. Push that further: classify requests before retrieval, use a small model for intent and query rewriting, retrieve only the minimum context, and escalate to a premium model only when confidence is low. Cache stable workspace summaries. Never send the entire page tree to a large model because the permission system made retrieval inconvenient.</p>
+          <p><strong>Sixth: reserve what is boring and spot what is disposable.</strong> The always-on database and gateway deserve commitments, reserved capacity, and careful rightsizing. Backfills, re-embeddings, compaction, and historical replays should use spot fleets and resumable checkpoints. The largest savings often come from refusing to pay on-demand prices for work that can wait.</p>
+          <p>My conservative target would be a 35-55 percent reduction against the modeled $975k-$2.2M monthly envelope: 15-25 percent from database rightsizing and commitments, 10-20 percent from lake and batch scheduling, 10-25 percent from vector tiering and index reduction, and 5-15 percent from AI routing and retrieval. These ranges overlap; they are not additive promises. In a mature system, savings are constrained by reliability, residency, tail latency, and engineering time.</p>
+          <p>The order matters. Do not start by rewriting the glamorous part. Start with the meter, then remove duplicate work, then separate hot from cold, then negotiate commitment discounts. Teams love buying a new database to solve a query problem caused by missing indexes. It is a beautiful industry tradition, right up there with solving latency by adding retries.</p>
+        </section>
+
+        <section>
+          <h2>9. The Verdict</h2>
+          <p>Notion's architecture is impressive precisely where it is vulnerable. The block model made product composition absurdly fast. The same model made every new feature another consumer of a mutable, permissioned, update-heavy graph. The company responded the right way: shard the online database, separate offline data from online traffic, replace warehouse rewrites with CDC and lake storage, decouple vector storage from compute, and use interruptible capacity for interruptible work.</p>
+          <p>The postmortem is not “Notion spent too much.” A billion-dollar product serving a hundred million people is supposed to have a large bill. The postmortem is that cost behaves like a distributed systems failure: it emerges from fan-out, retries, idle capacity, duplicated representations, and the distance between the event that caused work and the feature that consumed it.</p>
+          <p>The next incident will not arrive with a red dashboard. It may arrive as a new AI feature that converts every page edit into an embedding, a new enterprise customer with a ten-million-block workspace, or a reindex job that quietly consumes the same capacity as the API. The cursor will still blink on a blank page. The user will see simplicity.</p>
+          <p>Behind it, 480 shards will wait. Kafka will begin to fill. A vector index will wake from cold storage. Somewhere, an engineer will look at the graph and ask the only question that matters:</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>What did this one innocent block just make the system do?</strong></p>
+        </section>
+
+        <section>
+          <h2>10. Three Questions Engineers Actually Ask</h2>
+          <h3>Is Notion using a data lake because PostgreSQL failed?</h3>
+          <p>No. PostgreSQL remained the transactional source for online product behavior. The data lake exists because analytics, search, and AI have different latency and cost requirements. The mistake would be making the primary database answer every offline question, not using PostgreSQL at all.</p>
+          <h3>Is 100,000 RPS Notion's confirmed peak?</h3>
+          <p>No. It is the peak in this article's explicit workload model: 100 million public users, 10 million daily active users, 20 minutes of engagement, one request every ten seconds, and an eight-times peak multiplier. Replace those assumptions with your telemetry and the result changes. That is the point.</p>
+          <h3>What is the first optimization to copy?</h3>
+          <p>Copy the discipline, not a vendor list. Measure the fan-out from one mutation, assign costs to each downstream consumer, and make replayable work interruptible. Notion's Debezium-to-Kafka-to-S3 path is useful because it separates durability, serving, and computation. Copying Kafka into a system with no event volume is just buying yourself a small distributed-systems-themed aquarium.</p>
+        </section>
+
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Public facts used here come primarily from Notion's engineering and company posts. The workload and cost model is my own estimate using rounded US cloud-market assumptions; it is not an assertion of Notion's confidential spend. Cloud prices, model rates, traffic, and architecture change over time.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://www.notion.com/blog/100-million-of-you" target="_blank" rel="noopener noreferrer">Notion: 100 Million of You</a></li>
+            <li><a href="https://www.notion.com/blog/gic-sequoia-index-purchase-notion-shares" target="_blank" rel="noopener noreferrer">Notion: $270M tender at an $11B valuation</a></li>
+            <li><a href="https://www.notion.com/blog/building-and-scaling-notions-data-lake" target="_blank" rel="noopener noreferrer">Notion Engineering: Building and Scaling Notion's Data Lake</a></li>
+            <li><a href="https://www.notion.com/blog/two-years-of-vector-search-at-notion" target="_blank" rel="noopener noreferrer">Notion Engineering: Two Years of Vector Search at Notion</a></li>
+            <li><a href="https://www.notion.com/blog/balancing-cost-and-reliability-for-spark-on-kubernetes" target="_blank" rel="noopener noreferrer">Notion Engineering: Balancing Cost and Reliability for Spark on Kubernetes</a></li>
+            <li><a href="https://aws.amazon.com/rds/pricing/" target="_blank" rel="noopener noreferrer">AWS RDS pricing reference</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;">
+        <span>Mukul Kumar Mishra</span>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a>
+      </footer>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

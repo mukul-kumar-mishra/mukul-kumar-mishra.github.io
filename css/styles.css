@@ -417,6 +417,61 @@ h1, h2, h3, h4, h5, h6 {
 .prose tr:last-child td { border-bottom: none; }
 .prose .muted { color: var(--mist); }
 
+/* Animated architecture figure used by long-form case studies. It is kept
+   dependency-free so it still works on GitHub Pages and on slow connections. */
+.live-diagram {
+  position: relative;
+  margin: 1.4em 0;
+  padding: 24px 18px 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--card), var(--card-muted));
+  font-family: var(--font-mono);
+}
+.live-diagram::before {
+  content: "LIVE REQUEST PATH  /  COST SURFACE";
+  display: block;
+  margin-bottom: 18px;
+  color: var(--cyan);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+.live-diagram-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; position: relative; }
+.diagram-node {
+  position: relative;
+  min-height: 82px;
+  padding: 13px 11px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--cyan);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.diagram-node small { display: block; margin-top: 7px; color: var(--mist); font-family: var(--font-mono); font-size: 0.64rem; font-weight: 400; line-height: 1.45; }
+.diagram-node.hot { border-top-color: var(--hot); }
+.diagram-node.gold { border-top-color: var(--gold); }
+.diagram-node.green { border-top-color: var(--lime); }
+.diagram-arrow { display: flex; align-items: center; justify-content: center; color: var(--cyan); font-size: 1.15rem; }
+.diagram-flow { position: absolute; left: 4%; right: 4%; top: 91px; height: 2px; pointer-events: none; background: repeating-linear-gradient(90deg, var(--cyan) 0 8px, transparent 8px 15px); opacity: 0.75; animation: data-flow 1.3s linear infinite; }
+.diagram-caption { margin: 18px 0 0; color: var(--mist); font-size: 0.72rem; line-height: 1.6; text-align: center; }
+@keyframes data-flow { to { background-position: 30px 0; } }
+.tip {
+  margin: 1.25em 0;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 25%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cyan) 6%, var(--card));
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.tip strong { color: var(--cyan); }
+
 .codeblock, .prose pre {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -556,6 +611,9 @@ h1, h2, h3, h4, h5, h6 {
   .topnav a { padding: 6px 8px; font-size: 0.78rem; }
   .sec-head { flex-direction: column; align-items: flex-start; }
   .sec-head .field-input { max-width: 100% !important; }
+  .live-diagram-grid { grid-template-columns: 1fr 1fr; }
+  .diagram-flow { display: none; }
+  .diagram-arrow { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
