@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How Figma built real-time multiplayer editing with WebSockets, server-authoritative conflict resolution, Rust, and per-document isolation. A practical system design postmortem with RPS and cost analysis.">
+  <meta name="keywords" content="Figma system design, Figma multiplayer architecture, real time collaboration, WebSocket scaling, CRDT vs OT, Rust backend, AWS cost optimization, collaborative editor architecture">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/figma-multiplayer-cost-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Figma's Multiplayer Editor: The Server That Decides Who Wins">
+  <meta property="og:description" content="A forensic system design postmortem of Figma's multiplayer editor, its Rust rewrite, WebSocket fan-out, cost drivers, and what I would change.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/figma-multiplayer-cost-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Figma's Multiplayer Editor: The Server That Decides Who Wins">
+  <meta name="twitter:description" content="WebSockets, Rust, conflict resolution, per-document isolation, RPS assumptions, and cost controls behind collaborative design.">
+  <title>Figma System Design Postmortem: Multiplayer Editor Architecture and Cost | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Figma's Multiplayer Editor: The Server That Decides Who Wins",
+    "description":"A system design postmortem of Figma's multiplayer editor, WebSockets, server-authoritative conflict resolution, Rust, and cost optimization.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-01",
+    "dateModified":"2026-09-01",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/figma-multiplayer-cost-postmortem.html"},
+    "keywords":"Figma system design, multiplayer architecture, WebSockets, CRDT, OT, Rust"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">mukul<span class="acc">.dev</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="on">System Design</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">17 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma's Multiplayer Editor: The Server That Decides Who Wins</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A design tool quietly became a distributed-systems exam. Then two designers dragged the same rectangle, an offline browser came back from the dead, and the server had to choose a winner without making the canvas look haunted.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Monthly Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">13M+</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">2025 Revenue</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$1.06B</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">65k RPS</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Engine Rewrite</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">TypeScript → Rust</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 1, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol and infrastructure decisions below come from its engineering posts and public filings. RPS and infrastructure-cost figures are a clearly labeled scenario model. The server knows the truth; my spreadsheet is only wearing a convincing hat.</aside>
+
+      <article class="prose">
+        <section>
+          <h2>1. The Moment a Rectangle Became a Distributed System</h2>
+          <p>Most software can tolerate a little delay. A design canvas cannot. When a designer drags a rectangle, the rectangle is expected to move now, not after a committee meeting between three availability zones. When a second designer changes the fill color, both people should see it immediately. When the Wi-Fi dies, the work should not evaporate into the same digital void as every unsaved university assignment.</p>
+          <p>Figma's product is therefore a collaboration system disguised as a drawing tool. Its clients are browser applications connected to servers over WebSockets. A document is a tree of objects. Every object has properties: position, size, color, text, parent, order. Clients apply edits optimistically, send them to the server, and receive the canonical stream back.</p>
+          <p>The hard question is not how to send JSON quickly. It is what happens when two people edit the same property, when one person is offline for an hour, or when a tree move creates a cycle. At that point, “real-time collaboration” stops being a feature and becomes a dispute-resolution institution with a latency budget.</p>
+          <div class="callout"><strong>The uncomfortable product truth:</strong> Figma does not need the most theoretically powerful collaboration algorithm. It needs the simplest algorithm that preserves the illusion that everyone is holding the same canvas.</div>
+        </section>
+
+        <section>
+          <h2>2. Why Figma Is a Better Autopsy Than Another AI Wrapper</h2>
+          <p>Figma crossed the billion-dollar scale in a way that leaves a useful paper trail. It raised venture funding, was valued at $10 billion in its 2021 financing, survived the collapse of Adobe's proposed $20 billion acquisition, and went public in 2025. Its final IPO prospectus reported 2024 revenue of $749 million and 2025 filings reported roughly $1.06 billion in revenue. This is no longer a tiny collaboration demo with a heroic README.</p>
+          <p>More important for engineers, Figma published the decisions that made its multiplayer system work. The company rejected Operational Transformation for the document model, did not adopt a pure peer-to-peer CRDT, and used server-authoritative ordering with last-writer-wins behavior at the property boundary. It kept network handling in Node.js, moved performance-sensitive document operations into Rust, and ran a separate process per active document.</p>
+          <p>Those are not fashionable choices. They are constrained choices. The architecture says something valuable: distributed systems are not a contest to use the most complicated noun. They are a contest to preserve the product's actual invariants while refusing to pay for imaginary ones.</p>
+        </section>
+
+        <section>
+          <h2>3. The Architecture: One Document, One Owner, Many Witnesses</h2>
+          <p>The core multiplayer model is surprisingly direct. When a document opens, the client downloads a copy and connects to the process that owns that document. Updates travel both ways over a WebSocket. The server process holds the active document state, applies operations, and broadcasts accepted changes to connected clients.</p>
+          <p>That “one document, one owner” rule is the load-bearing beam. It gives the system a single authority for ordering changes. There is no need for every replica to reach consensus on every property update. A client can be optimistic because the server will eventually confirm or reject the operation. A document can be sharded by ownership because two unrelated documents do not need to share a lock.</p>
+          <div class="live-diagram" aria-label="Figma multiplayer architecture diagram">
+            <div class="diagram-flow"></div>
+            <div class="live-diagram-grid">
+              <div class="diagram-node">Designer A<small>browser canvas<br>optimistic edit</small></div>
+              <div class="diagram-node">Designer B<small>browser canvas<br>concurrent edit</small></div>
+              <div class="diagram-node gold">WebSocket edge<small>connection routing<br>reconnect buffer</small></div>
+              <div class="diagram-node hot">Document owner<small>one active process<br>canonical ordering</small></div>
+              <div class="diagram-node green">Rust core<small>property updates<br>tree validation</small></div>
+              <div class="diagram-node">Broadcast stream<small>accepted deltas<br>presence frames</small></div>
+              <div class="diagram-node gold">Postgres product data<small>teams, users,<br>comments, permissions</small></div>
+              <div class="diagram-node hot">Object storage<small>snapshots, assets,<br>recovery history</small></div>
+            </div>
+            <p class="diagram-caption">The document owner is the linearization point. Everyone may edit optimistically; only one process gets to make the final call.</p>
+          </div>
+          <p>Figma deliberately separates document synchronization from other product data. Comments, teams, users, and projects do not live in the same multiplayer state machine. They use Postgres and a separate synchronization system. That boundary prevents “the comment service is slow” from becoming “the canvas cannot move.”</p>
+          <div class="tip"><strong>Architecture tip:</strong> Separate state by user-visible invariant. A document editor needs low-latency ordered mutations. Billing and permissions need durable transactional truth. Putting both in one magic “realtime service” is how a clean diagram becomes a 3 a.m. incident.</div>
+        </section>
+
+        <section>
+          <h2>4. Conflict Resolution: No, Figma Is Not Just CRDTs</h2>
+          <p>Internet discussions love calling every collaborative editor “CRDT-based.” It is a useful shortcut and often an inaccurate one. Figma's system is centralized. The server is the authority. It tracks the latest value sent for a property on an object. If two clients change unrelated properties, both changes survive. If they change the same property, the operation that arrives later wins according to server order.</p>
+          <p>That is not a moral failure. It is a product decision. In a design tool, two users rarely edit the exact same property at the exact same moment. If they do, one result must win. Figma accepts that a text property changed concurrently may end as either value rather than interleaving characters like a text editor. The product optimizes for spatial design operations, not collaborative novel writing.</p>
+          <p>Tree structure is harder. A user can reparent an object, and two concurrent reparent operations can try to create a cycle. Figma's server validates the tree and rejects operations that would make the document invalid. On the client, a temporary weird state may exist while the rejection travels back. It is not perfect. It is bounded, understandable, and preferable to a mathematically elegant document that has parent A under B under A forever.</p>
+          <p>For ordering, Figma uses fractional indexing: each child has a position between zero and one, and inserting between two children means choosing a fraction between their positions. The implementation uses arbitrary-precision fractions to avoid running out of space after repeated insertions.</p>
+          <div class="tip"><strong>Conflict tip:</strong> Choose the conflict users can explain. “The server rejected a cycle” is recoverable. “Every replica converged through 14 layers of metadata, but nobody can explain why the object disappeared” is a support ticket with a PhD.</div>
+        </section>
+
+        <section id="rust-rewrite">
+          <h2>5. The Rust Rewrite Was a Latency Incident Wearing a Language Hat</h2>
+          <p>Figma's first multiplayer server was written in TypeScript. It worked until large documents started behaving like large documents, which is rude but predictable. The service used fixed machines and workers, with multiple documents sharing a worker. A slow serialization operation could block the single-threaded worker and delay synchronization for every document attached to it.</p>
+          <p>The temporary fix was a pool of “heavy” workers. Humans then had to discover the unusually large files and move them by hand. This is a classic scaling phase: the system is technically up, the process is operationally embarrassing, and a spreadsheet quietly becomes a scheduler.</p>
+          <p>Figma moved the performance-sensitive document engine into a Rust child process. Node.js retained network handling. A separate Rust process could be created per document without the memory overhead of a full JavaScript VM, and serialization became more than ten times faster according to Figma's engineering account. This was not a total rewrite for the sake of a conference slide. It was an isolation boundary aimed at the exact failure mode.</p>
+          <p>The lesson is more useful than “Rust is fast.” The lesson is to move only the code that has a measurable, structural bottleneck. Rewriting HTTP handlers while leaving a pathological shared document worker untouched would be a very expensive way to feel productive.</p>
+        </section>
+
+        <section>
+          <h2>6. The RPS Model: How Much Traffic Does a Canvas Make?</h2>
+          <p>Figma reported more than 13 million monthly active users in its 2025 prospectus, with approximately two-thirds of them using the product's collaboration-heavy teams. It does not publish a complete request histogram, so the following is a scenario, not a secret leak.</p>
+          <p>Assume 4 million daily active users on a busy day. Assume each active user spends 35 minutes in the product and the browser sends one application or synchronization request every 20 seconds while active. That creates 420 million requests per day, or about 4,860 average RPS. Real-time systems are shaped by concurrency, not just request count: assume a six-times peak factor and the control plane must absorb roughly 29,000 RPS.</p>
+          <p>Now count presence. Suppose 1.5 million concurrent users are spread across active documents, and each client sends a coalesced cursor or presence update twice per second. That is 3 million presence frames per second before fan-out. Presence should not be journaled like a document edit. If a cursor frame is replayed from durable storage, somebody has accidentally made the mouse a financial record.</p>
+          <p>For document mutations, assume 2 million active editing users produce one meaningful property mutation every five seconds. That is 400,000 mutations per second at the average active period, with a six-times burst producing 2.4 million mutation events per second. This is intentionally conservative on the user side and aggressive on the peak side. It tests the architecture's shape: a large, persistent WebSocket population, small ephemeral frames, and a lower-volume but more expensive durable mutation stream.</p>
+          <table><thead><tr><th>Workload</th><th>Scenario assumption</th><th>Modeled result</th></tr></thead><tbody>
+            <tr><td>API + sync requests</td><td>4M DAU, 35 min, 1 request/20 sec</td><td>4.9k avg RPS</td></tr>
+            <tr><td>Peak API + sync</td><td>6x busy-period multiplier</td><td>~29k RPS</td></tr>
+            <tr><td>Presence frames</td><td>1.5M connected users, 2/sec</td><td>3M ephemeral frames/sec</td></tr>
+            <tr><td>Document mutations</td><td>2M editors, 1 mutation/5 sec</td><td>400k avg mutations/sec</td></tr>
+            <tr><td>Peak mutations</td><td>6x burst multiplier</td><td>~2.4M events/sec</td></tr>
+          </tbody></table>
+          <div class="tip"><strong>Load-test tip:</strong> Simulate one enormous document, thousands of ordinary documents, reconnect storms, and presence churn separately. A benchmark with 100,000 polite clients opening one tiny file is not a multiplayer test. It is a networking screensaver.</div>
+        </section>
+
+        <section id="cost-model">
+          <h2>7. The Cost Model: What Might This Collaboration Engine Cost?</h2>
+          <p>Figma's public filings provide a useful anchor: its 2025 cost of revenue was about $185.5 million, and the filing says cost of revenue includes technical infrastructure and hosting, AI inference, infrastructure and product-support staff, payment processing, and amortization. That is not a multiplayer invoice, but it is a reality check against fantasy numbers.</p>
+          <p>For the scenario above, model 1.5 million persistent connections across 19 regional pools, with headroom for failover. Suppose 750 application workers average $0.50 per hour after commitments, plus connection proxies and regional control-plane services. Compute is roughly $274,000 per month. Add cross-zone traffic, load balancers, observability, and failover capacity: <strong>$350,000-$550,000 per month</strong>.</p>
+          <p>Document processes need memory. Assume 250,000 hot documents at an average 80 MB resident state, distributed across worker pools with replicas and spare capacity. That is 20 TB of logical memory before overhead. With replicated cache/state, this can become 40-60 TB. Depending on the compute class, a plausible managed-cloud envelope is <strong>$250,000-$600,000 per month</strong>.</p>
+          <p>Snapshots, assets, exports, and recovery history belong in object storage. Assume 500 TB of stored data with lifecycle policies and several petabytes of monthly reads and writes. Storage itself may be modest; transfer, image processing, backups, and indexing push a practical range to <strong>$75,000-$200,000 per month</strong>.</p>
+          <p>Finally, there is the product-data layer: Postgres for users, teams, permissions, comments, and billing; search; queues; batch jobs; and AI-related workloads. A broad estimate is <strong>$150,000-$400,000 per month</strong>. Put the ranges together and the collaboration and supporting platform in this scenario lands around <strong>$825,000-$1.75M per month</strong>, or roughly <strong>$27,500-$58,300 per day</strong>.</p>
+          <p>Again: this is not Figma's disclosed spend. The filing gives the broader cost-of-revenue anchor; the component ranges are a design exercise. Actual cost depends on connection duration, document locality, compression, cache hit rates, AWS contract pricing, and the percentage of free users receiving infrastructure they do not directly pay for. Free users are wonderful for growth and surprisingly indifferent to your NAT gateway bill.</p>
+          <table><thead><tr><th>Cost center</th><th>Modeled monthly range</th><th>What moves the number</th></tr></thead><tbody>
+            <tr><td>WebSocket edge + workers</td><td>$350k-$550k</td><td>connections, regions, failover</td></tr>
+            <tr><td>Document state processes</td><td>$250k-$600k</td><td>hot files, memory, replicas</td></tr>
+            <tr><td>Storage + transfer</td><td>$75k-$200k</td><td>assets, snapshots, egress</td></tr>
+            <tr><td>Product data + search + AI</td><td>$150k-$400k</td><td>queries, indexing, model mix</td></tr>
+            <tr><td><strong>Total scenario</strong></td><td><strong>$825k-$1.75M</strong></td><td><strong>$27.5k-$58.3k/day</strong></td></tr>
+          </tbody></table>
+          <div class="callout"><strong>Do not confuse revenue with margin:</strong> A billion-dollar revenue line does not make an expensive realtime architecture free. It makes the architecture important enough that a 10 percent efficiency gain can be worth millions annually.</div>
+        </section>
+
+        <section id="cost-plan">
+          <h2>8. How I Would Cut the Bill Without Cutting the Canvas</h2>
+          <p><strong>1. Treat presence as disposable.</strong> Cursor position, selection, viewport, and “Mukul is looking at frame 12” are ephemeral. Coalesce them, drop stale frames, and route them through a separate best-effort path. Do not persist presence in the document journal. The user wants to see a cursor, not receive a receipt for it.</p>
+          <p><strong>2. Make document ownership locality-aware.</strong> One process per document is excellent for ordering but can be painful when a team spans India, Europe, and California. Place the owner near the dominant editor population, use remote proxies for everyone else, and migrate only when the latency win pays for the handoff complexity. A global document owner selected by round-robin is how you turn geography into a monthly invoice.</p>
+          <p><strong>3. Load subtrees, not entire files.</strong> Figma has publicly described incremental frame loading and subscription to parts of a document. Keep the active viewport hot. Hydrate adjacent frames on demand. Evict old prototype regions. This saves client memory, server memory, serialization CPU, and bandwidth simultaneously. The cheapest object is the object no one asked to render.</p>
+          <p><strong>4. Compress the durable stream.</strong> The live WebSocket stream should feel immediate; the durable journal should be compact. Coalesce repeated property updates within a short window, encode deltas, and checkpoint documents to object storage. Keep enough history for recovery and audit requirements, but do not make every intermediate drag position immortal.</p>
+          <p><strong>5. Right-size the heavy-document pool automatically.</strong> Figma's manual heavy-worker phase was a useful bridge, not a business model. Detect serialization time, resident memory, and operation queue depth. Route outliers to isolated pools automatically. Scale the pool on measured document weight, not on a vague “large customer” label.</p>
+          <p><strong>6. Use commitments for the floor and spot for the broom.</strong> Persistent WebSocket workers and database capacity are the floor. Snapshot generation, reindexing, export rendering, and historical compaction are the broom. Buy commitments for the floor; use interruptible capacity for the broom. If a reindex cannot survive an interruption, it is not a reindexer. It is a hostage situation.</p>
+          <p><strong>7. Charge AI with a budget, not optimism.</strong> Figma's filing explicitly includes AI inference in cost of revenue. Route simple tasks to smaller models, cache design-system context, limit repeated retrieval, and add per-workspace quotas. A design assistant that rereads the same 80-page file for every tiny suggestion is not intelligent. It is a very polite denial-of-wallet.</p>
+          <p>Against the scenario envelope, a realistic first target is 25-45 percent lower run-rate: 8-15 percent from presence and protocol compression, 8-18 percent from incremental loading and memory locality, 5-12 percent from commitments and spot scheduling, and 5-15 percent from search and AI routing. These ranges overlap and should not be added like achievement badges. Savings are only real if p95 sync latency, reconnect success, conflict correctness, and recovery time remain inside the product contract.</p>
+          <div class="tip"><strong>Optimization tip:</strong> Track dollars per active editor-hour, dollars per million durable mutations, and dollars per GB of document state-hour. “Cost per user” hides whether the bill comes from a productive editing session or a million idle browser tabs.</div>
+        </section>
+
+        <section>
+          <h2>9. The Postmortem Verdict</h2>
+          <p>Figma's multiplayer architecture is interesting because it refuses to be impressive in the usual way. It does not solve every possible collaboration problem. It solves the problem Figma actually has: browser clients editing structured design documents with low latency, occasional conflicts, offline reconnection, and a server that can remain the final authority.</p>
+          <p>The per-document owner makes ordering simple. Property-level last-writer-wins keeps the conflict model understandable. Fractional indexing handles reordering without turning every drag into a transformation algebra dissertation. Rust isolates the expensive path. Incremental loading prevents every viewer from paying to load the whole universe.</p>
+          <p>The costs are real: persistent connections, memory-heavy active documents, global latency, snapshots, search, and an AWS dependency large enough to appear plainly in public risk disclosures. But the architecture's best optimization is already visible in its boundaries. Ephemeral state is not durable state. Document state is not product metadata. Hot frames are not cold frames. The system gets cheaper when those distinctions are enforced in code rather than explained in a postmortem after the bill arrives.</p>
+          <p>That is the part worth stealing. Not Figma's exact protocol. Not a cargo-cult Rust rewrite. Steal the refusal to pay for complexity the product does not need.</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The canvas feels simple because the server is doing the arguing somewhere else.</strong></p>
+        </section>
+
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Figma's collaboration protocol, Rust migration, incremental loading, and product-data separation are taken from Figma engineering posts. User, revenue, cost-of-revenue, AWS-hosting, and customer figures come from Figma's public filings and IPO materials. The RPS and cloud-cost model is my own scenario, not Figma's confidential telemetry or invoice. Rates change; architecture decisions should be tested against production measurements.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://www.figma.com/blog/how-figmas-multiplayer-technology-works/" target="_blank" rel="noopener noreferrer">Figma Engineering: How Figma's Multiplayer Technology Works</a></li>
+            <li><a href="https://www.figma.com/blog/rust-in-production-at-figma/" target="_blank" rel="noopener noreferrer">Figma Engineering: How Mozilla's Rust Dramatically Improved Our Server-Side Performance</a></li>
+            <li><a href="https://www.figma.com/blog/realtime-editing-of-ordered-sequences/" target="_blank" rel="noopener noreferrer">Figma Engineering: Realtime Editing of Ordered Sequences</a></li>
+            <li><a href="https://www.figma.com/blog/incremental-frame-loading/" target="_blank" rel="noopener noreferrer">Figma Engineering: Improving Performance with Incremental Frame Loading</a></li>
+            <li><a href="https://www.sec.gov/Archives/edgar/data/1579878/000162828026009228/fig-20251231.htm" target="_blank" rel="noopener noreferrer">Figma 2025 Annual Filing</a></li>
+            <li><a href="https://www.sec.gov/Archives/edgar/data/1579878/000162828025037014/figma424b4.htm" target="_blank" rel="noopener noreferrer">Figma IPO Prospectus</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>
