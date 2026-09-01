@@ -54,45 +54,58 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> RFCs &amp; Deep Dives</h2>
       </div>
       <div style="display:grid;gap:16px;">
-        <a class="feature-link" href="cell-based-control-plane.html">
+        <article class="feature-link">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Architectural Critique</span>
             <span class="chip">12 min read</span>
           </div>
-          <h3>Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</h3>
+          <h3><a class="feature-link-title" href="cell-based-control-plane.html">Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</a></h3>
           <p class="fl-desc">
             An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
           </p>
           <div style="display:flex;gap:8px;margin-top:14px;">
             <span class="chip">Go</span><span class="chip">Raft</span><span class="chip">AWS</span>
           </div>
-        </a>
-        <a class="feature-link" href="notion-data-lake-cost-postmortem.html">
+        </article>
+        <article class="feature-link">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Forensic Architecture</span>
             <span class="chip">18 min read</span>
           </div>
-          <h3>The Workspace That Ate the Warehouse</h3>
+          <h3><a class="feature-link-title" href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a></h3>
           <p class="fl-desc">
             A forensic teardown of Notion's 200-billion-block data platform: 480 logical shards, CDC, Kafka, Hudi, vector search, a modeled 100k RPS peak, and the cost controls that can stop a flexible product from becoming an infrastructure furnace.
           </p>
           <div style="display:flex;gap:8px;margin-top:14px;">
             <span class="chip">Postgres</span><span class="chip">Kafka</span><span class="chip">S3</span><span class="chip">AI</span>
           </div>
-        </a>
-        <a class="feature-link" href="figma-multiplayer-cost-postmortem.html">
+        </article>
+        <article class="feature-link">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Realtime Systems</span>
             <span class="chip">17 min read</span>
           </div>
-          <h3>Figma's Multiplayer Editor: The Server That Decides Who Wins</h3>
+          <h3><a class="feature-link-title" href="figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a></h3>
           <p class="fl-desc">
             A forensic teardown of Figma's WebSocket collaboration engine, server-authoritative conflict resolution, Rust rewrite, per-document isolation, modeled 65k RPS, and the cost controls behind an always-live canvas.
           </p>
           <div style="display:flex;gap:8px;margin-top:14px;">
             <span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">CRDT / OT</span><span class="chip">AWS</span>
           </div>
-        </a>
+        </article>
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Cloud Infrastructure</span>
+            <span class="chip">16 min read</span>
+          </div>
+          <h3><a class="feature-link-title" href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</a></h3>
+          <p class="fl-desc">
+            A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, a normalized 1M RPS cost model, and the levers that make serverless economics less theatrical.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <span class="chip">Serverless</span><span class="chip">AI Gateway</span><span class="chip">RPS</span><span class="chip">AWS</span>
+          </div>
+        </article>
       </div>
     </section>
   </main>

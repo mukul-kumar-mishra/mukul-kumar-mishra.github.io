@@ -82,7 +82,7 @@
         </div>
         <h1 class="page-title" style="color:var(--heading);">Mukul Kumar Mishra</h1>
         <p class="page-lede" style="margin-top:14px;">
-          Seasoned full-stack backend engineer and Tech Lead specializing in Golang and AWS cloud architectures. Specialized in building high-performance backends, telemetry pipelines, and cloud-native microservices utilizing Kubernetes, Docker, Kafka, and SQS.
+          Backend engineer and Tech Lead specializing in Golang and AWS cloud architecture. I build high-performance backends, telemetry pipelines, and cloud-native microservices with Kubernetes, Docker, Kafka, and SQS.
         </p>
         <p class="page-lede" style="margin-top:6px;">
           Experienced in containerization, CNCF standards, and high-scale state synchronization. Proven technical leadership overseeing cross-functional engineering teams, legacy-to-cloud migrations, and system reliability.
@@ -122,19 +122,45 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> Featured System Architecture</h2>
         <a class="sec-link" href="system-design/index.html">View All RFCs <i data-lucide="chevron-right"></i></a>
       </div>
-      <a class="feature-link" href="system-design/cell-based-control-plane.html">
+      <article class="feature-link">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-tag">Architectural Critique</span>
+          <span class="fl-tag">Cloud Infrastructure</span>
           <span class="chip">Featured Deep Dive</span>
         </div>
-        <h3>Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</h3>
+        <h3><a class="feature-link-title" href="system-design/vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</a></h3>
         <p class="fl-desc">
-          An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
+          A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, and the cost difference at 1M RPS.
         </p>
         <div style="display:flex;gap:8px;margin-top:14px;">
-          <span class="chip">Go</span><span class="chip">Raft</span><span class="chip">AWS</span>
+          <span class="chip">Serverless</span><span class="chip">AI Gateway</span><span class="chip">1M RPS</span><span class="chip">AWS</span>
         </div>
-      </a>
+      </article>
+    </section>
+
+    <!-- Recent engineering writing -->
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="newspaper"></i> Recent Engineering Writing</h2>
+        <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
+      </div>
+      <div class="grid2">
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span>
+          </div>
+          <h3><a class="feature-link-title" href="system-design/vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</a></h3>
+          <p class="fl-desc">A forensic look at concurrency, cold starts, compute-resolver, AI Gateway waiting time, and the cost difference at 1M RPS.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Serverless</span><span class="chip">AI Gateway</span><span class="chip">1M RPS</span></div>
+        </article>
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span>
+          </div>
+          <h3><a class="feature-link-title" href="system-design/figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a></h3>
+          <p class="fl-desc">A practical teardown of WebSocket collaboration, Rust isolation, conflict resolution, and the hidden price of an always-live canvas.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">Realtime</span></div>
+        </article>
+      </div>
     </section>
 
     <!-- Skills -->

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How Vercel built Fluid Compute to make serverless AI workloads cheaper. A system design postmortem covering compute-resolver, concurrency, cold starts, 1M RPS math, and cloud cost savings.">
+  <meta name="keywords" content="Vercel system design, Fluid Compute architecture, serverless cost optimization, compute resolver, AI Gateway infrastructure, cold starts, AWS serverless cost, 1M RPS architecture">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/vercel-fluid-compute-cost-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
+  <meta property="og:description" content="A forensic teardown of Vercel's Fluid Compute architecture, cold-start problem, concurrency model, 1M RPS cost math, and proposed optimizations.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/vercel-fluid-compute-cost-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
+  <meta name="twitter:description" content="Serverless concurrency, compute-resolver, cold starts, RPS math, and cost optimization behind Vercel's AI Cloud.">
+  <title>Vercel Fluid Compute System Design Postmortem and Cost Analysis | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response",
+    "description":"A system design postmortem of Vercel Fluid Compute, concurrency, compute-resolver, cold starts, and cloud cost optimization.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-01",
+    "dateModified":"2026-09-01",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/vercel-fluid-compute-cost-postmortem.html"},
+    "keywords":"Vercel system design, Fluid Compute, serverless cost optimization, cold starts, RPS"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">mukul<span class="acc">.dev</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="on">System Design</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">16 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A function receives a request, calls an AI provider, and waits. Nothing is happening. Except the meter is running. This is the story of how a $9.3B startup decided that “serverless” had become a very elegant way to rent empty chairs.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Series F Valuation</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$9.3B</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Fluid Requests</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">45B / week</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Resolver Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k+ RPS</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Reported Savings</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Up to 95%</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 1, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Read this carefully:</strong> Vercel's published numbers are labeled as company disclosures. The 1M RPS bill is my normalized thought experiment. The question is not whether Vercel's confidential invoice equals my estimate. The question is whether the architecture pays for work that is actually happening.</aside>
+
+      <article class="prose">
+        <section>
+          <h2>1. The Request Arrives. The Bill Starts.</h2>
+          <p>Serverless promised a clean bargain. Write a function. Deploy it. Pay when it runs. No servers to patch, no idle fleet to explain, no capacity meeting where someone says “peak traffic” and everyone quietly opens a spreadsheet.</p>
+          <p>Then applications became AI applications. A function now authenticates a user, checks a quota, calls a model, waits for tokens, streams the response, and maybe calls another tool. The CPU works for milliseconds. The network waits for seconds. Traditional serverless billing does not always care about that distinction.</p>
+          <p>Vercel's AI Gateway provides a perfect stress case. Vercel wrote that, in its first month of availability, AI Gateway handled roughly 16,000 runtime hours. Only 1,200 hours involved actual CPU work. The other 14,800 hours were mostly waiting for AI providers to respond. That means about 7.5 percent of runtime was active CPU work.</p>
+          <p>The function looked alive. The CPU was mostly not. The invoice, naturally, had no philosophical objections.</p>
+          <div class="callout"><strong>The real serverless bug:</strong> A one-request-per-instance model treats waiting as occupancy. AI workloads turned that into a measurable tax.</div>
+        </section>
+
+        <section>
+          <h2>2. Why Vercel Became a Billion-Dollar Infrastructure Bet</h2>
+          <p>Vercel began with a sharp developer experience around Next.js deployment. It grew into a platform for building and serving web applications, then pushed into AI Cloud infrastructure. In September 2025, Vercel announced a $300M Series F at a $9.3B post-money valuation. The round included Accel, GIC, BlackRock, Khosla Ventures, and existing investors.</p>
+          <p>The valuation is not the interesting part by itself. The interesting part is what investors are buying. Vercel is an abstraction layer over cloud infrastructure, with a global delivery network, build pipeline, serverless functions, AI SDK, AI Gateway, and sandboxed execution. The product promise is simple: developers should ship code without becoming part-time capacity planners.</p>
+          <p>That promise creates a nasty obligation. Vercel must solve the capacity planning on behalf of every customer, including the customers who send a request to a function and then wait on OpenAI, Anthropic, a database, or a slow third-party API. If Vercel pays for that idle time, developer convenience becomes Vercel's cost of revenue.</p>
+          <p>Vercel's public Fluid Compute posts say the platform now powers over 45 billion weekly requests, with over 75 percent of function invocations using Fluid Compute. The company reports savings of up to 95 percent for some workloads. These figures are not universal guarantees. They reveal the direction of the optimization: reuse warm resources, allow concurrency, and bill active CPU separately from memory waiting.</p>
+        </section>
+
+        <section>
+          <h2>3. The Old Model Was Not Broken. It Was Honest.</h2>
+          <p>Traditional serverless has a very understandable shape. A request arrives. The platform finds or creates an isolated instance. The function runs. The response returns. The instance may disappear. Isolation is strong, scaling is convenient, and the model is easy to explain.</p>
+          <p>The waste appears when the function blocks on I/O. If 1,000 requests each wait three seconds for a provider, the platform may hold 1,000 instances even though the CPU could have handled the active parts of those requests with a fraction of that capacity. The platform is protecting isolation. The customer is paying for the protection. The function is staring at a loading spinner.</p>
+          <p>There is a second problem. A burst of 100 requests can create 100 cold-start opportunities. If the workload is bursty, the platform must choose between over-provisioning warm instances and accepting latency while new instances boot. Either way, the cost of uncertainty lands somewhere.</p>
+          <p>Vercel's answer is not to abandon serverless. It changes the unit of reuse. A Fluid instance can process multiple concurrent requests. The instance becomes more like a small server, while the deployment and scaling experience remains serverless. The trick is not marketing. It is making concurrency safe enough that one customer's waiting request does not block another customer's active request.</p>
+          <div class="tip"><strong>Systems tip:</strong> When a workload waits more than it computes, instance count is a poor proxy for cost. Measure active CPU time, memory lifetime, concurrent I/O, and response bytes separately.</div>
+        </section>
+
+        <section>
+          <h2>4. The Resolver Problem Nobody Sees</h2>
+          <p>Concurrency creates a routing problem. If a request should reuse an already open connection to a warm function instance, the next request has to reach the right Function Router pod. Random routing destroys reuse. Perfect affinity creates hotspots. The largest region has more router pods and therefore more chances to miss the warm connection you wanted.</p>
+          <p>Vercel describes a service called <code>compute-resolver</code>. It behaves like a DNS-style resolver for proxy pods, remembers where a function was routed, improves the chance of reusing an existing TCP tunnel, and avoids concentrating a sudden traffic spike on one router pod. Vercel reports that the resolver handles more than 100k RPS at peak and resolves in under a millisecond at p99.99.</p>
+          <p>This is the part people skip when they say “just reuse instances.” Reuse is not a boolean. It is a placement problem under load. The router needs enough memory of past decisions to improve locality, enough randomness to avoid hotspots, and enough health information to stop routing into a dead tunnel.</p>
+          <p>The service exists because the simple architecture created a second-order problem. The function instance was not the hard part. Finding it again was.</p>
+        </section>
+
+        <section>
+          <h2>5. The Failure Sequence</h2>
+          <p>Picture a global launch. A customer releases a new AI-powered shopping assistant. At 09:00, traffic is quiet. At 09:07, a social post catches fire. At 09:08, requests triple. At 09:09, every function calls the model provider. At 09:10, the functions are alive, but most are waiting.</p>
+          <p>In a one-request-per-instance system, instance count follows request count. Cold starts increase. Connections multiply. Memory stays allocated while upstream responses stream. The provider slows under its own load. Retries begin. The retry storm creates more instances. Someone looks at CPU and says it is only 18 percent.</p>
+          <p>That 18 percent is not comforting. It is an indictment. The system has paid for a fleet whose most important feature is waiting politely.</p>
+          <div class="live-diagram" aria-label="Vercel Fluid Compute failure and recovery flow diagram">
+            <div class="diagram-flow"></div>
+            <div class="live-diagram-grid">
+              <div class="diagram-node hot">Traffic spike<small>AI requests arrive<br>burst is uneven</small></div>
+              <div class="diagram-node">Proxy pods<small>route by function ID<br>preserve locality</small></div>
+              <div class="diagram-node gold">Compute resolver<small>avoid hot spots<br>sub-ms lookup</small></div>
+              <div class="diagram-node green">Fluid instance<small>many requests<br>one warm runtime</small></div>
+              <div class="diagram-node">Active CPU lane<small>pay for execution<br>not waiting</small></div>
+              <div class="diagram-node gold">Provider wait<small>stream tokens<br>memory remains</small></div>
+              <div class="diagram-node">Response tunnel<small>chunked output<br>back to client</small></div>
+              <div class="diagram-node green">Scale down<small>release idle capacity<br>keep the cache warm</small></div>
+            </div>
+            <p class="diagram-caption">The optimization is a chain. Locality enables reuse, reuse enables concurrency, and active CPU pricing makes waiting less expensive.</p>
+          </div>
+          <p>Fluid attacks the sequence at three points. Existing instances receive more work. The resolver sends requests toward reusable capacity. Active CPU pricing separates execution from waiting. None of those removes the provider's latency. They stop provider latency from multiplying the platform's compute bill.</p>
+        </section>
+
+        <section>
+          <h2>6. The One Million RPS Cost Test</h2>
+          <p>Vercel reports more than 100k RPS for compute-resolver, not one million RPS for the entire platform. So let us normalize the comparison. Assume one million function events per second, 2 KB total request and response metadata per event, three copies for routing and safety, and a 30-day month.</p>
+          <p>The logical traffic is <strong>1,000,000 x 2 KB x 2,592,000 seconds = 5.18 PB per month</strong>. That is before payloads, model streams, logs, traces, and retries. Now assume the old one-request-per-instance shape pays $0.0000012 per event for origin compute, instance lifetime, routing, and platform overhead. The current-shaped bill is <strong>1,000,000 x 2,592,000 x $0.0000012 = $3.11M per month</strong>.</p>
+          <p>My proposed shape allows concurrency, drops stale retries, reuses warm instances, and separates active CPU from provider wait time. Suppose only 30 percent of events require origin execution, and the effective origin rate falls to $0.0000008 per event. That is <strong>300,000 x 2,592,000 x $0.0000008 = $622,080 per month</strong>. Add $350,000 for edge routing, memory, observability, failover, and the resolver layer. The proposed envelope is approximately <strong>$972,000 per month</strong>.</p>
+          <table><thead><tr><th>At 1M events/s</th><th>Current-shaped model</th><th>Proposed Fluid-style model</th></tr></thead><tbody>
+            <tr><td>Origin events</td><td>1,000,000/s</td><td>300,000/s after reuse and coalescing</td></tr>
+            <tr><td>Modeled event rate</td><td>$0.0000012</td><td>$0.0000008</td></tr>
+            <tr><td>Core monthly work</td><td>$3.11M</td><td>$622k</td></tr>
+            <tr><td>Edge, memory, safety</td><td>Included in wider estimate</td><td>$350k</td></tr>
+            <tr><td><strong>Modeled monthly total</strong></td><td><strong>$3.11M</strong></td><td><strong>$972k</strong></td></tr>
+            <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$2.14M/month, about 69% lower</strong></td></tr>
+          </tbody></table>
+          <div class="callout"><strong>Do not worship the percentage:</strong> The model is illustrative. The useful result is the lever. At one million events per second, reducing origin work by 700,000 events per second matters more than arguing about whether Node or Rust wins a benchmark.</div>
+        </section>
+
+        <section id="cost-plan">
+          <h2>7. What I Would Improve Next</h2>
+          <p><strong>Make concurrency a contract.</strong> Not every function is safe to run concurrently. Shared globals, file writes, connection pools, and poorly scoped caches can create cross-request leaks. Fluid needs a clear runtime contract, isolation tests, and automatic fallback for functions that fail the contract.</p>
+          <p><strong>Separate waiting classes.</strong> Waiting on a model provider is different from waiting on a database, and both are different from waiting on a customer webhook. Track them separately. A single “duration” metric encourages teams to optimize the wrong part of the request.</p>
+          <p><strong>Put a budget on retries.</strong> A platform that scales instantly can also amplify a bad retry policy instantly. Retry budgets should be shared across function, provider, and customer boundaries. If the upstream is returning 429, spawning more warm capacity is not resilience. It is enthusiasm with a credit card.</p>
+          <p><strong>Move data less.</strong> Vercel's own Fluid material emphasizes placing compute near the data rather than pretending every workload belongs at every edge location. Keep dynamic compute in a small set of deliberate regions. Use the edge for routing and cacheable delivery. Global replication is not free, and it does not become free when drawn as a globe.</p>
+          <p><strong>Bill for value-shaped work.</strong> Active CPU pricing is a good step because it maps billing closer to actual execution. The next step is exposing cost per successful response, cost per streamed token, and cost per cache hit. Customers need to know whether a feature is fast because it is efficient or fast because it is burning a larger hole through a reserved fleet.</p>
+          <p><strong>Protect the resolver.</strong> The resolver is a control-plane dependency. It should have bounded state, regional failover, overload shedding, and a safe fallback route. If the resolver goes down, the platform should lose reuse efficiency before it loses request correctness.</p>
+          <div class="tip"><strong>Operations tip:</strong> Alert on reuse rate, not just CPU. A drop from 99 percent warm routing to 80 percent can be the earliest signal that your cost and cold-start curves are about to diverge.</div>
+        </section>
+
+        <section>
+          <h2>8. The Tradeoff Nobody Puts on the Launch Slide</h2>
+          <p>Fluid Compute makes the server more efficient, but it also makes the runtime more interesting. Concurrency means requests share a process. Shared processes mean state leaks become possible. A forgotten global variable, a reused buffer, or a cache key missing a tenant identifier can turn a cost optimization into a security incident.</p>
+          <p>The safe design needs isolation at the data boundary even when it relaxes isolation at the process boundary. Credentials, request context, trace IDs, and tenant data must be scoped per invocation. The runtime can share sockets, bytecode, and memory pages. It cannot share assumptions about who owns the response.</p>
+          <p>There is also a fairness problem. A function with long model waits can occupy memory for a long time. A function with expensive CPU work can monopolize execution slots. The scheduler needs separate limits for active CPU, concurrent requests, memory, open connections, and response duration. One number called “timeout” is not a scheduler.</p>
+          <p>My rollout plan would start with I/O-heavy functions that already have idempotent handlers. I would canary them by function ID, compare active CPU milliseconds, memory GB-hours, p95 time to first byte, error rate, and reuse rate, then expand gradually. A platform should not convert every customer at once just because the dashboard has a cheerful green button.</p>
+          <div class="tip"><strong>Migration tip:</strong> Before enabling concurrency, audit globals, connection pools, temporary files, cached credentials, and response buffers. The first question is not “how much will this save?” It is “what can accidentally cross request boundaries?”</div>
+        </section>
+
+        <section>
+          <h2>9. Three Numbers I Would Watch Every Morning</h2>
+          <p><strong>Warm reuse rate.</strong> If 99 percent of requests reach a router with reusable capacity, the architecture is behaving as designed. If it falls to 90 percent, instance creation and cold starts may rise before average CPU shows anything dramatic.</p>
+          <p><strong>Active CPU ratio.</strong> Divide active CPU milliseconds by wall-clock milliseconds. In Vercel's AI Gateway example, 1,200 active hours divided by 16,000 runtime hours is 7.5 percent. That ratio tells you whether CPU billing and wall-clock billing are measuring the same thing. Usually they are not.</p>
+          <p><strong>Cost per successful streamed response.</strong> Cost per invocation rewards clever splitting and punishes useful streaming. Cost per user hides noisy tenants. A successful response is closer to the value the platform delivers. Break it down further by model provider, region, function, and cache outcome.</p>
+          <p>At one million events per second, a one percent change is 10,000 events per second. Under the current-shaped model at $0.0000012 per event, that one percent represents <strong>10,000 x 2,592,000 x $0.0000012 = $31,104 per month</strong>. A tiny graph movement can pay for a serious engineering project.</p>
+        </section>
+
+        <section>
+          <h2>10. The Verdict</h2>
+          <p>Vercel's Fluid Compute is not just a cheaper Lambda clone. It is a response to a particular change in software. Modern functions spend more time waiting on remote systems, especially AI providers, while users still expect instant streaming output.</p>
+          <p>The winning move is not to hide the wait. It is to stop treating the wait as a dedicated machine. Persistent tunnels, a locality-aware resolver, concurrent execution, warm reuse, predictive scaling, and active CPU billing form one coherent answer.</p>
+          <p>The sharpest lesson is architectural. Serverless is not a property of the function. It is a property of the operating model. If the platform can safely multiplex waiting work, it can preserve elasticity without paying one full instance per nervous request.</p>
+          <p>At the beginning, the function is waiting for a model. At the end, the platform is waiting for the next function. That is the difference between a cloud bill and a cloud business.</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The request was never expensive because it ran. It was expensive because everyone kept a seat warm while it thought.</strong></p>
+        </section>
+
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Vercel's funding, Fluid Compute, compute-resolver, Active CPU, and AI Gateway figures come from Vercel's official posts and the company announcement. The 1M RPS scenario is my own normalized model. It is not Vercel's confidential telemetry or invoice. The purpose is to show how concurrency and work reduction change the shape of a bill.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://vercel.com/blog/series-f" target="_blank" rel="noopener noreferrer">Vercel: Towards the AI Cloud, Series F</a></li>
+            <li><a href="https://vercel.com/blog/fluid-how-we-built-serverless-servers" target="_blank" rel="noopener noreferrer">Vercel Engineering: Fluid Compute, How We Built Serverless Servers</a></li>
+            <li><a href="https://vercel.com/blog/how-fluid-compute-works-on-vercel" target="_blank" rel="noopener noreferrer">Vercel: How Fluid Compute Works</a></li>
+            <li><a href="https://vercel.com/blog/how-ai-gateway-runs-on-fluid-compute" target="_blank" rel="noopener noreferrer">Vercel Engineering: How AI Gateway Runs on Fluid Compute</a></li>
+            <li><a href="https://vercel.com/blog/introducing-active-cpu-pricing-for-fluid-compute" target="_blank" rel="noopener noreferrer">Vercel: Introducing Active CPU Pricing</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>
