@@ -10,16 +10,24 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Figma's Multiplayer Editor: The Server That Decides Who Wins">
   <meta property="og:description" content="A forensic system design postmortem of Figma's multiplayer editor, its Rust rewrite, WebSocket fan-out, cost drivers, and what I would change.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/figma-multiplayer-cost-postmortem.png">
+  <meta property="og:image:alt" content="Figma multiplayer system design postmortem architecture and cost illustration">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1672">
+  <meta property="og:image:height" content="942">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/figma-multiplayer-cost-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Figma's Multiplayer Editor: The Server That Decides Who Wins">
   <meta name="twitter:description" content="WebSockets, Rust, conflict resolution, per-document isolation, RPS assumptions, and cost controls behind collaborative design.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/figma-multiplayer-cost-postmortem.png">
+  <meta name="twitter:image:alt" content="Figma multiplayer system design postmortem architecture and cost illustration">
   <title>Figma System Design Postmortem: Multiplayer Editor Architecture and Cost | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
@@ -68,6 +76,10 @@
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol and infrastructure decisions below come from its engineering posts and public filings. RPS and infrastructure-cost figures are a clearly labeled scenario model. The server knows the truth; my spreadsheet is only wearing a convincing hat.</aside>
 
       <article class="prose">
+        <figure class="article-figure">
+          <img src="../images/articles/figma-multiplayer-cost-postmortem.png" alt="Illustration of Figma multiplayer collaboration architecture, services, database, cache, object storage, and rising infrastructure cost" width="1672" height="942">
+          <figcaption>Figure 1. The collaboration promise is simple for users. The infrastructure behind it is not.</figcaption>
+        </figure>
         <section>
           <h2>1. The Moment a Rectangle Became a Distributed System</h2>
           <p>Most software can tolerate a little delay. A design canvas cannot. When a designer drags a rectangle, the rectangle is expected to move now, not after a committee meeting between three availability zones. When a second designer changes the fill color, both people should see it immediately. When the Wi-Fi dies, the work should not evaporate into the same digital void as every unsaved university assignment.</p>

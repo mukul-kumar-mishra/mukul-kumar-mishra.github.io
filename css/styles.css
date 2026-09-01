@@ -160,6 +160,7 @@ h1, h2, h3, h4, h5, h6 {
 .iconbtn svg, .iconbtn i { width: 18px; height: 18px; }
 .profile-hero-actions .iconbtn { background: var(--heading); border-color: var(--heading); color: var(--panel); }
 .profile-hero-actions .iconbtn:hover { background: var(--cyan); border-color: var(--cyan); color: #fff; }
+.profile-hero-actions .social-link { width: auto; min-width: 92px; padding: 0 11px; gap: 7px; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; text-decoration: none; }
 
 /* ---------- Buttons ---------- */
 .btn {
@@ -421,6 +422,9 @@ h1, h2, h3, h4, h5, h6 {
 .prose td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .prose tr:last-child td { border-bottom: none; }
 .prose .muted { color: var(--mist); }
+.article-figure { margin: 1.6rem 0 2rem; }
+.article-figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+.article-figure figcaption { margin-top: 8px; color: var(--mist); font-family: var(--font-body); font-size: 0.72rem; line-height: 1.55; text-align: center; }
 
 /* Animated architecture figure used by long-form case studies. It is kept
    dependency-free so it still works on GitHub Pages and on slow connections. */

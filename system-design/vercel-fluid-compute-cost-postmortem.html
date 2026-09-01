@@ -10,16 +10,24 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
   <meta property="og:description" content="A forensic teardown of Vercel's Fluid Compute architecture, cold-start problem, concurrency model, 1M RPS cost math, and proposed optimizations.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/vercel-fluid-compute-cost-postmortem.png">
+  <meta property="og:image:alt" content="Vercel Fluid Compute system design postmortem architecture and cost illustration">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1536">
+  <meta property="og:image:height" content="1024">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/vercel-fluid-compute-cost-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
   <meta name="twitter:description" content="Serverless concurrency, compute-resolver, cold starts, RPS math, and cost optimization behind Vercel's AI Cloud.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/vercel-fluid-compute-cost-postmortem.png">
+  <meta name="twitter:image:alt" content="Vercel Fluid Compute system design postmortem architecture and cost illustration">
   <title>Vercel Fluid Compute System Design Postmortem and Cost Analysis | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
@@ -76,6 +84,11 @@
           <p>The function looked alive. The CPU was mostly not. The invoice, naturally, had no philosophical objections.</p>
           <div class="callout"><strong>The real serverless bug:</strong> A one-request-per-instance model treats waiting as occupancy. AI workloads turned that into a measurable tax.</div>
         </section>
+
+        <figure class="article-figure">
+          <img src="../images/articles/vercel-fluid-compute-cost-postmortem.png" alt="Illustration of Vercel Fluid Compute routing web, function, mobile, and webhook traffic through edge and cost-aware compute" width="1536" height="1024">
+          <figcaption>Figure 1. Fluid Compute tries to make the runtime behave like a server when that is efficient, and like serverless when that is useful.</figcaption>
+        </figure>
 
         <section>
           <h2>2. Why Vercel Became a Billion-Dollar Infrastructure Bet</h2>

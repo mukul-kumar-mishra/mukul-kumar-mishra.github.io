@@ -10,11 +10,16 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="The Workspace That Ate the Warehouse: Notion's Data Architecture">
   <meta property="og:description" content="A forensic teardown of Notion's 200-billion-block platform, modeled at 100k peak RPS, with the engineering decisions that can make or break the cloud bill.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/notion-data-lake-cost-postmortem.png">
+  <meta property="og:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="The Workspace That Ate the Warehouse">
   <meta name="twitter:description" content="Notion's 200B-block data architecture, modeled RPS, cloud-cost teardown, and practical ways to cut the bill.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/notion-data-lake-cost-postmortem.png">
+  <meta name="twitter:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
   <title>Notion System Design Postmortem: The Workspace That Ate the Warehouse | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,6 +90,10 @@
       </aside>
 
       <article class="prose">
+        <figure class="article-figure">
+          <img src="../images/articles/notion-data-lake-cost-postmortem.png" alt="Illustration of Notion data lake architecture with ingest, process, store, serve, monitoring, and cost layers">
+          <figcaption>Figure 1. The quiet workspace on the left becomes a high-throughput data platform on the right.</figcaption>
+        </figure>
         <section>
           <h2>1. The Blank Page Is a Trap</h2>
           <p>Open Notion and the first thing you see is almost nothing: a cursor, a page title, a few quiet controls. That emptiness is the product's magic. It makes a database look like a notebook, a project plan look like a document, and a document look like a conversation.</p>
