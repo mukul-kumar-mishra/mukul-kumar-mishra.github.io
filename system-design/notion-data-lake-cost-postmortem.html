@@ -81,7 +81,7 @@
       </header>
 
       <aside class="tip" style="margin-bottom:30px;">
-        <strong>Read this like an incident review:</strong> facts from Notion's public engineering posts are marked as disclosed; traffic and cloud costs are explicitly modeled. Skip to <a href="#the-bill">the bill</a> if you came for the numbers, or <a href="#cost-plan">the cost plan</a> if your AWS invoice has started sending you emotional messages.
+        <strong>Read this like an incident review:</strong> facts from Notion's public engineering posts are marked as disclosed. Traffic and cloud costs are explicitly modeled. Skip to <a href="#the-bill">the bill</a> if you came for the numbers, or <a href="#data-lake-redesign">the cost plan</a> if your AWS invoice has started sending you emotional messages.
       </aside>
 
       <article class="prose">
@@ -146,7 +146,7 @@
         <section id="the-bill">
           <h2>5. The Bill: What Could This Cost?</h2>
           <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
-          <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failover, and operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transfer, and monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply; a larger high-memory mix could exceed it.</p>
+          <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failover, and operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transfer, and monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply. A larger high-memory mix could exceed it.</p>
           <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissions, and replication overhead. Assume 300 TB of compressed lake data across raw, processed, and historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storage, and scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>
           <p><strong>Search and vector infrastructure.</strong> Notion's own vector-search post says the old architecture reached a cost run rate of millions per year and that the first storage-compute decoupling cut peak cost by 50 percent. Before the later 90 percent reduction, a reasonable modeled range is <strong>$150,000-$350,000 per month</strong> for vector storage, indexing, embeddings, EMR, and serving. This is exactly where idle capacity becomes a villain: a rarely queried workspace can still occupy index capacity if storage and compute are welded together.</p>
           <p><strong>Edge, compute, media, and egress.</strong> Add API compute, WebSockets, CDN, object storage requests, image transformations, logs, metrics, backups, and internet egress. Even with aggressive caching, <strong>$150,000-$400,000 per month</strong> is a defensible range for a globally distributed SaaS at this modeled scale.</p>
@@ -166,17 +166,33 @@
           <div class="tip"><strong>FinOps tip:</strong> Put a cost owner and a usage meter on every expensive noun: shard, index, workspace, pipeline, model, and reindex job. “Shared platform” is often the accounting equivalent of leaving the freezer door open and blaming the weather.</div>
         </section>
 
-        <section id="cost-plan">
-          <h2>6. The First Escape: Stop Asking the Warehouse to Pretend</h2>
+        <section id="one-million-rps">
+          <h2>6. The One Million RPS Test</h2>
+          <p>Here is the clean comparison. This is not a claim about Notion's current traffic. It is a common stress test for the architecture. Assume one million requests per second at the product edge, 1 KB average request size, 2 KB average response size, 30 percent cacheable reads, and three copies for availability. That is 3,000,000 KB per second crossing the system before protocol overhead, or about 259 TB per day.</p>
+          <p>In the current shape, every uncached request still travels through the API and permission path. State changes fan into the database, WAL, CDC, search, and AI pipelines. Use a deliberately rounded infrastructure rate of $0.000002 per request for the origin path after compute, storage, replication, and operations. The arithmetic is simple: <strong>1,000,000 x 2,592,000 seconds per 30-day month x $0.000002 = $5.18M per month</strong>.</p>
+          <p>My proposed approach does not try to make every request cheaper with a magic database. It removes work. Cache safe reads at the edge, coalesce repeated mutations, keep presence and analytics off the transaction path, tier cold indexes into object storage, and send only 20 percent of the million requests to the origin. At a modeled origin rate of $0.000001 per request, the result is <strong>200,000 x 2,592,000 x $0.000001 = $518,400 per month</strong>. Add $250,000 for cache, edge, observability, and failure headroom. The proposed envelope becomes about <strong>$768,000 per month</strong>.</p>
+          <table><thead><tr><th>At 1M RPS</th><th>Current-shaped design</th><th>Proposed design</th></tr></thead><tbody>
+            <tr><td>Origin requests</td><td>1,000,000/s</td><td>200,000/s after 80% cache/coalescing</td></tr>
+            <tr><td>Origin work rate</td><td>$0.000002/request</td><td>$0.000001/request</td></tr>
+            <tr><td>Core monthly work</td><td>$5.18M</td><td>$518k</td></tr>
+            <tr><td>Shared edge and safety layer</td><td>Included in wider bill</td><td>$250k</td></tr>
+            <tr><td><strong>Modeled monthly total</strong></td><td><strong>~$5.18M</strong></td><td><strong>~$768k</strong></td></tr>
+            <tr><td><strong>Difference</strong></td><td colspan="2"><strong>~$4.41M/month, or about 85% lower</strong></td></tr>
+          </tbody></table>
+          <div class="callout"><strong>The important math:</strong> The saving is not “buy cheaper servers.” It is 1,000,000 RPS minus 800,000 RPS of duplicate, cacheable, ephemeral, or deferred work. At this scale, every unnecessary 100,000 RPS costs about $259,200 per month under the model.</div>
+        </section>
+
+        <section id="data-lake-redesign">
+          <h2>7. The First Escape: Stop Asking the Warehouse to Pretend</h2>
           <p>Notion's early ELT setup used Fivetran connectors from Postgres WAL into Snowflake. The design was understandable: get data out quickly, centralize it, and let analysts query it. The problem was shape. There were 480 connectors, update-heavy block data, and expensive transformations such as tree traversal and permission construction.</p>
-          <p>The redesign moved incremental changes through Debezium and Kafka, landed them in S3 with Apache Hudi, and processed raw data separately from cleaned data. This is the right separation. S3 becomes the durable truth for offline work; Spark can compute when needed; Snowflake and product stores receive only curated data.</p>
+          <p>The redesign moved incremental changes through Debezium and Kafka, landed them in S3 with Apache Hudi, and processed raw data separately from cleaned data. This is the right separation. S3 becomes the durable truth for offline work. Spark can compute when needed. Snowflake and product stores receive only curated data.</p>
           <p>Could a team do better? First, use append-friendly event records and compact them into immutable columnar files. Do not rewrite a giant warehouse table for every block edit. Second, partition by workspace and event date, then compact only hot partitions. Third, calculate permission ancestry incrementally when a parent or membership changes, rather than repeatedly traversing every tree during every downstream job. Fourth, use spot capacity for replayable Spark jobs, with on-demand capacity only for the control plane and deadlines.</p>
           <p>Notion later said its Spot Balancer reduced Spark compute costs by 60-90 percent across workloads. That is not a theoretical trick. It is the direct consequence of admitting that batch compute is interruptible and designing the scheduler around that fact.</p>
           <div class="tip"><strong>Reliability tip:</strong> Spot capacity is safe only when the job is replayable. Checkpoint by partition, make writes idempotent, and keep a small on-demand lane for deadlines. “We saved 90 percent” is not impressive if the remaining 10 percent is your data-recovery team.</div>
         </section>
 
         <section>
-          <h2>7. The Second Escape: Let Cold Data Go Cold</h2>
+          <h2>8. The Second Escape: Let Cold Data Go Cold</h2>
           <p>The vector-search story is even more revealing. The first vector architecture bundled storage and compute into pods. That is fast, familiar, and dangerous. Capacity is purchased for the peak, while most workspaces sleep. A quiet index still consumes a machine because the machine cannot tell the difference between a customer who will return in ten seconds and one who will return next month.</p>
           <p>Notion migrated embeddings to a serverless design that decoupled storage from compute. It reported an immediate 50 percent cost reduction from peak usage and several million dollars in annual savings. Later optimizations included a 60 percent reduction in search-engine spend, a 35 percent reduction in EMR compute, and a 70 percent reduction in indexed data volume. It also began moving embeddings from Spark to Ray, anticipating more than 90 percent lower embedding infrastructure cost.</p>
           <p>The lesson is not “serverless is always cheaper.” Serverless can be expensive for hot, steady workloads. The lesson is to match cost ownership to access patterns. Keep hot vectors in memory or local SSD. Put warm vectors in a cheaper serving tier. Store cold vectors in object storage and rebuild or hydrate them on demand. Put a budget on every workspace and every index generation. A million rarely used workspaces should not be allowed to masquerade as a million hot applications.</p>
@@ -184,19 +200,19 @@
         </section>
 
         <section>
-          <h2>8. What I Would Change Before the Next Billion Blocks</h2>
+          <h2>9. What I Would Change Before the Next Billion Blocks</h2>
           <p><strong>First: make the cost unit visible.</strong> Notion has users, seats, and now AI usage, but infrastructure teams need a different ledger: dollars per active workspace, dollars per million block mutations, dollars per indexed block, dollars per AI answer, and dollars per successful search. Without those ratios, an optimization can improve latency while quietly increasing the bill.</p>
           <p><strong>Second: introduce workload-aware admission control.</strong> A workspace that edits thousands of blocks in a migration should not compete with interactive edits for the same queue. Separate interactive, indexing, export, and AI workloads. Give each a budget, deadline, and degradation policy. If AI indexing is behind, delay embeddings. Do not let it starve page reads.</p>
           <p><strong>Third: make permissions incremental.</strong> Permission checks are non-negotiable, but recomputing inherited access over a large block tree is expensive. Maintain a compact workspace authorization snapshot and version it. On a membership or parent change, enqueue affected subtrees. On reads, validate against a versioned boundary. The system should pay for the changed branch, not the entire forest.</p>
           <p><strong>Fourth: compress the mutation stream earlier.</strong> If a user types ten characters, the system should not necessarily persist ten full downstream indexing operations. Coalesce edits over a short window, preserve an audit-quality event log, and publish one searchable document update. The WebSocket path can remain responsive while durable secondary systems receive a compacted representation.</p>
           <p><strong>Fifth: route AI by difficulty.</strong> Notion has described routing tasks by quality, latency, and cost. Push that further: classify requests before retrieval, use a small model for intent and query rewriting, retrieve only the minimum context, and escalate to a premium model only when confidence is low. Cache stable workspace summaries. Never send the entire page tree to a large model because the permission system made retrieval inconvenient.</p>
           <p><strong>Sixth: reserve what is boring and spot what is disposable.</strong> The always-on database and gateway deserve commitments, reserved capacity, and careful rightsizing. Backfills, re-embeddings, compaction, and historical replays should use spot fleets and resumable checkpoints. The largest savings often come from refusing to pay on-demand prices for work that can wait.</p>
-          <p>My conservative target would be a 35-55 percent reduction against the modeled $975k-$2.2M monthly envelope: 15-25 percent from database rightsizing and commitments, 10-20 percent from lake and batch scheduling, 10-25 percent from vector tiering and index reduction, and 5-15 percent from AI routing and retrieval. These ranges overlap; they are not additive promises. In a mature system, savings are constrained by reliability, residency, tail latency, and engineering time.</p>
+          <p>My conservative target would be a 35-55 percent reduction against the modeled $975k-$2.2M monthly envelope. That could mean 15-25 percent from database rightsizing and commitments, 10-20 percent from lake and batch scheduling, 10-25 percent from vector tiering and index reduction, and 5-15 percent from AI routing and retrieval. These ranges overlap. They are not additive promises. In a mature system, savings are constrained by reliability, residency, tail latency, and engineering time.</p>
           <p>The order matters. Do not start by rewriting the glamorous part. Start with the meter, then remove duplicate work, then separate hot from cold, then negotiate commitment discounts. Teams love buying a new database to solve a query problem caused by missing indexes. It is a beautiful industry tradition, right up there with solving latency by adding retries.</p>
         </section>
 
         <section>
-          <h2>9. The Verdict</h2>
+          <h2>10. The Verdict</h2>
           <p>Notion's architecture is impressive precisely where it is vulnerable. The block model made product composition absurdly fast. The same model made every new feature another consumer of a mutable, permissioned, update-heavy graph. The company responded the right way: shard the online database, separate offline data from online traffic, replace warehouse rewrites with CDC and lake storage, decouple vector storage from compute, and use interruptible capacity for interruptible work.</p>
           <p>The postmortem is not “Notion spent too much.” A billion-dollar product serving a hundred million people is supposed to have a large bill. The postmortem is that cost behaves like a distributed systems failure: it emerges from fan-out, retries, idle capacity, duplicated representations, and the distance between the event that caused work and the feature that consumed it.</p>
           <p>The next incident will not arrive with a red dashboard. It may arrive as a new AI feature that converts every page edit into an embedding, a new enterprise customer with a ten-million-block workspace, or a reindex job that quietly consumes the same capacity as the API. The cursor will still blink on a blank page. The user will see simplicity.</p>
@@ -205,7 +221,7 @@
         </section>
 
         <section>
-          <h2>10. Three Questions Engineers Actually Ask</h2>
+          <h2>11. Three Questions Engineers Actually Ask</h2>
           <h3>Is Notion using a data lake because PostgreSQL failed?</h3>
           <p>No. PostgreSQL remained the transactional source for online product behavior. The data lake exists because analytics, search, and AI have different latency and cost requirements. The mistake would be making the primary database answer every offline question, not using PostgreSQL at all.</p>
           <h3>Is 100,000 RPS Notion's confirmed peak?</h3>
@@ -216,7 +232,7 @@
 
         <section>
           <h2>Sources and Method</h2>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Public facts used here come primarily from Notion's engineering and company posts. The workload and cost model is my own estimate using rounded US cloud-market assumptions; it is not an assertion of Notion's confidential spend. Cloud prices, model rates, traffic, and architecture change over time.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Public facts used here come primarily from Notion's engineering and company posts. The workload and cost model is my own estimate using rounded US cloud-market assumptions. It is not an assertion of Notion's confidential spend. Cloud prices, model rates, traffic, and architecture change over time.</p>
           <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
             <li><a href="https://www.notion.com/blog/100-million-of-you" target="_blank" rel="noopener noreferrer">Notion: 100 Million of You</a></li>
             <li><a href="https://www.notion.com/blog/gic-sequoia-index-purchase-notion-shares" target="_blank" rel="noopener noreferrer">Notion: $270M tender at an $11B valuation</a></li>

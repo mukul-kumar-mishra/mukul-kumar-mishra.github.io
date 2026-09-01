@@ -87,20 +87,6 @@
           <h2>3. The Architecture: One Document, One Owner, Many Witnesses</h2>
           <p>The core multiplayer model is surprisingly direct. When a document opens, the client downloads a copy and connects to the process that owns that document. Updates travel both ways over a WebSocket. The server process holds the active document state, applies operations, and broadcasts accepted changes to connected clients.</p>
           <p>That “one document, one owner” rule is the load-bearing beam. It gives the system a single authority for ordering changes. There is no need for every replica to reach consensus on every property update. A client can be optimistic because the server will eventually confirm or reject the operation. A document can be sharded by ownership because two unrelated documents do not need to share a lock.</p>
-          <div class="live-diagram" aria-label="Figma multiplayer architecture diagram">
-            <div class="diagram-flow"></div>
-            <div class="live-diagram-grid">
-              <div class="diagram-node">Designer A<small>browser canvas<br>optimistic edit</small></div>
-              <div class="diagram-node">Designer B<small>browser canvas<br>concurrent edit</small></div>
-              <div class="diagram-node gold">WebSocket edge<small>connection routing<br>reconnect buffer</small></div>
-              <div class="diagram-node hot">Document owner<small>one active process<br>canonical ordering</small></div>
-              <div class="diagram-node green">Rust core<small>property updates<br>tree validation</small></div>
-              <div class="diagram-node">Broadcast stream<small>accepted deltas<br>presence frames</small></div>
-              <div class="diagram-node gold">Postgres product data<small>teams, users,<br>comments, permissions</small></div>
-              <div class="diagram-node hot">Object storage<small>snapshots, assets,<br>recovery history</small></div>
-            </div>
-            <p class="diagram-caption">The document owner is the linearization point. Everyone may edit optimistically; only one process gets to make the final call.</p>
-          </div>
           <p>Figma deliberately separates document synchronization from other product data. Comments, teams, users, and projects do not live in the same multiplayer state machine. They use Postgres and a separate synchronization system. That boundary prevents “the comment service is slow” from becoming “the canvas cannot move.”</p>
           <div class="tip"><strong>Architecture tip:</strong> Separate state by user-visible invariant. A document editor needs low-latency ordered mutations. Billing and permissions need durable transactional truth. Putting both in one magic “realtime service” is how a clean diagram becomes a 3 a.m. incident.</div>
         </section>
@@ -143,9 +129,9 @@
           <p>Figma's public filings provide a useful anchor: its 2025 cost of revenue was about $185.5 million, and the filing says cost of revenue includes technical infrastructure and hosting, AI inference, infrastructure and product-support staff, payment processing, and amortization. That is not a multiplayer invoice, but it is a reality check against fantasy numbers.</p>
           <p>For the scenario above, model 1.5 million persistent connections across 19 regional pools, with headroom for failover. Suppose 750 application workers average $0.50 per hour after commitments, plus connection proxies and regional control-plane services. Compute is roughly $274,000 per month. Add cross-zone traffic, load balancers, observability, and failover capacity: <strong>$350,000-$550,000 per month</strong>.</p>
           <p>Document processes need memory. Assume 250,000 hot documents at an average 80 MB resident state, distributed across worker pools with replicas and spare capacity. That is 20 TB of logical memory before overhead. With replicated cache/state, this can become 40-60 TB. Depending on the compute class, a plausible managed-cloud envelope is <strong>$250,000-$600,000 per month</strong>.</p>
-          <p>Snapshots, assets, exports, and recovery history belong in object storage. Assume 500 TB of stored data with lifecycle policies and several petabytes of monthly reads and writes. Storage itself may be modest; transfer, image processing, backups, and indexing push a practical range to <strong>$75,000-$200,000 per month</strong>.</p>
-          <p>Finally, there is the product-data layer: Postgres for users, teams, permissions, comments, and billing; search; queues; batch jobs; and AI-related workloads. A broad estimate is <strong>$150,000-$400,000 per month</strong>. Put the ranges together and the collaboration and supporting platform in this scenario lands around <strong>$825,000-$1.75M per month</strong>, or roughly <strong>$27,500-$58,300 per day</strong>.</p>
-          <p>Again: this is not Figma's disclosed spend. The filing gives the broader cost-of-revenue anchor; the component ranges are a design exercise. Actual cost depends on connection duration, document locality, compression, cache hit rates, AWS contract pricing, and the percentage of free users receiving infrastructure they do not directly pay for. Free users are wonderful for growth and surprisingly indifferent to your NAT gateway bill.</p>
+          <p>Snapshots, assets, exports, and recovery history belong in object storage. Assume 500 TB of stored data with lifecycle policies and several petabytes of monthly reads and writes. Storage itself may be modest. Transfer, image processing, backups, and indexing push a practical range to <strong>$75,000-$200,000 per month</strong>.</p>
+          <p>Finally, there is the product-data layer. Postgres handles users, teams, permissions, comments, and billing. Search, queues, batch jobs, and AI-related workloads sit beside it. A broad estimate is <strong>$150,000-$400,000 per month</strong>. Put the ranges together and the collaboration and supporting platform in this scenario lands around <strong>$825,000-$1.75M per month</strong>, or roughly <strong>$27,500-$58,300 per day</strong>.</p>
+          <p>Again: this is not Figma's disclosed spend. The filing gives the broader cost-of-revenue anchor. The component ranges are a design exercise. Actual cost depends on connection duration, document locality, compression, cache hit rates, AWS contract pricing, and the percentage of free users receiving infrastructure they do not directly pay for. Free users are wonderful for growth and surprisingly indifferent to your NAT gateway bill.</p>
           <table><thead><tr><th>Cost center</th><th>Modeled monthly range</th><th>What moves the number</th></tr></thead><tbody>
             <tr><td>WebSocket edge + workers</td><td>$350k-$550k</td><td>connections, regions, failover</td></tr>
             <tr><td>Document state processes</td><td>$250k-$600k</td><td>hot files, memory, replicas</td></tr>
@@ -156,21 +142,51 @@
           <div class="callout"><strong>Do not confuse revenue with margin:</strong> A billion-dollar revenue line does not make an expensive realtime architecture free. It makes the architecture important enough that a 10 percent efficiency gain can be worth millions annually.</div>
         </section>
 
+        <section id="one-million-rps">
+          <h2>8. The One Million RPS Thought Experiment</h2>
+          <p>One million RPS is not Figma's reported peak. It is a useful way to compare an unoptimized realtime design with a proposed design. Assume each event carries 1 KB inbound and 1 KB outbound, and that three copies exist across routing, processing, and failover. The wire carries roughly 6,000,000 KB per second. Over a 30-day month, that is about 15.6 petabytes of logical traffic before compression.</p>
+          <p>In the current-shaped design, let the average fully loaded origin cost be $0.0000015 per event. The math is <strong>1,000,000 x 2,592,000 x $0.0000015 = $3.89M per month</strong>. This represents connection workers, document ownership, fan-out, cross-zone transfer, monitoring, and spare capacity. It does not claim Figma pays exactly this amount.</p>
+          <p>My proposed shape separates event classes. Drop stale cursor frames, coalesce repeated drag positions, load only subscribed subtrees, route local reads through an edge cache, and send only 25 percent of events to the document owner. If the remaining origin event costs $0.000001, the origin work is <strong>250,000 x 2,592,000 x $0.000001 = $648,000 per month</strong>. Add $300,000 for edge delivery, connection pools, observability, and failure headroom. The proposed envelope is about <strong>$948,000 per month</strong>.</p>
+          <table><thead><tr><th>At 1M RPS</th><th>Current-shaped design</th><th>Proposed design</th></tr></thead><tbody>
+            <tr><td>Document-owner events</td><td>1,000,000/s</td><td>250,000/s after coalescing and cache</td></tr>
+            <tr><td>Modeled origin rate</td><td>$0.0000015/event</td><td>$0.000001/event</td></tr>
+            <tr><td>Core monthly work</td><td>$3.89M</td><td>$648k</td></tr>
+            <tr><td>Edge and safety layer</td><td>Included in wider bill</td><td>$300k</td></tr>
+            <tr><td><strong>Modeled monthly total</strong></td><td><strong>~$3.89M</strong></td><td><strong>~$948k</strong></td></tr>
+            <tr><td><strong>Difference</strong></td><td colspan="2"><strong>~$2.94M/month, or about 76% lower</strong></td></tr>
+          </tbody></table>
+          <div class="callout"><strong>The engineering conclusion:</strong> At one million events per second, reducing fan-out from 100 percent to 25 percent saves more than a language rewrite. Rust may reduce CPU cost. Protocol design decides how much CPU you need.</div>
+          <div class="live-diagram" aria-label="Figma cost-optimized realtime architecture diagram">
+            <div class="diagram-flow"></div>
+            <div class="live-diagram-grid">
+              <div class="diagram-node">Edit stream<small>coalesce drags<br>keep intent</small></div>
+              <div class="diagram-node green">Presence lane<small>ephemeral frames<br>drop stale data</small></div>
+              <div class="diagram-node gold">Edge cache<small>subtree snapshots<br>local locality</small></div>
+              <div class="diagram-node hot">Document owner<small>only canonical<br>mutations arrive</small></div>
+              <div class="diagram-node">Rust worker<small>serialize and validate<br>isolated state</small></div>
+              <div class="diagram-node gold">Checkpoint store<small>compressed snapshots<br>replayable history</small></div>
+              <div class="diagram-node">Search projection<small>async downstream<br>never blocks edits</small></div>
+              <div class="diagram-node green">Client viewport<small>subscribed frames<br>not the whole file</small></div>
+            </div>
+            <p class="diagram-caption">This figure appears after the cost model on purpose. First find the waste. Then decide which messages deserve a trip to the owner.</p>
+          </div>
+        </section>
+
         <section id="cost-plan">
-          <h2>8. How I Would Cut the Bill Without Cutting the Canvas</h2>
+          <h2>9. How I Would Cut the Bill Without Cutting the Canvas</h2>
           <p><strong>1. Treat presence as disposable.</strong> Cursor position, selection, viewport, and “Mukul is looking at frame 12” are ephemeral. Coalesce them, drop stale frames, and route them through a separate best-effort path. Do not persist presence in the document journal. The user wants to see a cursor, not receive a receipt for it.</p>
           <p><strong>2. Make document ownership locality-aware.</strong> One process per document is excellent for ordering but can be painful when a team spans India, Europe, and California. Place the owner near the dominant editor population, use remote proxies for everyone else, and migrate only when the latency win pays for the handoff complexity. A global document owner selected by round-robin is how you turn geography into a monthly invoice.</p>
           <p><strong>3. Load subtrees, not entire files.</strong> Figma has publicly described incremental frame loading and subscription to parts of a document. Keep the active viewport hot. Hydrate adjacent frames on demand. Evict old prototype regions. This saves client memory, server memory, serialization CPU, and bandwidth simultaneously. The cheapest object is the object no one asked to render.</p>
-          <p><strong>4. Compress the durable stream.</strong> The live WebSocket stream should feel immediate; the durable journal should be compact. Coalesce repeated property updates within a short window, encode deltas, and checkpoint documents to object storage. Keep enough history for recovery and audit requirements, but do not make every intermediate drag position immortal.</p>
+          <p><strong>4. Compress the durable stream.</strong> The live WebSocket stream should feel immediate. The durable journal should be compact. Coalesce repeated property updates within a short window, encode deltas, and checkpoint documents to object storage. Keep enough history for recovery and audit requirements, but do not make every intermediate drag position immortal.</p>
           <p><strong>5. Right-size the heavy-document pool automatically.</strong> Figma's manual heavy-worker phase was a useful bridge, not a business model. Detect serialization time, resident memory, and operation queue depth. Route outliers to isolated pools automatically. Scale the pool on measured document weight, not on a vague “large customer” label.</p>
-          <p><strong>6. Use commitments for the floor and spot for the broom.</strong> Persistent WebSocket workers and database capacity are the floor. Snapshot generation, reindexing, export rendering, and historical compaction are the broom. Buy commitments for the floor; use interruptible capacity for the broom. If a reindex cannot survive an interruption, it is not a reindexer. It is a hostage situation.</p>
+          <p><strong>6. Use commitments for the floor and spot for the broom.</strong> Persistent WebSocket workers and database capacity are the floor. Snapshot generation, reindexing, export rendering, and historical compaction are the broom. Buy commitments for the floor. Use interruptible capacity for the broom. If a reindex cannot survive an interruption, it is not a reindexer. It is a hostage situation.</p>
           <p><strong>7. Charge AI with a budget, not optimism.</strong> Figma's filing explicitly includes AI inference in cost of revenue. Route simple tasks to smaller models, cache design-system context, limit repeated retrieval, and add per-workspace quotas. A design assistant that rereads the same 80-page file for every tiny suggestion is not intelligent. It is a very polite denial-of-wallet.</p>
           <p>Against the scenario envelope, a realistic first target is 25-45 percent lower run-rate: 8-15 percent from presence and protocol compression, 8-18 percent from incremental loading and memory locality, 5-12 percent from commitments and spot scheduling, and 5-15 percent from search and AI routing. These ranges overlap and should not be added like achievement badges. Savings are only real if p95 sync latency, reconnect success, conflict correctness, and recovery time remain inside the product contract.</p>
           <div class="tip"><strong>Optimization tip:</strong> Track dollars per active editor-hour, dollars per million durable mutations, and dollars per GB of document state-hour. “Cost per user” hides whether the bill comes from a productive editing session or a million idle browser tabs.</div>
         </section>
 
         <section>
-          <h2>9. The Postmortem Verdict</h2>
+          <h2>10. The Postmortem Verdict</h2>
           <p>Figma's multiplayer architecture is interesting because it refuses to be impressive in the usual way. It does not solve every possible collaboration problem. It solves the problem Figma actually has: browser clients editing structured design documents with low latency, occasional conflicts, offline reconnection, and a server that can remain the final authority.</p>
           <p>The per-document owner makes ordering simple. Property-level last-writer-wins keeps the conflict model understandable. Fractional indexing handles reordering without turning every drag into a transformation algebra dissertation. Rust isolates the expensive path. Incremental loading prevents every viewer from paying to load the whole universe.</p>
           <p>The costs are real: persistent connections, memory-heavy active documents, global latency, snapshots, search, and an AWS dependency large enough to appear plainly in public risk disclosures. But the architecture's best optimization is already visible in its boundaries. Ephemeral state is not durable state. Document state is not product metadata. Hot frames are not cold frames. The system gets cheaper when those distinctions are enforced in code rather than explained in a postmortem after the bill arrives.</p>
@@ -180,7 +196,7 @@
 
         <section>
           <h2>Sources and Method</h2>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Figma's collaboration protocol, Rust migration, incremental loading, and product-data separation are taken from Figma engineering posts. User, revenue, cost-of-revenue, AWS-hosting, and customer figures come from Figma's public filings and IPO materials. The RPS and cloud-cost model is my own scenario, not Figma's confidential telemetry or invoice. Rates change; architecture decisions should be tested against production measurements.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Figma's collaboration protocol, Rust migration, incremental loading, and product-data separation are taken from Figma engineering posts. User, revenue, cost-of-revenue, AWS-hosting, and customer figures come from Figma's public filings and IPO materials. The RPS and cloud-cost model is my own scenario, not Figma's confidential telemetry or invoice. Rates change. Architecture decisions should be tested against production measurements.</p>
           <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
             <li><a href="https://www.figma.com/blog/how-figmas-multiplayer-technology-works/" target="_blank" rel="noopener noreferrer">Figma Engineering: How Figma's Multiplayer Technology Works</a></li>
             <li><a href="https://www.figma.com/blog/rust-in-production-at-figma/" target="_blank" rel="noopener noreferrer">Figma Engineering: How Mozilla's Rust Dramatically Improved Our Server-Side Performance</a></li>
