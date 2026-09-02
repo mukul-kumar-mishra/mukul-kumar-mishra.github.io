@@ -249,6 +249,10 @@ h1, h2, h3, h4, h5, h6 {
   gap: 5px;
 }
 .sec-link:hover { text-decoration: underline; }
+.disclosure-button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--paper); font-family: var(--font-display); font-size: 0.76rem; font-weight: 700; cursor: pointer; }
+.disclosure-button:hover { border-color: var(--cyan); color: var(--heading); }
+.disclosure-button svg { width: 15px; height: 15px; transition: transform 0.18s ease; }
+.disclosure-button[aria-expanded="true"] svg { transform: rotate(180deg); }
 
 /* ---------- Cards ---------- */
 .card {
@@ -425,6 +429,25 @@ h1, h2, h3, h4, h5, h6 {
 .article-figure { margin: 1.6rem 0 2rem; }
 .article-figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
 .article-figure figcaption { margin-top: 8px; color: var(--mist); font-family: var(--font-body); font-size: 0.72rem; line-height: 1.55; text-align: center; }
+.article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
+.article-card:hover { color: var(--paper); }
+.article-card img { width: 100%; aspect-ratio: 1.91 / 1; object-fit: cover; border-bottom: 1px solid var(--line); }
+.article-card-visual { display: flex; align-items: flex-end; aspect-ratio: 1.91 / 1; padding: 18px; border-bottom: 1px solid var(--line); background: radial-gradient(circle at 75% 25%, color-mix(in srgb, var(--cyan) 32%, transparent), transparent 28%), linear-gradient(135deg, var(--card-muted), var(--card)); color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; }
+.article-card-body { display: flex; flex: 1; flex-direction: column; padding: 18px; }
+.article-card h3 { margin: 12px 0 8px; font-size: 1.02rem; line-height: 1.35; }
+.article-card .fl-desc { margin: 0; }
+.article-card .article-read { margin-top: auto; padding-top: 16px; color: var(--cyan); font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; }
+.article-card:hover .article-read { color: var(--lime); }
+.load-more { display: none; margin: 18px auto 0; }
+.incident-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 1.4em 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
+.incident-step { position: relative; min-height: 130px; padding: 16px 14px; border-right: 1px solid var(--line); }
+.incident-step:last-child { border-right: 0; }
+.incident-step::after { content: ">"; position: absolute; right: -7px; top: 54px; z-index: 2; width: 14px; height: 14px; color: var(--cyan); background: var(--card); font-family: var(--font-mono); font-size: 0.75rem; text-align: center; line-height: 14px; }
+.incident-step:last-child::after { display: none; }
+.incident-step .step-no { color: var(--cyan); font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; }
+.incident-step strong { display: block; margin-top: 11px; color: var(--heading); font-family: var(--font-display); font-size: 0.78rem; line-height: 1.35; }
+.incident-step small { display: block; margin-top: 7px; color: var(--mist); font-family: var(--font-body); font-size: 0.7rem; line-height: 1.5; }
 
 /* Animated architecture figure used by long-form case studies. It is kept
    dependency-free so it still works on GitHub Pages and on slow connections. */
@@ -597,6 +620,7 @@ h1, h2, h3, h4, h5, h6 {
   .grid3 { grid-template-columns: repeat(2, 1fr); }
   .grid2 { grid-template-columns: 1fr; }
   .prose { max-width: none; }
+  .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 700px) {
   .profile-hero {
@@ -620,6 +644,11 @@ h1, h2, h3, h4, h5, h6 {
   .topnav a { padding: 6px 8px; font-size: 0.78rem; }
   .sec-head { flex-direction: column; align-items: flex-start; }
   .sec-head .field-input { max-width: 100% !important; }
+  .article-grid { grid-template-columns: 1fr; }
+  .incident-track { grid-template-columns: 1fr; }
+  .incident-step { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .incident-step:last-child { border-bottom: 0; }
+  .incident-step::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -7px; }
   .live-diagram-grid { grid-template-columns: 1fr 1fr; }
   .diagram-flow { display: none; }
   .diagram-arrow { display: none; }
