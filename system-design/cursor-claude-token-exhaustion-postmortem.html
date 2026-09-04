@@ -13,6 +13,8 @@
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-claude-token-exhaustion-postmortem.png">
   <meta property="og:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1736">
+  <meta property="og:image:height" content="906">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
@@ -82,6 +84,8 @@
         </tbody></table>
         <div class="tip"><strong>Budget tip:</strong> Track cost per completed task, not cost per month. A $3 task that ships is cheap. A $0.40 task that burns the session and gets reverted twice is the most expensive line on your bill.</div>
       </section>
+
+      <figure class="article-figure"><img src="../images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion showing prompt, tool outputs, context window stages, compaction, cache TTL, and cost per task" width="1736" height="906"><figcaption>Figure 1. The session lifecycle in one image. Fresh context bloats, rots, gets compacted into a fragment, and meets the cap while cost per task climbs.</figcaption></figure>
 
       <section><h2>3. The Two Machines You Are Actually Paying For</h2>
         <p>Cursor and Claude Code look like one category and bill like two different philosophies. Cursor sells monthly pools of model compute. Pro at $20 carries about $20 of third party model usage plus a generous first party pool. Pro Plus at $60 carries about $70. Ultra at $200 carries about $400. Teams seats add a $0.25 per million token rate on third party routes. When the pool empties, eligible plans keep going on pay as you go at the same API rates. Nothing quietly downgrades. The meter just keeps running with your permission.</p>
