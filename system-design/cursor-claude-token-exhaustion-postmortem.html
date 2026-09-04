@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A system design postmortem of Cursor and Claude Code token limits. Explore context rot, compaction cliffs, cache economics, developer productivity math, and what AI coding vendors could fix.">
+  <meta name="keywords" content="Cursor token limit, Claude Code rate limits, AI coding agent cost, context window exhaustion, context rot, prompt caching, compaction, developer productivity, token pricing">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer">
+  <meta property="og:description" content="A forensic teardown of AI coding limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-claude-token-exhaustion-postmortem.png">
+  <meta property="og:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer">
+  <meta name="twitter:description" content="Token limits, context rot, compaction cliffs, productivity math, and fixes for AI coding economics.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-claude-token-exhaustion-postmortem.png">
+  <meta name="twitter:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
+  <title>Cursor and Claude Code Postmortem: Token Limits and Cost Analysis | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer",
+    "description":"A system design postmortem of AI coding token limits, context rot, compaction, cache economics, and developer productivity math.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-04",
+    "dateModified":"2026-09-04",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html"},
+    "keywords":"Cursor token limit, Claude Code rate limits, context rot, prompt caching, developer productivity"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Developer Tools</span><span class="chip">September 2026</span><span class="chip">19 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tuesday, 11:47 AM. You are mid refactor, the agent is finally holding the whole plan in its head, and the screen prints the five words every developer now hates. Limit reached. Come back later. Your flow state just got rate limited.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Pro Subscription</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$20 / month</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Session Appetite</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">50 to 200K tokens</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Compaction Survival</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Under 1 percent</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Core Flaw</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Context Rot</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 4, 2026</p>
+    </header>
+
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Cursor pricing, Claude Code limits, context windows, and caching behavior below come from official docs and help centers linked at the end. The productivity math and the 1M turn cost model are mine. Nothing here claims to be a vendor invoice.</aside>
+
+    <article class="prose">
+      <section><h2>1. The Five Words That Kill Flow State</h2>
+        <p>Every developer using Cursor or Claude Code daily knows the moment. The agent has read twenty files. It finally understands the auth module. It is three edits away from done. Then the limit message arrives and your morning splits in two. There is the work, and there is the meter running underneath the work.</p>
+        <p>Comment threads blame everything. The model is greedy. The vendor is greedy. The cache expired. The intern left a test log in the repo. Most of the advice online treats the meter like weather. Something that happens to you. I spent nine years watching meters like this one, and meters are never weather. They are architecture with a billing page.</p>
+        <p>So here is the postmortem nobody asked for but every daily user needs. They built agentic coding that replays your entire session on every single turn. The big issue is that context behaves like a recurring charge with a rising rate, while the pricing page talks like you are buying countable requests. We are doing the postmortem on that mismatch, with math, because anger without arithmetic is just a comment thread.</p>
+        <div class="callout"><strong>The postmortem thesis:</strong> They built pair programmers that remember everything by re reading everything. The big issue is context rot plus cache economics plus triple limit systems. We are doing the postmortem on why your $20 subscription keeps meeting a paywall at 11:47 AM.</div>
+      </section>
+
+      <section><h2>2. Productivity Math: What the Limit Actually Costs You</h2>
+        <p>Start with the developer, not the dashboard. A mid level engineer costs roughly $75 per hour fully loaded. A $20 monthly subscription looks like pocket change next to that. It breaks even if it saves about sixteen minutes in an entire month. Of course it pays for itself. That was never the real question.</p>
+        <p>The real question is what happens after the subscription stops covering the work. Take a heavy agent day. Three long sessions, each burning roughly $4 of model compute at API rates. That is $12 in one day. Over twenty working days that pace becomes $240 a month, twelve times the sticker price. Cursor documents exactly this shape. Daily agent users typically land near $60 to $100 of total monthly usage, and power users running parallel agents pass $200. The $20 is an entry ticket. The meter decides the final bill.</p>
+        <p>Now price the interruption itself. A limit hit mid refactor costs thirty to forty five minutes of flow state. The agent loses momentum, you lose the mental model, and the restart tax lands on the most expensive resource in the building, which is you. At $75 an hour, two limit hits a week cost about $200 a month in lost focus alone. Add the overage spend and the true monthly cost of heavy agentic coding lands near $250 to $450 per developer. Still worth it for the output, probably. But let us stop pretending the tool costs twenty dollars. It costs twenty dollars plus whatever your attention is worth at the exact moment the meter says no.</p>
+        <table><thead><tr><th>Monthly picture</th><th>Light user</th><th>Heavy agent user</th></tr></thead><tbody>
+          <tr><td>Subscription sticker</td><td>$20</td><td>$20 to $60</td></tr>
+          <tr><td>Model overage pace</td><td>Near zero</td><td>$40 to $200</td></tr>
+          <tr><td>Flow state lost to limits</td><td>Rare</td><td>About $200 in focus time</td></tr>
+          <tr><td><strong>True monthly shape</strong></td><td><strong>About $20</strong></td><td><strong>$250 to $450</strong></td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Budget tip:</strong> Track cost per completed task, not cost per month. A $3 task that ships is cheap. A $0.40 task that burns the session and gets reverted twice is the most expensive line on your bill.</div>
+      </section>
+
+      <section><h2>3. The Two Machines You Are Actually Paying For</h2>
+        <p>Cursor and Claude Code look like one category and bill like two different philosophies. Cursor sells monthly pools of model compute. Pro at $20 carries about $20 of third party model usage plus a generous first party pool. Pro Plus at $60 carries about $70. Ultra at $200 carries about $400. Teams seats add a $0.25 per million token rate on third party routes. When the pool empties, eligible plans keep going on pay as you go at the same API rates. Nothing quietly downgrades. The meter just keeps running with your permission.</p>
+        <p>Claude Code sells allowance windows instead. A rolling five hour session cap for burst protection, a weekly cap for total volume, and a separate Opus allowance on top. Pro at $20 gets roughly 10 to 40 prompts per five hours. Max plans multiply the allowance by 5x or 20x. Switching models does not restore a spent window, because consumption tracks tokens, not turns. Hitting the Opus allowance is the one exception where switching models keeps you working.</p>
+        <p>Both vendors meter the same underlying fuel. A typical agent prompt with full repo context fires 50K to 200K input tokens, because the harness pulls surrounding files, edits, and diffs into every call. On Sonnet class pricing near $3 per million input tokens, that single prompt costs $0.15 to $0.60 before a word of output. On Opus class pricing near $15 per million, the same prompt costs $0.75 to $3.00. Output tokens cost roughly five times input. One wrong 400 line diff that you revert and regenerate bills you twice for the same lesson, plus the turns spent arguing about it.</p>
+      </section>
+
+      <section><h2>4. Why Tokens Confuse Everyone, Including Smart People</h2>
+        <p>Tokens get misunderstood because three different scarcities wear the same costume. Usage limits cap how much you consume over time. Context limits cap how long one conversation can grow. Cache behavior decides what each token costs. Developers hit all three in one week and file them under one feeling. The tool feels stingy. The fixes for each scarcity are opposites, which is why generic advice keeps failing.</p>
+        <p>A full window is fixed by clearing or compacting. Waiting does nothing. An exhausted allowance is fixed by waiting or paying. A fresh conversation does nothing. A cache miss is fixed by session hygiene. Complaining does nothing. Anthropic docs say this plainly, yet I watch experienced engineers mix them up every week, because all three failures arrive wearing the same tired message about limits.</p>
+        <div class="incident-track" aria-label="Agent session lifecycle from fresh to limit">
+          <div class="incident-step"><span class="step-no">01</span><strong>Fresh</strong><small>Small context, sharp answers, cheap turns.</small></div>
+          <div class="incident-step"><span class="step-no">02</span><strong>Bloated</strong><small>Tool outputs pile up, every turn replays all of it.</small></div>
+          <div class="incident-step"><span class="step-no">03</span><strong>Rotting</strong><small>Recall degrades long before any hard limit.</small></div>
+          <div class="incident-step"><span class="step-no">04</span><strong>Compacted</strong><small>Under 1 percent survives, cache breaks, bill spikes.</small></div>
+          <div class="incident-step"><span class="step-no">05</span><strong>Capped</strong><small>Weekly or session window ends the run.</small></div>
+        </div>
+        <p>The cruelest stage is the third one. Research on long context agents keeps finding the same pattern. Recall quality falls as windows fill, well before any hard cap. One large study measured active useful context at a few thousand tokens no matter whether the window held 39K or 645K. Everything beyond that is mostly inert weight you pay to reprocess. Adding tokens past the useful frontier does not add understanding. It adds distraction at full price.</p>
+      </section>
+
+      <section><h2>5. Postmortem: Why the Architecture Burns Context</h2>
+        <p>An agentic coding session is a loop. The model emits a tool call, the harness runs it, the result gets appended to the conversation, and the entire conversation goes back in on the next turn. Context is therefore not a tank that drains. It is a subscription that reprices upward every step. Early steps add about 3,200 tokens each. Later steps settle near 1,470. Total spend grows faster than linear because every step re purchases the history.</p>
+        <p>Then comes the compaction cliff, the part vendors describe gently and researchers describe with numbers. One careful study of 873 real compactions found the median event crushing a 575K token window into a 4.3K summary. Under one percent survives. The agent then spends roughly 28 steps re reading files and rebuilding state it already knew yesterday. Correction rates run more than twice as high after compaction while tool error rates stay flat. Read that twice. The tools are fine. The memory got mugged.</p>
+        <p>Cache economics sharpen the blade. Prompt caching discounts repeated prefixes by up to 90 percent, which rewards keeping early context frozen. But editing early context breaks the prefix and forces full price reprocessing. Compaction replaces the prefix with a summary, which breaks the cache entirely and causes a cost spike at the worst moment. Even the TTL conspires. Caches live about an hour on subscription and five minutes on usage credits or API keys. Take a lunch break mid session and your first message back reprocesses the world. The system that rewards you for never touching history also punishes you for blinking.</p>
+        <p>This is the same prefill tax I dissected in my <a href="perplexity-answer-engine-postmortem.html">Perplexity postmortem</a>. Every turn reprocesses the full pile before generating anything new. Long context does not just risk quality. It taxes every future step with the weight of every past step. And the retry storms should look familiar too. My <a href="replit-agent-runtime-postmortem.html">Replit teardown</a> showed agents repeating failed tool work because task state was not idempotent. Same religion, smaller church.</p>
+        <div class="tip"><strong>Session tip:</strong> Run slash clear between tasks and slash compact inside long ones. A plan costs hundreds of tokens. A wrong diff costs thousands twice. Ask the agent to list files and actions before touching anything once the task spans more than three files.</div>
+      </section>
+
+      <section id="cost-model"><h2>6. The 1M Turn Cost Test</h2>
+        <p>Normalize to one million agent turns in a month. Assume each turn carries 80K input tokens with 70K served as cache reads at $0.30 per million and 10K fresh at $3 per million, plus 1.5K output tokens at $15 per million. Cache reads cost $0.021, fresh input costs $0.03, output costs $0.0225. Each turn lands near <strong>$0.074</strong>. One million turns at that rate equals <strong>$74,000 per month</strong> in model compute alone.</p>
+        <p>My proposed shape cuts the context before it cuts the model. Just in time retrieval keeps the working set near 25K tokens. Observation masking drops stale tool payloads while keeping the action record. Routine turns route to smaller models at roughly a fifth of the price. The blended turn falls to about <strong>$0.018</strong>. One million turns then cost <strong>$18,000 per month</strong>. Add $4,000 for evals, dashboards, and guardrails. The proposed envelope is about <strong>$22,000 per month</strong>.</p>
+        <table><thead><tr><th>At 1M turns per month</th><th>Current shaped habit</th><th>Proposed discipline</th></tr></thead><tbody>
+          <tr><td>Input per turn</td><td>80K tokens</td><td>25K tokens</td></tr>
+          <tr><td>Blended turn cost</td><td>$0.074</td><td>$0.018</td></tr>
+          <tr><td>Core model spend</td><td>$74,000</td><td>$18,000</td></tr>
+          <tr><td>Evals and guardrails</td><td>Included in chaos</td><td>$4,000</td></tr>
+          <tr><td><strong>Modeled monthly total</strong></td><td><strong>$74,000</strong></td><td><strong>$22,000</strong></td></tr>
+          <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$52,000 per month, about 70 percent lower</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The uncomfortable math:</strong> At one million turns, every needless 10K tokens per turn costs about $9,250 per month under current shaped rates. Context hygiene is not tidiness. It is payroll.</div>
+      </section>
+
+      <section><h2>7. What Vendors Could Do Instead of Selling Bigger Buckets</h2>
+        <p><strong>First, meter the task, not just the month.</strong> Show cost per completed task with its context curve attached. Developers cannot optimize what they cannot see, and a monthly pool teaches nothing about which habit burned it. A per task meter would end half the internet arguments overnight. Vendors avoid it because per task numbers would reveal how often the harness wastes the budget, not the user.</p>
+        <p><strong>Second, make just in time the default.</strong> Keep file paths and identifiers in context. Load file bodies at read time. Claude Code already gestures this way, but every agent framework should treat full repo dumps as a failure mode. My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> made the same point for serverless. Pay for execution, not for waiting around fully loaded.</p>
+        <p><strong>Third, mask before you summarize.</strong> Independent research keeps finding that replacing stale tool outputs with placeholders beats full LLM summarization at roughly half the cost, without the trajectory elongation that summaries cause. Summarization should be the last resort, not the first reflex. Vendors love summarization because it looks intelligent. Masking looks boring. Boring wins.</p>
+        <p><strong>Fourth, preserve a verbatim tail.</strong> The harm of compaction concentrates at the discontinuity where 99 percent vanishes at once. Keeping the last 30K to 60K tokens verbatim alongside the summary cuts both cost and disruption in measured studies. Expose it as a setting instead of hiding the knob. Users who cannot tune the cliff will keep falling off it.</p>
+        <p><strong>Fifth, stop routing by advertised window.</strong> Sending a 90K session to the long context tier because the model supports a million tokens is how small tasks inherit big task pricing. Route by actual size. Bill by actual size. The GitHub issue trackers already contain this complaint in triplicate, which is the open source way of saying the bug is real.</p>
+        <div class="tip"><strong>Team tip:</strong> Put cache hit rate and prefill tokens per task on the team dashboard next to spend. When prefill per task climbs while output stays flat, your agents are rereading the past instead of writing the future.</div>
+      </section>
+
+      <section><h2>8. The Verdict</h2>
+        <p>Cursor and Claude Code earned their daily driver status. Agents that read code, run tools, and iterate genuinely compress weeks of grunt work. The postmortem does not take that away. It names the price structure underneath. Every turn replays history. History grows faster than value. Compaction rescues the window by amputating the memory. Caches reward frozen prefixes and punish living sessions. Three different scarcities share one tired error message, and the user pays in the one currency vendors never meter, which is attention.</p>
+        <p>The way out is not a bigger bucket. It is a stricter context diet enforced by the tools themselves. Retrieve just in time. Mask stale outputs. Preserve verbatim tails. Route by actual size. Meter per task. At the normalized million turn scale, that discipline is worth about $52,000 a month in this model. For a fifty person engineering org, it is the difference between AI leverage and AI landlordship.</p>
+        <p>The cliffhanger writes itself. Agent fleets multiply every one of these curves, because each teammate carries its own window and its own bill. One developer hitting a limit is an annoyance. Ten agents hitting limits in parallel is a capacity plan. The vendors selling bigger buckets today will eventually have to sell smaller appetites. The only question is whether they do it before your finance team notices.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>You are not running out of intelligence. You are running out of remembering.</strong></p>
+      </section>
+
+      <section><h2>Keep Reading the Postmortem Series</h2>
+        <p>If the meter is your enemy, the rest of the series maps the same war on other fronts. My <a href="perplexity-answer-engine-postmortem.html">Perplexity teardown</a> covers the prefill tax behind every AI answer. My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> covers paying for idle wait as if it were work. My <a href="replit-agent-runtime-postmortem.html">Replit postmortem</a> covers agent retry storms that bill you for learning nothing. Same religion, different crime scenes.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Pricing, limits, context windows, caching, and compaction behavior come from official docs and help centers linked below. Productivity rates and the 1M turn model are my normalized scenario math, not vendor invoices. Research findings on compaction and context rot are summarized from public studies.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://cursor.com/docs/models-and-pricing" target="_blank" rel="noopener noreferrer">Cursor Docs: Models and Pricing</a></li>
+          <li><a href="https://cursor.com/pricing" target="_blank" rel="noopener noreferrer">Cursor: Pricing Plans</a></li>
+          <li><a href="https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code" target="_blank" rel="noopener noreferrer">Anthropic Help Center: Models, Usage, and Limits in Claude Code</a></li>
+          <li><a href="https://code.claude.com/docs/en/costs.md" target="_blank" rel="noopener noreferrer">Claude Code Docs: Costs and Rate Limits</a></li>
+          <li><a href="https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work" target="_blank" rel="noopener noreferrer">Anthropic Help Center: Usage and Length Limits</a></li>
+          <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic Engineering: Effective Context Engineering for AI Agents</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>
