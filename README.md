@@ -6,11 +6,11 @@
 
 ### Contact Profile
 
-I am Mukul, a seasoned full-stack backend developer with over 10 years of experience specializing in Python and Golang for backend development. I have a strong background in building high-performance backends and cloud-native microservices (REST, gRPC, Socket, and Lambda) following CNCF standards.
+I am Mukul, a seasoned full-stack backend developer with over 10 years of experience specializing in Python and Golang for backend development. I have a strong background in building high-performance backends and cloud-native microservices (REST, gRPC, Socketand Lambda) following CNCF standards.
 
 My expertise extends to containerization, delivering fully containerized projects using Docker and various AWS resources. I am efficient in using distributed architecture for large systems utilizing Kafka and SQS, with exposure to building ETL processes in AWS and GCP.
 
-On the frontend side, I have two years of experience with React and Svelte, complemented by proficiency in various JavaScript libraries, including jQuery, D3 charts, and numerous Node packages. I have taken on leadership roles, serving as a Team Lead where I oversaw end-to-end project development, managed Jira tasks, led scrum meetings, and handled resource management.
+On the frontend side, I have two years of experience with React and Svelte, complemented by proficiency in various JavaScript libraries, including jQuery, D3 chartsand numerous Node packages. I have taken on leadership roles, serving as a Team Lead where I oversaw end-to-end project development, managed Jira tasks, led scrum meetingsand handled resource management.
 
 ---
 
@@ -43,17 +43,17 @@ Worked on Python for a top client including Goldman Sachs.
 #### IDC/LTTS, Pune  
 **Senior Software Engineer**  
 *7th March 2022 - 30th December 2022*  
-Worked on Python and ReactJS with AWS CI/CD, Docker, Kubernetes, and Postgres. Engaged in client communication and project management using Jira and Grafana.
+Worked on Python and ReactJS with AWS CI/CD, Docker, Kubernetesand Postgres. Engaged in client communication and project management using Jira and Grafana.
 
 #### R-Systems  
 **Project Lead**  
 *June 2021 – September 2021*  
-Developed CXM and ETL pipelines in Golang using gRPC and Kafka, and worked on frontend components in React.
+Developed CXM and ETL pipelines in Golang using gRPC and Kafkaand worked on frontend components in React.
 
 #### Syncrasy Tech  
 **Sr. Software Engineer**  
 *July 2020 – May 2021*  
-Built APIs for master data management, handled Kubernetes and Docker tasks, and developed custom provider solutions.
+Built APIs for master data management, handled Kubernetes and Docker tasksand developed custom provider solutions.
 
 #### Freelance Engineer  
 *December 2017 – February 2020*  
@@ -62,7 +62,7 @@ Worked on 40+ projects including migrations between AWS and GCP.
 #### Techpro Compsoft  
 **Sr. Software Engineer**  
 *November 2016 – November 2017*  
-Built CXM and ETL pipelines in Golang, and developed frontend components using React.
+Built CXM and ETL pipelines in Golangand developed frontend components using React.
 
 ---
 
@@ -88,7 +88,7 @@ Built CXM and ETL pipelines in Golang, and developed frontend components using R
 
 ### Conclusion
 
-My diverse experience in backend development, cloud architecture, and team leadership positions me as a valuable asset for any organization looking to enhance their technological capabilities.
+My diverse experience in backend development, cloud architectureand team leadership positions me as a valuable asset for any organization looking to enhance their technological capabilities.
 
 **Mukul Kumar**  
 *Dated: 28th January 2024*
