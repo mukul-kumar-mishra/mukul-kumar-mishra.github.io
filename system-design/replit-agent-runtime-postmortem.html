@@ -8,7 +8,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/replit-agent-runtime-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Replit Agent Postmortem: The Day the Demo Became Production">
+  <meta property="og:title" content="The Dashboard That Deployed Itself">
   <meta property="og:description" content="A forensic teardown of Replit Agent, sandboxed execution, deployment infrastructure, 1M RPS cost mathand the production risks hidden inside prompt-to-production software.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/replit-agent-runtime-postmortem.png">
   <meta property="og:image:alt" content="Replit Agent system design postmortem architecture and cost illustration">
@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/replit-agent-runtime-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Replit Agent Postmortem: The Day the Demo Became Production">
+  <meta name="twitter:title" content="The Dashboard That Deployed Itself">
   <meta name="twitter:description" content="Sandbox execution, AI coding agents, deployment risk, RPS mathand cost controls behind prompt-to-production software.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/replit-agent-runtime-postmortem.png">
   <meta name="twitter:image:alt" content="Replit Agent system design postmortem architecture and cost illustration">
@@ -49,8 +49,8 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Runtime</span><span class="chip">September 2026</span><span class="chip">19 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Replit Agent Postmortem: The Day the Demo Became Production</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The prompt was innocent. “Build me a dashboard.” Then the agent wrote code, ran migrations, installed packages, opened ports, called an APIand tried to ship. Suddenly the toy was a multi-tenant cloud platform with root privileges in a hurry.</p>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Dashboard That Deployed Itself</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The prompt was innocent. Build me a dashboard. Then the agent wrote code, ran migrations, installed packages, opened ports, called an API, tried to ship. A toy with root privileges in a hurry. This is what prompt-to-production really costs to contain.</p>
       <div class="grid4" style="margin-top:24px;">
         <div class="stat" style="padding:14px;"><div class="lbl">Latest Valuation</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$9B</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">40M+</div></div>
@@ -146,7 +146,7 @@
         <p>The winning architecture cannot treat the agent as a chatbot. It has to treat the agent as an untrusted workflow engine with a budget, capabilities, checkpointsand an audit trail. Sandboxes contain code. Queues contain bursts. Content-addressed caches contain repeated work. Region-aware scheduling contains latency and transfer cost. A real deployment gate contains optimism.</p>
         <p>At 1M events per second, the difference between the current-shaped design and the proposed shape is about $5.59M per month in this model. That difference comes from classification, reuse, batchingand refusing to make ephemeral work durable. The platform gets cheaper when it knows what not to remember.</p>
         <p>That is the cliff edge for prompt-to-production software. The demo says anyone can build. Production asks who is allowed to run it, where it can connect, how long it may live, what it may changeand who pays when the agent gets curious.</p>
-        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. <figure class="article-figure pm-meme"><img src="../images/articles/replit-coffee-meme.svg" alt="Pen sketched cartoon of an exhausted man pressing retry forever beside a coffee cup" width="1200" height="680"><figcaption>Figure 3. Attempt 48 in one cartoon, drawn for this postmortem. The package has not changed. The meter has.</figcaption></figure>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. <figure class="article-figure pm-meme"><img src="../images/articles/replit-coffee-meme.svg" alt="Pen sketched cartoon of a grinning cat pressing retry forever beside a coffee cup" width="1200" height="680"><figcaption>Figure 3. Attempt 48 in one cartoon, drawn for this postmortem. The package has not changed. The meter has.</figcaption></figure>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. The infrastructure still has to survive the user's imagination.</strong></p>
       </section>
 

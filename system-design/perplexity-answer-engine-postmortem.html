@@ -8,7 +8,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/perplexity-answer-engine-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice">
+  <meta property="og:title" content="Eleven Words In. Twelve Thousand Tokens Out.">
   <meta property="og:description" content="A forensic teardown of Perplexity RAG pipeline, KV cache flaw, prefill tax, inference cost mathand the fix chain at 1M RPS.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/perplexity-answer-engine-postmortem.png">
   <meta property="og:image:alt" content="Perplexity answer engine system design postmortem architecture and cost illustration">
@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/perplexity-answer-engine-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice">
+  <meta name="twitter:title" content="Eleven Words In. Twelve Thousand Tokens Out.">
   <meta name="twitter:description" content="RAG retrieval, KV cache flaw, prefill tax, inference mathand cost controls behind AI answer engines.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/perplexity-answer-engine-postmortem.png">
   <meta name="twitter:image:alt" content="Perplexity answer engine system design postmortem architecture and cost illustration">
@@ -49,8 +49,8 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">September 2026</span><span class="chip">20 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A user types eleven words. The system crawls nothing, reads everything, reranks the survivors, stuffs twelve thousand tokens into a model, generates four hundred moreand then does it again for related questions. The answer looks free. The pipeline knows better.</p>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Eleven Words In. Twelve Thousand Tokens Out.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">You typed eleven words. The machine read the internet, argued with itself over thousands of pages, stuffed twelve thousand tokens into a model, wrote four hundred words back, then did it all again for questions you never asked. The answer felt free. Twelve thousand tokens say otherwise.</p>
       <div class="grid4" style="margin-top:24px;">
         <div class="stat" style="padding:14px;"><div class="lbl">Latest Valuation</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$20B</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Monthly Queries</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">780M</div></div>
@@ -62,7 +62,9 @@
 
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Perplexity funding, query volume, index scale, latencyand inference stack come from company posts and credible coverage. The request rates and cloud bill below are my normalized model. The flaw discussion uses public research on RAG and KV cache reuse. Nothing here claims to be the private invoice.</aside>
 
-    <article class="prose">
+      <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/perplexity-answer-engine-postmortem.png" alt="Perplexity answer engine architecture showing crawl, index, hybrid retrieval, rerank, prefill, decodeand cost pressure"><figcaption>Figure 1. The answer is the smallest part of the system. Retrieval, ranking, prefilland decode do the heavy lifting before the first cited sentence appears.</figcaption></figure>
+
       <section><h2>1. Eleven Words In, Twelve Thousand Tokens Out</h2>
         <p>Ask Perplexity who won last night and the answer lands in about a second with neat little citations. It feels like search finally grew a brain. I love the product. I also keep thinking about what it costs to be this helpful, because behind that calm answer box sits a small supercomputer having a very busy second.</p>
         <p>Here is what actually happened while you blinked. The query hit a retrieval layer that searched an index of hundreds of billions of pages. A ranking funnel narrowed thousands of candidates to a handful. The survivors were sliced into sub document chunks and packed into a prompt. A large model read the whole bundle and wrote an answer with a footnote on nearly every sentence. Then the system generated follow up questions using yet more inference. One curious human, one full factory shift.</p>
@@ -84,8 +86,6 @@
         <p>Two design choices carry the whole product. First, retrieval and ranking run at both document and sub document level because models are brittle when the prompt drowns in irrelevant context. Second, every sentence of the answer should trace to retrieved evidence, which means the model cannot answer from memory alone. Both choices raise quality. Both choices raise the token count. There is no version of this architecture where grounding is free.</p>
       </section>
 
-      <figure class="article-figure"><img src="../images/articles/perplexity-answer-engine-postmortem.png" alt="Perplexity answer engine architecture showing crawl, index, hybrid retrieval, rerank, prefill, decodeand cost pressure"><figcaption>Figure 1. The answer is the smallest part of the system. Retrieval, ranking, prefilland decode do the heavy lifting before the first cited sentence appears.</figcaption></figure>
-
       <section><h2>4. The Flaw Every AI Answer Engine Shares</h2>
         <p>Here is the flaw in one line. A language model reads fast in parallel but only once per promptand everything it reads must be re read for every new question.</p>
         <p>Unpack that. Inference has two phases. Prefill processes the full input prompt and builds the KV cache. Decode generates output tokens one by one. Prefill cost grows roughly quadratically with input length because attention compares tokens against tokens. A 12k token RAG prompt does not cost twice as much as a 6k prompt to prefill. It costs closer to four times as much in attention work. Every extra retrieved chunk makes the prompt longer and the prefill heavier. Better grounding means a heavier prefill. That is the prefill tax and it applies to every RAG system, not just Perplexity.</p>
@@ -98,7 +98,7 @@
       <section><h2>5. The Traffic Model With Real Numbers</h2>
         <p>Start from the disclosed 780M monthly queries. Divide by 2,592,000 seconds in a 30 day month and the average is about 301 queries per second. Daily volume near 30M gives about 347 per second on average. Apply an eight times evening peak multiplier and the edge must absorb roughly 2,400 to 2,800 query RPS. That number looks calm until fan out enters the picture.</p>
         <p>Each query fans out inside the platform. Assume 6 retrieval operations, 3 rerank passes, 1 prefill over 12k tokens, 400 decode stepsand 1 related question pass over 2k tokens. That is about 12 internal operations per user question before counting telemetry, loggingand cache lookups. At 301 average query RPS, the internal fabric sees about 3,600 operations per second. At the 2,400 peak, it sees nearly 29,000 operations per second. The user facing RPS is a headline. The internal RPS is the bill.</p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/perplexity-bill-meme.svg" alt="Pen sketched cartoon of a shocked man holding a giant inference bill" width="1200" height="680"><figcaption>Figure 3. Eleven words in one cartoon, drawn for this postmortem. The answer is free. The invoice lists retrieval, rerank, prefill, plus decode.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img src="../images/articles/perplexity-bill-meme.svg" alt="Pen sketched cartoon of a skeptical cat holding a giant inference bill" width="1200" height="680"><figcaption>Figure 3. Eleven words in one cartoon, drawn for this postmortem. The answer is free. The invoice lists retrieval, rerank, prefill, plus decode.</figcaption></figure>
         <p>Token math makes it concrete. Per query, 12k input tokens plus 400 output tokens plus 2k related pass tokens. At 780M queries per month, input volume is about 9.36 trillion tokens and output volume is about 312 billion tokens. Read those numbers again. Trillion with a T, every single month, just to answer questions people used to skim from blue links. Even at aggressive owned infrastructure rates, moving that many tokens through frontier class models every month is a gravity well. This is why Perplexity routes with classifier models, serves many model sizes, tunes batching against strict latency targetsand openly optimizes every layer from kernels to schedulers. Nobody hand tunes CUDA kernels for fun. You do it when the token meter is the business.</p>
         <table><thead><tr><th>Workload</th><th>Modeled assumption</th><th>Result</th></tr></thead><tbody>
           <tr><td>Average query RPS</td><td>780M per 30 day month</td><td>About 301 per second</td></tr>

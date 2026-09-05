@@ -8,7 +8,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer">
+  <meta property="og:title" content="Your $20 Subscription Meets a Paywall at 11:47 AM">
   <meta property="og:description" content="A forensic teardown of AI coding limits, context rot, compaction cliffs, productivity mathand the fixes vendors keep postponing.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-claude-token-exhaustion-postmortem.png">
   <meta property="og:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
@@ -18,7 +18,7 @@
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/cursor-claude-token-exhaustion-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer">
+  <meta name="twitter:title" content="Your $20 Subscription Meets a Paywall at 11:47 AM">
   <meta name="twitter:description" content="Token limits, context rot, compaction cliffs, productivity mathand fixes for AI coding economics.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-claude-token-exhaustion-postmortem.png">
   <meta name="twitter:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
@@ -51,8 +51,8 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Developer Tools</span><span class="chip">September 2026</span><span class="chip">19 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tuesday, 11:47 AM. You are mid refactor, the agent is finally holding the whole plan in its headand the screen prints the five words every developer now hates. Limit reached. Come back later. Your flow state just got rate limited.</p>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Your $20 Subscription Meets a Paywall at 11:47 AM</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tuesday, 11:47 AM. You are mid refactor, the agent finally holds the whole plan in its head, the screen prints five words every developer now hates. Limit reached. Come back later. Behind that message sits a meter that replays your entire session on every turn, rots what it remembers, plus bills you for the forgetting. This is the postmortem.</p>
       <div class="grid4" style="margin-top:24px;">
         <div class="stat" style="padding:14px;"><div class="lbl">Pro Subscription</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$20 / month</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Session Appetite</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">50 to 200K tokens</div></div>
@@ -64,7 +64,9 @@
 
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Cursor pricing, Claude Code limits, context windowsand caching behavior below come from official docs and help centers linked at the end. The productivity math and the 1M turn cost model are mine. Nothing here claims to be a vendor invoice.</aside>
 
-    <article class="prose">
+      <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion showing prompt, tool outputs, context window stages, compaction, cache TTLand cost per task" width="1736" height="906"><figcaption>Figure 1. The session lifecycle in one image. Fresh context bloats, rots, gets compacted into a fragmentand meets the cap while cost per task climbs.</figcaption></figure>
+
       <section><h2>1. The Five Words That Kill Flow State</h2>
         <p>Every developer using Cursor or Claude Code daily knows the moment. The agent has read twenty files. It finally understands the auth module. It is three edits away from done. Then the limit message arrives and your morning splits in two. There is the workand there is the meter running underneath the work.</p>
         <p>Comment threads blame everything. The model is greedy. The vendor is greedy. The cache expired. The intern left a test log in the repo. Most of the advice online treats the meter like weather. Something that happens to you. I spent nine years watching meters like this oneand meters are never weather. They are architecture with a billing page.</p>
@@ -85,7 +87,7 @@
         <div class="tip"><strong>Budget tip:</strong> Track cost per completed task, not cost per month. A $3 task that ships is cheap. A $0.40 task that burns the session and gets reverted twice is the most expensive line on your bill.</div>
       </section>
 
-      <figure class="article-figure"><img src="../images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion showing prompt, tool outputs, context window stages, compaction, cache TTLand cost per task" width="1736" height="906"><figcaption>Figure 1. The session lifecycle in one image. Fresh context bloats, rots, gets compacted into a fragmentand meets the cap while cost per task climbs.</figcaption></figure>
+
 
       <section><h2>3. The Two Machines You Are Actually Paying For</h2>
         <p>Cursor and Claude Code look like one category and bill like two different philosophies. Cursor sells monthly pools of model compute. Pro at $20 carries about $20 of third party model usage plus a generous first party pool. Pro Plus at $60 carries about $70. Ultra at $200 carries about $400. Teams seats add a $0.25 per million token rate on third party routes. When the pool empties, eligible plans keep going on pay as you go at the same API rates. Nothing quietly downgrades. The meter just keeps running with your permission.</p>
@@ -104,7 +106,7 @@
           <div class="incident-step"><span class="step-no">05</span><strong>Capped</strong><small>Weekly or session window ends the run.</small></div>
         </div>
         <p>The cruelest stage is the third one. Research on long context agents keeps finding the same pattern. Recall quality falls as windows fill, well before any hard cap. One large study measured active useful context at a few thousand tokens no matter whether the window held 39K or 645K. Everything beyond that is mostly inert weight you pay to reprocess. Adding tokens past the useful frontier does not add understanding. It adds distraction at full price.</p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/cursor-goldfish-meme.svg" alt="Pen sketched cartoon of a dizzy man meeting a goldfish that holds the session memory" width="1200" height="680"><figcaption>Figure 2. Session memory in one cartoon, drawn for this postmortem. The agent meets your auth module like a stranger, then bills you for introductions.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img src="../images/articles/cursor-goldfish-meme.svg" alt="Pen sketched cartoon of a grinning cat meeting a goldfish that holds the session memory" width="1200" height="680"><figcaption>Figure 2. Session memory in one cartoon, drawn for this postmortem. The agent meets your auth module like a stranger, then bills you for introductions.</figcaption></figure>
       </section>
 
       <section><h2>5. Postmortem: Why the Architecture Burns Context</h2>

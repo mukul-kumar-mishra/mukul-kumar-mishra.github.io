@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Mukul Kumar Mishra (SlimDestro) - Senior Backend & SRE Lead specializing in Golang, AWS, distributed systems, high-scale telemetry pipelinesand cloud-native microservices.">
+  <meta name="description" content="Mukul Kumar Mishra - Senior Backend & SRE Lead specializing in Golang, AWS, distributed systems, high-scale telemetry pipelinesand cloud-native microservices.">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/">
-  <meta name="keywords" content="Mukul Kumar, Mukul Kumar Mishra, SlimDestro, Golang Developer, AWS Engineer, Cloud Microservices, Backend Engineer, Distributed Systems, Kubernetes, Docker, Python, Cloud Computing, API Development, SRE, Tech Lead">
+  <meta name="keywords" content="Mukul Kumar, Mukul Kumar Mishra, Golang Developer, AWS Engineer, Cloud Microservices, Backend Engineer, Distributed Systems, Kubernetes, Docker, Python, Cloud Computing, API Development, SRE, Tech Lead">
   <meta name="author" content="Mukul Kumar Mishra">
   <meta name="robots" content="index, follow">
 
@@ -35,7 +35,6 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Mukul Kumar Mishra",
-    "alternateName": "SlimDestro",
     "url": "https://mukul-kumar-mishra.github.io/",
     "image": "images/mukul_kumar_mishra_golang_aws_engineer.jpg",
     "jobTitle": "Tech Lead & Site Reliability Engineer",
@@ -226,8 +225,21 @@
       <button class="btn btn-ghost load-more" id="loadMoreArticles" type="button">Load more articles</button>
     </section>
 
-    <!-- Skills -->
-    <section class="sec">
+    <section class="sec" id="jobsSection">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="briefcase"></i> System Design Jobs</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Fresh remote roles only — every listing posted within the last 30 days, matched to your country on load.</p>
+      <div id="jobList" data-page-size="5" style="display:grid;gap:16px;"></div>
+      <p id="jobCount" class="fl-desc" style="margin:12px 0 0;"></p>
+      <div style="text-align:center;margin-top:18px;">
+        <a class="btn btn-ghost load-more" href="jobs.html" style="text-decoration:none;display:inline-flex;">View all jobs</a>
+      </div>
+      <p class="fl-desc" style="margin:12px 0 0;font-size:0.75rem;">Remote listings by <a href="https://remotive.com/remote-jobs" target="_blank" rel="noopener">Remotive</a> and <a href="https://www.arbeitnow.com/job-board-api" target="_blank" rel="noopener">Arbeitnow</a> — apply on the original postings.</p>
+    </section>
+
+    <!-- Skills (hidden) -->
+    <section class="sec" style="display:none">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="terminal"></i> Technical Skills</h2>
       </div>
@@ -259,8 +271,8 @@
       </div>
     </section>
 
-    <!-- Projects -->
-    <section class="sec">
+    <!-- Projects (hidden) -->
+    <section class="sec" style="display:none">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="folder-git-2"></i> Production Engineering Projects <span class="chip">12 selected</span></h2>
         <button class="disclosure-button" id="toggleProjectsBtn" type="button" aria-expanded="false" aria-controls="projectsContent">
@@ -411,7 +423,7 @@
 
   <footer class="footer">
     <div class="wrap">
-      <span>&copy; <span id="year"></span> Mukul Kumar Mishra (SlimDestro)</span>
+      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
       <span>Hosted on GitHub Pages</span>
     </div>
   </footer>
@@ -488,6 +500,7 @@
 
     lucide.createIcons();
   </script>
+  <script src="js/jobs.js?v=20260905" defer></script>
   <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="How Figma built real-time multiplayer editing with WebSockets, server-authoritative conflict resolution, Rustand per-document isolation. A practical system design postmortem with RPS and cost analysis.">
+  <meta name="description" content="Figma multiplayer architecture explained: WebSocket fan-out, server-authoritative resolution (not pure CRDT/OT), Rust rewrite, 65k RPS model and cost controls.">
   <meta name="keywords" content="Figma system design, Figma multiplayer architecture, real time collaboration, WebSocket scaling, CRDT vs OT, Rust backend, AWS cost optimization, collaborative editor architecture">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/figma-multiplayer-cost-postmortem.html">
@@ -22,7 +22,7 @@
   <meta name="twitter:description" content="WebSockets, Rust, conflict resolution, per-document isolation, RPS assumptionsand cost controls behind collaborative design.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/figma-multiplayer-cost-postmortem.png">
   <meta name="twitter:image:alt" content="Figma multiplayer system design postmortem architecture and cost illustration">
-  <title>Figma System Design Postmortem: Multiplayer Editor Architecture and Cost | Mukul Kumar Mishra</title>
+  <title>Figma Multiplayer Architecture: WebSockets, CRDT/OT and Cost Postmortem | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,8 +34,8 @@
   {
     "@context":"https://schema.org",
     "@type":"TechArticle",
-    "headline":"Figma's Multiplayer Editor: The Server That Decides Who Wins",
-    "description":"A system design postmortem of Figma's multiplayer editor, WebSockets, server-authoritative conflict resolution, Rustand cost optimization.",
+    "headline":"Figma Multiplayer Architecture: WebSockets, CRDT/OT and Cost Postmortem",
+    "description":"Figma multiplayer architecture explained: WebSocket fan-out, server-authoritative resolution (not pure CRDT/OT), Rust rewrite, 65k RPS model and cost controls.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
     "datePublished":"2026-09-01",
     "dateModified":"2026-09-01",
@@ -64,7 +64,7 @@
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">17 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma's Multiplayer Editor: The Server That Decides Who Wins</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A design tool quietly became a distributed-systems exam. Then two designers dragged the same rectangle, an offline browser came back from the deadand the server had to choose a winner without making the canvas look haunted.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two designers grab the same rectangle. An offline browser crawls back from the dead. Somewhere a server must pick a winner without making the canvas look haunted. This is how Figma's multiplayer engine settles every fight, plus what it costs at 65,000 requests per second.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Monthly Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">13M+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">2025 Revenue</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$1.06B</div></div>
@@ -106,8 +106,9 @@
 
         <section>
           <h2>4. Conflict Resolution: No, Figma Is Not Just CRDTs</h2>
-        <figure class="article-figure pm-meme"><img src="../images/articles/figma-referee-meme.svg" alt="Pen sketched cartoon of a stern man refereeing two fighting cursors over one rectangle" width="1200" height="680"><figcaption>Figure 2. Conflict resolution in one cartoon, drawn for this postmortem. Two cursors fight. The server picks Ana.</figcaption></figure>
+
           <p>Internet discussions love calling every collaborative editor “CRDT-based.” It is a useful shortcut and often an inaccurate one. Figma's system is centralized. The server is the authority. It tracks the latest value sent for a property on an object. If two clients change unrelated properties, both changes survive. If they change the same property, the operation that arrives later wins according to server order.</p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/figma-referee-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching two fighting cursors over one rectangle" width="1200" height="680"><figcaption>Figure 2. Conflict resolution in one cartoon, drawn for this postmortem. Two cursors fight. The server picks Ana.</figcaption></figure>
           <p>That is not a moral failure. It is a product decision. In a design tool, two users rarely edit the exact same property at the exact same moment. If they do, one result must win. Figma accepts that a text property changed concurrently may end as either value rather than interleaving characters like a text editor. The product optimizes for spatial design operations, not collaborative novel writing.</p>
           <p>Tree structure is harder. A user can reparent an objectand two concurrent reparent operations can try to create a cycle. Figma's server validates the tree and rejects operations that would make the document invalid. On the client, a temporary weird state may exist while the rejection travels back. It is not perfect. It is bounded, understandableand preferable to a mathematically elegant document that has parent A under B under A forever.</p>
           <p>For ordering, Figma uses fractional indexing: each child has a position between zero and oneand inserting between two children means choosing a fraction between their positions. The implementation uses arbitrary-precision fractions to avoid running out of space after repeated insertions.</p>

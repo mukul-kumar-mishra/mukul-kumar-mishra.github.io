@@ -8,7 +8,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/simultaneous-ai-outage-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Simultaneous AI Model Outage: The Single Point We All Ignored">
+  <meta property="og:title" content="Four Chatbots Died at Once. That Was Never a Coincidence.">
   <meta property="og:description" content="When Claude, Gemini, Grok and ChatGPT all went dark the same morning, the incident exposed a terrifying vulnerability: the frontier AI stack shares more than hype. It shares critical infrastructure. What happened, whyand what it means for anyone building on these platforms.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/simultaneous-ai-outage-postmortem.png">
   <meta property="og:image:alt" content="System architecture illustration showing shared cloud infrastructure underpinning multiple AI chatbot services">
@@ -18,7 +18,7 @@
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/simultaneous-ai-outage-postmortem.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Simultaneous AI Model Outage: The Single Point We All Ignored">
+  <meta name="twitter:title" content="Four Chatbots Died at Once. That Was Never a Coincidence.">
   <meta name="twitter:description" content="When Claude, Gemini, Grok and ChatGPT all went dark the same morning, the incident exposed a terrifying vulnerability: the frontier AI stack shares more than hype. It shares critical infrastructure.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/simultaneous-ai-outage-postmortem.png">
   <meta name="twitter:image:alt" content="System architecture illustration showing shared cloud infrastructure underpinning multiple AI chatbot services">
@@ -51,8 +51,8 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">28 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Simultaneous AI Model Outage: The Single Point We All Ignored</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Thursday 3 September 2026. The morning began as any other. Agents were running. Edits were landing. Then the meters hit the ceiling all at once.</p>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Four Chatbots Died at Once. That Was Never a Coincidence.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Thursday, 3 September 2026, just after breakfast UTC. Claude chokes. ChatGPT follows. Grok flatlines. Gemini wobbles while Google says nothing. Four frontier providers dark inside four hours. The odds of coincidence run near one in ten million. This is the postmortem of the morning the shared layer showed itself.</p>
       <div style="margin-top:24px;">
         <div style="padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:4px;"><strong>Incident scope:</strong> Anthropic Claude partial outage, OpenAI ChatGPT elevated errors, xAI Grok infrastructure issue, Google Gemini user-reported disruptions. All incidents clustered within a four-hour window on Thursday morning UTC.</div>
       </div>
@@ -117,7 +117,7 @@
       <section><h2>8. What We Should Have Learned</h2>
         <p>The 3 September outage was not a once-in-a-generation event. It was a foreseeable convergence of known infrastructure dependencies. The reason it felt exceptional is that most of us have come to treat AI as a utility that just works. The outage pulled the curtain back and showed the machinery. The question now is whether the industry will treat this as a one-off incident or as the wake-up call that forces a redesign of the stack.</p>
         <p>History suggests the latter is unlikely in the short term. Vendors will pat their own systems. Customers will wait for normal service. And the next time four providers go dark at once the incident will be described as "unprecedented" all over again. The cycle repeats until the cost of repetition exceeds the cost of redesign. That is the incentive structure we are all operating inside.</p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/outage-stranded-meme.svg" alt="Pen sketched cartoon of a gloomy man staring at a dead terminal while all four providers are down" width="1200" height="680"><figcaption>Figure 1. The outage morning in one cartoon, drawn for this postmortem. Four providers down. Gemini officially fine.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img src="../images/articles/outage-stranded-meme.svg" alt="Pen sketched cartoon of a skeptical cat staring at a dead terminal while all four providers are down" width="1200" height="680"><figcaption>Figure 1. The outage morning in one cartoon, drawn for this postmortem. Four providers down. Gemini officially fine.</figcaption></figure>
       </section>
 
       <section><h2>9. Series Cross-References</h2>

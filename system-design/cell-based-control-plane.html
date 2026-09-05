@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/cell-based-control-plane.html">
   <title>RFC: Cell-Based Control Plane Architecture | Mukul Kumar Mishra</title>
+  <meta property="og:title" content="One Outage Should Never Eat Every Region">
+  <meta name="twitter:title" content="One Outage Should Never Eat Every Region">
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +60,7 @@
           <span class="chip">12 min read</span>
         </div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">
-          Rethinking Control Planes: Cell-Based Architecture for Blast-Radius Isolation
+          One Outage Should Never Eat Every Region
         </h1>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;">
@@ -78,6 +80,7 @@
             <div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Cellular Isolation</div>
           </div>
         </div>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A bad config ships in one region. Minutes later every region agrees to fail together. Cell-based architecture answers with bulkheads: split the control plane into isolated Raft-backed cells so a blast in one stays in one. This is the design, the Go router, plus the trade-offs.</p>
       </header>
 
       <!-- Article body -->
@@ -96,10 +99,11 @@
 
         <section>
           <h2>2. Proposed Target Architecture</h2>
-        <figure class="article-figure pm-meme"><img src="../images/articles/cellbased-architect-meme.svg" alt="Pen sketched cartoon of a smug man in a hard hat pointing at isolated region cells" width="1200" height="680"><figcaption>Figure 2. Blast radius in one cartoon, drawn for this postmortem. One cell quarantined. The rest stay fine.</figcaption></figure>
+
           <p>
             By restructuring the control plane into isolated, self-contained Cells, where each cell operates its own independent state machine, we decouple failures entirely.
           </p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/cellbased-architect-meme.svg" alt="Pen sketched cartoon of a grinning cat beside isolated region cells" width="1200" height="680"><figcaption>Figure 1. Blast radius in one cartoon, drawn for this postmortem. One cell quarantined. The rest stay fine.</figcaption></figure>
           <div style="border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--card);margin:1.2em 0;">
             <div class="mermaid">
               graph TD
@@ -119,7 +123,7 @@
                   C2 --> C3[Local DynamoDB/Scylla]
                 end
             </div>
-            <p class="muted" style="font-family:var(--font-mono);font-size:0.78rem;text-align:center;margin:14px 0 0;">Figure 1: Cell-based routing showing zero shared runtime dependencies between regions.</p>
+            <p class="muted" style="font-family:var(--font-mono);font-size:0.78rem;text-align:center;margin:14px 0 0;">Figure 2: Cell-based routing showing zero shared runtime dependencies between regions.</p>
           </div>
         </section>
 

@@ -75,7 +75,7 @@
           The Workspace That Ate the Warehouse
         </h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">
-          Notion built the internet's most deceptively expensive blank page. Behind every block is a distributed database, a change stream, an index, a permission graphand a bill that grows while nobody is looking.
+          Every block looks free. Behind each one sits a distributed database, a change stream, an index, a permission graph, plus a meter that never sleeps. Notion turned notes into a 200-billion-block data platform. This is the bill hiding inside the blank page.
         </p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100M+</div></div>
@@ -155,8 +155,9 @@
 
         <section id="the-bill">
           <h2>5. The Bill: What Could This Cost?</h2>
-        <figure class="article-figure pm-meme"><img src="../images/articles/notion-flood-meme.svg" alt="Pen sketched cartoon of a panicked man drowning in a flood of document blocks" width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one cartoon, drawn for this postmortem. Every block is cheap. The flood is not.</figcaption></figure>
+
           <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/notion-flood-meme.svg" alt="Pen sketched cartoon of a grinning cat drowning in a flood of document blocks" width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one cartoon, drawn for this postmortem. Every block is cheap. The flood is not.</figcaption></figure>
           <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failoverand operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transferand monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply. A larger high-memory mix could exceed it.</p>
           <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissionsand replication overhead. Assume 300 TB of compressed lake data across raw, processedand historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storageand scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>
           <p><strong>Search and vector infrastructure.</strong> Notion's own vector-search post says the old architecture reached a cost run rate of millions per year and that the first storage-compute decoupling cut peak cost by 50 percent. Before the later 90 percent reduction, a reasonable modeled range is <strong>$150,000-$350,000 per month</strong> for vector storage, indexing, embeddings, EMRand serving. This is exactly where idle capacity becomes a villain: a rarely queried workspace can still occupy index capacity if storage and compute are welded together.</p>

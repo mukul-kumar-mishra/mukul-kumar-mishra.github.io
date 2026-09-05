@@ -1,0 +1,54 @@
+{
+  "memes": [
+    {
+      "name": "cursor-compaction-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        200,
+        300,
+        300
+      ],
+      "seed": 7,
+      "strip": "Your $20 Subscription Meets a Paywall at 11:47 AM",
+      "title": "575K in. 4.3K out. Who are you people?",
+      "subtitle": "",
+      "scene": "compaction-panels.svg",
+      "banner": [
+        "the tools are fine.",
+        "the memory got mugged."
+      ],
+      "banner_x2": 520,
+      "alt": "Pen sketched cartoon of a skeptical cat staring at a 575K to 4.3K compaction",
+      "caption": "Figure 3. Compaction in one cartoon, drawn for this postmortem. 575K tokens walk in. A two-line summary walks out. The agent meets your codebase like a stranger, at full price.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat staring at a 575K to 4.3K compaction"
+    },
+    {
+      "name": "zero-click-heist-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        120,
+        230,
+        300,
+        300
+      ],
+      "seed": 141,
+      "strip": "You Uploaded a CV. It Downloaded Your API Keys.",
+      "title": "Best summary ever.",
+      "subtitle": "plus a complimentary data breach.",
+      "scene": "zero-click-panels.svg",
+      "banner": [
+        "zero clicks.",
+        "full drive."
+      ],
+      "banner_x2": 360,
+      "alt": "Pen sketched cartoon of a grinning cat presenting a framed exfiltration picture while keys leak out",
+      "caption": "Figure 1. The heist in one cartoon, drawn for this postmortem. One poisoned document in. Your Drive keys out. Nobody clicked anything.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat presenting a framed exfiltration picture"
+    }
+  ]
+}

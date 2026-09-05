@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fresh remote system design, backend and infrastructure jobs filtered by your country. Every listing posted within the last 30 days. Live board, updated continuously.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/jobs.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Remote System Design Jobs by Country | Mukul Kumar Mishra">
+  <meta property="og:description" content="Fresh remote backend, infrastructure and system design roles matched to your country. Updated within the last 30 days.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/jobs.html">
+  <title>Remote System Design Jobs by Country | Mukul Kumar Mishra</title>
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="index.html">Mukul<span class="acc"> Mishra</span></a>
+      <nav class="topnav">
+        <a href="index.html">Home</a>
+        <a href="system-design/index.html">System Design</a>
+        <a href="system-design/ai-slop.html">AI Slop Watch</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> Back to Home
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Job Board</span><span class="chip">Remote only</span><span class="chip">30-day fresh</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Remote System Design Jobs</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Fresh remote roles only — every listing below was posted within the last 30 days, matched to your country on load.</p>
+    </header>
+
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layers"></i> Open Roles</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);flex-wrap:wrap;">
+        <input id="jobSearch" type="search" placeholder="Search roles, companies, tags" aria-label="Search jobs" autocomplete="off" style="flex:2;min-width:180px;background:transparent;border:0;outline:0;color:var(--paper);font-family:var(--font-body);font-size:0.95rem;">
+        <select id="jobCountry" aria-label="Filter by eligible country" style="flex:1;min-width:160px;background:var(--card);border:1px solid var(--line);border-radius:6px;color:var(--paper);font-family:var(--font-body);font-size:0.9rem;padding:8px;">
+          <option value="ALL">All locations</option>
+        </select>
+      </div>
+      <p id="jobCount" class="fl-desc" style="margin:0 0 14px;"></p>
+      <div id="jobList" data-page-size="20" style="display:grid;gap:16px;"></div>
+      <div style="text-align:center;margin-top:20px;">
+        <button class="btn btn-ghost load-more" id="jobMoreBtn" type="button" style="display:none;">Load more jobs</button>
+      </div>
+      <p class="fl-desc" style="margin:16px 0 0;font-size:0.78rem;">How this board works: roles load live from the free public APIs of Remotive and Arbeitnow and link back to the original postings, which both providers' terms require. Only listings from the last 30 days are shown, and the section loads lazily so it never slows down the page. Your country is detected in your browser to preselect the filter — nothing is stored or sent anywhere except the public jobs and location services. Applications happen entirely on the original postings.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
+      <span>Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    lucide.createIcons();
+  </script>
+  <script src="js/jobs.js?v=20260905" defer>
+</body>
+</html>
