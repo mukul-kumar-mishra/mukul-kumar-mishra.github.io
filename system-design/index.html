@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="System design case studies and engineering postmortems by Mukul Kumar Mishra covering distributed systems, AWS cost optimization, PostgreSQL sharding, Kafkaand high-scale architecture.">
+  <meta name="description" content="System design case studies and engineering postmortems by Mukul Kumar Mishra covering distributed systems, AWS cost optimization, PostgreSQL sharding, Kafka, and high-scale architecture.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/">
   <meta property="og:type" content="website">
@@ -27,6 +27,7 @@
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../about.html">About</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
@@ -42,7 +43,7 @@
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design &amp; Architecture Case Studies</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluationsand counterfactual redesigns.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluations, and counterfactual redesigns.</p>
       <div class="grid4" style="margin-top:26px;">
         <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Telemetry Ingestion</div></div>
         <div class="stat"><div class="num">99.99%</div><div class="lbl">Production Availability</div></div>
@@ -65,6 +66,14 @@
       </div>
       <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
       <div id="articleList" style="display:grid;gap:16px;">
+        <article class="feature-link"><div><span class="fl-tag">Developer Tools</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="cursor-claude-token-exhaustion-postmortem.html">Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</a></h3><p class="fl-desc">A forensic teardown of token limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">AI Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="perplexity-answer-engine-postmortem.html">Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice</a></h3><p class="fl-desc">A forensic teardown of RAG retrieval, KV cache reuse, prefill cost, and inference economics at scale.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Cloud Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="simultaneous-ai-outage-postmortem.html">Simultaneous AI Model Outage: The Single Point We All Ignored</a></h3><p class="fl-desc">A failure analysis of a shared dependency beneath multiple frontier AI providers and the resilience lessons.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Agent Runtime</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="replit-agent-runtime-postmortem.html">Replit Agent Postmortem: The Day the Demo Became Production</a></h3><p class="fl-desc">A teardown of sandbox execution, agent retries, deployment risk, and prompt-to-production infrastructure.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Cloud Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</a></h3><p class="fl-desc">A system design analysis of concurrency, cold starts, provider wait time, and serverless cost controls.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Realtime Systems</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a></h3><p class="fl-desc">A practical teardown of WebSocket collaboration, server-authoritative conflict resolution, and realtime cost.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Forensic Architecture</span> <span class="chip">August 2026</span></div><h3><a class="feature-link-title" href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">A data-platform teardown covering PostgreSQL sharding, CDC, Kafka, object storage, vector search, and modeled cloud cost.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Architectural Critique</span> <span class="chip">July 2026</span></div><h3><a class="feature-link-title" href="cell-based-control-plane.html">Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</a></h3><p class="fl-desc">An analysis of regional isolation, failure containment, Raft-backed cells, and zero-blast-radius operations.</p></article>
 
 
 
@@ -113,7 +122,7 @@
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
       var embeddedArticles = [
-        {"title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer", "url": "cursor-claude-token-exhaustion-postmortem.html", "tag": "Developer Tools", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math and the fixes vendors keep postponing.", "tags": ["Cursor", "Claude Code", "Tokens"]},
+        {"title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer", "url": "cursor-claude-token-exhaustion-postmortem.html", "tag": "Developer Tools", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.", "tags": ["Cursor", "Claude Code", "Tokens"]},
         {"title": "Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice", "url": "perplexity-answer-engine-postmortem.html", "tag": "AI Infrastructure", "dateLabel": "September 2026", "readTime": "20 min read", "desc": "A forensic teardown of RAG retrieval, KV cache flaw, prefill tax, 780M monthly queries and the cost difference at 1M events per second.", "tags": ["RAG", "Inference", "1M RPS"]},
         {"title": "Simultaneous AI Model Outage: The Single Point We All Ignored", "url": "simultaneous-ai-outage-postmortem.html", "tag": "Cloud Infrastructure", "dateLabel": "September 2026", "readTime": "28 min read", "desc": "Four frontier providers dark inside the same four-hour window. The shared layer beneath them plus the failure math behind it.", "tags": ["Claude", "Gemini", "Grok", "ChatGPT", "Azure"]},
         {"title": "Replit Agent Postmortem: The Day the Demo Became Production", "url": "replit-agent-runtime-postmortem.html", "tag": "Agent Runtime", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk and the cost difference at 1M events per second.", "tags": ["AI Agents", "Sandbox", "1M RPS"]},
@@ -204,6 +213,7 @@
       }
 
       visibleArticles = allArticles.slice();
+      list.innerHTML = '';
       renderMore();
       fetch('articles.json').then(function (res) { return res.json(); }).then(function (data) {
         if (data && data.length) {

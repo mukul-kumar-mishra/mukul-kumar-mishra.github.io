@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A system design postmortem of Replit Agent and its prompt-to-production platform. Explore sandbox execution, multi-tenant workloads, deployment risk, RPS mathand cloud cost controls.">
+  <meta name="description" content="A system design postmortem of Replit Agent and its prompt-to-production platform covering sandbox execution, deployment risk, RPS math, and cloud cost controls.">
   <meta name="keywords" content="Replit system design, Replit Agent architecture, AI coding agent infrastructure, sandbox execution, prompt to production, multi tenant cloud cost, RPS cost analysis">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/replit-agent-runtime-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="The Dashboard That Deployed Itself">
-  <meta property="og:description" content="A forensic teardown of Replit Agent, sandboxed execution, deployment infrastructure, 1M RPS cost mathand the production risks hidden inside prompt-to-production software.">
+  <meta property="og:description" content="A forensic teardown of Replit Agent, sandboxed execution, deployment infrastructure, 1M RPS cost math, and production risks hidden inside prompt-to-production software.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/replit-agent-runtime-postmortem.png">
   <meta property="og:image:alt" content="Replit Agent system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="The Dashboard That Deployed Itself">
-  <meta name="twitter:description" content="Sandbox execution, AI coding agents, deployment risk, RPS mathand cost controls behind prompt-to-production software.">
+  <meta name="twitter:description" content="Sandbox execution, AI coding agents, deployment risk, RPS math, and cost controls behind prompt-to-production software.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/replit-agent-runtime-postmortem.png">
   <meta name="twitter:image:alt" content="Replit Agent system design postmortem architecture and cost illustration">
   <title>Replit Agent System Design Postmortem and Cost Analysis | Mukul Kumar Mishra</title>
@@ -33,7 +33,7 @@
     "@context":"https://schema.org",
     "@type":"TechArticle",
     "headline":"Replit Agent Postmortem: The Day the Demo Became Production",
-    "description":"A system design postmortem of Replit Agent, sandbox execution, deployment infrastructure, RPS mathand cloud cost controls.",
+    "description":"A system design postmortem of Replit Agent, sandbox execution, deployment infrastructure, RPS math, and cloud cost controls.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
     "datePublished":"2026-09-02",
     "dateModified":"2026-09-02",
@@ -118,7 +118,7 @@
       <section><h2>6. The Proposed Shape at 1M RPS</h2>
         <p>My proposed design starts by classifying events before spending compute. Edge-cache safe reads. Batch telemetry. Coalesce repeated file updates. Route interactive tool calls through a priority queue. Keep a small warm pool for popular runtimes. Put cold projects on demand. Cache dependency layers and build artifacts by content hash. Make agent steps resumable and idempotent.</p>
         <p>Assume those controls reduce origin events from 1M to 250k per second. Assume the better packed workload costs $0.0000009 per origin event. The core monthly work becomes <strong>250,000 x 2,592,000 x $0.0000009 = $583,200</strong>.</p>
-        <p>Use $700k for sandbox capacity, $650k for model and tool calls after routing simple tasks to smaller models, $350k for storage and databasesand $400k for edge, observabilityand failover. The proposed envelope is approximately <strong>$2.68M per month</strong>, or about <strong>$89k per day</strong>.</p>
+        <p>Use $700k for sandbox capacity, $650k for model and tool calls after routing simple tasks to smaller models, $350k for storage and databases, and $400k for edge, observability, and failover. The proposed envelope is approximately <strong>$2.68M per month</strong>, or about <strong>$89k per day</strong>.</p>
         <table><thead><tr><th>At 1M events/sec</th><th>Current-shaped design</th><th>Proposed design</th></tr></thead><tbody>
           <tr><td>Origin events</td><td>1,000,000/s</td><td>250,000/s</td></tr>
           <tr><td>Core event work</td><td>$4.67M/month</td><td>$583k/month</td></tr>

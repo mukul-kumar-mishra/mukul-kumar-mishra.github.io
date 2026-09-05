@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="How Vercel built Fluid Compute to make serverless AI workloads cheaper. A system design postmortem covering compute-resolver, concurrency, cold starts, 1M RPS mathand cloud cost savings.">
+  <meta name="description" content="How Vercel built Fluid Compute to make serverless AI workloads cheaper. A system design postmortem covering compute-resolver, concurrency, cold starts, 1M RPS math, and cloud cost savings.">
   <meta name="keywords" content="Vercel system design, Fluid Compute architecture, serverless cost optimization, compute resolver, AI Gateway infrastructure, cold starts, AWS serverless cost, 1M RPS architecture">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/vercel-fluid-compute-cost-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
-  <meta property="og:description" content="A forensic teardown of Vercel's Fluid Compute architecture, cold-start problem, concurrency model, 1M RPS cost mathand proposed optimizations.">
+  <meta property="og:description" content="A forensic teardown of Vercel's Fluid Compute architecture, cold-start problem, concurrency model, 1M RPS cost math, and proposed optimizations.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/vercel-fluid-compute-cost-postmortem.png">
   <meta property="og:image:alt" content="Vercel Fluid Compute system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
@@ -19,7 +19,7 @@
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response">
-  <meta name="twitter:description" content="Serverless concurrency, compute-resolver, cold starts, RPS mathand cost optimization behind Vercel's AI Cloud.">
+  <meta name="twitter:description" content="Serverless concurrency, compute-resolver, cold starts, RPS math, and cost optimization behind Vercel's AI Cloud.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/vercel-fluid-compute-cost-postmortem.png">
   <meta name="twitter:image:alt" content="Vercel Fluid Compute system design postmortem architecture and cost illustration">
   <title>Vercel Fluid Compute System Design Postmortem and Cost Analysis | Mukul Kumar Mishra</title>
@@ -51,7 +51,7 @@
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
-        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="ai-slop.html">AI Slop Watch</a><a href="../about.html">About</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
       </nav>
     </div>
@@ -112,8 +112,8 @@
         <section>
           <h2>4. The Resolver Problem Nobody Sees</h2>
           <p>Concurrency creates a routing problem. If a request should reuse an already open connection to a warm function instance, the next request has to reach the right Function Router pod. Random routing destroys reuse. Perfect affinity creates hotspots. The largest region has more router pods and therefore more chances to miss the warm connection you wanted.</p>
-          <p>Vercel describes a service called <code>compute-resolver</code>. It behaves like a DNS-style resolver for proxy pods, remembers where a function was routed, improves the chance of reusing an existing TCP tunneland avoids concentrating a sudden traffic spike on one router pod. Vercel reports that the resolver handles more than 100k RPS at peak and resolves in under a millisecond at p99.99.</p>
-          <p>This is the part people skip when they say “just reuse instances.” Reuse is not a boolean. It is a placement problem under load. The router needs enough memory of past decisions to improve locality, enough randomness to avoid hotspotsand enough health information to stop routing into a dead tunnel.</p>
+          <p>Vercel describes a service called <code>compute-resolver</code>. It behaves like a DNS-style resolver for proxy pods, remembers where a function was routed, improves the chance of reusing an existing TCP tunnel, and avoids concentrating a sudden traffic spike on one router pod. Vercel reports that the resolver handles more than 100k RPS at peak and resolves in under a millisecond at p99.99.</p>
+          <p>This is the part people skip when they say “just reuse instances.” Reuse is not a boolean. It is a placement problem under load. The router needs enough memory of past decisions to improve locality, enough randomness to avoid hotspots, and enough health information to stop routing into a dead tunnel.</p>
           <p>The service exists because the simple architecture created a second-order problem. The function instance was not the hard part. Finding it again was.</p>
         </section>
 
@@ -144,7 +144,7 @@
           <h2>6. The One Million RPS Cost Test</h2>
           <p>Vercel reports more than 100k RPS for compute-resolver, not one million RPS for the entire platform. So let us normalize the comparison. Assume one million function events per second, 2 KB total request and response metadata per event, three copies for routing and safetyand a 30-day month.</p>
           <p>The logical traffic is <strong>1,000,000 x 2 KB x 2,592,000 seconds = 5.18 PB per month</strong>. That is before payloads, model streams, logs, tracesand retries. Now assume the old one-request-per-instance shape pays $0.0000012 per event for origin compute, instance lifetime, routingand platform overhead. The current-shaped bill is <strong>1,000,000 x 2,592,000 x $0.0000012 = $3.11M per month</strong>.</p>
-          <p>My proposed shape allows concurrency, drops stale retries, reuses warm instancesand separates active CPU from provider wait time. Suppose only 30 percent of events require origin executionand the effective origin rate falls to $0.0000008 per event. That is <strong>300,000 x 2,592,000 x $0.0000008 = $622,080 per month</strong>. Add $350,000 for edge routing, memory, observability, failoverand the resolver layer. The proposed envelope is approximately <strong>$972,000 per month</strong>.</p>
+          <p>My proposed shape allows concurrency, drops stale retries, reuses warm instances, and separates active CPU from provider wait time. Suppose only 30 percent of events require origin execution and the effective origin rate falls to $0.0000008 per event. That is <strong>300,000 x 2,592,000 x $0.0000008 = $622,080 per month</strong>. Add $350,000 for edge routing, memory, observability, failover, and the resolver layer. The proposed envelope is approximately <strong>$972,000 per month</strong>.</p>
           <table><thead><tr><th>At 1M events/s</th><th>Current-shaped model</th><th>Proposed Fluid-style model</th></tr></thead><tbody>
             <tr><td>Origin events</td><td>1,000,000/s</td><td>300,000/s after reuse and coalescing</td></tr>
             <tr><td>Modeled event rate</td><td>$0.0000012</td><td>$0.0000008</td></tr>
@@ -172,7 +172,7 @@
           <p>Fluid Compute makes the server more efficient, but it also makes the runtime more interesting. Concurrency means requests share a process. Shared processes mean state leaks become possible. A forgotten global variable, a reused buffer, or a cache key missing a tenant identifier can turn a cost optimization into a security incident.</p>
           <p>The safe design needs isolation at the data boundary even when it relaxes isolation at the process boundary. Credentials, request context, trace IDsand tenant data must be scoped per invocation. The runtime can share sockets, bytecodeand memory pages. It cannot share assumptions about who owns the response.</p>
           <p>There is also a fairness problem. A function with long model waits can occupy memory for a long time. A function with expensive CPU work can monopolize execution slots. The scheduler needs separate limits for active CPU, concurrent requests, memory, open connectionsand response duration. One number called “timeout” is not a scheduler.</p>
-          <p>My rollout plan would start with I/O-heavy functions that already have idempotent handlers. I would canary them by function ID, compare active CPU milliseconds, memory GB-hours, p95 time to first byte, error rateand reuse rate, then expand gradually. A platform should not convert every customer at once just because the dashboard has a cheerful green button.</p>
+          <p>My rollout plan would start with I/O-heavy functions that already have idempotent handlers. I would canary them by function ID, compare active CPU milliseconds, memory GB-hours, p95 time to first byte, error rate, and reuse rate, then expand gradually. A platform should not convert every customer at once just because the dashboard has a cheerful green button.</p>
           <div class="tip"><strong>Migration tip:</strong> Before enabling concurrency, audit globals, connection pools, temporary files, cached credentialsand response buffers. The first question is not “how much will this save?” It is “what can accidentally cross request boundaries?”</div>
         </section>
 
