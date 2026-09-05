@@ -43,7 +43,7 @@
   </script>
 </head>
 <body class="site">
-  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
 
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
@@ -138,6 +138,7 @@
         <p><strong>The database can become the agent's scratchpad.</strong> Generated applications often use a database for everything because it is convenient. Replit should give projects sane defaults for connection pooling, migrations, backupsand idle suspension. A project with three users should not keep a large database fleet warm forever because its generated ORM opened a pool of 100 connections.</p>
         <p><strong>The model can be correct and the system can still be wrong.</strong> The agent may generate valid code that violates tenant policy, leaks a secret in a log, or creates an expensive polling loop. Verification must include behavior, security, resource usageand cost. Compile success is not a production readiness signal.</p>
         <div class="tip"><strong>Production tip:</strong> Add a cost test to the agent's acceptance loop. Reject a build that passes functional tests but exceeds its request, memory, query, or egress budget. “It works” is not a sufficient definition of done when the platform pays for every experiment.</div>
+        <figure class="article-figure pm-meme"><img src="../images/articles/replit-retry-meme.svg" alt="Cartoon of an agent pressing retry on a failed install while the meter spins" width="1200" height="680"><figcaption>Figure 2. The retry machine in one cartoon, drawn for this postmortem. Same error. Same install. Fresh bill.</figcaption></figure>
       </section>
 
       <section><h2>8. The Verdict</h2>
@@ -145,6 +146,7 @@
         <p>The winning architecture cannot treat the agent as a chatbot. It has to treat the agent as an untrusted workflow engine with a budget, capabilities, checkpointsand an audit trail. Sandboxes contain code. Queues contain bursts. Content-addressed caches contain repeated work. Region-aware scheduling contains latency and transfer cost. A real deployment gate contains optimism.</p>
         <p>At 1M events per second, the difference between the current-shaped design and the proposed shape is about $5.59M per month in this model. That difference comes from classification, reuse, batchingand refusing to make ephemeral work durable. The platform gets cheaper when it knows what not to remember.</p>
         <p>That is the cliff edge for prompt-to-production software. The demo says anyone can build. Production asks who is allowed to run it, where it can connect, how long it may live, what it may changeand who pays when the agent gets curious.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. <figure class="article-figure pm-meme"><img src="../images/articles/replit-coffee-meme.svg" alt="Pen sketched cartoon of an exhausted man pressing retry forever beside a coffee cup" width="1200" height="680"><figcaption>Figure 3. Attempt 48 in one cartoon, drawn for this postmortem. The package has not changed. The meter has.</figcaption></figure>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. The infrastructure still has to survive the user's imagination.</strong></p>
       </section>
 

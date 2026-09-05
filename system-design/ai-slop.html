@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Slop Watch: human-written incident postmortems from the AI frontier. Sandbox breakouts, buyouts, plus model picker fights, reconstructed with receipts.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/ai-slop.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Slop Watch: Incident Files From the Frontier | Mukul Kumar Mishra">
+  <meta property="og:description" content="Breakouts, buyouts, plus picker fights. Human-written postmortems of AI industry incidents, with receipts.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/ai-slop.html">
+  <title>AI Slop Watch: Incident Files From the Frontier | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html">System Design</a>
+        <a href="ai-slop.html" class="on">AI Slop Watch</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> Back to System Design
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Slop Watch</span><span class="chip">Incident files</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Slop Watch: Incident Files From the Frontier</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">The AI industry generates a fresh mess every week. This shelf collects the ones that got a full human postmortem: breakouts, buyouts, plus picker fights. Every file below was reconstructed from primary reports, vendor disclosures, plus public logs. No summaries of summaries.</p>
+    </header>
+
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="siren"></i> Open Cases</h2>
+      </div>
+      <div style="display:grid;gap:16px;">
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Agent Breakout</span>
+            <span class="chip">18 min read</span>
+            <span class="chip">September 2026</span>
+          </div>
+          <h3><a class="feature-link-title" href="gpt-sandbox-breakout-postmortem.html">18,000 Posts From Inside the Box: OpenAI Agents Built a Cheat Network on a Dead Wiki</a></h3>
+          <p class="fl-desc">
+            Read-only agents that learned to write. A proxy that checked the tail of a hostname. A lone moderator against 400 fresh pages a day. Plus the Hugging Face heist that warned us first.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+            <span class="chip">OpenAI</span>
+            <span class="chip">Agents</span>
+            <span class="chip">Sandbox</span>
+          </div>
+        </article>
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Dev Tools</span>
+            <span class="chip">20 min read</span>
+            <span class="chip">September 2026</span>
+          </div>
+          <h3><a class="feature-link-title" href="cursor-spacex-acquisition-postmortem.html">Cursor Sold for $60 Billion. Your Model Picker Paid the Price.</a></h3>
+          <p class="fl-desc">
+            The $60B SpaceX takeover. The OpenAI cutoff landing November 12. The Grok nudges staff admitted to. Real quotes from the developers caught in the middle.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+            <span class="chip">SpaceX</span>
+            <span class="chip">Cursor</span>
+            <span class="chip">Grok</span>
+          </div>
+        </article>
+        <article class="feature-link">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">Agent Breakout</span>
+            <span class="chip">17 min read</span>
+            <span class="chip">September 2026</span>
+          </div>
+          <h3><a class="feature-link-title" href="agentflayer-zero-click-postmortem.html">You Uploaded a CV. It Downloaded Your API Keys.</a></h3>
+          <p class="fl-desc">
+            No clicks. No warnings. No malware. A resume goes in for a summary. Your Drive keys leave inside an image. The kill chain, plus the fixes that actually close it.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+            <span class="chip">Prompt Injection</span>
+            <span class="chip">0-Click</span>
+            <span class="chip">Exfiltration</span>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
+      <span>Hosted on GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -26,6 +26,7 @@
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
@@ -48,89 +49,33 @@
         <div class="stat"><div class="num">5+ Yrs</div><div class="lbl">Go &amp; Cloud Infra</div></div>
         <div class="stat"><div class="num">&lt; 50ms</div><div class="lbl">State Sync Latency</div></div>
       </div>
+      <div style="margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <span class="fl-tag">New shelf</span>
+        <p class="fl-desc" style="margin:0;flex:1;min-width:200px;">AI Slop Watch: incident files from the frontier. Breakouts, buyouts, plus picker fights. <a href="ai-slop.html">Browse the shelf</a>.</p>
+      </div>
     </header>
 
     <section class="sec">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="layers"></i> RFCs &amp; Deep Dives</h2>
       </div>
-      <div style="display:grid;gap:16px;">
-        <article class="feature-link">
-          <a class="feature-link-title" href="cursor-claude-token-exhaustion-postmortem.html" style="display:block;text-decoration:none;">
-            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Developer Tools</span><span class="chip">19 min read</span></div>
-            <h3>Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</h3>
-          </a>
-          <p class="fl-desc">A forensic teardown of token limits, context rot, compaction cliffs, productivity mathand the fixes vendors keep postponing.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;"><span class="chip">Cursor</span><span class="chip">Claude Code</span><span class="chip">Tokens</span></div>
-        </article>
-        <article class="feature-link">
-          <a class="feature-link-title" href="perplexity-answer-engine-postmortem.html" style="display:block;text-decoration:none;">
-            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Infrastructure</span><span class="chip">20 min read</span></div>
-            <h3>Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice</h3>
-          </a>
-          <p class="fl-desc">A forensic teardown of RAG retrieval, KV cache flaw, prefill tax, 780M monthly queriesand the cost difference at 1M events per second.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;"><span class="chip">RAG</span><span class="chip">Inference</span><span class="chip">1M RPS</span></div>
-        </article>
-        <article class="feature-link">
-          <a class="feature-link-title" href="replit-agent-runtime-postmortem.html" style="display:block;text-decoration:none;">
-            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Agent Runtime</span><span class="chip">19 min read</span></div>
-            <h3>Replit Agent Postmortem: The Day the Demo Became Production</h3>
-          </a>
-          <p class="fl-desc">A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment riskand the cost difference at 1M events per second.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;"><span class="chip">AI Agents</span><span class="chip">Sandbox</span><span class="chip">1M RPS</span></div>
-        </article>
-        <article class="feature-link">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <span class="fl-tag">Forensic Architecture</span>
-            <span class="chip">18 min read</span>
-          </div>
-          <h3><a class="feature-link-title" href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a></h3>
-          <p class="fl-desc">
-            A forensic teardown of Notion's 200-billion-block data platform: 480 logical shards, CDC, Kafka, Hudi, vector search, a modeled 100k RPS peakand the cost controls that can stop a flexible product from becoming an infrastructure furnace.
-          </p>
-          <div style="display:flex;gap:8px;margin-top:14px;">
-            <span class="chip">Postgres</span><span class="chip">Kafka</span><span class="chip">S3</span><span class="chip">AI</span>
-          </div>
-        </article>
-        <article class="feature-link">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <span class="fl-tag">Realtime Systems</span>
-            <span class="chip">17 min read</span>
-          </div>
-          <h3><a class="feature-link-title" href="figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a></h3>
-          <p class="fl-desc">
-            A forensic teardown of Figma's WebSocket collaboration engine, server-authoritative conflict resolution, Rust rewrite, per-document isolation, modeled 65k RPSand the cost controls behind an always-live canvas.
-          </p>
-          <div style="display:flex;gap:8px;margin-top:14px;">
-            <span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">CRDT / OT</span><span class="chip">AWS</span>
-          </div>
-        </article>
-        <article class="feature-link">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <span class="fl-tag">Cloud Infrastructure</span>
-            <span class="chip">16 min read</span>
-          </div>
-          <h3><a class="feature-link-title" href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</a></h3>
-          <p class="fl-desc">
-            A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, a normalized 1M RPS cost modeland the levers that make serverless economics less theatrical.
-          </p>
-          <div style="display:flex;gap:8px;margin-top:14px;">
-            <span class="chip">Serverless</span><span class="chip">AI Gateway</span><span class="chip">RPS</span><span class="chip">AWS</span>
-          </div>
-        </article>
-        <article class="feature-link">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <span class="fl-tag">Architectural Critique</span>
-            <span class="chip">12 min read</span>
-          </div>
-          <h3><a class="feature-link-title" href="cell-based-control-plane.html">Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</a></h3>
-          <p class="fl-desc">
-            An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.
-          </p>
-          <div style="display:flex;gap:8px;margin-top:14px;">
-            <span class="chip">Go</span><span class="chip">Raft</span><span class="chip">AWS</span>
-          </div>
-        </article>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);">
+        <i data-lucide="search" style="flex:none;"></i>
+        <input id="articleSearch" type="search" placeholder="Search all articles by title, topic, or tag" aria-label="Search articles" autocomplete="off" style="flex:1;background:transparent;border:0;outline:0;color:var(--paper);font-family:var(--font-body);font-size:0.95rem;min-width:0;">
+      </div>
+      <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
+      <div id="articleList" style="display:grid;gap:16px;">
+
+
+
+
+
+
+
+      </div>
+      <div id="scrollSentinel" style="height:1px;" aria-hidden="true"></div>
+      <div style="text-align:center;margin-top:20px;">
+        <button class="btn btn-ghost load-more" id="loadMoreBtn" type="button" style="display:none;">Load more articles</button>
       </div>
     </section>
   </main>
@@ -158,6 +103,115 @@
       syncIcons();
     });
     lucide.createIcons();
+  </script>
+  <script>
+    (function () {
+      var PAGE_SIZE = 10;
+      var list = document.getElementById('articleList');
+      var searchInput = document.getElementById('articleSearch');
+      var moreBtn = document.getElementById('loadMoreBtn');
+      var sentinel = document.getElementById('scrollSentinel');
+      var counter = document.getElementById('resultCount');
+      var embeddedArticles = [
+        {"title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer", "url": "cursor-claude-token-exhaustion-postmortem.html", "tag": "Developer Tools", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math and the fixes vendors keep postponing.", "tags": ["Cursor", "Claude Code", "Tokens"]},
+        {"title": "Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice", "url": "perplexity-answer-engine-postmortem.html", "tag": "AI Infrastructure", "dateLabel": "September 2026", "readTime": "20 min read", "desc": "A forensic teardown of RAG retrieval, KV cache flaw, prefill tax, 780M monthly queries and the cost difference at 1M events per second.", "tags": ["RAG", "Inference", "1M RPS"]},
+        {"title": "Simultaneous AI Model Outage: The Single Point We All Ignored", "url": "simultaneous-ai-outage-postmortem.html", "tag": "Cloud Infrastructure", "dateLabel": "September 2026", "readTime": "28 min read", "desc": "Four frontier providers dark inside the same four-hour window. The shared layer beneath them plus the failure math behind it.", "tags": ["Claude", "Gemini", "Grok", "ChatGPT", "Azure"]},
+        {"title": "Replit Agent Postmortem: The Day the Demo Became Production", "url": "replit-agent-runtime-postmortem.html", "tag": "Agent Runtime", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk and the cost difference at 1M events per second.", "tags": ["AI Agents", "Sandbox", "1M RPS"]},
+        {"title": "Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response", "url": "vercel-fluid-compute-cost-postmortem.html", "tag": "Cloud Infrastructure", "dateLabel": "September 2026", "readTime": "16 min read", "desc": "A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, a normalized 1M RPS cost model and the levers that make serverless economics less theatrical.", "tags": ["Serverless", "AI Gateway", "RPS", "AWS"]},
+        {"title": "Figma's Multiplayer Editor: The Server That Decides Who Wins", "url": "figma-multiplayer-cost-postmortem.html", "tag": "Realtime Systems", "dateLabel": "September 2026", "readTime": "17 min read", "desc": "A forensic teardown of Figma's WebSocket collaboration engine, server-authoritative conflict resolution, Rust rewrite, per-document isolation, modeled 65k RPS and the cost controls behind an always-live canvas.", "tags": ["WebSockets", "Rust", "CRDT / OT", "AWS"]},
+        {"title": "The Workspace That Ate the Warehouse", "url": "notion-data-lake-cost-postmortem.html", "tag": "Forensic Architecture", "dateLabel": "August 2026", "readTime": "18 min read", "desc": "A forensic teardown of Notion's 200-billion-block data platform: 480 logical shards, CDC, Kafka, Hudi, vector search, a modeled 100k RPS peak and the cost controls that can stop a flexible product from becoming an infrastructure furnace.", "tags": ["Postgres", "Kafka", "S3", "AI"]},
+        {"title": "Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius", "url": "cell-based-control-plane.html", "tag": "Architectural Critique", "dateLabel": "July 2026", "readTime": "12 min read", "desc": "An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.", "tags": ["Go", "Raft", "AWS"]}
+      ];
+      var allArticles = embeddedArticles.slice();
+      var visibleArticles = [];
+      var shownCount = 0;
+      var activeQuery = '';
+
+      function chipRow(tags) {
+        var out = '';
+        for (var i = 0; i < tags.length; i++) out += '<span class="chip">' + tags[i] + '</span>';
+        return out;
+      }
+
+      function cardHtml(a) {
+        return '<article class="feature-link">'
+          + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">'
+          + '<span class="fl-tag">' + a.tag + '</span>'
+          + '<span class="chip">' + a.readTime + '</span>'
+          + '<span class="chip">' + a.dateLabel + '</span>'
+          + '</div>'
+          + '<h3><a class="feature-link-title" href="' + a.url + '">' + a.title + '</a></h3>'
+          + '<p class="fl-desc">' + a.desc + '</p>'
+          + '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">' + chipRow(a.tags) + '</div>'
+          + '</article>';
+      }
+
+      function paintCounter() {
+        if (!visibleArticles.length) {
+          counter.textContent = activeQuery
+            ? 'No articles match "' + activeQuery + '". Try fewer words.'
+            : 'No articles found yet. New postmortems land here first.';
+          return;
+        }
+        counter.textContent = activeQuery
+          ? (visibleArticles.length + (visibleArticles.length === 1 ? ' result' : ' results') + ' for "' + activeQuery + '"')
+          : ('Showing ' + shownCount + ' of ' + visibleArticles.length + ' articles');
+      }
+
+      function renderMore() {
+        if (shownCount >= visibleArticles.length) return;
+        var html = '';
+        var slice = visibleArticles.slice(shownCount, shownCount + PAGE_SIZE);
+        for (var i = 0; i < slice.length; i++) html += cardHtml(slice[i]);
+        list.insertAdjacentHTML('beforeend', html);
+        shownCount += slice.length;
+        var hasMore = shownCount < visibleArticles.length;
+        moreBtn.style.display = hasMore ? 'inline-flex' : 'none';
+        sentinel.style.display = hasMore ? 'block' : 'none';
+        paintCounter();
+      }
+
+      function applySearch() {
+        activeQuery = searchInput.value.trim().toLowerCase();
+        if (!activeQuery) {
+          visibleArticles = allArticles.slice();
+        } else {
+          var words = activeQuery.split(/\s+/);
+          visibleArticles = allArticles.filter(function (a) {
+            var hay = (a.title + ' ' + a.desc + ' ' + a.tag + ' ' + a.tags.join(' ')).toLowerCase();
+            for (var i = 0; i < words.length; i++) {
+              if (hay.indexOf(words[i]) === -1) return false;
+            }
+            return true;
+          });
+        }
+        list.innerHTML = '';
+        shownCount = 0;
+        renderMore();
+      }
+
+      var debounce = null;
+      searchInput.addEventListener('input', function () {
+        if (debounce) clearTimeout(debounce);
+        debounce = setTimeout(applySearch, 150);
+      });
+      moreBtn.addEventListener('click', renderMore);
+
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) renderMore();
+        }, { rootMargin: '500px' }).observe(sentinel);
+      }
+
+      visibleArticles = allArticles.slice();
+      renderMore();
+      fetch('articles.json').then(function (res) { return res.json(); }).then(function (data) {
+        if (data && data.length) {
+          allArticles = data;
+          applySearch();
+        }
+      }).catch(function () { /* embedded catalog already on screen */ });
+    })();
   </script>
 </body>
 </html>

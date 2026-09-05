@@ -429,6 +429,10 @@ h1, h2, h3, h4, h5, h6 {
 .article-figure { margin: 1.6rem 0 2rem; }
 .article-figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
 .article-figure figcaption { margin-top: 8px; color: var(--mist); font-family: var(--font-body); font-size: 0.72rem; line-height: 1.55; text-align: center; }
+.pm-meme { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 10px; }
+.pm-meme img { border-radius: 10px; }
+.pm-meme figcaption { font-size: 0.78rem; }
+.pm-meme figcaption strong { color: var(--lime); }
 .article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
 .article-card:hover { color: var(--paper); }

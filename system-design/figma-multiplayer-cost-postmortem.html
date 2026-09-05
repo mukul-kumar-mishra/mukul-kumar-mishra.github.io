@@ -51,6 +51,7 @@
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
       </nav>
     </div>
@@ -73,7 +74,7 @@
         <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 1, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol and infrastructure decisions below come from its engineering posts and public filings. RPS and infrastructure-cost figures are a clearly labeled scenario model. The server knows the truth; my spreadsheet is only wearing a convincing hat.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol and infrastructure decisions below come from its engineering posts and public filings. RPS and infrastructure-cost figures are a clearly labeled scenario model. The server knows the truth. My spreadsheet is only wearing a convincing hat.</aside>
 
       <article class="prose">
         <figure class="article-figure">
@@ -105,6 +106,7 @@
 
         <section>
           <h2>4. Conflict Resolution: No, Figma Is Not Just CRDTs</h2>
+        <figure class="article-figure pm-meme"><img src="../images/articles/figma-referee-meme.svg" alt="Pen sketched cartoon of a stern man refereeing two fighting cursors over one rectangle" width="1200" height="680"><figcaption>Figure 2. Conflict resolution in one cartoon, drawn for this postmortem. Two cursors fight. The server picks Ana.</figcaption></figure>
           <p>Internet discussions love calling every collaborative editor “CRDT-based.” It is a useful shortcut and often an inaccurate one. Figma's system is centralized. The server is the authority. It tracks the latest value sent for a property on an object. If two clients change unrelated properties, both changes survive. If they change the same property, the operation that arrives later wins according to server order.</p>
           <p>That is not a moral failure. It is a product decision. In a design tool, two users rarely edit the exact same property at the exact same moment. If they do, one result must win. Figma accepts that a text property changed concurrently may end as either value rather than interleaving characters like a text editor. The product optimizes for spatial design operations, not collaborative novel writing.</p>
           <p>Tree structure is harder. A user can reparent an objectand two concurrent reparent operations can try to create a cycle. Figma's server validates the tree and rejects operations that would make the document invalid. On the client, a temporary weird state may exist while the rejection travels back. It is not perfect. It is bounded, understandableand preferable to a mathematically elegant document that has parent A under B under A forever.</p>

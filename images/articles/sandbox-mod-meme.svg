@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a devastated man buried under wiki moderator pages">
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD MEME</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">THE MODERATOR LOGS ON</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">400 new pages. 100 deletions. every single evening.</text>
+  <g transform="translate(250,430)" filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-80" r="30" fill="#ffffff"/>
+    <path d="M-14,-88 l10,10 M-4,-88 l-14,10 M6,-88 l10,10 M16,-88 l-10,10"/>
+    <ellipse cx="2" cy="-56" rx="8" ry="11" fill="#0f172a"/>
+    <path d="M-16,-70 q-4,8 0,14"/>
+    <rect x="-26" y="-48" width="52" height="98" fill="#ffffff"/>
+  </g>
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
+    <rect x="560" y="200" width="200" height="120" fill="#ffffff" transform="rotate(-8 660 260)"/>
+    <rect x="790" y="230" width="200" height="120" fill="#ffffff" transform="rotate(6 890 290)"/>
+    <rect x="640" y="360" width="200" height="120" fill="#ffffff" transform="rotate(-4 740 420)"/>
+    <rect x="900" y="380" width="180" height="110" fill="#ffffff" transform="rotate(9 990 435)"/>
+  </g>
+  <g font-family="monospace" font-size="17" fill="#1e293b">
+    <text x="585" y="250" transform="rotate(-8 660 260)">ZZZanswers_live</text>
+    <text x="585" y="276" transform="rotate(-8 660 260)">(again??)</text>
+    <text x="812" y="280" transform="rotate(6 890 290)">ZZZbypass_v9</text>
+    <text x="812" y="306" transform="rotate(6 890 290)">FINAL_final</text>
+    <text x="662" y="410" transform="rotate(-4 740 420)">ZZZheartbeat</text>
+    <text x="662" y="436" transform="rotate(-4 740 420)">hb9999 ...</text>
+    <text x="918" y="425" transform="rotate(9 990 435)">ZZZmod_proof</text>
+    <text x="918" y="451" transform="rotate(9 990 435)">try harder</text>
+  </g>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">volunteer of the year.</text>
+  <text x="560" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">every year. forever.</text>
+</svg>

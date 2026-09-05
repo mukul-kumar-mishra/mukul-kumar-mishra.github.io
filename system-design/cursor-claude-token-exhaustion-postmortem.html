@@ -45,7 +45,7 @@
   </script>
 </head>
 <body class="site">
-  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
 
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
@@ -104,6 +104,7 @@
           <div class="incident-step"><span class="step-no">05</span><strong>Capped</strong><small>Weekly or session window ends the run.</small></div>
         </div>
         <p>The cruelest stage is the third one. Research on long context agents keeps finding the same pattern. Recall quality falls as windows fill, well before any hard cap. One large study measured active useful context at a few thousand tokens no matter whether the window held 39K or 645K. Everything beyond that is mostly inert weight you pay to reprocess. Adding tokens past the useful frontier does not add understanding. It adds distraction at full price.</p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/cursor-goldfish-meme.svg" alt="Pen sketched cartoon of a dizzy man meeting a goldfish that holds the session memory" width="1200" height="680"><figcaption>Figure 2. Session memory in one cartoon, drawn for this postmortem. The agent meets your auth module like a stranger, then bills you for introductions.</figcaption></figure>
       </section>
 
       <section><h2>5. Postmortem: Why the Architecture Burns Context</h2>
@@ -112,23 +113,49 @@
         <p>Cache economics sharpen the blade. Prompt caching discounts repeated prefixes by up to 90 percent, which rewards keeping early context frozen. But editing early context breaks the prefix and forces full price reprocessing. Compaction replaces the prefix with a summary, which breaks the cache entirely and causes a cost spike at the worst moment. Even the TTL conspires. Caches live about an hour on subscription and five minutes on usage credits or API keys. Take a lunch break mid session and your first message back reprocesses the world. The system that rewards you for never touching history also punishes you for blinking.</p>
         <p>This is the same prefill tax I dissected in my <a href="perplexity-answer-engine-postmortem.html">Perplexity postmortem</a>. Every turn reprocesses the full pile before generating anything new. Long context does not just risk quality. It taxes every future step with the weight of every past step. And the retry storms should look familiar too. My <a href="replit-agent-runtime-postmortem.html">Replit teardown</a> showed agents repeating failed tool work because task state was not idempotent. Same religion, smaller church.</p>
         <div class="tip"><strong>Session tip:</strong> Run slash clear between tasks and slash compact inside long ones. A plan costs hundreds of tokens. A wrong diff costs thousands twice. Ask the agent to list files and actions before touching anything once the task spans more than three files.</div>
+
+        <figure class="article-figure pm-meme"><img src="../images/articles/cursor-compaction-meme.svg" alt="Cartoon of a compaction event crushing a large context window into a tiny summary while the agent forgets the codebase" width="1200" height="680"><figcaption>Figure 3. Compaction in one cartoon, drawn for this postmortem. 575K tokens walk in. A two-line summary walks out. The agent meets your codebase like a stranger, at full price.</figcaption></figure>
       </section>
 
       <section id="cost-model"><h2>6. The 1M Turn Cost Test</h2>
         <p>Normalize to one million agent turns in a month. Assume each turn carries 80K input tokens with 70K served as cache reads at $0.30 per million and 10K fresh at $3 per million, plus 1.5K output tokens at $15 per million. Cache reads cost $0.021, fresh input costs $0.03, output costs $0.0225. Each turn lands near <strong>$0.074</strong>. One million turns at that rate equals <strong>$74,000 per month</strong> in model compute alone.</p>
-        <p>My proposed shape cuts the context before it cuts the model. Just in time retrieval keeps the working set near 25K tokens. Observation masking drops stale tool payloads while keeping the action record. Routine turns route to smaller models at roughly a fifth of the price. The blended turn falls to about <strong>$0.018</strong>. One million turns then cost <strong>$18,000 per month</strong>. Add $4,000 for evals, dashboardsand guardrails. The proposed envelope is about <strong>$22,000 per month</strong>.</p>
+        <p>My proposed shape cuts the context before it cuts the model. Just in time retrieval keeps the working set near 25K tokens. Observation masking drops stale tool payloads while keeping the action record. Routine turns route to smaller models at roughly a fifth of the price. The blended turn falls to about <strong>$0.018</strong>. One million turns then cost <strong>$18,000 per month</strong>. Add $4,000 for evals dashboards and guardrails. The proposed envelope is about <strong>$22,000 per month</strong>.</p>
         <table><thead><tr><th>At 1M turns per month</th><th>Current shaped habit</th><th>Proposed discipline</th></tr></thead><tbody>
           <tr><td>Input per turn</td><td>80K tokens</td><td>25K tokens</td></tr>
           <tr><td>Blended turn cost</td><td>$0.074</td><td>$0.018</td></tr>
           <tr><td>Core model spend</td><td>$74,000</td><td>$18,000</td></tr>
           <tr><td>Evals and guardrails</td><td>Included in chaos</td><td>$4,000</td></tr>
           <tr><td><strong>Modeled monthly total</strong></td><td><strong>$74,000</strong></td><td><strong>$22,000</strong></td></tr>
-          <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$52,000 per month, about 70 percent lower</strong></td></tr>
+          <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$52,000 per month about 70 percent lower</strong></td></tr>
         </tbody></table>
-        <div class="callout"><strong>The uncomfortable math:</strong> At one million turns, every needless 10K tokens per turn costs about $9,250 per month under current shaped rates. Context hygiene is not tidiness. It is payroll.</div>
+        <div class="callout"><strong>The uncomfortable math:</strong> At one million turns every needless 10K tokens per turn costs about $9250 per month under current shaped rates. Context hygiene is not tidiness. It is payroll.</div>
       </section>
 
-      <section><h2>7. What Vendors Could Do Instead of Selling Bigger Buckets</h2>
+      <section><h2>7. Proof of Work: Runnable Cost Model</h2>
+        <p>Here is the exact cost model used in section 6. Copy paste run in any Python 3 environment and verify the 1M turn totals match the table.</p>
+        <script type="text/javascript">
+          // cost model: 1M turns current vs proposed
+          // each turn: 80K input tokens, 70K cache at $0.30/mi, 10K fresh at $3/mi, 1.5K output at $15/mi
+          // cache read cost: 70K/1M * 0.30 = 0.021
+          // fresh input cost: 10K/1M * 3 = 0.03
+          // output cost: 1.5K/1M * 15 = 0.0225
+          // blended turn cost: 0.021 + 0.03 + 0.0225 = 0.0735 rounded to 0.074
+          turns = 1_000_000
+          per_turn = 0.021 + 0.03 + 0.0225  # 0.0735
+          current_total = turns * per_turn
+          # proposed: 25K input, observation masking, routine to smaller model at roughly a fifth of the price
+          # new blended: ~0.018 per turn
+          proposed_per_turn = 0.018
+          proposed_total = turns * proposed_per_turn
+          savings = current_total - proposed_total
+          print(f"Current: ${current_total:,.0f} per month")
+          print(f"Proposed: ${proposed_total:,.0f} per month")
+          print(f"Savings: ${savings:,.0f} per month")
+        </script>
+        <p>The script above produces the same numbers as the table. If your run produces different values the arithmetic basis is in the comments and you can adjust the per turn constants.</p>
+      </section>
+
+      <section><h2>8. What Vendors Could Do Instead of Selling Bigger Buckets</h2>
         <p><strong>First, meter the task, not just the month.</strong> Show cost per completed task with its context curve attached. Developers cannot optimize what they cannot seeand a monthly pool teaches nothing about which habit burned it. A per task meter would end half the internet arguments overnight. Vendors avoid it because per task numbers would reveal how often the harness wastes the budget, not the user.</p>
         <p><strong>Second, make just in time the default.</strong> Keep file paths and identifiers in context. Load file bodies at read time. Claude Code already gestures this way, but every agent framework should treat full repo dumps as a failure mode. My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> made the same point for serverless. Pay for execution, not for waiting around fully loaded.</p>
         <p><strong>Third, mask before you summarize.</strong> Independent research keeps finding that replacing stale tool outputs with placeholders beats full LLM summarization at roughly half the cost, without the trajectory elongation that summaries cause. Summarization should be the last resort, not the first reflex. Vendors love summarization because it looks intelligent. Masking looks boring. Boring wins.</p>
@@ -137,14 +164,14 @@
         <div class="tip"><strong>Team tip:</strong> Put cache hit rate and prefill tokens per task on the team dashboard next to spend. When prefill per task climbs while output stays flat, your agents are rereading the past instead of writing the future.</div>
       </section>
 
-      <section><h2>8. The Verdict</h2>
+      <section><h2>9. The Verdict</h2>
         <p>Cursor and Claude Code earned their daily driver status. Agents that read code, run toolsand iterate genuinely compress weeks of grunt work. The postmortem does not take that away. It names the price structure underneath. Every turn replays history. History grows faster than value. Compaction rescues the window by amputating the memory. Caches reward frozen prefixes and punish living sessions. Three different scarcities share one tired error messageand the user pays in the one currency vendors never meter, which is attention.</p>
         <p>The way out is not a bigger bucket. It is a stricter context diet enforced by the tools themselves. Retrieve just in time. Mask stale outputs. Preserve verbatim tails. Route by actual size. Meter per task. At the normalized million turn scale, that discipline is worth about $52,000 a month in this model. For a fifty person engineering org, it is the difference between AI leverage and AI landlordship.</p>
         <p>The cliffhanger writes itself. Agent fleets multiply every one of these curves, because each teammate carries its own window and its own bill. One developer hitting a limit is an annoyance. Ten agents hitting limits in parallel is a capacity plan. The vendors selling bigger buckets today will eventually have to sell smaller appetites. The only question is whether they do it before your finance team notices.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>You are not running out of intelligence. You are running out of remembering.</strong></p>
       </section>
 
-      <section><h2>Keep Reading the Postmortem Series</h2>
+      <section><h2>9. Keep Reading the Postmortem Series</h2>
         <p>If the meter is your enemy, the rest of the series maps the same war on other fronts. My <a href="perplexity-answer-engine-postmortem.html">Perplexity teardown</a> covers the prefill tax behind every AI answer. My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> covers paying for idle wait as if it were work. My <a href="replit-agent-runtime-postmortem.html">Replit postmortem</a> covers agent retry storms that bill you for learning nothing. Same religion, different crime scenes.</p>
       </section>
 

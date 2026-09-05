@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a smug man in a hard hat pointing at isolated region cells">
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="129" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD MEME</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">THIS CELL SHALL NOT PASS</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">blast radius: one cell. ego: global.</text>
+  <g transform="translate(250,400)" filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M-32,-102 Q0,-128 32,-102 L32,-96 L-32,-96 Z" fill="#ffffff"/>
+    <rect x="-40" y="-104" width="80" height="10" fill="#ffffff"/>
+    <circle cx="0" cy="-80" r="30" fill="#ffffff"/>
+    <path d="M-16,-88 q9,-6 18,-1 M4,-88 q9,-6 18,-1"/>
+    <path d="M-6,-58 q12,3 18,-5"/>
+    <rect x="-26" y="-48" width="52" height="98" fill="#ffffff"/>
+    <path d="M26,-30 L120,-55"/>
+    <circle cx="124" cy="-56" r="5" fill="#ffffff"/>
+  </g>
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="4" fill="none">
+    <rect x="600" y="220" width="140" height="120" fill="#e8f4ff"/>
+    <rect x="770" y="220" width="140" height="120" fill="#e8f4ff"/>
+    <rect x="940" y="220" width="140" height="120" fill="#ffffff"/>
+    <path d="M940,220 l140,120 M1080,220 l-140,120" stroke="#e11d48"/>
+  </g>
+  <g font-family="monospace" font-size="17" fill="#0f172a">
+    <text x="622" y="285">cell A: fine</text>
+    <text x="792" y="285">cell B: fine</text>
+    <text x="955" y="285">cell C: ...</text>
+    <text x="955" y="312">quarantined</text>
+  </g>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-style="italic" fill="#475569">
+    <text x="600" y="400">zero shared runtime.</text>
+    <text x="600" y="432">zero shared tears.</text>
+  </g>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">one region sneezes.</text>
+  <text x="560" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">nobody else catches it.</text>
+</svg>

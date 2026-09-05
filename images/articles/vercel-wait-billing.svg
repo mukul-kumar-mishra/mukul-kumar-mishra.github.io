@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="Themed bar diagram of AI Gateway runtime hours showing a small slice of CPU work against a large span of billed waiting time">
+  <rect x="0" y="0" width="1200" height="600" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="600" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD DIAGRAM</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">16,000 RUNTIME HOURS. ONE MONTH.</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">only 1,200 of them did CPU work.</text>
+  <rect x="60" y="210" width="1080" height="90" fill="#e11d48" stroke="#0f172a" stroke-width="4"/>
+  <rect x="60" y="210" width="81" height="90" fill="#16a34a"/>
+  <line x1="141" y1="200" x2="141" y2="310" stroke="#0f172a" stroke-width="3"/>
+  <text x="60" y="345" font-family="monospace" font-size="19" font-weight="bold" fill="#16a34a">CPU work: 1,200h (7.5%)</text>
+  <text x="560" y="345" font-family="monospace" font-size="19" font-weight="bold" fill="#e11d48">waiting on providers: 14,800h</text>
+  <text x="60" y="395" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" fill="#1e293b">one-request-per-instance treats waiting as occupancy.</text>
+  <text x="60" y="427" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" fill="#1e293b">AI workloads turned that into a measurable tax.</text>
+  <rect x="60" y="460" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="510" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">a fleet whose finest skill is waiting politely.</text>
+</svg>

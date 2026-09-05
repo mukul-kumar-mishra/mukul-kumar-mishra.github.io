@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer",
+    "url": "cursor-claude-token-exhaustion-postmortem.html",
+    "tag": "Developer Tools",
+    "date": "2026-09-04",
+    "dateLabel": "September 2026",
+    "readTime": "19 min read",
+    "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math and the fixes vendors keep postponing.",
+    "tags": ["Cursor", "Claude Code", "Tokens"]
+  },
+  {
+    "title": "Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice",
+    "url": "perplexity-answer-engine-postmortem.html",
+    "tag": "AI Infrastructure",
+    "date": "2026-09-04",
+    "dateLabel": "September 2026",
+    "readTime": "20 min read",
+    "desc": "A forensic teardown of RAG retrieval, KV cache flaw, prefill tax, 780M monthly queries and the cost difference at 1M events per second.",
+    "tags": ["RAG", "Inference", "1M RPS"]
+  },
+  {
+    "title": "Simultaneous AI Model Outage: The Single Point We All Ignored",
+    "url": "simultaneous-ai-outage-postmortem.html",
+    "tag": "Cloud Infrastructure",
+    "date": "2026-09-04",
+    "dateLabel": "September 2026",
+    "readTime": "28 min read",
+    "desc": "Four frontier providers dark inside the same four-hour window. The shared layer beneath them plus the failure math behind it.",
+    "tags": ["Claude", "Gemini", "Grok", "ChatGPT", "Azure"]
+  },
+  {
+    "title": "Replit Agent Postmortem: The Day the Demo Became Production",
+    "url": "replit-agent-runtime-postmortem.html",
+    "tag": "Agent Runtime",
+    "date": "2026-09-02",
+    "dateLabel": "September 2026",
+    "readTime": "19 min read",
+    "desc": "A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk and the cost difference at 1M events per second.",
+    "tags": ["AI Agents", "Sandbox", "1M RPS"]
+  },
+  {
+    "title": "Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response",
+    "url": "vercel-fluid-compute-cost-postmortem.html",
+    "tag": "Cloud Infrastructure",
+    "date": "2026-09-01",
+    "dateLabel": "September 2026",
+    "readTime": "16 min read",
+    "desc": "A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, a normalized 1M RPS cost model and the levers that make serverless economics less theatrical.",
+    "tags": ["Serverless", "AI Gateway", "RPS", "AWS"]
+  },
+  {
+    "title": "Figma's Multiplayer Editor: The Server That Decides Who Wins",
+    "url": "figma-multiplayer-cost-postmortem.html",
+    "tag": "Realtime Systems",
+    "date": "2026-09-01",
+    "dateLabel": "September 2026",
+    "readTime": "17 min read",
+    "desc": "A forensic teardown of Figma's WebSocket collaboration engine, server-authoritative conflict resolution, Rust rewrite, per-document isolation, modeled 65k RPS and the cost controls behind an always-live canvas.",
+    "tags": ["WebSockets", "Rust", "CRDT / OT", "AWS"]
+  },
+  {
+    "title": "The Workspace That Ate the Warehouse",
+    "url": "notion-data-lake-cost-postmortem.html",
+    "tag": "Forensic Architecture",
+    "date": "2026-08-31",
+    "dateLabel": "August 2026",
+    "readTime": "18 min read",
+    "desc": "A forensic teardown of Notion's 200-billion-block data platform: 480 logical shards, CDC, Kafka, Hudi, vector search, a modeled 100k RPS peak and the cost controls that can stop a flexible product from becoming an infrastructure furnace.",
+    "tags": ["Postgres", "Kafka", "S3", "AI"]
+  },
+  {
+    "title": "Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius",
+    "url": "cell-based-control-plane.html",
+    "tag": "Architectural Critique",
+    "date": "2026-07-01",
+    "dateLabel": "July 2026",
+    "readTime": "12 min read",
+    "desc": "An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.",
+    "tags": ["Go", "Raft", "AWS"]
+  }
+]

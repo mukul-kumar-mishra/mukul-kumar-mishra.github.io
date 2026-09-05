@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a panicked man drowning in a flood of document blocks">
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="113" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD MEME</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">JUST ONE MORE BLOCK</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">said 100 million users. nightly.</text>
+  <g filter="url(#roughen)" stroke="#0369a1" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M60,420 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0"/>
+    <path d="M60,470 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0 q60,-22 120,0 q60,22 120,0"/>
+  </g>
+  <g transform="translate(300,470)" filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-80" r="30" fill="#ffffff"/>
+    <circle cx="-8" cy="-86" r="8"/>
+    <circle cx="12" cy="-86" r="8"/>
+    <ellipse cx="2" cy="-52" rx="9" ry="12" fill="#0f172a"/>
+    <path d="M-24,-40 L-52,-100 M24,-40 L52,-100"/>
+    <circle cx="-54" cy="-104" r="6" fill="#ffffff"/>
+    <circle cx="54" cy="-104" r="6" fill="#ffffff"/>
+  </g>
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" font-family="monospace" font-size="16" fill="#1e293b">
+    <rect x="620" y="200" width="130" height="80" fill="#ffffff" transform="rotate(-7 685 240)"/>
+    <text x="638" y="246" transform="rotate(-7 685 240)" stroke="none">block</text>
+    <rect x="780" y="230" width="130" height="80" fill="#ffffff" transform="rotate(5 845 270)"/>
+    <text x="798" y="276" transform="rotate(5 845 270)" stroke="none">block</text>
+    <rect x="940" y="210" width="130" height="80" fill="#ffffff" transform="rotate(-4 1005 250)"/>
+    <text x="958" y="256" transform="rotate(-4 1005 250)" stroke="none">block</text>
+    <rect x="700" y="330" width="150" height="80" fill="#ffffff" transform="rotate(4 775 370)"/>
+    <text x="722" y="376" transform="rotate(4 775 370)" stroke="none">+480 shards</text>
+  </g>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">200 billion blocks.</text>
+  <text x="500" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">bring a bigger boat.</text>
+</svg>

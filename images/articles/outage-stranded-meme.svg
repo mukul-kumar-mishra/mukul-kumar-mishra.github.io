@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a gloomy stranded man staring at a dead terminal while all four providers are down">
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD MEME</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">HAVE YOU TRIED TURNING IT ALL OFF</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">someone already did. everyone. at once.</text>
+  <g filter="url(#roughen)" stroke="#0369a1" stroke-width="4" stroke-linecap="round">
+    <path d="M620,190 l-14,34 M700,190 l-14,34 M780,190 l-14,34 M860,190 l-14,34 M940,190 l-14,34 M1020,190 l-14,34 M1100,190 l-14,34"/>
+  </g>
+  <g transform="translate(250,420)" filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-80" r="30" fill="#ffffff"/>
+    <path d="M-16,-84 q9,-5 18,0 M4,-84 q9,-5 18,0"/>
+    <path d="M-10,-50 q10,-8 20,-2"/>
+    <rect x="-26" y="-48" width="52" height="98" fill="#ffffff"/>
+  </g>
+  <g filter="url(#roughen)">
+    <rect x="600" y="250" width="480" height="240" fill="#0f172a" stroke="#0f172a" stroke-width="4"/>
+    <text x="625" y="295" font-family="monospace" font-size="20" fill="#fb7185">$ curl any-provider</text>
+    <text x="625" y="330" font-family="monospace" font-size="20" fill="#fb7185">claude .... down</text>
+    <text x="625" y="365" font-family="monospace" font-size="20" fill="#fb7185">chatgpt .... down</text>
+    <text x="625" y="400" font-family="monospace" font-size="20" fill="#fb7185">grok ...... down</text>
+    <text x="625" y="435" font-family="monospace" font-size="20" fill="#fb7185">gemini .... down*</text>
+    <text x="625" y="470" font-family="monospace" font-size="16" fill="#93a4ba">* officially fine. sure.</text>
+  </g>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">the cloud is raining.</text>
+  <text x="520" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">no umbrella.</text>
+</svg>

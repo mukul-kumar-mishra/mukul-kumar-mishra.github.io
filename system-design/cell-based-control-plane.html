@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/cell-based-control-plane.html">
   <title>RFC: Cell-Based Control Plane Architecture | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +31,7 @@
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
@@ -94,6 +96,7 @@
 
         <section>
           <h2>2. Proposed Target Architecture</h2>
+        <figure class="article-figure pm-meme"><img src="../images/articles/cellbased-architect-meme.svg" alt="Pen sketched cartoon of a smug man in a hard hat pointing at isolated region cells" width="1200" height="680"><figcaption>Figure 2. Blast radius in one cartoon, drawn for this postmortem. One cell quarantined. The rest stay fine.</figcaption></figure>
           <p>
             By restructuring the control plane into isolated, self-contained Cells, where each cell operates its own independent state machine, we decouple failures entirely.
           </p>

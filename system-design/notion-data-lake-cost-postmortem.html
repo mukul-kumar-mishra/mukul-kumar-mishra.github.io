@@ -48,6 +48,7 @@
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
@@ -154,6 +155,7 @@
 
         <section id="the-bill">
           <h2>5. The Bill: What Could This Cost?</h2>
+        <figure class="article-figure pm-meme"><img src="../images/articles/notion-flood-meme.svg" alt="Pen sketched cartoon of a panicked man drowning in a flood of document blocks" width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one cartoon, drawn for this postmortem. Every block is cheap. The flood is not.</figcaption></figure>
           <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
           <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failoverand operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transferand monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply. A larger high-memory mix could exceed it.</p>
           <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissionsand replication overhead. Assume 300 TB of compressed lake data across raw, processedand historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storageand scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>

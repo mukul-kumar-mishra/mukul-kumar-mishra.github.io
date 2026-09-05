@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a stern man refereeing two fighting cursors over one rectangle">
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD MEME</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">SEPARATE CORNERS, BOTH CURSORS</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">two editors. one rectangle. zero chill.</text>
+  <g transform="translate(250,400)" filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-80" r="30" fill="#ffffff"/>
+    <path d="M-18,-100 L4,-96"/>
+    <path d="M-12,-86 L6,-85 M10,-86 L22,-87"/>
+    <path d="M-8,-56 l16,0"/>
+    <rect x="-26" y="-48" width="52" height="98" fill="#ffffff"/>
+    <circle cx="38" cy="-58" r="9" fill="#ffffff"/>
+    <path d="M22,-58 L29,-58"/>
+    <rect x="58" y="-92" width="52" height="64" fill="#e11d48"/>
+    <text x="64" y="-52" font-family="monospace" font-size="17" font-weight="bold" fill="#ffffff" stroke="none">FOUL</text>
+  </g>
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
+    <rect x="620" y="250" width="200" height="150" fill="#ffffff"/>
+    <path d="M560,200 L600,190 L592,240 z" fill="#0369a1"/>
+    <text x="548" y="180" font-family="monospace" font-size="17" fill="#0f172a" stroke="none">ana: mine</text>
+    <path d="M880,200 L920,190 L912,240 z" fill="#e11d48"/>
+    <text x="884" y="180" font-family="monospace" font-size="17" fill="#0f172a" stroke="none">bob: MINE</text>
+    <text x="660" y="340" font-family="monospace" font-size="18" fill="#0f172a" stroke="none">server: ... Ana.</text>
+  </g>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">one document. one owner.</text>
+  <text x="620" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">two cursors. one whistle.</text>
+</svg>

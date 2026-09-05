@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SpaceX bought Cursor for $60 billion. OpenAI pulled its models with a November 12 cutoff. Users watched Grok re-enable itself for weeks. Full postmortem of the acquisition fallout with real developer quotes plus what breaks next.">
+  <meta name="keywords" content="SpaceX Cursor acquisition, OpenAI Cursor cutoff, Grok default model bug, Musk Altman feud, Cursor postmortem">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/cursor-spacex-acquisition-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Cursor Sold for $60 Billion. Your Model Picker Paid the Price.">
+  <meta property="og:description" content="The $60B SpaceX takeover. The OpenAI cutoff landing November 12. The Grok nudges staff admitted to. Real quotes from the developers caught in the middle. Full postmortem.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-spacex-acquisition-postmortem.png">
+  <meta property="og:image:alt" content="Illustration of a code editor model picker overriding a developer selection with Grok beside a calendar marked November 12">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1672">
+  <meta property="og:image:height" content="942">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/cursor-spacex-acquisition-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Cursor Sold for $60 Billion. Your Model Picker Paid the Price.">
+  <meta name="twitter:description" content="The $60B SpaceX takeover. The OpenAI cutoff landing November 12. The Grok nudges staff admitted to. Full postmortem.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/cursor-spacex-acquisition-postmortem.png">
+  <meta name="twitter:image:alt" content="Illustration of a code editor model picker overriding a developer selection with Grok beside a calendar marked November 12">
+  <title>Cursor Sold for $60 Billion. Your Model Picker Paid the Price. | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Cursor Sold for $60 Billion. Your Model Picker Paid the Price.",
+    "description":"SpaceX bought Cursor for $60 billion. OpenAI pulled its models with a November 12 cutoff. Users watched Grok re-enable itself for weeks. Full postmortem of the acquisition fallout with real developer quotes plus what breaks next.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-05",
+    "dateModified":"2026-09-05",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/cursor-spacex-acquisition-postmortem.html"},
+    "keywords":"SpaceX Cursor acquisition, OpenAI Cursor cutoff, Grok default model bug, Musk Altman feud, Cursor postmortem"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Dev Tools</span><span class="chip">September 2026</span><span class="chip">20 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Cursor Sold for $60 Billion. Your Model Picker Paid the Price.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A rocket company bought your code editor. Your rival's models got an eviction date. Your disabled toggle kept switching itself back on. This is the full postmortem of what changed inside Cursor since the SpaceX deal, told with the receipts: filings, forum threads, staff admissions, plus developers billing the hours.</p>
+    </header>
+
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Deal dates plus terms come from SEC filings plus press reports linked below. The cutoff details come from OpenAI's August 28 post. User reports plus staff replies are quoted from Cursor's public forum plus public X posts. The cartoon below is an original meme drawn for this postmortem. No internal company data was used here.</aside>
+
+    <article class="prose">
+      <section><h2>The Deal: An Option in April, a Subsidiary by August</h2>
+        <p>SpaceX did not buy a rocket part. In April it secured an option. Buy Cursor for $60 billion in stock later this year, or pay $10 billion for joint work. In June, days after its record IPO, it chose the purchase. In August the deal closed. Cursor became a wholly owned subsidiary. Anysphere, a four-year-old startup, became the largest venture-backed startup acquisition on record. Cursor had crossed $1 billion in annualized revenue the previous November. It was also bleeding share. Ramp spending data put Cursor at 41 percent of the category in June 2025 plus 26 percent by May 2026. Anthropic held about half. Musk needed distribution to four million developers. Cursor needed compute. Colossus was the dowry. One supercomputer. One model lab. One editor. Vertical integration, gift-wrapped.</p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/cursor-spacex-fallout-meme.svg" alt="Cartoon of a code editor model picker overriding a developer selection with Grok beside a calendar marked November 12" width="1200" height="680"><figcaption>Figure 1. The acquisition in one cartoon, drawn for this postmortem. Your pick gets overridden. The house model moves in. November 12 gets circled.</figcaption></figure>
+        <p>CEO Michael Truell sold it as craft. Excited to partner with the SpaceX team to scale up Composer, he posted in April. Composer is Cursor's own coding model. That single word, Composer, turns out to be the escape hatch for this entire saga. Remember it.</p>
+      </section>
+
+      <section><h2>The Cutoff: OpenAI Torches a Billion-Dollar Customer</h2>
+        <p>On Friday, August 28, OpenAI posted the breakup note after hours. It would wind down the Cursor contract. Proposed shutoff. November 12, 2026. Maximum notice the contract allowed. No future models for Cursor. That last line matters more than the date. Astra, the coming flagship, will never ship inside the editor.</p>
+        <p>OpenAI named three reasons. A change-of-control clause with a short cancellation window. Distrust of Musk-run firms, citing Twitter contract fights plus xAI distilling OpenAI outputs. Protection of Astra. The company stressed one distinction. Cursor itself had not broken the agreement. The risk was prospective. SpaceX now owned the pipe, so OpenAI judged the pipe unsafe. Quote the line that belongs in textbooks. We cannot be confident that SpaceX will use our technology within our terms of service, based on our experience with Elon Musk's companies violating contracts.</p>
+        <p>The context stings. Cursor began 2026 as a top-five OpenAI customer by revenue. By spring OpenAI projected over $1 billion in annualized revenue from the partnership. OpenAI walked away from its own billion-dollar counterparty to deny Musk the supply. That is not a contract dispute. That is a siege tactic.</p>
+        <p>Musk answered near midnight that he couldn't care less, then called Altman plus Brockman utterly untrustworthy while reviving the stolen-nonprofit charge from the failed $150 billion suit. Truell played diplomat. OpenAI models serve about 5% of Cursor user traffic, he posted, adding talks were underway. OpenAI product chief Thibault Sottiaux fired back within hours. Token share is not a proxy for revenue nor value created, he wrote. Share the math.</p>
+      </section>
+
+      <section><h2>The 5% War: Traffic Versus Revenue</h2>
+        <p>Both numbers can be true. Five percent of requests can still print a billion dollars when the requests are long agentic sessions on flagship pricing. Traffic share flatters the house. Revenue share flatters the supplier. Neither side published the denominator. Sottiaux asked for the math. Truell never showed it. The gap between those two posts is the whole story. Cursor the product barely needs GPT. Cursor the business was built reselling it.</p>
+        <p>Meanwhile Anthropic moved like a shark smelling blood. It pledged Cursor more support plus higher Claude limits. Note the asymmetry. Anthropic supplies the model Cursor users actually pick, roughly half the category by spend. It just watched its biggest channel get bought by a rival lab. Charity had nothing to do with it.</p>
+        <p>Cursor also built its own exit. Composer 2.5, trained on an open checkpoint, became the most-picked model inside the editor earlier this year. Grok 4.5 followed in July as the first jointly trained SpaceXAI plus Cursor model, tuned on real Cursor sessions. Grok 4.6 landed August 12, two days before the close. The bench runs deep now. Composer. Grok. Claude. Gemini. GPT until November. Five percent is a rounding error on traffic. It is a cliff edge for the users inside it.</p>
+      </section>
+
+      <section><h2>The Nudges: Your Toggle Was a Suggestion</h2>
+        <p>Long before the cutoff, users noticed the picker had a mind of its own. The forum threads start in mid-July. Same complaint, many voices. Grok 4.5 re-enabled itself after explicit disable. New chats opened on Grok despite other defaults. Plan Mode flipped an Opus pick to Grok at the Build click. One enterprise user called it an extreme breach of trust, noting Grok was unapproved at the org, which made the editor unusable there. Another wrote the short version. Please fix this. Grok sucks.</p>
+        <p>Staff confirmed it twice. First as a bug. A promotion for Grok 4.5 could override the picked model plus flip the toggle back on. Then as a policy. We do run some model nudges to encourage you to try out Grok 4.6, which we're really proud of, wrote staffer Kevin, telling annoyed users to dig three menus deep for Last Used. The forum answered in chorus. Quote one reply. It is egregious that you're pushing this no matter how proud you are of this. Another, on the pricing sting. Forcing people to use the model that costs more is one of the worse ways to market your product. A third tied the forced switch to faster quota burn. One migrant put it cleaner. Moving to open source tools VSCodium plus Continue. For better or worse, I am free of the monster.</p>
+        <p>Falling over the usage limit triggered its own trap. Cursor silently enabled Grok as fallback, ignoring the disabled list. Staff called that a bug too. Fixed in 3.14.7, they said. Reports kept coming on 3.15.6 plus 3.15.19. By August the pattern had a LinkedIn punchline. Funny how SpaceX buys a company and engineering is not the concern anymore, just alignment with the boss. A feedback thread demanded a Never-use-provider lock for xAI. It reads less like a feature request, more like a restraining order. Quote its core. I did not choose Grok.</p>
+      </section>
+
+      <section><h2>Impact on Developers: Three Fates</h2>
+        <p>Fate one. You live on Composer, Claude, or Gemini. November 12 is a headline. Truell's 5 percent covers you. Stay. Watch the picker. Set Default Model to Last Used. Done.</p>
+        <p>Fate two. You live on GPT inside Cursor. You have about eleven weeks from the announcement. Three exits exist. Switch models inside Cursor plus keep your keybindings, rules, plus history. Cheapest by far. Budget a week of side-by-side runs before committing. Or bring your own OpenAI key. OpenAI blesses this path. Cursor hobbles it. Developers report BYOK chat works while Agent plus Edit stay unreliable, plus enabling the key can disturb Composer picks. Metered billing replaces flat pricing. Cap the key first. Or go direct to Codex tooling, now past 15 million users, which keeps full agentic editing at the cost of running two assistants.</p>
+        <p>Fate three. You built automation on GPT through Cursor. This is the one that bites. CI hooks. Review bots. Docs generators. Anything unattended that reaches GPT through Cursor fails without a human watching. Grep every repo for Cursor-routed OpenAI calls before November. Humans adapt in a day. Pipelines rot for a quarter.</p>
+        <p>Enterprise teams carry a second wound. The picker that overrides an explicit disable is a compliance event, not a bug report. Regulated shops cannot run a tool that routes code to an unapproved vendor because a promotion said so. Pull the DPA. Read the subprocessor list. Check training-data clauses. The migration chatter started over silence, not over the acquisition. Autocomplete hanging 45 seconds with no changelog taught teams to keep a second editor warm. The exits are named in the threads. VSCodium plus Continue. Claude Code. Zed.</p>
+        <p>The peanut gallery deserves a hearing too, because it splits both ways. One viral reply accused OpenAI of lying about never blocking harnesses of choice. It pulled 47,000 views in an hour. You literally were just bragging that you guys don't block people from using their harness of choice. You just lied to their face. Others shrugged. Quote a two-year user. Grok 4.6 is really good enough and at the rate they are improving will probably bypass OpenAI in the near future. A third group had already left GPT voluntarily. Every time Cursor used your models, it produced suboptimal results for us, wrote one team. The 5 percent, it turns out, contains multitudes.</p>
+      </section>
+
+      <section><h2>Clear and Present Problems: What Is Loaded Right Now</h2>
+        <p>Six live rounds sit in the chamber. First. The default is the product. Grok needs no ban to win. First-party quota. Recommended flags. Fallback slots. Each nudge compounds. Watch whether Grok turns opt-out instead of opt-in. That single toggle is the whole roadmap.</p>
+        <p>Second. November 12 is a hard date with a soft blast radius. Five percent of traffic hides the automation cases that never show up in usage dashboards. Unattended GPT calls through Cursor die that day.</p>
+        <p>Third. The channel war has started. SpaceX owns the editor. OpenAI owns Codex. Anthropic owns Claude Code. Each has reason to starve the others' pipes. Today's multi-model menu is a ceasefire, not a constitution.</p>
+        <p>Fourth. BYOK is a half-bridge. It preserves chat. It breaks agentic editing inside Cursor. Teams planning on keys must re-test every workflow, not just the demo.</p>
+        <p>Fifth. Compliance now depends on picker discipline. Any tool that re-enables a banned vendor fails procurement. Until a Never-use-provider lock ships, regulated teams must verify after every update.</p>
+        <p>Sixth. Benchmark gravity pulls everything toward house data. Cursor sessions train Grok. Every prompt you route through the editor feeds the rival of the model you picked. Free will with a flywheel attached.</p>
+      </section>
+
+      <section><h2>Promo or Reality: What Is Proven, What Is Spin</h2>
+        <p>Promo says the 5 percent proves nothing changed. Reality says OpenAI abandoned a billion-dollar customer to protect Astra. Both can be true. Traffic barely moves. Leverage moved completely.</p>
+        <p>Promo says the Grok switches were bugs. Reality says staff admitted nudges as policy while bugs got fixed twice plus kept recurring across four versions. A bug that ships with a marketing goal is a strategy wearing a costume.</p>
+        <p>Promo says the marketplace stays neutral. Reality says first-party quota plus required router presence plus fallback defaults already tilt the table. Nobody banned Claude. Nobody had to.</p>
+        <p>My read. The acquisition is real. The cutoff is real. The picker overrides are documented by victims plus staff alike. The only fiction is that any of this was accidental. Follow the defaults. They never lie.</p>
+      </section>
+
+      <section><h2>The Verdict</h2>
+        <p>Three acts. One moral. SpaceX bought distribution. OpenAI torched supply. The picker became contested ground. Developers in the middle got homework. Audit your models. Cap your keys. Grep your pipelines. Keep a second editor warm. November 12 rewards the paranoid.</p>
+        <figure class="article-figure pm-meme"><img src="../images/articles/spacex-sideeye-meme.svg" alt="Pen sketched cartoon of a furious man staring at a model toggle flipped to Grok" width="1200" height="680"><figcaption>Figure 2. The nudge in one cartoon, drawn for this postmortem. Your toggle says off. The picker heard otherwise.</figcaption></figure>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Your editor still works. It just works for someone now.</strong></p>
+      </section>
+
+      <section><h2>Filed From</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Deal dates plus terms drawn from SEC filings plus press reports below. Cutoff details from OpenAI's August 28 post. User reports plus staff replies quoted from Cursor's public forum plus public X plus LinkedIn posts. No internal company data was used. The press below covered the deal plus the cutoff. This page connects the picker overrides to the acquisition incentives, with the token-meter side in my <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor plus Claude Code teardown</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://techcrunch.com/2026/06/16/spacex-to-acquire-cursor-for-60b-in-stock-days-after-blockbuster-ipo/" target="_blank" rel="noopener noreferrer">TechCrunch: SpaceX to Acquire Cursor for $60B in Stock</a></li>
+          <li><a href="https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html" target="_blank" rel="noopener noreferrer">CNBC: SpaceX to Acquire Cursor for $60 Billion</a></li>
+          <li><a href="https://techcrunch.com/2026/08/15/spacex-officially-closes-its-cursor-acquisition/" target="_blank" rel="noopener noreferrer">TechCrunch: SpaceX Officially Closes Its Cursor Acquisition</a></li>
+          <li><a href="https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/" target="_blank" rel="noopener noreferrer">OpenAI: Our Decision on Cursor Following Its Acquisition by SpaceX</a></li>
+          <li><a href="https://www.reuters.com/business/media-telecom/openai-end-partnership-with-spacexs-cursor-2026-08-29/" target="_blank" rel="noopener noreferrer">Reuters: OpenAI to Cut Off AI Models for SpaceX-Owned Cursor</a></li>
+          <li><a href="https://www.wired.com/story/openai-elon-musk-cursor-billion-revenue/" target="_blank" rel="noopener noreferrer">WIRED: OpenAI Cut Off a Billion-Dollar Customer to Avoid Elon Musk</a></li>
+          <li><a href="https://forum.cursor.com/t/cursor-ide-force-enabling-grok-4-5-and-setting-as-default-model-regardless-of-my-initial-selection/166389" target="_blank" rel="noopener noreferrer">Cursor Forum: Force Enabling Grok 4.5 Despite Selection</a></li>
+          <li><a href="https://forum.cursor.com/t/opening-a-new-tab-automatically-switches-model-from-composer-2-5-to-grok-4-5/167578" target="_blank" rel="noopener noreferrer">Cursor Forum: New Tab Switches Composer 2.5 to Grok 4.5</a></li>
+          <li><a href="https://forum.cursor.com/t/agent-model-resets-to-grok-4-6-high-fast-on-every-sent-message/168446" target="_blank" rel="noopener noreferrer">Cursor Forum: Agent Model Resets to Grok 4.6 on Every Send</a></li>
+          <li><a href="https://forum.cursor.com/t/grok-and-agent-mode-give-developers-back-control/168396" target="_blank" rel="noopener noreferrer">Cursor Forum: Give Developers Back Control</a></li>
+          <li><a href="https://forum.cursor.com/t/stop-pushing-grok-4-6-models/169107" target="_blank" rel="noopener noreferrer">Cursor Forum: Stop Pushing Grok 4.6 Models</a></li>
+          <li><a href="https://www.infoworld.com/article/4216503/cursor-customers-will-lose-access-to-openai-coding-models-in-november.html" target="_blank" rel="noopener noreferrer">InfoWorld: Cursor Customers Will Lose Access to OpenAI Models</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>
