@@ -121,6 +121,8 @@ def load_cat(name):
     themed = theme_colors(raw)
     inner = re.sub(r'^.*?<svg[^>]*>', '', themed, count=1, flags=re.DOTALL)
     inner = re.sub(r'</svg>\s*$', '', inner, flags=re.DOTALL)
+    for tag in ('title', 'desc', 'text'):
+        inner = re.sub(r'<%s[^>]*>.*?</%s>' % (tag, tag), '', inner, flags=re.DOTALL)
     return inner.strip()
 
 
@@ -169,11 +171,13 @@ def check(svg_text, name):
         errs.append('banned em dash in text')
     if re.sub(r'&[a-zA-Z]+;', '', plain).count(';'):
         errs.append('banned semicolon in text')
+    vb = re.search(r'viewBox="0 0 ([\d.]+)', svg_text)
+    limit = float(vb.group(1)) - 40 if vb else 1160
     for m in re.finditer(r'<text[^>]*x="([\d.]+)"[^>]*font-size="([\d.]+)"[^>]*>(.*?)</text>', svg_text, re.DOTALL):
         x, size, body = float(m.group(1)), float(m.group(2)), re.sub(r'<[^>]+>', '', m.group(3))
         mono = 'monospace' in m.group(0)
         est = x + len(body) * size * (0.60 if mono else 0.52)
-        if est > 1160:
+        if est > limit:
             errs.append('text overflows canvas: "%s..."' % body[:40])
     if 'Mukul<tspan' not in svg_text:
         errs.append('wordmark missing')

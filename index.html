@@ -74,7 +74,7 @@
       <div class="profile-hero-media">
         <img src="images/mukul_kumar_mishra_golang_aws_engineer.jpg" alt="Mukul Kumar Mishra"
              onerror="this.src='images/mukul_kumar_mishra_golang_aws_engineer.jpg'">
-        <span style="position:absolute;bottom:-6px;right:-6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;" title="Available for Architectural & Technical Leadership Roles">
+        <span style="position:absolute;bottom:-6px;right:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;" title="Available for Architectural & Technical Leadership Roles">
           <span style="display:block;width:12px;height:12px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite;"></span>
         </span>
       </div>
@@ -85,10 +85,7 @@
         </div>
         <h1 class="page-title" style="color:var(--heading);">Mukul Kumar Mishra</h1>
         <p class="page-lede" style="margin-top:14px;">
-          Tech Lead and backend platform engineer with 9 years of experience building reliable systems in Golang and AWS. I design high-performance APIs, telemetry pipelines, and cloud-native services with Kubernetes, Docker, Kafka, and SQS.
-        </p>
-        <p class="page-lede" style="margin-top:6px;">
-          I lead architecture and delivery across distributed systems, cloud migrations, observability, and production reliability. My work spans technical direction, engineering execution, and the operational details that keep systems dependable after launch.
+          Tech Lead with 9 years of experience designing distributed systems in Golang on AWS. I write system design postmortems that price real architectures: APIs, telemetry pipelines and cloud-native platforms, down to the cost per request.
         </p>
         <div class="profile-hero-actions">
           <a class="btn btn-primary" href="system-design/index.html">
@@ -226,17 +223,27 @@
       <button class="btn btn-ghost load-more" id="loadMoreArticles" type="button">Load more articles</button>
     </section>
 
-    <section class="sec" id="jobsSection">
+    <section class="sec" id="calculatorsBox">
       <div class="sec-head">
-        <h2 class="sec-title"><i data-lucide="briefcase"></i> System Design Jobs</h2>
+        <h2 class="sec-title"><i data-lucide="calculator"></i> Token Bill Calculator</h2>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Fresh remote roles only — every listing posted within the last 30 days, matched to your country on load.</p>
-      <div id="jobList" data-page-size="5" style="display:grid;gap:16px;"></div>
-      <p id="jobCount" class="fl-desc" style="margin:12px 0 0;"></p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price an agent turn below, live. Three more instruments on the full page. No tracking, no backend.</p>
+      <div style="display:grid;gap:2px;max-width:340px;">
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-in">Input tokens / turn</label><input type="number" id="tk-in" value="80000" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cache">Cache hit rate (percent)</label><input type="number" id="tk-cache" value="87.5" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cachep">Cached price ($ / M tokens)</label><input type="number" id="tk-cachep" value="0.3" step="0.01" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-freshp">Fresh price ($ / M tokens)</label><input type="number" id="tk-freshp" value="3" step="0.01" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-out">Output tokens / turn</label><input type="number" id="tk-out" value="1500" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-outp">Output price ($ / M tokens)</label><input type="number" id="tk-outp" value="15" step="0.01" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
+      </div>
+      <div class="grid4" style="margin-top:18px;">
+        <div class="stat"><div class="num" id="tk-perturn">—</div><div class="lbl">Cost per turn</div></div>
+        <div class="stat"><div class="num" id="tk-monthly">—</div><div class="lbl">Monthly model spend</div></div>
+      </div>
       <div style="text-align:center;margin-top:18px;">
-        <a class="btn btn-ghost load-more" href="jobs.html" style="text-decoration:none;display:inline-flex;">View all jobs</a>
+        <a class="btn btn-ghost load-more" href="calculators.html" style="text-decoration:none;display:inline-flex;">Open all calculators</a>
       </div>
-      <p class="fl-desc" style="margin:12px 0 0;font-size:0.75rem;">Remote listings by <a href="https://remotive.com/remote-jobs" target="_blank" rel="noopener">Remotive</a> and <a href="https://www.arbeitnow.com/job-board-api" target="_blank" rel="noopener">Arbeitnow</a> — apply on the original postings.</p>
     </section>
 
     <!-- Skills (hidden) -->
@@ -501,7 +508,8 @@
 
     lucide.createIcons();
   </script>
-  <script src="js/jobs.js?v=20260905" defer></script>
+  <script src="js/calculators.js" defer></script>
+
   <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 </body>
 </html>

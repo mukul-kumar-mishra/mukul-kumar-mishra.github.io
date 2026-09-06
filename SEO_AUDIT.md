@@ -89,7 +89,7 @@ Do not repeatedly request indexing for every small edit. Publish a meaningful up
 
 - Fix all missing spaces, grammar, and accidental factual inconsistencies.
 - Add complete metadata/schema to `cell-based-control-plane.html`.
-- Fix the missing closing `</script>` tag in `jobs.html:92`.
+- Jobs experiment retired: `jobs.html` and `js/jobs.js` removed, replaced by `calculators.html` with client-side tools.
 
 ### Days 2-3
 

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="942" viewBox="0 0 1672 942" role="img" aria-label="Cover illustration of Roblox event ingestion at 18 trillion messages per day across latency tiers">
+  <rect x="0" y="0" width="1672" height="942" fill="#0f172a"/>
+  <rect x="0" y="0" width="1672" height="942" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <text x="1300" y="80" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="34" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="12" fill="#16a34a">Mishra</tspan></text>
+  <text x="90" y="230" font-family="monospace" font-size="150" font-weight="bold" fill="#f8fafc">18T</text>
+  <text x="90" y="310" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="44" font-weight="bold" fill="#16a34a">MESSAGES A DAY</text>
+  <text x="90" y="360" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-style="italic" fill="#93a4ba">half of them could have waited.</text>
+  <g font-family="monospace" font-size="26" font-weight="bold">
+    <rect x="90" y="450" width="1490" height="110" fill="#e11d48"/>
+    <text x="120" y="520" fill="#ffffff">HOT: matchmaking, under 10 ms</text>
+    <rect x="90" y="590" width="900" height="110" fill="#0369a1"/>
+    <text x="120" y="660" fill="#ffffff">WARM: analytics, seconds OK</text>
+    <rect x="90" y="730" width="520" height="110" fill="#475569"/>
+    <text x="120" y="800" fill="#ffffff">COLD: history, HDD cheap</text>
+  </g>
+  <text x="90" y="890" font-family="monospace" font-size="22" fill="#93a4ba">one platform billed all three at hot prices.</text>
+</svg>

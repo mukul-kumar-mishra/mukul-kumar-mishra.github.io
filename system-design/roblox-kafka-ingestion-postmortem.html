@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A system design postmortem of Roblox event ingestion at 18 trillion messages a day. Kafka tiers, SSD fleets, standby clusters, gossip limits, plus a normalized 1M msgs/sec cost model with a cheaper shape.">
+  <meta name="keywords" content="Roblox system design, Kafka at scale, event ingestion cost, Redis gossip protocol, infrastructure cost optimization, 1M RPS architecture">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="18 Trillion Messages a Day. Half of Them Could Have Waited.">
+  <meta property="og:description" content="Roblox moves 18 trillion Kafka messages daily through one platform that treats urgent matchmaking like patient analytics. Teardown of the tiers, the standby habit, plus a cheaper shape.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
+  <meta property="og:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="18 Trillion Messages a Day. Half of Them Could Have Waited.">
+  <meta name="twitter:description" content="Roblox Kafka teardown: tiered traffic, standby clusters, gossip ceilings, plus a normalized cost model.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
+  <meta name="twitter:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
+  <title>Roblox Kafka Postmortem: 18 Trillion Messages a Day | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Roblox Kafka Postmortem: 18 Trillion Messages a Day",
+    "description":"A system design postmortem of Roblox event ingestion at 18 trillion messages a day. Kafka tiers, SSD fleets, standby clusters, gossip limits, plus a normalized 1M msgs/sec cost model.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-06",
+    "dateModified":"2026-09-06",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html"},
+    "keywords":"Roblox system design, Kafka at scale, event ingestion cost, Redis gossip protocol, infrastructure cost"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">24 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">18 Trillion Messages a Day. Half of Them Could Have Waited.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every day Roblox routes 18 trillion Kafka messages. That is about 208 million per second, every second. Some decide a match in under ten milliseconds. Most could arrive tomorrow without anyone noticing. One platform carries both at the same urgency. This is the postmortem of that decision.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Daily Volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">18T messages</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Average Rate</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">208M / sec</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Cache Fleet</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">6,000+ nodes</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Core Flaw</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">One Urgency</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 6, 2026</p>
+    </header>
+
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Traffic figures, hardware moves, plus financials below come from Roblox engineering posts plus investor disclosures linked at the end. The normalized cost model is mine. Nothing here claims to be a Roblox invoice.</aside>
+
+    <article class="prose">
+      <section><h2>1. The Number That Broke the Whiteboard</h2>
+        <p>Eighteen trillion messages per day. Divide by 86,400 seconds and you get roughly 208 million messages every second, sustained, all day. That volume does not fit on one cluster, one vendor tier, or one whiteboard. Roblox disclosed the figure in September 2026 alongside the hard lesson it bought. Not all traffic deserves the same urgency, yet for years the platform treated it that way.</p>
+        <p>The split matters more than the sum. Matchmaking traffic needs single-digit millisecond end-to-end latency. A slow match is a dead game. Analytics ingestion, the bulk by volume, tolerates seconds of delay without any player noticing. Serve both through identical tiers with identical redundancy and the patient majority inherits the price of the impatient minority. That inheritance is the entire postmortem.</p>
+      </section>
+
+      <section><h2>2. Why Roblox Is the Right Autopsy</h2>
+        <p>Three reasons. First, evidence. Roblox publishes serious engineering writing about its own platform, including a March 2026 cache deep dive plus the September 2026 Kafka post this teardown leans on. Second, money with receipts. Q2 FY26 brought about $1.4 billion in revenue against $2.2 billion in bookings, while management told investors that fresh AI GPU spend now pressures margins alongside softer bookings. Third, a public stance most unicorns avoid. Roblox runs its own data centers, spent over $400 million on its Ashburn site in one year, plus claims public cloud would cost up to ten times more for game traffic. A company that owns its fleet feels every architectural tax directly. No cloud bill to hide behind.</p>
+      </section>
+
+      <section><h2>3. Reconstructing the Machine</h2>
+        <p>Producers sit everywhere. Game servers emit state changes. Clients emit telemetry. Chat, presence, purchases, plus moderation signals join the stream. Brokers durably order this firehose. Consumers split into live systems plus batch analytics. Failover rides on a standby cluster with spare capacity. Chaos drills plus game days rehearse host, rack, plus network failures.</p>
+        <p>The hardware story reads like triage notes. Disk I/O choked first on RAID10 spinning disks, so brokers moved to SSDs for a tenfold throughput jump, trading disk space for speed. Remaining disks flipped from RAID10 to RAID0, doubling write capacity by dropping the mirror. Page cache tuning keeps hot reads in memory. Broker throttles cap runaway tenants. Each fix bought headroom. None of them asked which traffic actually needed it.</p>
+        <figure class="article-figure"><img src="../images/articles/roblox-tier-flow.svg" alt="Flow diagram of Roblox event traffic split into hot warm and cold latency tiers feeding separate Kafka paths" width="1200" height="600"><figcaption>Figure 1. The proposed shape in one diagram. Route by urgency first. Hot matchmaking gets SSD speed. Patient analytics gets shared throughput. Cold history gets cheap disks.</figcaption></figure>
+      </section>
+
+      <section><h2>4. The Cache War Next Door</h2>
+        <p>The same company fought the same battle in caching. Redis gossip protocol caps practical clusters near 400 to 500 nodes, since every node chats health with every peer. Roblox needed far more, so it federated small clusters behind a client proxy, growing past 6,000 nodes across 15 clusters serving over a billion queries per second at peak. Memory-bound Redis nodes plus compute-bound Envoy proxies then moved into one pool with container isolation, cutting capacity needs by a quarter. The pattern repeats. Find the real constraint, isolate it, share everything else. The next step is a multitenant Valkey service for even denser sharing.</p>
+      </section>
+
+      <section><h2>5. The Flaw Every Mixed Pipeline Shares</h2>
+        <p>Uniform treatment of non-uniform traffic is the flaw. A standby cluster sized for total failover duplicates the most expensive capacity instead of the most urgent. Retention on fast disks pays premium rates for data nobody replays. Throttles tuned per machine class still cannot express per use-case priority, since server configs refuse per-tenant nuance. Each of these is a tax on patience. Analytics pays matchmaking prices for matchmaking guarantees it never needed.</p>
+      </section>
+
+      <section id="cost-model"><h2>6. The 1M msgs/sec Cost Test</h2>
+        <p>Normalize to one million events per second for one month, which holds 2,592,000 seconds. Assume the current-shaped design pushes every event through origin compute at a blended $0.0000025 per event for compute, routing, queueing, plus platform overhead. The core math is <strong>1,000,000 times 2,592,000 seconds times $0.0000025 which equals $6.48M per month</strong>.</p>
+        <p>Add $1.8M for hot SSD storage plus retention, $1.2M for the standby duplicate, plus $0.7M for edge delivery, observability, plus safety systems. The current-shaped envelope reaches about <strong>$10.18M per month</strong>, roughly <strong>$339k per day</strong>.</p>
+        <p>My proposed shape routes by urgency before spending compute. Assume hot traffic keeps 300k events per second on origin at $0.0000012 per event. The core monthly work becomes <strong>300,000 times 2,592,000 times $0.0000012 which equals $933,120</strong>. Add $600k for tiered storage, $300k for a shared failover pool instead of a full duplicate, plus $400k for edge plus observability. The proposed envelope is approximately <strong>$2.23M per month</strong>, roughly <strong>$74k per day</strong>.</p>
+        <table><thead><tr><th>At 1M msgs/sec</th><th>Current-shaped design</th><th>Proposed design</th></tr></thead><tbody>
+          <tr><td>Origin events</td><td>1,000,000/s</td><td>300,000/s</td></tr>
+          <tr><td>Core event work</td><td>$6.48M/month</td><td>$933k/month</td></tr>
+          <tr><td>Hot storage and retention</td><td>$1.8M/month</td><td>$600k/month</td></tr>
+          <tr><td>Standby and failover</td><td>$1.2M/month</td><td>$300k/month</td></tr>
+          <tr><td>Edge and safety layer</td><td>$700k/month</td><td>$400k/month</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>$10.18M/month</strong></td><td><strong>$2.23M/month</strong></td></tr>
+          <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$7.95M/month, about 78 percent lower</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The uncomfortable math:</strong> Every percentage point of patient traffic treated as urgent traffic buys matchmaking-grade redundancy for data that would wait a week. Urgency is the most expensive tag in the system. Stop handing it out by default.</div>
+        <figure class="article-figure"><img src="../images/articles/roblox-cost-waterfall.svg" alt="Bar chart comparing current shaped monthly cost against proposed design across event work storage failover and edge layers" width="1200" height="600"><figcaption>Figure 2. The envelopes side by side. Classification does the winning, not cheaper servers. Refuse the urgent path to patient work.</figcaption></figure>
+      </section>
+
+      <section><h2>7. What I Would Change Before the Next Trillion</h2>
+        <p><strong>First, route by urgency at the edge.</strong> Tag every producer with a latency class at emit time. Hot matchmaking traffic takes the fast path with reserved headroom. Analytics takes shared throughput with backpressure instead of panic. A tag added once saves a fleet forever.</p>
+        <p><strong>Second, tier the storage physically.</strong> Hot SSD for replay windows measured in hours. Shared throughput pools for warm analytics. Cold HDD retention for history nobody replays. Roblox already walks this road with Valkey multitenancy. Extend the same thinking below the cache layer.</p>
+        <p><strong>Third, share the failover instead of duplicating it.</strong> A standby cluster per critical path is insurance priced like the disaster. One shared failover pool with pre-tested capacity plus chaos drills covers the same failures at a fraction of the idle bill.</p>
+        <p><strong>Fourth, price the wait out of the hot path.</strong> My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> made this point for serverless. Waiting work should never occupy executing capacity. Batch it, defer it, or move it off the expensive tier entirely.</p>
+        <div class="tip"><strong>Capacity tip:</strong> Track dollars per urgency tier, not dollars per cluster. A cluster bill hides which traffic class earned it. A tier bill names the most impatient customer in the building.</div>
+      </section>
+
+      <section><h2>8. The Verdict</h2>
+        <p>Roblox earned its scale the hard way, on its own metal, with engineering writing most vendors would never publish. The postmortem does not take that away. It names the tax inside the triumph. Eighteen trillion messages a day is not one workload. It is a millisecond workload wearing a multi-second workload as an overcoat, billed at millisecond prices. Separate them by urgency and the same platform costs roughly a fifth as much in this model.</p>
+        <p>The pattern generalizes beyond gaming. My <a href="replit-agent-runtime-postmortem.html">Replit teardown</a> found agent retries billed like first attempts. Same religion, different crime scene. Classify before you spend or the patient majority keeps funding the impatient minority.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Not every message is urgent. Stop paying like it is.</strong></p>
+      </section>
+
+      <section><h2>Keep Reading the Postmortem Series</h2>
+        <p>If tiering by urgency is your new religion, the rest of the series preaches nearby texts. My <a href="perplexity-answer-engine-postmortem.html">Perplexity teardown</a> covers the prefill tax behind every AI answer. My <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> covers paying for idle wait as if it were work. Same religion, different crime scenes.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Traffic figures, hardware moves, plus financials come from Roblox engineering posts plus investor disclosures linked below. The normalized cost model is my own scenario math, not Roblox telemetry or invoices. Q2 FY26 figures are rounded from the company's investor data sheet.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://about.roblox.com/newsroom/2026/09/how-roblox-scaled-kafka-platform-over-18-trillion-messages-a-day" target="_blank" rel="noopener noreferrer">Roblox: How Kafka Scaled Past 18 Trillion Messages a Day</a></li>
+          <li><a href="https://about.roblox.com/newsroom/2026/03/roblox-cache-sustained-138b-qps-beyond-redis-limits" target="_blank" rel="noopener noreferrer">Roblox: Cache Sustained 1.38B QPS Beyond Redis Limits</a></li>
+          <li><a href="https://about.roblox.com/newsroom/2023/12/making-robloxs-infrastructure-efficient-resilient" target="_blank" rel="noopener noreferrer">Roblox: Making Infrastructure More Efficient and Resilient</a></li>
+          <li><a href="https://www.datacenterdynamics.com/en/news/roblox-spends-nearly-400m-on-ashburn-data-center-rolls-out-edge-facilities/" target="_blank" rel="noopener noreferrer">Data Center Dynamics: Roblox Spends Nearly $400M on Ashburn Data Center</a></li>
+          <li><a href="https://devforum.roblox.com/t/scale-your-game-performance-with-extended-services-for-compute/4665165" target="_blank" rel="noopener noreferrer">Roblox DevForum: Extended Services for Compute</a></li>
+          <li><a href="https://www.marketscreener.com/news/roblox-second-quarter-2026-investor-data-sheet-ce7f50dbd98dfe26" target="_blank" rel="noopener noreferrer">MarketScreener: Roblox Q2 2026 Investor Data Sheet</a></li>
+          <li><a href="https://longbridge.com/news/294434624" target="_blank" rel="noopener noreferrer">Longbridge: Roblox Q3 Guide and Margin Framework</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

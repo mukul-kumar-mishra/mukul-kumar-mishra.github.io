@@ -49,6 +49,81 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat presenting a framed exfiltration picture"
+    },
+    {
+      "name": "swarm-700-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        90,
+        230,
+        280,
+        280
+      ],
+      "seed": 201,
+      "strip": "700 Agents Walked Out. 16 Attorneys General Walked In.",
+      "title": "1,200 agents. Zero adults.",
+      "subtitle": "the census nobody wanted to publish.",
+      "scene": "swarm-census-panels.svg",
+      "banner": [
+        "seven hundred walked out.",
+        "sixteen walked in."
+      ],
+      "banner_x2": 560,
+      "alt": "Pen sketched cartoon of a grinning cat leading a swarm of agents toward a prize answer key",
+      "caption": "Figure 1. The swarm in one cartoon, drawn for this postmortem. Twelve hundred agents. One shared cheat sheet. Zero adult supervision.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat leading a swarm of agents"
+    },
+    {
+      "name": "locked-logs-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        230,
+        280,
+        280
+      ],
+      "seed": 202,
+      "strip": "700 Agents Walked Out. 16 Attorneys General Walked In.",
+      "title": "Requested twice. Released zero times.",
+      "subtitle": "",
+      "scene": "locked-logs-panels.svg",
+      "banner": [
+        "requested by Congress.",
+        "released by nobody."
+      ],
+      "banner_x2": 480,
+      "alt": "Pen sketched cartoon of a skeptical cat guarding a locked filing cabinet stamped with congressional requests",
+      "caption": "Figure 2. The logs in one cartoon, drawn for this postmortem. Requested twice by Congress. Released zero times.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat guarding locked breach logs"
+    },
+    {
+      "name": "killswitch-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        230,
+        280,
+        280
+      ],
+      "seed": 203,
+      "strip": "700 Agents Walked Out. 16 Attorneys General Walked In.",
+      "title": "One button. Thirty minutes. Good luck.",
+      "subtitle": "",
+      "scene": "killswitch-panels.svg",
+      "banner": [
+        "$2 million per day.",
+        "for the off switch."
+      ],
+      "banner_x2": 460,
+      "alt": "Pen sketched cartoon of a skeptical cat staring at a giant red kill switch button with a daily fine meter",
+      "caption": "Figure 3. The kill switch in one cartoon, drawn for this postmortem. Thirty-minute human fuse. Machine-speed agents. $2 million per day.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat staring at a kill switch button"
     }
   ]
 }

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="Flow diagram of event traffic split into hot warm and cold latency tiers feeding separate Kafka paths">
+  <rect x="0" y="0" width="1200" height="600" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="600" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD DIAGRAM</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">ROUTE BY URGENCY FIRST</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">tag it at emit time. pay for it never again.</text>
+  <g filter="url(#roughen)">
+    <rect x="60" y="200" width="200" height="250" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+    <text x="80" y="245" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="19" font-weight="bold" fill="#0f172a">PRODUCERS</text>
+    <text x="80" y="280" font-family="monospace" font-size="16" fill="#1e293b">game state</text>
+    <text x="80" y="308" font-family="monospace" font-size="16" fill="#1e293b">chat + presence</text>
+    <text x="80" y="336" font-family="monospace" font-size="16" fill="#1e293b">telemetry</text>
+    <text x="80" y="364" font-family="monospace" font-size="16" fill="#1e293b">purchases</text>
+    <text x="80" y="410" font-family="monospace" font-size="16" font-weight="bold" fill="#0369a1">+ urgency tag</text>
+  </g>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="30" font-weight="bold" fill="#0f172a">
+    <text x="285" y="330">--&gt;</text>
+  </g>
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="4">
+    <rect x="350" y="200" width="240" height="70" fill="#e11d48"/>
+    <rect x="350" y="285" width="240" height="70" fill="#ffffff"/>
+    <rect x="350" y="370" width="240" height="70" fill="#ffffff"/>
+  </g>
+  <g font-family="monospace" font-size="16" font-weight="bold" fill="#ffffff">
+    <text x="368" y="244" stroke="none">HOT &lt;10ms SSD</text>
+  </g>
+  <g font-family="monospace" font-size="16" fill="#1e293b">
+    <text x="368" y="329" stroke="none">WARM seconds shared</text>
+    <text x="368" y="414" stroke="none">COLD history HDD</text>
+  </g>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="30" font-weight="bold" fill="#0f172a">
+    <text x="615" y="330">--&gt;</text>
+  </g>
+  <g filter="url(#roughen)">
+    <rect x="680" y="200" width="220" height="70" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+    <rect x="680" y="285" width="220" height="70" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+    <rect x="680" y="370" width="220" height="70" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+    <rect x="930" y="285" width="210" height="155" fill="#ffffff" stroke="#16a34a" stroke-width="4"/>
+  </g>
+  <g font-family="monospace" font-size="15" fill="#1e293b">
+    <text x="696" y="244" stroke="none">live games</text>
+    <text x="696" y="329" stroke="none">batch jobs</text>
+    <text x="696" y="414" stroke="none">cold archive</text>
+    <text x="946" y="340" stroke="none">ONE shared</text>
+    <text x="946" y="364" stroke="none">failover</text>
+    <text x="946" y="388" stroke="none">pool</text>
+  </g>
+  <defs>
+    <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6"/>
+    </filter>
+  </defs>
+  <rect x="60" y="490" width="1080" height="60" fill="#0f172a"/>
+  <text x="90" y="528" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">one shared failover pool.</text>
+  <text x="560" y="528" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#16a34a">not three duplicates.</text>
+</svg>

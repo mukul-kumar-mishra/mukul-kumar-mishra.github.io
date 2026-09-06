@@ -99,6 +99,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   background: var(--ink);
 }
+.site > main { min-width: 0; }
 
 /* ---------- Top bar / nav ---------- */
 .topbar {
@@ -421,7 +422,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--mist);
   font-style: italic;
 }
-.prose table { width: 100%; border-collapse: collapse; font-family: var(--font-body); font-size: 0.88rem; margin: 1.2em 0; }
+.prose table { display: block; width: 100%; max-width: calc(100vw - 32px); overflow-x: auto; -webkit-overflow-scrolling: touch; border-collapse: collapse; font-family: var(--font-body); font-size: 0.88rem; margin: 1.2em 0; }
 .prose th { background: var(--card-muted); color: var(--cyan); font-family: var(--font-display); font-weight: 700; text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .prose td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .prose tr:last-child td { border-bottom: none; }
@@ -433,6 +434,10 @@ h1, h2, h3, h4, h5, h6 {
 .pm-meme img { border-radius: 10px; }
 .pm-meme figcaption { font-size: 0.78rem; }
 .pm-meme figcaption strong { color: var(--lime); }
+.calc-tabs { display: flex; gap: 8px; overflow-x: auto; max-width: calc(100vw - 32px); padding: 4px 2px 14px; margin-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.calc-tab { flex: none; font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--paper); cursor: pointer; white-space: nowrap; }
+.calc-tab:hover { border-color: var(--cyan); color: var(--heading); }
+.calc-tab[aria-selected="true"] { background: var(--lime); border-color: var(--lime); color: #fff; }
 .article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
 .article-card:hover { color: var(--paper); }
@@ -640,6 +645,10 @@ h1, h2, h3, h4, h5, h6 {
   .profile-hero-copy .page-lede { max-width: 36rem; }
   .profile-hero-actions { justify-content: center; }
   .profile-hero-copy > div:first-child { justify-content: center; }
+}
+@media (max-width: 520px) {
+  .topbar > .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; row-gap: 8px; }
+  .topnav { flex-wrap: wrap; row-gap: 6px; }
 }
 @media (max-width: 560px) {
   .wrap { padding: 0 16px; }

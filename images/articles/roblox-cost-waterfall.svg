@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="Bar chart comparing current shaped monthly cost against proposed design across event work storage failover and edge layers">
+  <rect x="0" y="0" width="1200" height="600" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="600" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="monospace" font-size="22" font-weight="bold" letter-spacing="3" fill="#16a34a">FIELD DIAGRAM</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Mukul<tspan dx="10" fill="#16a34a">Mishra</tspan></text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">$10.18M VS $2.23M PER MONTH</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">classification wins. cheaper servers do not.</text>
+  <g font-family="monospace" font-size="17" font-weight="bold" fill="#0f172a">
+    <text x="60" y="220" stroke="none">CURRENT</text>
+    <text x="60" y="360" stroke="none">PROPOSED</text>
+  </g>
+  <g stroke="#0f172a" stroke-width="3">
+    <rect x="220" y="185" width="586" height="50" fill="#e11d48"/>
+    <rect x="806" y="185" width="163" height="50" fill="#0369a1"/>
+    <rect x="969" y="185" width="108" height="50" fill="#b45309"/>
+    <rect x="1077" y="185" width="63" height="50" fill="#16a34a"/>
+    <rect x="220" y="325" width="84" height="50" fill="#e11d48"/>
+    <rect x="304" y="325" width="54" height="50" fill="#0369a1"/>
+    <rect x="358" y="325" width="27" height="50" fill="#b45309"/>
+    <rect x="385" y="325" width="36" height="50" fill="#16a34a"/>
+  </g>
+  <g font-family="monospace" font-size="15" fill="#1e293b">
+    <text x="220" y="270" stroke="none">core 6.48 / hot 1.8 / standby 1.2 / edge 0.7</text>
+    <text x="220" y="410" stroke="none">core 0.93 / hot 0.6 / pool 0.3 / edge 0.4</text>
+  </g>
+  <rect x="60" y="470" width="1080" height="70" fill="#0f172a"/>
+  <text x="90" y="515" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">same trillion messages.</text>
+  <text x="560" y="515" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#16a34a">78 percent less bill.</text>
+</svg>
