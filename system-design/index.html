@@ -115,13 +115,16 @@
   </script>
   <script>
     (function () {
-      var PAGE_SIZE = 10;
+      var PAGE_SIZE = 20;
       var list = document.getElementById('articleList');
       var searchInput = document.getElementById('articleSearch');
       var moreBtn = document.getElementById('loadMoreBtn');
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
       var embeddedArticles = [
+        {"title": "The $6.6B Preview Button That Reinstalls the Internet", "url": "lovable-vibe-coding-scale-postmortem.html", "tag": "AI Builder Platform", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Lovable hit $6.6B by turning prompts into apps. Teardown of preview sandboxes, repeated npm installs and 1B tokens per minute that could have reused a cache.", "tags": ["Lovable", "Vibe Coding", "Supabase", "AWS"]},
+        {"title": "The Serverless Postgres That Was Not Serverless at 3 AM", "url": "supabase-postgres-scale-postmortem.html", "tag": "Database Infrastructure", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Supabase runs 2M Postgres databases behind one pooling promise. Supavisor, transaction mode, RLS tax and the 1M RPS math that proves pooling is a cost control.", "tags": ["Supabase", "Postgres", "RLS", "AWS"]},
+        {"title": "The Ledger That Cannot Blink", "url": "stripe-ledger-scale-postmortem.html", "tag": "Financial Infrastructure", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Stripe processed $1.4 trillion without double charging anything. Idempotency keys, double entry ledger and webhook storms at 1M RPS.", "tags": ["Stripe", "Ledger", "Webhooks", "AWS"]},
         {"title": "18 Trillion Messages a Day. Half of Them Could Have Waited.", "url": "roblox-kafka-ingestion-postmortem.html", "tag": "Event Infrastructure", "dateLabel": "September 2026", "readTime": "24 min read", "desc": "Roblox routes 18 trillion Kafka messages daily through one platform that treats urgent matchmaking like patient analytics. Teardown of the tiers plus a cheaper shape.", "tags": ["Kafka", "Redis", "1M RPS", "AWS"]},
         {"title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer", "url": "cursor-claude-token-exhaustion-postmortem.html", "tag": "Developer Tools", "dateLabel": "September 2026", "readTime": "19 min read", "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.", "tags": ["Cursor", "Claude Code", "Tokens"]},
         {"title": "Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice", "url": "perplexity-answer-engine-postmortem.html", "tag": "AI Infrastructure", "dateLabel": "September 2026", "readTime": "20 min read", "desc": "A forensic teardown of RAG retrieval, KV cache flaw, prefill tax, 780M monthly queries and the cost difference at 1M events per second.", "tags": ["RAG", "Inference", "1M RPS"]},

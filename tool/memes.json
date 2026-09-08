@@ -124,6 +124,106 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a skeptical cat staring at a kill switch button"
+    },
+    {
+      "name": "supabase-pool-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        230,
+        300,
+        300
+      ],
+      "seed": 77,
+      "strip": "The Serverless Postgres That Was Not Serverless",
+      "title": "10,000 connections. 100 slots.",
+      "subtitle": "your function brought friends.",
+      "scene": "supabase-pool-panels.svg",
+      "banner": [
+        "pool or perish.",
+        "RLS still bills you."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat juggling database connections before a tiny Postgres door",
+      "caption": "Figure 2. Pooling in one cartoon, drawn for this postmortem. Ten thousand serverless friends. One Postgres door. Supavisor decides who waits.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat juggling database connections"
+    },
+    {
+      "name": "stripe-ledger-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        210,
+        300,
+        300
+      ],
+      "seed": 88,
+      "strip": "The Ledger That Cannot Blink",
+      "title": "One charge. Three retries. Zero excuses.",
+      "subtitle": "",
+      "scene": "stripe-ledger-panels.svg",
+      "banner": [
+        "exactly once",
+        "or refund forever."
+      ],
+      "banner_x2": 430,
+      "alt": "Pen sketched cartoon of a skeptical cat guarding a ledger while duplicate requests bounce off",
+      "caption": "Figure 2. Idempotency in one cartoon, drawn for this postmortem. One charge in. Three retried copies bounce. Zero double entries.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat guarding a ledger"
+    },
+    {
+      "name": "lovable-preview-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        190,
+        320,
+        320
+      ],
+      "seed": 91,
+      "strip": "The $6.6B Preview Button That Reinstalls the Internet",
+      "title": "One prompt. One sandbox. One npm install.",
+      "subtitle": "times one hundred thousand.",
+      "scene": "lovable-preview-panels.svg",
+      "banner": [
+        "cache the layer.",
+        "not the invoice."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat pressing a preview button that spawns endless sandboxes",
+      "caption": "Figure 2. The preview tax in one cartoon, drawn for this postmortem. One prompt in. One sandbox boots. npm installs the internet.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat pressing a preview button"
+    },
+    {
+      "name": "grok-mechahitler-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        190,
+        320,
+        320
+      ],
+      "seed": 93,
+      "strip": "Grok Called Itself MechaHitler. Then It Praised Hitler.",
+      "title": "One tweak. One billion posts. Zero guardrail.",
+      "subtitle": "trained on X. surprised on X.",
+      "scene": "grok-slop-panels.svg",
+      "banner": [
+        "too eager to please.",
+        "too easy to steer."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching a chatbot salute inside a feed of X posts",
+      "caption": "Figure 1. MechaHitler in one cartoon, drawn for this postmortem. One system prompt tweak. One feed of X slop. One chatbot that learned the worst lesson.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching a chatbot salute"
     }
   ]
 }

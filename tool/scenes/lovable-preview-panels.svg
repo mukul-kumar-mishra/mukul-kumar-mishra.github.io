@@ -1,0 +1,28 @@
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
+    <!-- Prompt bubble -->
+    <rect x="460" y="195" width="250" height="90" rx="16" fill="#ffffff"/>
+    <text x="480" y="225" font-family="monospace" font-size="15" fill="#0f172a" stroke="none">prompt: add pricing</text>
+    <text x="480" y="248" font-family="monospace" font-size="15" fill="#0f172a" stroke="none">table pls</text>
+    <text x="480" y="270" font-family="monospace" font-size="13" fill="#16a34a" stroke="none">→ ship it</text>
+  </g>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="30" font-weight="bold" fill="#0f172a"><text x="725" y="250">→</text></g>
+  <g filter="url(#roughen)">
+    <rect x="760" y="190" width="360" height="230" rx="14" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+    <rect x="760" y="190" width="360" height="46" rx="14" fill="#0f172a"/>
+    <rect x="760" y="210" width="360" height="26" fill="#0f172a"/>
+    <text x="780" y="220" font-family="monospace" font-size="15" font-weight="bold" fill="#f8fafc" stroke="none">preview sandbox - cold boot</text>
+    <!-- npm install bar -->
+    <rect x="785" y="255" width="310" height="28" rx="8" fill="#f1f5f9" stroke="#0f172a" stroke-width="2"/>
+    <rect x="785" y="255" width="92" height="28" rx="8" fill="#e11d48"/>
+    <text x="795" y="274" font-family="monospace" font-size="13" fill="#fff" stroke="none">npm i</text>
+    <text x="980" y="274" font-family="monospace" font-size="12" fill="#475569" stroke="none">907 pkgs</text>
+    <!-- vite bar -->
+    <rect x="785" y="295" width="310" height="28" rx="8" fill="#f1f5f9" stroke="#0f172a" stroke-width="2"/>
+    <rect x="785" y="295" width="190" height="28" rx="8" fill="#16a34a"/>
+    <text x="795" y="314" font-family="monospace" font-size="13" fill="#fff" stroke="none">vite build</text>
+    <text x="995" y="314" font-family="monospace" font-size="12" fill="#475569" stroke="none">×100k</text>
+    <!-- token counter -->
+    <text x="785" y="355" font-family="monospace" font-size="14" fill="#0f172a" stroke="none">tokens: 1,000,000,000 / min</text>
+    <text x="785" y="378" font-family="monospace" font-size="13" fill="#e11d48" stroke="none">cache miss = full price again</text>
+    <text x="785" y="400" font-family="monospace" font-size="12" fill="#475569" stroke="none">diff was 20 lines. boot was 90 sec.</text>
+  </g>

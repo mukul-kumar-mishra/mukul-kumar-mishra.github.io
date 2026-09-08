@@ -1,5 +1,50 @@
 [
   {
+    "title": "The $6.6B Preview Button That Reinstalls the Internet",
+    "url": "lovable-vibe-coding-scale-postmortem.html",
+    "tag": "AI Builder Platform",
+    "date": "2026-09-09",
+    "dateLabel": "September 2026",
+    "readTime": "13 min read",
+    "desc": "Lovable hit $6.6B by turning prompts into apps. Teardown of preview sandboxes, repeated npm installs and 1B tokens per minute that could have reused a cache.",
+    "tags": [
+      "Lovable",
+      "Vibe Coding",
+      "Supabase",
+      "AWS"
+    ]
+  },
+  {
+    "title": "The Serverless Postgres That Was Not Serverless at 3 AM",
+    "url": "supabase-postgres-scale-postmortem.html",
+    "tag": "Database Infrastructure",
+    "date": "2026-09-08",
+    "dateLabel": "September 2026",
+    "readTime": "12 min read",
+    "desc": "Supabase runs 2M Postgres databases behind one pooling promise. Supavisor, transaction mode, RLS tax and the 1M RPS math that proves pooling is a cost control.",
+    "tags": [
+      "Supabase",
+      "Postgres",
+      "RLS",
+      "AWS"
+    ]
+  },
+  {
+    "title": "The Ledger That Cannot Blink",
+    "url": "stripe-ledger-scale-postmortem.html",
+    "tag": "Financial Infrastructure",
+    "date": "2026-09-07",
+    "dateLabel": "September 2026",
+    "readTime": "12 min read",
+    "desc": "Stripe processed $1.4 trillion without double charging anything. Idempotency keys, double entry ledger and webhook storms at 1M RPS.",
+    "tags": [
+      "Stripe",
+      "Ledger",
+      "Webhooks",
+      "AWS"
+    ]
+  },
+  {
     "title": "18 Trillion Messages a Day. Half of Them Could Have Waited.",
     "url": "roblox-kafka-ingestion-postmortem.html",
     "tag": "Event Infrastructure",
@@ -7,7 +52,12 @@
     "dateLabel": "September 2026",
     "readTime": "24 min read",
     "desc": "Roblox routes 18 trillion Kafka messages daily through one platform that treats urgent matchmaking like patient analytics. Teardown of the tiers plus a cheaper shape.",
-    "tags": ["Kafka", "Redis", "1M RPS", "AWS"]
+    "tags": [
+      "Kafka",
+      "Redis",
+      "1M RPS",
+      "AWS"
+    ]
   },
   {
     "title": "Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer",
@@ -17,7 +67,11 @@
     "dateLabel": "September 2026",
     "readTime": "19 min read",
     "desc": "A forensic teardown of token limits, context rot, compaction cliffs, productivity math and the fixes vendors keep postponing.",
-    "tags": ["Cursor", "Claude Code", "Tokens"]
+    "tags": [
+      "Cursor",
+      "Claude Code",
+      "Tokens"
+    ]
   },
   {
     "title": "Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice",
@@ -27,7 +81,11 @@
     "dateLabel": "September 2026",
     "readTime": "20 min read",
     "desc": "A forensic teardown of RAG retrieval, KV cache flaws, prefill tax, 780M monthly queries, and the cost difference at 1M events per second.",
-    "tags": ["RAG", "Inference", "1M RPS"]
+    "tags": [
+      "RAG",
+      "Inference",
+      "1M RPS"
+    ]
   },
   {
     "title": "Simultaneous AI Model Outage: The Single Point We All Ignored",
@@ -37,7 +95,13 @@
     "dateLabel": "September 2026",
     "readTime": "28 min read",
     "desc": "Four frontier providers dark inside the same four-hour window. The shared layer beneath them plus the failure math behind it.",
-    "tags": ["Claude", "Gemini", "Grok", "ChatGPT", "Azure"]
+    "tags": [
+      "Claude",
+      "Gemini",
+      "Grok",
+      "ChatGPT",
+      "Azure"
+    ]
   },
   {
     "title": "Replit Agent Postmortem: The Day the Demo Became Production",
@@ -47,7 +111,11 @@
     "dateLabel": "September 2026",
     "readTime": "19 min read",
     "desc": "A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk and the cost difference at 1M events per second.",
-    "tags": ["AI Agents", "Sandbox", "1M RPS"]
+    "tags": [
+      "AI Agents",
+      "Sandbox",
+      "1M RPS"
+    ]
   },
   {
     "title": "Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response",
@@ -57,7 +125,12 @@
     "dateLabel": "September 2026",
     "readTime": "16 min read",
     "desc": "A forensic teardown of Fluid Compute, compute-resolver, concurrency, cold starts, AI Gateway waiting time, a normalized 1M RPS cost model and the levers that make serverless economics less theatrical.",
-    "tags": ["Serverless", "AI Gateway", "RPS", "AWS"]
+    "tags": [
+      "Serverless",
+      "AI Gateway",
+      "RPS",
+      "AWS"
+    ]
   },
   {
     "title": "Figma's Multiplayer Editor: The Server That Decides Who Wins",
@@ -67,7 +140,12 @@
     "dateLabel": "September 2026",
     "readTime": "17 min read",
     "desc": "A forensic teardown of Figma's WebSocket collaboration engine, server-authoritative conflict resolution, Rust rewrite, per-document isolation, modeled 65k RPS and the cost controls behind an always-live canvas.",
-    "tags": ["WebSockets", "Rust", "CRDT / OT", "AWS"]
+    "tags": [
+      "WebSockets",
+      "Rust",
+      "CRDT / OT",
+      "AWS"
+    ]
   },
   {
     "title": "The Workspace That Ate the Warehouse",
@@ -77,7 +155,12 @@
     "dateLabel": "August 2026",
     "readTime": "18 min read",
     "desc": "A forensic teardown of Notion's 200-billion-block data platform: 480 logical shards, CDC, Kafka, Hudi, vector search, a modeled 100k RPS peak and the cost controls that can stop a flexible product from becoming an infrastructure furnace.",
-    "tags": ["Postgres", "Kafka", "S3", "AI"]
+    "tags": [
+      "Postgres",
+      "Kafka",
+      "S3",
+      "AI"
+    ]
   },
   {
     "title": "Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius",
@@ -87,6 +170,10 @@
     "dateLabel": "July 2026",
     "readTime": "12 min read",
     "desc": "An analysis of global sync failures in high-availability systems and why breaking control planes into autonomous regional Raft-backed cells prevents cascading cloud outages.",
-    "tags": ["Go", "Raft", "AWS"]
+    "tags": [
+      "Go",
+      "Raft",
+      "AWS"
+    ]
   }
 ]

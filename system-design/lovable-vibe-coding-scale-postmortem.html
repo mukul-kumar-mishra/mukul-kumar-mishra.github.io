@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lovable hit $6.6B turning prompts into apps. Teardown of preview sandboxes, repeated npm installs, 1B tokens per minute and the 1M RPS cache fix.">
+  <meta name="keywords" content="Lovable system design, vibe coding architecture, Supabase MCP, preview sandbox cost, prompt caching, LLM load balancer, AI builder scale, 1M RPS cost">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/lovable-vibe-coding-scale-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Lovable Postmortem: The $6.6B Preview Button That Reinstalls the Internet">
+  <meta property="og:description" content="Lovable hit $6.6B by turning prompts into apps. Teardown of the preview loop that boots a sandbox, reinstalls deps and routes a billion tokens per minute.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/lovable-preview-meme.svg">
+  <meta property="og:image:alt" content="Lovable vibe coding preview loop and token routing illustration">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/lovable-vibe-coding-scale-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lovable Postmortem: The $6.6B Preview Button That Reinstalls the Internet">
+  <meta name="twitter:description" content="Preview sandboxes, npm installs and a billion tokens per minute behind vibe coding at scale.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/lovable-preview-meme.svg">
+  <meta name="twitter:image:alt" content="Lovable vibe coding preview loop and token routing illustration">
+  <title>Lovable Postmortem: The $6.6B Preview Button That Reinstalls the Internet | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Lovable Postmortem: The $6.6B Preview Button That Reinstalls the Internet",
+    "description":"A system design postmortem of Lovable vibe coding scale, preview sandboxes, Supabase MCP and token routing at 1M RPS.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "datePublished":"2026-09-09",
+    "dateModified":"2026-09-09",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/lovable-vibe-coding-scale-postmortem.html"},
+    "keywords":"Lovable, vibe coding, Supabase MCP, preview sandbox, LLM routing"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../about.html">About</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Builder Platform</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The $6.6B Preview Button That Reinstalls the Internet</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Lovable went from 0 to $6.6 billion in under two years by letting anyone turn a prompt into a working app. Behind the chat box sits a loop that builds a React app, boots a sandbox, runs npm install, rebuilds Vite and routes more than one billion tokens per minute. Every preview click repeats most of that work.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Valuation</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$6.6B</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">ARR Nov 2025</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$200M</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Daily Projects</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k+</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Tokens per min</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1B+</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 9, 2026</p>
+    </header>
+
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Lovable funding, product and routing notes below come from company posts and press linked at the end. Token rates and infra costs are a labeled scenario model. Nothing here claims to be Lovable billing.</aside>
+
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/lovable-preview-meme.svg" alt="Lovable prompt to preview loop with sandbox and token routing illustration" width="1200" height="680"><figcaption>Figure 1. The preview tax in one cartoon, drawn for this postmortem. One prompt in. One sandbox boots. npm installs the internet while the meter spins.</figcaption></figure>
+
+      <section><h2>1. The Preview Button Is a Data Center</h2>
+        <p>Type add a pricing table and watch the preview. One sentence becomes a plan, a patch set, a file rewrite, a Vite rebuild and a deployed URL. The sandbox spins up an isolated filesystem, clones a template, applies the diff, runs package install, starts a dev server and streams logs back through the agent. It feels instant. It costs a boot plus a build plus the model call that wrote the code.</p>
+        <p>The loop repeats every time you answer sure fix that button. The agent replays context, generates new patches, reinstalls deps if lockfile changed, rebuilds and redeploys. At one hundred thousand daily projects with three prompts per project that is three hundred thousand preview builds per day. Each build reinstalls a largely identical dependency tree and recompiles a React app that changed by twenty lines.</p>
+        <div class="callout"><strong>The uncomfortable product truth:</strong> Lovable sells prompts. It pays for sandboxes and tokens. The cheapest preview is the one that never boots a new container for an unchanged lockfile.</div>
+        <p>It is a heroic form of waste. Your user changed a button color and you reinstalled the internet to prove it.</p>
+      </section>
+
+      <section><h2>2. Why Lovable Is the Right Unicorn Autopsy</h2>
+        <p>Lovable launched in Stockholm in 2023, hit unicorn at $1.8 billion in July 2025 on a $200 million Series A led by Accel, then tripled to $6.6 billion in December 2025 on a $330 million Series B led by CapitalG and Menlo Ventures. Investors now include CapitalG, Menlo Ventures Anthology, NVentures, Salesforce Ventures, Databricks Ventures plus Accel and Creandum. Total capital raised is about $552.5 million.</p>
+        <p>Revenue tracks that curve. From $1 million ARR to $75 million ARR in seven months, then to $200 million ARR by November 2025. The product reported 180k paying subscribers plus more than 100k projects per day at its peak. Supabase integration is the quiet accelerator. Every project provisions a managed Postgres database plus auth plus storage plus edge functions. The platform went from frontend generator to full stack builder and the meter followed.</p>
+        <blockquote>"We have 180,000 paying subscribers and crossed $75 million ARR in seven months" Anton Osika said in July 2025. Vibe coding stopped being a demo. It became a billing event every time someone pressed preview.</blockquote>
+        <p>Lovable also publishes how it scales model traffic. The company disclosed processing more than one billion tokens per minute at peak and built an LLM provider load balancer with weighted fallback chains and project affinity. That disclosure is rare for a vibe coding unicorn. Most builders hide token routing behind a status page. Lovable explained why prompt cache affinity matters.</p>
+      </section>
+
+      <section><h2>3. Reconstructing the Machine</h2>
+        <p>A project lives in three places at once. Chat frontend on the left, live preview on the right and a sandbox in the middle that holds files plus a dev server. The agent runs a five stage loop. Spec collection, context assembly, change set planning, build and preview and feedback that seeds the next turn. The user thinks they sent a prompt. The platform thinks it ran a distributed build.</p>
+        <p>Code generation writes React plus TypeScript plus Tailwind plus shadcn components. Backend scaffolding provisions Supabase primitives through the Supabase MCP server. Each project gets an isolated Postgres plus bucketed storage plus auth wiring. Secrets stay client side and are injected at deploy, not in the model call. Edge functions generated in supabase/functions deploy as managed serverless. The static frontend ships as an SPA behind a CDN.</p>
+        <p>The loop is stateful. The agent keeps conversation history and file state. The next prompt reuses context. That reuse is where Lovable wins or bleeds. Without prompt cache reuse a 80k context replay costs full input price each turn. With reuse it costs a fraction. The load balancer must keep the same project on the same provider long enough to exploit caching while spreading load when a provider throttles. This is the same lesson my <a href="supabase-postgres-scale-postmortem.html">Supabase teardown</a> found with connection reuse, only the pool is now a prompt cache.</p>
+        <div class="tip"><strong>Architecture tip:</strong> Draw the builder as a build system, not a chatbot. Files plus deps plus preview URL are the artifacts. Chat is only the trigger. The bill lives in files touched per prompt.</div>
+      </section>
+
+      <section><h2>4. The Billion Token Router You Did Not Put on Your Roadmap</h2>
+        <p>Lovable routes model traffic across multiple LLM providers because no single provider sustains prompt cache reuse at a billion tokens per minute without faltering. Providers are not interchangeable. Some offer cheaper Flash style models, some offer smarter Pro style models, some offer faster inference for the same weights. The agent introduces stickiness. Consecutive prompts for the same project should hit the same provider to reuse the KV cache for the prior context.</p>
+        <p>The team replaced a single global fallback chain with many weighted permutations. Each provider gets an availability score updated every thirty seconds by a PID controller over error rate and throughput. Weight for the first preferred provider equals its availability. Weight for the second provider equals the minimum of its availability or remaining weight budget. A project samples a permutation from those weights and keeps it for a short window. That preserves cache affinity while shifting new projects away from a hot provider.</p>
+        <p>Cache affinity reads well in a blog post and saves real money at scale. Without it each of the three prompts per project pays full input token price. With 80k input tokens per turn at $3 per million tokens that is $0.24 per turn. Three turns is $0.72 per project before output. One hundred thousand projects per day is $72k per day in input alone before optimization. Seventy percent cache hit rate at $0.30 per million cached input drops that input bill by more than half. Routing is margin engineering disguised as reliability.</p>
+      </section>
+
+      <section id="rps-model"><h2>5. The RPS Model: How Many Previews Does Vibe Coding Make</h2>
+        <p>Lovable reported more than one hundred thousand projects per day. The following model assumes a steady platform day.</p>
+        <p>Assume one hundred thousand active projects per day, three agent prompts per project and two billion tokens routed in total. That holds one billion tokens per minute for bursts and roughly thirty thousand new preview builds per day counting iterations. Assume each preview build touches a sandbox for ninety seconds on average including npm install plus Vite rebuild plus log tail.</p>
+        <p>Convert to rates. Three hundred thousand agent turns per day is 3.47 turns per second average. Apply a six times burst multiplier when European and US working hours overlap. Modeled peak agent turns become twenty point eight per second. Each turn fans into one LLM call plus one sandbox boot plus one Vite build plus one Supabase schema check. At peak that is roughly eighty events per second hitting origin before storage plus auth plus hosting.</p>
+        <p>Web preview traffic adds more. Assume twenty thousand concurrent previews each polling or socketing the preview URL twice per second. That is forty thousand preview control events per second that must not hit origin as full rebuilds.</p>
+        <table><thead><tr><th>Workload</th><th>Assumption</th><th>Modeled result</th></tr></thead><tbody>
+          <tr><td>Projects per day</td><td>Reported peak</td><td>100k</td></tr>
+          <tr><td>Agent turns per day</td><td>3 per project</td><td>300k</td></tr>
+          <tr><td>Peak turns</td><td>6x burst over avg 3.47 per sec</td><td>20.8 per sec</td></tr>
+          <tr><td>Tokens per day</td><td>1B per minute burst proxy</td><td>2B total</td></tr>
+          <tr><td>Preview control</td><td>20k viewers times 2 per sec</td><td>40k events per sec</td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Load test tip:</strong> Replay the same project for five prompts, not five fresh projects for one prompt each. Fresh projects hide cache affinity cost. Long lived projects reveal it.</div>
+      </section>
+
+      <section id="cost-model"><h2>6. The Cost Model: Why the Preview Button Costs More Than the Model</h2>
+        <p>Model tokens dominate headlines but preview infrastructure dominates the tail.</p>
+        <p>Assume per turn input of 80k tokens with seventy percent cache reuse and output of 2k tokens. Blended effective input cost around $0.60 per million after caching. Input cost per turn is about $0.05. Output at $15 per million is $0.03. Add gateway overhead. Agent token cost lands near $0.10 per turn. Three hundred thousand turns per day is $30k per day or $900k per month.</p>
+        <p>Preview sandbox and build is the second bill. Assume ninety seconds of isolated container at $0.00005 per second plus network plus storage. That is $0.0045 per preview before install IO. Add npm install network and registry IO amortized to $0.01 per build when lockfile is reused and $0.04 when cold. With eighty percent lockfile reuse the blended build cost is $0.015 per preview. Three hundred thousand previews per day is $4.5k per day or $135k per month. Full rebuilds for every prompt would triple that.</p>
+        <p>Add Supabase per project provisioning, hosting for preview URLs, auth, storage and observability. Lovable Cloud and Supabase MCP together at platform scale sit near $250k per month for the modeled project volume. Total modeled envelope lands near $1.285M per month for this project scale, or roughly $42.8k per day.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
+          <tr><td>Agent tokens with cache affinity</td><td>$900k</td><td>cache hit rate plus model mix</td></tr>
+          <tr><td>Sandbox boot plus Vite build</td><td>$135k</td><td>lockfile reuse plus layer cache</td></tr>
+          <tr><td>Supabase MCP plus preview hosting</td><td>$250k</td><td>projects times idle timeout</td></tr>
+          <tr><td><strong>Total scenario</strong></td><td><strong>$1.285M</strong></td><td></td></tr>
+        </tbody></table>
+      </section>
+
+      <section id="one-million-rps"><h2>7. The One Million RPS Thought Experiment</h2>
+        <p>Normalize to one million preview requests per second for one month. A month holds 2,592,000 seconds. Assume each preview request carries one kilobyte inbound plus two kilobytes outbound for diff plus logs. Logical data crossing the edge is roughly three million kilobytes per second or about 7.2 petabytes per month before replication.</p>
+        <p>In the current shaped builder, assume origin cost of $0.0000016 per preview request for full sandbox plus reinstall plus LLM turn plus Supabase check. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.0000016 equals $4.15M per month</strong>.</p>
+        <p>My proposed builder caches aggressively. Layer cache node modules by lockfile hash, reuse Vite build via persistent filesystem snapshots, keep sandboxes warm for five minutes per project and serve eighty percent of preview control events from edge without a rebuild. Assume forty percent of requests reach origin and origin rate falls to $0.0000011 after diff only patches and Supabase connection reuse via my Supabase postmortem pool. Core origin work becomes <strong>400,000 times 2,592,000 times $0.0000011 equals $1.14M per month</strong>. Add four hundred thousand dollars for layer cache plus warm pool plus Supabase MCP and hosting buffer. Proposed envelope is about <strong>$1.54M per month</strong>.</p>
+        <table><thead><tr><th>At 1M RPS</th><th>Reinstall everything</th><th>Cached preview builder</th></tr></thead><tbody>
+          <tr><td>Origin previews</td><td>1,000,000 per sec</td><td>400,000 per sec after cache</td></tr>
+          <tr><td>Modeled rate</td><td>$0.0000016 per req</td><td>$0.0000011 per req</td></tr>
+          <tr><td>Core origin work</td><td>$4.15M</td><td>$1.14M</td></tr>
+          <tr><td>Cache and warm pool</td><td>Included</td><td>$400k</td></tr>
+          <tr><td><strong>Modeled monthly total</strong></td><td><strong>$4.15M</strong></td><td><strong>$1.54M</strong></td></tr>
+          <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$2.61M per month, about 63 percent lower</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The engineering conclusion:</strong> At one million previews per second the win is not a cheaper model. It is fewer reinstalls. Cache the filesystem before you haggle the token price.</div>
+        <div class="live-diagram" aria-label="Lovable cached preview architecture diagram">
+          <div class="diagram-flow"></div>
+          <div class="live-diagram-grid">
+            <div class="diagram-node green">Project affinity<small>same provider chain<br>prompt cache reuse</small></div>
+            <div class="diagram-node hot">LLM provider mesh<small>1B tokens per min<br>PID reweight</small></div>
+            <div class="diagram-node gold">Diff planner<small>patch twenty lines<br>not regen all files</small></div>
+            <div class="diagram-node">Layer cache<small>lockfile hash<br>node_modules reuse</small></div>
+            <div class="diagram-node green">Warm sandbox pool<small>keep FS snapshot 5m<br>no cold boot</small></div>
+            <div class="diagram-node">Vite incremental<small>rebuild changed route<br>not app</small></div>
+            <div class="diagram-node gold">Supabase MCP<small>pooled Postgres<br>per project</small></div>
+            <div class="diagram-node">CDN preview<small>edge control events<br>origin only on diff</small></div>
+          </div>
+          <p class="diagram-caption">This figure appears after the cost model on purpose. First price the reinstall. Then decide what survives without it.</p>
+        </div>
+      </section>
+
+      <section><h2>8. How I Would Cut the Bill Without Cutting the Demo</h2>
+        <p><strong>Hash the lockfile and never reinstall for free.</strong> Cache node_modules layers by package lock hash plus Node version plus registry mirror. Keep a content addressed store for tarballs. A prompt that tweaks a button should not reinstall 900 packages through the same registry ten times.</p>
+        <p><strong>Snapshot the filesystem between turns.</strong> Preserve the sandbox filesystem as a snapshot after a successful Vite build. Next prompt restores the snapshot in milliseconds, applies a diff and rebuilds only changed routes. Warm pool for five minutes per project turns a cold boot into a warm patch.</p>
+        <p><strong>Generate diffs, not rewrites.</strong> Force the agent to emit unified diffs with file level scope. Validate the patch applies before install or build. Full file regeneration looks impressive and invalidates every layer cache. Diff is money.</p>
+        <p><strong>Keep prompt cache affinity as a correctness property.</strong> Treat project to provider affinity as a routing invariant, not a preference. Monitor cache hit ratio per project and alert when affinity breaks. A one percent hit ratio drop at a billion tokens per minute is a hundred thousand dollars waiting to be acknowledged.</p>
+        <p><strong>Pool Supabase with the same lesson as before.</strong> My <a href="supabase-postgres-scale-postmortem.html">Supabase teardown</a> already showed transaction pooling plus RLS index design trims backend cost. Apply it per project template. Provision read replicas only for hosted previews that expect traffic, not for every draft that never ships.</p>
+        <p><strong>Put idle projects to cold storage fast.</strong> Preview URLs for draft projects have a half life measured in minutes. Snapshot DB and filesystem, stop the container and restore on next prompt. A draft that lives hot forever is a tenant that never pays but never leaves.</p>
+        <div class="tip"><strong>Ops tip:</strong> Alert on preview build time, lockfile miss rate and prompt cache hit ratio before you alert on GPU or CPU. At builder scale those three ratios move the bill ten minutes before CPU graphs notice.</div>
+      </section>
+
+      <section><h2>9. The Verdict</h2>
+        <p>Lovable earned its $6.6 billion by making software creation feel like a conversation. The loop is the product. Chat in, preview out, iterate. The cost is every part of that loop that reinstalls the world to change a line of text. One billion tokens per minute is not a flex. It is a routing and caching problem that must be solved every minute before someone notices.</p>
+        <p>The pattern is bigger than one builder. My Supabase teardown showed pooling decides Postgres cost. My Vercel teardown showed waiting work must not occupy executing capacity. Lovable proves preview cost behaves the same way. Reuse the backend connection, reuse the prompt cache and reuse the filesystem layer before you scale the fleet. The cheapest preview is the one that never repeats work the prior prompt already paid for.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A billion tokens per minute is not your moat. A cached layer that avoids the next billion is.</strong></p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Lovable funding, product and routing notes come from Lovable blog posts and press linked below. The RPS and cost model is my own scenario math, not Lovable billing. Validate with production measurements before capacity decisions.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://www.cnbc.com/2025/12/16/ai-startup-lovables-round-values-it-at-6point6-billion-sources.html" target="_blank" rel="noopener noreferrer">CNBC: Lovable Valued at $6.6 Billion</a></li>
+          <li><a href="https://techcrunch.com/2025/07/17/lovable-becomes-a-unicorn-with-200m-series-a-just-8-months-after-launch/" target="_blank" rel="noopener noreferrer">TechCrunch: Lovable Becomes a Unicorn at $1.8B</a></li>
+          <li><a href="https://lovable.dev/blog/routing-billions-of-tokens-per-minute" target="_blank" rel="noopener noreferrer">Lovable Blog: Routing Billions of Tokens per Minute</a></li>
+          <li><a href="https://lovable.dev/blog/lovable-cloud" target="_blank" rel="noopener noreferrer">Lovable Blog: Introducing Lovable Cloud and AI</a></li>
+          <li><a href="https://www.beam.cloud/blog/agentic-apps" target="_blank" rel="noopener noreferrer">Beam: How Lovable and Bolt Work Architecture</a></li>
+          <li><a href="https://techfundingnews.com/lovable-raises-330m-series-b-6-6b-valuation-builder-ai/" target="_blank" rel="noopener noreferrer">TFN: Lovable Bags $330M Series B at $6.6B</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

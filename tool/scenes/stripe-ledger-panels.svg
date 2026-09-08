@@ -1,0 +1,23 @@
+  <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
+    <rect x="460" y="200" width="220" height="110" rx="14" fill="#ffffff"/>
+    <text x="475" y="228" font-family="monospace" font-size="14" font-weight="bold" fill="#0f172a" stroke="none">POST /charge</text>
+    <text x="475" y="250" font-family="monospace" font-size="13" fill="#475569" stroke="none">retry #1</text>
+    <text x="475" y="270" font-family="monospace" font-size="13" fill="#475569" stroke="none">retry #2</text>
+    <text x="475" y="290" font-family="monospace" font-size="13" fill="#e11d48" stroke="none">retry #3 ← same $10</text>
+  </g>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="30" font-weight="bold" fill="#0f172a"><text x="695" y="262">→</text></g>
+  <g filter="url(#roughen)">
+    <rect x="730" y="180" width="260" height="140" rx="14" fill="#fff7ed" stroke="#e11d48" stroke-width="4"/>
+    <rect x="730" y="180" width="260" height="40" fill="#e11d48"/>
+    <text x="745" y="206" font-family="monospace" font-size="14" font-weight="bold" fill="#fff" stroke="none">idempotency cache</text>
+    <text x="745" y="240" font-family="monospace" font-size="13" fill="#0f172a" stroke="none">key: abc-123</text>
+    <text x="745" y="262" font-family="monospace" font-size="13" fill="#16a34a" stroke="none">→ one ledger hit</text>
+    <text x="745" y="285" font-family="monospace" font-size="12" fill="#475569" stroke="none">two retries = free</text>
+  </g>
+  <g filter="url(#roughen)">
+    <rect x="840" y="340" width="250" height="110" rx="14" fill="#0f172a" stroke="#0f172a" stroke-width="3"/>
+    <text x="855" y="365" font-family="monospace" font-size="13" font-weight="bold" fill="#16a34a" stroke="none">ledger - double entry</text>
+    <text x="855" y="388" font-family="monospace" font-size="13" fill="#f8fafc" stroke="none">+ $10.00  |  - $10.00</text>
+    <text x="855" y="410" font-family="monospace" font-size="12" fill="#f8fafc" stroke="none">= 0  ✓ never 2×</text>
+    <text x="855" y="430" font-family="monospace" font-size="11" fill="#93a4ba" stroke="none">without key: $20. oops.</text>
+  </g>
