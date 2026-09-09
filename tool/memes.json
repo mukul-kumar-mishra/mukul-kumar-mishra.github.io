@@ -324,6 +324,56 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat running a funeral factory"
+    },
+    {
+      "name": "navier-stokes-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        195,
+        320,
+        320
+      ],
+      "seed": 103,
+      "strip": "OpenAI Says It Solved Navier-Stokes",
+      "title": "90 years. 10,000 agents. One vortex.",
+      "subtitle": "the velocity has left the chat.",
+      "scene": "navier-stokes-panels.svg",
+      "banner": [
+        "finite energy.",
+        "infinite footnote."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching Astra agents solve a Navier Stokes vortex problem",
+      "caption": "Figure 1. The claim in one cartoon, drawn for this postmortem. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching agents solve Navier Stokes"
+    },
+    {
+      "name": "navier-stokes-pipeline-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        210,
+        300,
+        300
+      ],
+      "seed": 105,
+      "strip": "The Proof Factory Has a Token Meter",
+      "title": "2.7M messages. 130B tokens. 0 sorry.",
+      "subtitle": "the invoice is also a result.",
+      "scene": "navier-stokes-pipeline-panels.svg",
+      "banner": [
+        "proof in.",
+        "peer review pending."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat running thousands of math agents into Lean proof checking",
+      "caption": "Figure 2. The production line in one cartoon, drawn for this postmortem. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat running a mathematical proof factory"
     }
   ]
 }
