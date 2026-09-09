@@ -1,5 +1,15 @@
 [
   {
+    "title": "Doltgres Postmortem: The Backup That Forgot the Data",
+    "url": "doltgres-data-loss-postmortem.html",
+    "tag": "Database Infrastructure",
+    "date": "2026-09-10",
+    "dateLabel": "September 2026",
+    "readTime": "13 min read",
+    "desc": "Doltgres lost values after adaptive encoding metadata was missed by backup and garbage collection erased the remaining references. Postmortem of the recovery failure.",
+    "tags": ["Doltgres", "Postgres", "Backups", "Data Loss"]
+  },
+  {
     "title": "The $11B Voice That Bills Per Hello",
     "url": "elevenlabs-voice-scale-postmortem.html",
     "tag": "Audio Infrastructure",

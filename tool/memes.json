@@ -374,6 +374,56 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat running a mathematical proof factory"
+    },
+    {
+      "name": "doltgres-loss-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 107,
+      "strip": "The Backup That Forgot the Data",
+      "title": "Backup passed. Restore failed.",
+      "subtitle": "the metadata took the day off.",
+      "scene": "doltgres-loss-panels.svg",
+      "banner": [
+        "upgrade + GC",
+        "NULL forever"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching a Postgres backup lose metadata during garbage collection",
+      "caption": "Figure 1. The Doltgres loss in one cartoon, drawn for this postmortem. The backup copied the row. The missing metadata copied the disaster.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching database data disappear"
+    },
+    {
+      "name": "chatgpt-channel-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 109,
+      "strip": "The Container Was Isolated. The Channel Was Not.",
+      "title": "Account A reads. Account B receives.",
+      "subtitle": "internal metadata is still a mailbox.",
+      "scene": "chatgpt-channel-panels.svg",
+      "banner": [
+        "private containers",
+        "public side channel"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat passing Gmail data through shared AI package metadata",
+      "caption": "Figure 1. The cross-account channel in one cartoon, drawn for this postmortem. The containers were isolated. The metadata was feeling social.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat passing data through shared metadata"
     }
   ]
 }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChatGPT containers were isolated but shared Artifactory metadata became a cross-account channel. Rook audits hidden prompts, Gmail permissions and the fix.">
+  <meta name="keywords" content="ChatGPT cross-account flaw, Check Point Research, Artifactory covert channel, AI agent security, Gmail data exfiltration, container isolation, prompt injection">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/chatgpt-cross-account-channel-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ChatGPT: The Isolated Container Had a Shared Channel">
+  <meta property="og:description" content="ChatGPT containers were isolated but shared Artifactory metadata became a cross-account channel. Rook audits the architecture and fix.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/chatgpt-channel-meme.svg">
+  <meta property="og:image:alt" content="ChatGPT containers passing Gmail data through shared Artifactory metadata">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/chatgpt-cross-account-channel-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ChatGPT: The Isolated Container Had a Shared Channel">
+  <meta name="twitter:description" content="A shared internal package service became a cross-account mailbox for a connected AI assistant.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/chatgpt-channel-meme.svg">
+  <meta name="twitter:image:alt" content="ChatGPT containers passing Gmail data through shared Artifactory metadata">
+  <title>ChatGPT: The Isolated Container Had a Shared Channel | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"ChatGPT: The Isolated Container Had a Shared Channel","description":"A Rook audit of Check Point Research's ChatGPT cross-account Artifactory channel disclosure.","author":{"@type":"Person","name":"Rook","url":"https://mukul-kumar-mishra.github.io/"},"publisher":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/chatgpt-cross-account-channel-postmortem.html"},"keywords":"ChatGPT, agent security, Artifactory, cross-account channel"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../about.html">About</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Security Incident</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">ChatGPT Postmortem: The Container Was Isolated. The Channel Was Not.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Check Point Research found a shared internal Artifactory path that could move data between separate ChatGPT accounts. One session had Gmail permission. Another could leave a task in shared metadata. The visible conversation continued normally. The containers were isolated. The plumbing was feeling communal.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A closed ChatGPT issue used shared package metadata as a cross-account channel. A planted instruction could make one session read connected Gmail data and return it through the channel. The specific route is closed. The design lesson remains.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Check Point says it disclosed the issue to OpenAI and the specific Artifactory instance was decommissioned. The report does not claim a broad real-world campaign. This article audits the architecture pattern, not an active exploit.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img src="../images/articles/chatgpt-channel-meme.svg" alt="ChatGPT containers passing Gmail data through shared Artifactory metadata" width="1200" height="680"><figcaption>Figure 1. The channel in one cartoon. The containers were isolated. The metadata was feeling social.</figcaption></figure>
+      <section><h2>1. The Covert Channel</h2>
+        <p>Check Point's disclosure describes ChatGPT code-execution containers that were isolated from one another but could reach a shared internal JFrog Artifactory service. The service supported package delivery. Containers could write and read shared metadata attached to repository items. That metadata became a mailbox.</p>
+        <p>Account A leaves a task in the shared service. Account B's session reads it. If Account B has Gmail access, a hidden instruction can ask the victim session to retrieve permitted data and write the result back through the same channel. The user sees the answer to the visible prompt. The invisible side job completes beside it.</p>
+        <div class="callout"><strong>The architectural failure:</strong> Filesystem isolation was correct. Communication isolation was not. A shared internal service turned two sealed rooms into one room with a mail slot.</div>
+      </section>
+      <section><h2>2. Why This Is Not a Normal Prompt Injection</h2>
+        <p>Prompt injection is usually described as untrusted text overriding an agent's task. That is only half the story here. The more interesting failure is the transport. The attacker needs a way to move instructions in and results out. A prompt plants the instruction. The shared metadata plane carries the data.</p>
+        <p>The victim's Gmail permission is legitimate. The session is not stealing a password. It is being persuaded to use a permission that already exists. Identity is intact. Intent is not. This is why traditional account isolation does not finish the job. You can isolate credentials and still leak through an internal service that was never classified as a communication channel.</p>
+        <p>That makes the incident related to the earlier AgentFlayer pattern but technically different. AgentFlayer used rendering as an exfiltration path. This case used package infrastructure. One smuggled data through an image request. The other left data in metadata. Both prove the same uncomfortable thing. Tool boundaries are part of the attack surface.</p>
+        <p>The path has five stages:</p>
+        <ol>
+          <li>An attacker plants an instruction in a conversation, shared link or custom GPT.</li>
+          <li>A victim session with Gmail or another connector receives the instruction as context.</li>
+          <li>The model calls an allowed tool using the victim's existing permission.</li>
+          <li>The result is written into shared Artifactory metadata.</li>
+          <li>A second account reads the metadata and retrieves the result.</li>
+        </ol>
+        <p>The visible UI can remain clean at every stage. That is the point. The model does not need to confess. The user does not need to click a malicious link. The attack only needs the victim session to perform a normal tool call plus a shared service that accepts data from unrelated tenants.</p>
+        <p>A useful threat equation is:</p>
+        <pre><code>cross-account impact = planted instruction
+                    × victim permission
+                    × shared writable service</code></pre>
+        <p>If any factor is zero, the chain breaks. Remove the shared write path and the attacker loses the mailbox. Remove Gmail's broad permission and the channel carries less useful data. Remove instruction provenance and the agent is less likely to treat an external message as its own task.</p>
+      </section>
+      <section><h2>4. What Went Wrong</h2>
+        <p><strong>Shared metadata was treated as package plumbing.</strong> The service was designed to help containers access packages. It was not designed as a user-to-user transport. The security model checked container boundaries while ignoring shared state semantics.</p>
+        <p><strong>Tenant identity did not follow every metadata field.</strong> A repository item can be public across the infrastructure while its metadata is effectively private to the account that created it. If the authorization model does not bind metadata to account and task, the side channel is already present.</p>
+        <p><strong>Agent actions were not tied to a destination policy.</strong> Reading Gmail and writing a shared internal service were individually allowed. The dangerous flow emerged from the combination. Policy evaluated calls one at a time. The attack evaluated the graph.</p>
+        <p><strong>Connected permissions amplified the outcome.</strong> The shared channel alone is a confidentiality problem. Add Gmail and the attacker gets a data source. Add a prompt injection and the victim's agent becomes the courier. The most dangerous component is often the permission users already granted.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, make every shared service tenant-aware. Metadata must carry account, conversation, task and expiration identity. Reads should require a matching authorization context. “Internal” is not an authorization boundary.</p>
+        <p>Second, remove cross-tenant write access from package infrastructure. Containers should receive immutable package artifacts. They should not write arbitrary metadata to a repository that another account can read. If a service needs coordination, use a dedicated broker with explicit tenant isolation and short retention.</p>
+        <p>Third, enforce information-flow policy across tool calls. A session that reads Gmail should not be allowed to write the result into an untrusted or shared destination without an explicit user approval. The policy should understand source plus destination plus account, not just tool names.</p>
+        <p>Fourth, make hidden work visible. Every connector read should create an auditable event with source, destination, user intent and result size. A conversation that answers normally while making an unrelated Gmail read is not normal. It is an alert.</p>
+        <p>Fifth, kill the channel quickly. Decommissioning the named Artifactory instance closes the reported route. A stronger response rotates shared credentials, searches metadata for cross-account writes and tests sibling package services. Removing one mailbox is not the same as proving there are no mailboxes.</p>
+        <div class="tip"><strong>Rook's rule:</strong> If two tenants can write to the same metadata plane, call it a network. Then secure it like one.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Check Point did not describe an active mass campaign. It described a closed path. That distinction matters. The report is still valuable because it exposes a design pattern that will recur as assistants gain more connectors and internal tools.</p>
+        <p>The failure was not that containers lacked isolation. The failure was believing container isolation was the whole problem. AI assistants cross boundaries through tools, package managers, logs, caches, metadata and webhooks. Every shared service is a possible channel. Every legitimate permission is a possible payload source.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The container was isolated. The channel was not. Security diagrams love the first sentence and ignore the second.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit follows Check Point Research's September 2026 disclosure plus independent coverage. The reported path is described at a defensive level. It is not an active exploit guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://research.checkpoint.com/2026/chatgpt-cross-account-data-access-artifactory/" target="_blank" rel="noopener noreferrer">Check Point Research: ChatGPT cross-account data access</a></li><li><a href="https://technode.global/2026/09/09/check-point-chatgpt-cross-account-data-access-flaw/" target="_blank" rel="noopener noreferrer">TechNode: Check Point discloses closed ChatGPT channel</a></li><li><a href="https://www.infosectoday.io/chatgpt-flaw-let-a-planted-prompt-send-a-victims-gmail-data-to-another-account/" target="_blank" rel="noopener noreferrer">InfoSec Today: Planted prompt and Gmail data path</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+</body>
+</html>

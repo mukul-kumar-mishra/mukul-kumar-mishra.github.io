@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Doltgres lost values when adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and safer recovery design.">
+  <meta name="keywords" content="Doltgres data loss, Postgres backup failure, garbage collection, adaptive encoding, database upgrade postmortem, backup integrity">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/doltgres-data-loss-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Doltgres: The Backup That Forgot the Data">
+  <meta property="og:description" content="Doltgres lost values after adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and recovery design.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/doltgres-loss-meme.svg">
+  <meta property="og:image:alt" content="Doltgres backup losing metadata during garbage collection">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/doltgres-data-loss-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Doltgres: The Backup That Forgot the Data">
+  <meta name="twitter:description" content="Out-of-band metadata, incomplete backup, upgrade and garbage collection. A database data-loss postmortem.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/doltgres-loss-meme.svg">
+  <meta name="twitter:image:alt" content="Doltgres backup losing metadata during garbage collection">
+  <title>Doltgres: The Backup That Forgot the Data | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Doltgres: The Backup That Forgot the Data","description":"A technical postmortem of Doltgres adaptive encoding metadata loss during upgrade, backup and garbage collection.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/doltgres-data-loss-postmortem.html"},"keywords":"Doltgres, data loss, backup integrity, garbage collection"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../about.html">About</a><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button></nav></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Database Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Doltgres Postmortem: The Backup That Forgot the Data</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A Doltgres customer upgraded a database. The backup completed. Garbage collection completed. The values did not survive. The bug lived in adaptive encoding metadata stored outside the obvious row path. The backup copied the row and forgot what made the row readable. Very efficient. Very final.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Doltgres lost values when old out-of-band metadata was missing from backup and garbage collection removed the remaining references. The fix is integrity checking, fail-safe backup and no destructive GC until restore has proved the data.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows DoltHub's public postmortem. The affected customer and data volume are not identified. The failure path and remediation are drawn from the published account.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/doltgres-loss-meme.svg" alt="Doltgres backup losing metadata during garbage collection" width="1200" height="680"><figcaption>Figure 1. The Doltgres loss in one cartoon. The backup copied the row. The missing metadata copied the disaster.</figcaption></figure>
+      <section><h2>1. The Backup Completed. That Was the Problem.</h2>
+        <p>In August a Doltgres customer upgraded from 0.57.3 to 1.2.0. Before the upgrade they used the hosted web interface to create a backup. The upgrade finished. SELECT queries then failed on some tables. Engineers repaired the database structure enough for queries to run, but missing values had already been replaced with NULL. Some smaller tables lost every affected value in at least one column.</p>
+        <p>The customer tried a downgrade. It did not restore the data. They restored the backup. It reproduced the same damage. That second result is the one database teams fear. A bad live copy is painful. A bad backup means the recovery path is decorative.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> A successful backup operation proves that bytes moved. It does not prove that logical data survived the move.</div>
+      </section>
+      <section><h2>2. The Hidden Metadata Bug</h2>
+        <p>Doltgres supports adaptively encoded values. Some larger values use out-of-band storage plus bookkeeping that tells the engine where the value lives. The logical row still looks normal to a query. The physical representation is split between the row and a side structure.</p>
+        <p>The bug wrote tuples without the required out-of-band metadata in releases from the adaptive encoding change through 0.56.3. Data movement and garbage collection were introduced later. Testing missed the interaction because the original bug existed before the operations that would expose it.</p>
+        <p>This is a classic temporal failure. Feature A ships in isolation. Feature B ships later. Feature C makes cleanup automatic. The system never tests A plus B plus C against a real upgrade path. Years later the combination meets a customer who upgrades at exactly the wrong moment. The code did not suddenly become wrong. The assumptions finally met.</p>
+        <p>The sequence was roughly:</p>
+        <ol>
+          <li>Old releases write values whose metadata is incomplete.</li>
+          <li>The customer creates a backup through the normal interface.</li>
+          <li>The backup moves rows but does not preserve every out-of-band value.</li>
+          <li>The customer upgrades to 1.2.0.</li>
+          <li>Automatic garbage collection sees metadata it cannot reach.</li>
+          <li>GC deletes the orphaned values permanently.</li>
+          <li>Downgrade and restore return the same incomplete state.</li>
+        </ol>
+        <p>The math is simple. Let R be the set of logical rows and M the set of metadata objects needed to decode them. A valid backup must preserve both R and every m in M referenced by R. This system effectively checked that R existed while allowing M to be incomplete. Garbage collection then computed reachability over the incomplete graph and correctly deleted objects that the backup had failed to reference. The collector was not irrational. It was operating on a lie.</p>
+        <p>If 1 percent of a million stored values depend on missing metadata, 10,000 values are at risk. If a smaller table has 500 rows and every row uses the affected encoding, a single column can become 100 percent damaged while the whole database looks mostly healthy. Aggregate health dashboards are excellent at hiding small tables with large feelings.</p>
+      </section>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Backup tested transport, not restore.</strong> A backup endpoint returned success without proving that a fresh instance could read every value. The contract was “copy finished” instead of “restore preserves logical data.”</p>
+        <p><strong>Garbage collection trusted reachability.</strong> GC treated missing metadata as unreachable data. For a versioned database, unknown reachability should be a stop condition. Delete only what the engine can prove is dead.</p>
+        <p><strong>Upgrade logic allowed destructive work too early.</strong> The new release ran automatic GC before an integrity scan established that old data had migrated correctly. Upgrade should be boring. It should also be allowed to refuse service until the data passes inspection.</p>
+        <p><strong>Representation changes lacked historical fixtures.</strong> Tests covered current writes. They did not cover values created by every older encoder followed by backup, clone, GC and restore. Storage formats remember your shortcuts longer than your team does.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, make backup verification logical. After every backup, restore it into an isolated instance and run a table and column inventory. Compare row counts, null counts, checksums and sampled value hashes against the source. For adaptive encoding, explicitly scan side stores and verify every pointer resolves.</p>
+        <p>Second, turn uncertainty into a safe failure. If GC encounters an object whose reachability cannot be established because metadata is malformed or missing, quarantine it. Do not delete it. Storage is cheaper than an apology written after NULL has replaced a customer value.</p>
+        <p>Third, make upgrades run a preflight. Scan all rows written by affected releases. Refuse startup if corruption is found. Offer an administrative rewrite tool that materializes values into the new safe representation before any GC runs. The database should be annoying before it is destructive.</p>
+        <p>Fourth, keep an independent backup path. A logical backup routine that shares the same encoding library is not independent enough to catch an encoding bug. Pair it with a storage snapshot or a raw object copy. Recovery needs a copy that did not share the same assumptions.</p>
+        <p>Fifth, retain rollback versions that were actually deployed to the customer. A selector with the five newest releases is not rollback safety if the customer was running a version outside that window. Rollback means returning to the last known-good state, not choosing a version from a dropdown.</p>
+        <div class="tip"><strong>Operator rule:</strong> Never run destructive GC after an upgrade until a clean restore has read the data. If the restore cannot prove it, GC cannot delete it.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Doltgres owned the failure clearly. The bug was old metadata, the blast radius was narrow and the recovery path still failed because the backup carried the same omission. The lesson is bigger than Doltgres. Modern databases are graphs of rows, indexes, blobs, manifests, tombstones and encoding metadata. A backup that copies only the obvious rows is a screenshot of the database, not the database.</p>
+        <p>The correct design is conservative. Verify logical restoration. Refuse to start on known damage. Quarantine unknown reachability. Keep an independent copy. Make GC prove death before it acts. These are not glamorous features. Neither is explaining to a customer why their backup successfully preserved the shape of data while losing the data itself.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Backup passed. Restore failed. The database believed the backup. The customer paid for the belief.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows DoltHub's public incident report. The graph model and safety recommendations are an engineering interpretation of the published failure path.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.dolthub.com/blog/2026-09-04-postgres-data-loss-post-mortem/" target="_blank" rel="noopener noreferrer">DoltHub: Early Beta Releases of Doltgres Could Trigger Data Loss</a></li><li><a href="https://www.dolthub.com/blog/" target="_blank" rel="noopener noreferrer">DoltHub Engineering Blog</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+</body>
+</html>
