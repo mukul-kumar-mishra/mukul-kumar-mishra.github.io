@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tech-Layoff Radar | Mukul Kumar Mishra</title>
-  <meta name="description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
+  <meta name="description" content="Live technology layoff news radar updated automatically from public news sources.">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/layoff-radar.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Tech-Layoff Radar">
-  <meta property="og:description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
+  <meta property="og:description" content="Live technology layoff news radar updated automatically from public news sources.">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Tech-Layoff Radar">
-  <meta name="twitter:description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
+  <meta name="twitter:description" content="Live technology layoff news radar updated automatically from public news sources.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,8 +27,6 @@
 
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <script type="application/json" id="layoff-count-json" data-json-path="data/layoff-count.json"></script>
 </head>
 
 <body class="site">
@@ -62,16 +60,16 @@
         <span id="layoff-count">—</span>
       </div>
 
-      <div style="font-size:0.9rem;color:var(--muted);margin-top:-0.15rem;">
-        matching tech-layoff reports this month
+      <div style="font-size:0.9rem;color:var(--muted);">
+        matching tech-layoff reports · last 30 days
       </div>
 
-      <div id="month-change" style="font-size:0.85rem;font-weight:600;color:var(--muted);margin-top:0.9rem;">
-        —
+      <div id="trend" style="font-size:0.85rem;font-weight:600;color:var(--muted);margin-top:0.9rem;">
+        Loading live data…
       </div>
 
-      <p id="updated-time" style="font-size:0.76rem;color:var(--mist);margin-top:0.8rem;">
-        Updating…
+      <p id="updated" style="font-size:0.76rem;color:var(--mist);margin-top:0.8rem;">
+        Connecting to news index…
       </p>
 
       <p style="font-size:0.76rem;line-height:1.5;color:var(--mist);margin:0.9rem auto 0;max-width:34rem;">
@@ -89,45 +87,21 @@
   </main>
 
   <script>
-    const COUNT_JSON_PATH = document.getElementById('layoff-count-json').dataset.jsonPath;
+    const API_URL = 'https://freenewsapi.ai/v1/search';
 
     const countElement = document.getElementById('layoff-count');
-    const changeElement = document.getElementById('month-change');
-    const updatedElement = document.getElementById('updated-time');
+    const trendElement = document.getElementById('trend');
+    const updatedElement = document.getElementById('updated');
 
-    const now = new Date();
-
-    const currentMonthStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      1
-    );
-
-    const previousMonthStart = new Date(
-      now.getFullYear(),
-      now.getMonth() - 1,
-      1
-    );
-
-    const nextMonthStart = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      1
-    );
-
-    const toGdeltDate = date => {
-      const y = date.getUTCFullYear();
-      const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-      const d = String(date.getUTCDate()).padStart(2, '0');
-      const h = String(date.getUTCHours()).padStart(2, '0');
-      const min = String(date.getUTCMinutes()).padStart(2, '0');
-      const s = String(date.getUTCSeconds()).padStart(2, '0');
-
-      return `${y}${m}${d}${h}${min}${s}`;
-    };
+    const queries = [
+      'tech layoffs',
+      'technology layoffs',
+      'software layoffs',
+      'startup layoffs'
+    ];
 
     const formatNumber = value =>
-      Math.round(value).toLocaleString('en-US');
+      Number(value).toLocaleString('en-US');
 
     const formatRelativeTime = date => {
       const seconds = Math.max(
@@ -156,149 +130,117 @@
       return `Updated ${days} day${days === 1 ? '' : 's'} ago`;
     };
 
-    const query = encodeURIComponent(
-      '("tech layoffs" OR "technology layoffs" OR "software layoffs" OR "tech job cuts" OR "software job cuts" OR "startup layoffs")'
-    );
-
-    async function fetchGdeltTimeline() {
-      const start = toGdeltDate(previousMonthStart);
-      const end = toGdeltDate(nextMonthStart);
-
-      const url =
-        `https://api.gdeltproject.org/api/v2/doc/doc` +
-        `?query=${query}` +
-        `&mode=timelinevolraw` +
-        `&format=json` +
-        `&startdatetime=${start}` +
-        `&enddatetime=${end}`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        cache: 'no-store'
+    async function searchNews(query, date) {
+      const params = new URLSearchParams({
+        q: query,
+        date,
+        lang: 'en',
+        size: '100',
+        sort: 'date'
       });
 
-      if (response.status === 429) {
-        throw new Error('RATE_LIMITED');
-      }
-
-      if (!response.ok) {
-        throw new Error('GDELT_ERROR');
-      }
-
-      const data = await response.json();
-
-      if (!data.timeline || !Array.isArray(data.timeline)) {
-        throw new Error('INVALID_RESPONSE');
-      }
-
-      return data.timeline;
-    }
-
-    function parseTimeline(timeline) {
-      let previousTotal = 0;
-      let currentTotal = 0;
-
-      timeline.forEach(item => {
-        const value = Number(item.value);
-
-        if (!Number.isFinite(value)) {
-          return;
-        }
-
-        const bucketDate = String(item.date || '');
-
-        if (bucketDate.length < 8) {
-          return;
-        }
-
-        const year = Number(bucketDate.substring(0, 4));
-        const month = Number(bucketDate.substring(4, 6));
-        const day = Number(bucketDate.substring(6, 8));
-
-        const date = new Date(Date.UTC(year, month - 1, day));
-
-        if (
-          date >= previousMonthStart &&
-          date < currentMonthStart
-        ) {
-          previousTotal += value;
-        }
-
-        if (
-          date >= currentMonthStart &&
-          date < nextMonthStart
-        ) {
-          currentTotal += value;
-        }
-      });
-
-      return {
-        previousTotal,
-        currentTotal
-      };
-    }
-
-    async function loadFallback() {
       const response = await fetch(
-        `${COUNT_JSON_PATH}?t=${Date.now()}`,
+        `${API_URL}?${params.toString()}`,
         {
           cache: 'no-store'
         }
       );
 
       if (!response.ok) {
-        throw new Error('FALLBACK_ERROR');
+        throw new Error(`News API ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    async function getNewsCount(date) {
+      const results = await Promise.all(
+        queries.map(query => searchNews(query, date))
+      );
+
+      const articles = new Map();
+
+      results.forEach(data => {
+        if (!Array.isArray(data.results)) {
+          return;
+        }
+
+        data.results.forEach(article => {
+          if (article.id) {
+            articles.set(article.id, article);
+          } else if (article.url) {
+            articles.set(article.url, article);
+          }
+        });
+      });
+
+      return articles.size;
+    }
+
+    async function loadFallback() {
+      const response = await fetch(
+        `data/layoff-count.json?t=${Date.now()}`,
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Fallback unavailable');
       }
 
       const data = await response.json();
 
       if (!Number.isFinite(Number(data.count))) {
-        throw new Error('INVALID_FALLBACK');
+        throw new Error('Invalid fallback');
       }
 
-      countElement.textContent = formatNumber(Number(data.count));
+      countElement.textContent =
+        formatNumber(Number(data.count));
 
-      changeElement.textContent =
-        'Live source temporarily unavailable';
+      trendElement.textContent =
+        'Live news source temporarily unavailable';
 
       if (data.lastUpdated) {
         updatedElement.textContent =
           formatRelativeTime(new Date(data.lastUpdated));
       } else {
         updatedElement.textContent =
-          'Updated from fallback data';
+          'Using fallback data';
       }
     }
 
     async function updateRadar() {
       try {
-        const timeline = await fetchGdeltTimeline();
+        updatedElement.textContent =
+          'Updating live data…';
 
-        const {
-          previousTotal,
-          currentTotal
-        } = parseTimeline(timeline);
+        const [currentCount, previousCount] =
+          await Promise.all([
+            getNewsCount('30d'),
+            getNewsCount('30d')
+          ]);
 
         countElement.textContent =
-          formatNumber(currentTotal);
+          formatNumber(currentCount);
 
-        if (previousTotal > 0) {
-          const percentage =
-            ((currentTotal - previousTotal) / previousTotal) * 100;
+        if (previousCount > 0) {
+          const change =
+            ((currentCount - previousCount) / previousCount) * 100;
 
-          if (percentage > 0) {
-            changeElement.textContent =
-              `↑ ${Math.abs(percentage).toFixed(1)}% vs last month`;
-          } else if (percentage < 0) {
-            changeElement.textContent =
-              `↓ ${Math.abs(percentage).toFixed(1)}% vs last month`;
+          if (change > 0) {
+            trendElement.textContent =
+              `↑ ${Math.abs(change).toFixed(1)}% vs previous period`;
+          } else if (change < 0) {
+            trendElement.textContent =
+              `↓ ${Math.abs(change).toFixed(1)}% vs previous period`;
           } else {
-            changeElement.textContent =
-              '→ No change vs last month';
+            trendElement.textContent =
+              '→ Stable vs previous period';
           }
         } else {
-          changeElement.textContent =
-            'Previous-month comparison unavailable';
+          trendElement.textContent =
+            'Live rolling 30-day coverage';
         }
 
         updatedElement.textContent =
@@ -309,7 +251,7 @@
           await loadFallback();
         } catch (fallbackError) {
           countElement.textContent = '—';
-          changeElement.textContent =
+          trendElement.textContent =
             'Live data temporarily unavailable';
           updatedElement.textContent =
             'Please try again later';
@@ -319,13 +261,19 @@
 
     updateRadar();
 
-    setInterval(updateRadar, 5 * 60 * 1000);
+    setInterval(
+      updateRadar,
+      10 * 60 * 1000
+    );
 
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        updateRadar();
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (!document.hidden) {
+          updateRadar();
+        }
       }
-    });
+    );
 
     lucide.createIcons();
   </script>
