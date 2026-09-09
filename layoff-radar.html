@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech‑Layoff Radar | Mukul Kumar Mishra</title>
+  <meta name="description"
+        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/layoff-radar.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Tech‑Layoff Radar">
+  <meta property="og:description"
+        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tech‑Layoff Radar">
+  <meta name="twitter:description"
+        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
+  <!-- Design tokens (pulse‑flow) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- ---- JSON that holds the current count (populated by GitHub Actions) ---- -->
+  <script type="application/json" id="layoff-count-json"
+          data-json-path="data/layoff-count.json"></script>
+</head>
+<body class="site">
+  <!-- ---- Header / Nav (identical to other pages) ---- -->
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <nav class="topnav">
+        <a href="../index.html">Home</a>
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../about.html">About</a>
+        <button class="iconbtn" id="themeToggle"
+                title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;text-align:center;">
+      <!-- ---- Count display (filled in by JS on load, then refreshed) ---- -->
+      <h1 style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);margin-bottom:0.5rem;">
+        Tech Layoff Radar
+      </h1>
+      <div style="font-size:2.2rem;font-weight:800;color:var(--lime);margin:0.5rem 0;">
+        <span id="layoff-count">‑‑‑</span>
+      </div>
+
+      <!-- ---- Small disclaimer (not the visual focus) ---- -->
+      <p style="font-size:0.78rem;color:var(--mist);margin-top:0.5rem;">
+        Figure is based on publicly‑available news and is approximate (≈ ± 15 %).
+      </p>
+
+      <!-- ---- Link back to the system‑design index ---- -->
+      <p style="margin-top:1rem;font-size:0.82rem;color:var(--muted);">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;">
+          <i data-lucide="arrow-left"></i> Back to System Design Index
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    // ---------- 1️⃣  Load the initial count from the JSON file ----------
+    const COUNT_JSON_PATH = document.getElementById('layoff-count-json').dataset.jsonPath;
+
+    async function loadCount() {
+      try {
+        const res = await fetch(COUNT_JSON_PATH + '?t=' + Date.now()); // cache‑bust
+        if (!res.ok) throw new Error('network');
+        const data = await res.json();
+        document.getElementById('layoff-count').textContent = Number.isFinite(data.count) ? data.count : '—';
+        window.LAYOFF_LAST_UPDATED = data.lastUpdated || new Date().toISOString();
+      } catch (e) {
+        // Fallback in case the file is missing or unreadable
+        document.getElementById('layoff-count').textContent = '—';
+      }
+    }
+
+    // ---------- 2️⃣  Refresh every 60 seconds ----------
+    async function refreshCount() {
+      try {
+        const res = await fetch(COUNT_JSON_PATH + '?t=' + Date.now());
+        if (!res.ok) throw new Error('network');
+        const data = await res.json();
+        document.getElementById('layoff-count').textContent = Number.isFinite(data.count) ? data.count : '—';
+        window.LAYOFF_LAST_UPDATED = data.lastUpdated || new Date().toISOString();
+      } catch (e) {
+        // Silently swallow errors – the number will stay as‑is until the next interval
+      }
+    }
+
+    // ---------- 3️⃣  Kick off ----------
+    loadCount();                     // render on first paint (SEO‑friendly)
+    setInterval(refreshCount, 60_000); // every 1 min (Google loves fast‑loading, non‑blocking updates)
+    // (If you prefer a less aggressive interval, change 60_000 to 300_000 for 5 min, etc.)
+
+    // Initialise lucide icons (used elsewhere on the site)
+    lucide.createIcons();
+  </script>
+</body>
+</html>
