@@ -53,6 +53,7 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Breakout</span><span class="chip">September 2026</span><span class="chip">17 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">You Uploaded a CV. It Downloaded Your API Keys.</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">No clicks. No warnings. No malware. A candidate resume goes into ChatGPT for a summary. Out comes a rendered image nobody asked for, carrying your Google Drive API keys to a stranger's log dashboard. That is AgentFlayer, the zero-click heist Zenity demonstrated against ChatGPT connectors. Everyone reported the headline. This is the postmortem.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> AgentFlayer is a zero-click prompt injection where a poisoned CV steals Google Drive API keys through image rendering. One upload triggers the chain with no clicks after. Fix is a destination allow-list with a planner reader split.</p>
     </header>
 
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Kill-chain mechanics below come from Zenity Labs publications, Invariant Labs research, plus the 2026 framing-gap paper linked at the end. Payload structure is described, never reproduced as a working exploit. No live systems were touched here.</aside>

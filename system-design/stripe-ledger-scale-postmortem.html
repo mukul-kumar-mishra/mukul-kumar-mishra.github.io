@@ -53,6 +53,7 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Financial Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Ledger That Cannot Blink</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Stripe processed $1.4 trillion in payments in one year. Each request must debit and credit the ledger exactly once while networks retry, webhooks fail and clients resend. The system cannot blink. One double charge is a financial incident. Ten thousand retries are a normal Tuesday.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Stripe prevents double charges with idempotency keys and a double-entry ledger. At 1M RPS edge dedupe cuts the modeled origin bill 60 percent. Fix is cache-first retry handling.</p>
       <div class="grid4" style="margin-top:24px;">
         <div class="stat" style="padding:14px;"><div class="lbl">Annual Volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$1.4T</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">API Requests</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">500M+ / day</div></div>

@@ -65,6 +65,7 @@
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">16 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A function wakes, calls an AI provider, waits. Nothing happens. The meter runs anyway. Vercel built Fluid Compute when it realized 92.5 percent of AI Gateway runtime was elegant idleness billed as occupancy. This is the postmortem of the wait.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Vercel Fluid Compute billed 92.5 percent waiting as occupancy when AI Gateway waited on providers. Fix is compute-resolver with concurrency and active CPU pricing at 100k RPS.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Series F Valuation</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$9.3B</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Fluid Requests</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">45B / week</div></div>

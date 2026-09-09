@@ -65,6 +65,7 @@
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">17 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma's Multiplayer Editor: The Server That Decides Who Wins</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two designers grab the same rectangle. An offline browser crawls back from the dead. Somewhere a server must pick a winner without making the canvas look haunted. This is how Figma's multiplayer engine settles every fight, plus what it costs at 65,000 requests per second.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Figma multiplayer picks a winner with server-authoritative resolution, not pure CRDT. Rust rewrite plus per-document isolation serves 65k RPS. Cost is presence plus memory plus global fan-out.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Monthly Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">13M+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">2025 Revenue</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$1.06B</div></div>

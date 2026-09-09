@@ -53,6 +53,7 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Database Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Serverless Postgres That Was Not Serverless at 3 AM</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Supabase runs more than two million Postgres databases and calls the result serverless. Postgres still caps connections at roughly one hundred per instance. At 3 AM your serverless function opens ten thousand of them at once and learns what a pooler really costs.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Supabase puts 2M Postgres databases behind Supavisor. Transaction pooling reduces backend pressure while RLS still costs per row. Fix is indexed policies plus workload-aware routing.</p>
       <div class="grid4" style="margin-top:24px;">
         <div class="stat" style="padding:14px;"><div class="lbl">Databases</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2M+</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Weekly API reqs</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">30B+</div></div>
