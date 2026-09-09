@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A system design postmortem of the simultaneous AI model outage affecting Claude, Gemini, Grok, and ChatGPT on September 3, 2026. Root cause analysis, impact assessment, and common-mode failure risk.">
+  <meta name="description" content="Claude, Gemini, Grok and ChatGPT died together. Postmortem of the single shared dependency that took 4 frontier models dark at once.">>
   <meta name="keywords" content="AI outage September 2026, Claude, Gemini, Grok, ChatGPT, common-mode failure, system design postmortem">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/simultaneous-ai-outage-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Four Chatbots Died at Once. That Was Never a Coincidence.">
-  <meta property="og:description" content="When Claude, Gemini, Grok and ChatGPT all went dark the same morning, the incident exposed a terrifying vulnerability: the frontier AI stack shares more than hype. It shares critical infrastructure. What happened, whyand what it means for anyone building on these platforms.">
+  <meta property="og:description" content="Claude, Gemini, Grok and ChatGPT died together. Postmortem of the single shared dependency that took 4 frontier models dark at once.">>
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/simultaneous-ai-outage-postmortem.png">
   <meta property="og:image:alt" content="System architecture illustration showing shared cloud infrastructure underpinning multiple AI chatbot services">
   <meta property="og:image:type" content="image/png">
@@ -22,7 +22,7 @@
   <meta name="twitter:description" content="When Claude, Gemini, Grok and ChatGPT all went dark the same morning, the incident exposed a terrifying vulnerability: the frontier AI stack shares more than hype. It shares critical infrastructure.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/simultaneous-ai-outage-postmortem.png">
   <meta name="twitter:image:alt" content="System architecture illustration showing shared cloud infrastructure underpinning multiple AI chatbot services">
-  <title>Simultaneous AI Model Outage: The Single Point We All Ignored | Mukul Kumar Mishra</title>
+  <title>When 4 AI Models Went Dark at Once | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
   {
     "@context":"https://schema.org",
     "@type":"TechArticle",
-    "headline":"Simultaneous AI Model Outage: The Single Point We All Ignored",
+    "headline":"When 4 AI Models Went Dark at Once",
     "description":"A system design postmortem of the simultaneous AI model outage affecting Claude, Gemini, Grok and ChatGPT on September 3 2026. Root cause analysis, impact assessmentand future risk of common-mode failure across frontier AI providers.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
     "datePublished":"2026-09-04",

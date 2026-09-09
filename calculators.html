@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Run the math behind the postmortems: token billing, RPS envelopes, compaction survival, cache value and retry-storm waste. Client-side calculators, no tracking.">
+  <meta name="description" content="Free AI cost calculators you can run in the browser. Price token bills with cache, RPS envelopes at 1M RPS, compaction survival and retry storm waste in seconds.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/calculators.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Engineering Cost Calculators: Tokens, RPS, Cache, Retries | Mukul Kumar Mishra">
-  <meta property="og:description" content="Price an agent turn, an event envelope, a compaction cliff, cache hits and retry storms. The postmortem math, runnable.">
+  <meta property="og:title" content="Free AI Cost Calculators: Token Bill, RPS Envelope, Retry Storm | Mukul Kumar Mishra">
+  <meta property="og:description" content="Price token bills with cache, RPS at 1M RPS, compaction survival and retry storms. The postmortem math, runnable in the browser.">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/calculators.html">
-  <title>Engineering Cost Calculators: Tokens, RPS, Cache, Retries | Mukul Kumar Mishra</title>
+  <title>Free AI Cost Calculators: Token Bill, RPS Envelope, Retry Storm | Mukul Kumar Mishra</title>
   <link rel="icon" href="images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,16 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does 1M agent turns cost with token caching?","acceptedAnswer":{"@type":"Answer","text":"Enter input tokens, cache hit rate and output price in the Token Bill calculator. It prices one turn then scales to one million turns. At 80k input tokens with 87.5 percent cache hits the example shows the monthly bill in seconds."}},
+      {"@type":"Question","name":"What is the difference between token cost and RPS envelope?","acceptedAnswer":{"@type":"Answer","text":"Token cost prices per turn with cache. RPS envelope prices events per second at 1M RPS for a month. Use Token Bill for agent cost and RPS Envelope for infrastructure cost."}}
+    ]
+  }
+  </script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -41,9 +51,10 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Tools</span><span class="chip">Client-side</span><span class="chip">No tracking</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Engineering Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">The math behind the postmortems, runnable. Tweak the inputs and watch the bill move. Every model below is simplified from its teardown, linked under each tool.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">No tracking</span><span class="chip">AI cost</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free AI Cost Calculators</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Free AI token cost calculator plus RPS envelope, compaction and retry storm tools. Enter input tokens and cache hit rate to price 1M turns at 1M RPS in seconds. All four run in your browser with no data sent. Each links to its teardown.</p>
+      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a> and <a href="system-design/vercel-fluid-compute-cost-postmortem.html">Vercel RPS</a> teardowns.</p>
     </header>
 
     <div class="calc-tabs" role="tablist" aria-label="Calculators">
@@ -69,8 +80,8 @@
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
       </div>
       <div class="grid4" style="margin-top:18px;">
-        <div class="stat"><div class="num" id="tk-perturn">—</div><div class="lbl">Cost per turn</div></div>
-        <div class="stat"><div class="num" id="tk-monthly">—</div><div class="lbl">Monthly model spend</div></div>
+        <div class="stat"><div class="num" id="tk-perturn">-</div><div class="lbl">Cost per turn</div></div>
+        <div class="stat"><div class="num" id="tk-monthly">-</div><div class="lbl">Monthly model spend</div></div>
       </div>
       <a class="article-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
@@ -94,9 +105,9 @@
         <div style="margin:0 0 12px;"><label class="field-label" for="rps-fixed">Fixed platform spend ($k / month)</label><input type="number" id="rps-fixed" value="2600" class="field-input"></div>
       </div>
       <div class="grid4" style="margin-top:18px;">
-        <div class="stat"><div class="num" id="rps-monthly">—</div><div class="lbl">Monthly envelope</div></div>
-        <div class="stat"><div class="num" id="rps-daily">—</div><div class="lbl">Daily burn</div></div>
-        <div class="stat"><div class="num" id="rps-perreq">—</div><div class="lbl">Cost per request</div></div>
+        <div class="stat"><div class="num" id="rps-monthly">-</div><div class="lbl">Monthly envelope</div></div>
+        <div class="stat"><div class="num" id="rps-daily">-</div><div class="lbl">Daily burn</div></div>
+        <div class="stat"><div class="num" id="rps-perreq">-</div><div class="lbl">Cost per request</div></div>
       </div>
       <a class="article-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
@@ -121,9 +132,9 @@
         <div style="margin:0 0 12px;"><label class="field-label" for="cx-stepc">Cost per re-read step ($)</label><input type="number" id="cx-stepc" value="0.074" step="0.001" class="field-input"></div>
       </div>
       <div class="grid4" style="margin-top:18px;">
-        <div class="stat"><div class="num" id="cx-summary">—</div><div class="lbl">Summary size</div></div>
-        <div class="stat"><div class="num" id="cx-lost">—</div><div class="lbl">Context lost</div></div>
-        <div class="stat"><div class="num" id="cx-reread">—</div><div class="lbl">Re-read bill</div></div>
+        <div class="stat"><div class="num" id="cx-summary">-</div><div class="lbl">Summary size</div></div>
+        <div class="stat"><div class="num" id="cx-lost">-</div><div class="lbl">Context lost</div></div>
+        <div class="stat"><div class="num" id="cx-reread">-</div><div class="lbl">Re-read bill</div></div>
       </div>
       <a class="article-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
@@ -149,8 +160,8 @@
         <div style="margin:0 0 12px;"><label class="field-label" for="rt-cost">Cost / attempt ($)</label><input type="number" id="rt-cost" value="0.05" step="0.01" class="field-input"></div>
       </div>
       <div class="grid4" style="margin-top:18px;">
-        <div class="stat"><div class="num" id="rt-daily">—</div><div class="lbl">Daily waste</div></div>
-        <div class="stat"><div class="num" id="rt-monthly">—</div><div class="lbl">Monthly waste</div></div>
+        <div class="stat"><div class="num" id="rt-daily">-</div><div class="lbl">Daily waste</div></div>
+        <div class="stat"><div class="num" id="rt-monthly">-</div><div class="lbl">Monthly waste</div></div>
       </div>
       <a class="article-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">

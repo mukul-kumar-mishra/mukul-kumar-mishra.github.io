@@ -224,6 +224,106 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a skeptical cat watching a chatbot salute"
+    },
+    {
+      "name": "elevenlabs-voice-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        210,
+        300,
+        300
+      ],
+      "seed": 95,
+      "strip": "The $11B Voice That Bills Per Hello",
+      "title": "Hello. Hello? Hello again.",
+      "subtitle": "each hello bills a GPU.",
+      "scene": "elevenlabs-voice-panels.svg",
+      "banner": [
+        "1000 chars, 1 min",
+        "no cache, full price"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat repeating hello into a meter that charges per character",
+      "caption": "Figure 1. Voice billing in one cartoon, drawn for this postmortem. One hello in. One GPU bills. Repeat a billion times.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat repeating hello"
+    },
+    {
+      "name": "elevenlabs-cache-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        190,
+        300,
+        300
+      ],
+      "seed": 99,
+      "strip": "The $11B Voice That Bills Per Hello",
+      "title": "Cached hello. 5ms. Fresh hello. 75ms.",
+      "subtitle": "one is margin. one is theater.",
+      "scene": "elevenlabs-cache-panels.svg",
+      "banner": [
+        "40% repeats wasted",
+        "$5.4M per month"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat comparing a cached hello versus a fresh GPU render",
+      "caption": "Figure 2. Cache vs render in one cartoon, drawn for this postmortem. Cached hello hits in 5ms. Fresh hello bills a GPU for 75ms. Guess which one you shipped by default.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat comparing cached hello"
+    },
+    {
+      "name": "agitslop-grief-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        210,
+        300,
+        300
+      ],
+      "seed": 97,
+      "strip": "When Grief Becomes a Cash Register",
+      "title": "One death. Ten thousand fakes.",
+      "subtitle": "engagement farms love a funeral.",
+      "scene": "agitslop-panels.svg",
+      "banner": [
+        "slop in, shares out",
+        "Grok just helps"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching AI generated grief posts flood a feed",
+      "caption": "Figure 1. Agitslop in one cartoon, drawn for this postmortem. One real death. Ten thousand fake grief posts. All monetized.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching grief slop"
+    },
+    {
+      "name": "agitslop-funnel-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        210,
+        300,
+        300
+      ],
+      "seed": 101,
+      "strip": "When Grief Becomes a Cash Register",
+      "title": "1 death. 10k prompts. 18k shares.",
+      "subtitle": "grief scales. moderation naps.",
+      "scene": "agitslop-funnel-panels.svg",
+      "banner": [
+        "$20 to make",
+        "$180k per funeral"
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat running a funeral content factory with AI prompts",
+      "caption": "Figure 2. The funnel in one cartoon, drawn for this postmortem. One death in. Ten thousand prompts out. Facebook pays per share. Grok supplies the face.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat running a funeral factory"
     }
   ]
 }

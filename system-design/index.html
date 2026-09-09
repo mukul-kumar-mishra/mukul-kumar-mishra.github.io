@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="System design case studies and engineering postmortems by Mukul Kumar Mishra covering distributed systems, AWS cost optimization, PostgreSQL sharding, Kafka, and high-scale architecture.">
+  <meta name="description" content="System design postmortems and architecture teardowns covering distributed systems, AWS and AI infra with RPS and cost models plus fixes.">>
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="System Design & Architecture Case Studies | Mukul Kumar Mishra">
-  <meta property="og:description" content="Research-led system design postmortems, architecture critiquesand practical cost-optimization analysis.">
+  <meta property="og:description" content="System design postmortems and architecture teardowns covering distributed systems, AWS and AI infra with RPS and cost models plus fixes.">>
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/elevenlabs-voice-meme.svg">
+  <meta property="og:image:alt" content="System design postmortems and cost teardowns">
+  <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/">
-  <title>System Design Case Studies & Architecture Postmortems | Mukul Kumar Mishra</title>
+  <title>System Design Case Studies & Postmortems | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,7 +69,7 @@
       </div>
       <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
       <div id="articleList" style="display:grid;gap:16px;">
-        <article class="feature-link"><div><span class="fl-tag">Developer Tools</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="cursor-claude-token-exhaustion-postmortem.html">Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</a></h3><p class="fl-desc">A forensic teardown of token limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Developer Tools</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="cursor-claude-token-exhaustion-postmortem.html">Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</a></h3><p class="fl-desc">A forensic teardown of token limits, context rot, compaction cliffs, productivity math and the fixes vendors keep postponing.</p></article>
         <article class="feature-link"><div><span class="fl-tag">AI Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="perplexity-answer-engine-postmortem.html">Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice</a></h3><p class="fl-desc">A forensic teardown of RAG retrieval, KV cache reuse, prefill cost, and inference economics at scale.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Cloud Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="simultaneous-ai-outage-postmortem.html">Simultaneous AI Model Outage: The Single Point We All Ignored</a></h3><p class="fl-desc">A failure analysis of a shared dependency beneath multiple frontier AI providers and the resilience lessons.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Agent Runtime</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="replit-agent-runtime-postmortem.html">Replit Agent Postmortem: The Day the Demo Became Production</a></h3><p class="fl-desc">A teardown of sandbox execution, agent retries, deployment risk, and prompt-to-production infrastructure.</p></article>
@@ -122,6 +125,7 @@
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
       var embeddedArticles = [
+        {"title": "The $11B Voice That Bills Per Hello", "url": "elevenlabs-voice-scale-postmortem.html", "tag": "Audio Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "ElevenLabs hit $11B and $330M ARR by selling hello at 75ms. Per character billing, no phoneme cache and the 1M RPS voice bill that proves hello should be cached.", "tags": ["ElevenLabs", "TTS", "Voice", "AWS"]},
         {"title": "The $6.6B Preview Button That Reinstalls the Internet", "url": "lovable-vibe-coding-scale-postmortem.html", "tag": "AI Builder Platform", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Lovable hit $6.6B by turning prompts into apps. Teardown of preview sandboxes, repeated npm installs and 1B tokens per minute that could have reused a cache.", "tags": ["Lovable", "Vibe Coding", "Supabase", "AWS"]},
         {"title": "The Serverless Postgres That Was Not Serverless at 3 AM", "url": "supabase-postgres-scale-postmortem.html", "tag": "Database Infrastructure", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Supabase runs 2M Postgres databases behind one pooling promise. Supavisor, transaction mode, RLS tax and the 1M RPS math that proves pooling is a cost control.", "tags": ["Supabase", "Postgres", "RLS", "AWS"]},
         {"title": "The Ledger That Cannot Blink", "url": "stripe-ledger-scale-postmortem.html", "tag": "Financial Infrastructure", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Stripe processed $1.4 trillion without double charging anything. Idempotency keys, double entry ledger and webhook storms at 1M RPS.", "tags": ["Stripe", "Ledger", "Webhooks", "AWS"]},

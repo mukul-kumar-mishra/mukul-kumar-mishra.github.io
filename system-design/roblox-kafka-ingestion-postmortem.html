@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A system design postmortem of Roblox event ingestion at 18 trillion messages a day. Kafka tiers, SSD fleets, standby clusters, gossip limits, plus a normalized 1M msgs/sec cost model with a cheaper shape.">
+  <meta name="description" content="Roblox routes 18 trillion Kafka messages a day. Postmortem of tiers, SSD fleets, standby clusters and the 1M RPS cost that proves half could wait.">>
   <meta name="keywords" content="Roblox system design, Kafka at scale, event ingestion cost, Redis gossip protocol, infrastructure cost optimization, 1M RPS architecture">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="18 Trillion Messages a Day. Half of Them Could Have Waited.">
-  <meta property="og:description" content="Roblox moves 18 trillion Kafka messages daily through one platform that treats urgent matchmaking like patient analytics. Teardown of the tiers, the standby habit, plus a cheaper shape.">
+  <meta property="og:description" content="Roblox routes 18 trillion Kafka messages a day. Postmortem of tiers, SSD fleets, standby clusters and the 1M RPS cost that proves half could wait.">>
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
   <meta property="og:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
   <meta property="og:image:type" content="image/png">
@@ -22,7 +22,7 @@
   <meta name="twitter:description" content="Roblox Kafka teardown: tiered traffic, standby clusters, gossip ceilings, plus a normalized cost model.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
   <meta name="twitter:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
-  <title>Roblox Kafka Postmortem: 18 Trillion Messages a Day | Mukul Kumar Mishra</title>
+  <title>Roblox: 18 Trillion Kafka Messages a Day | Mukul Kumar Mishra</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
   {
     "@context":"https://schema.org",
     "@type":"TechArticle",
-    "headline":"Roblox Kafka Postmortem: 18 Trillion Messages a Day",
+    "headline":"Roblox: 18 Trillion Kafka Messages a Day",
     "description":"A system design postmortem of Roblox event ingestion at 18 trillion messages a day. Kafka tiers, SSD fleets, standby clusters, gossip limits, plus a normalized 1M msgs/sec cost model.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
     "datePublished":"2026-09-06",
