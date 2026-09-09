@@ -3,44 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tech‑Layoff Radar | Mukul Kumar Mishra</title>
-  <meta name="description"
-        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
+  <title>Tech-Layoff Radar | Mukul Kumar Mishra</title>
+  <meta name="description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/layoff-radar.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Tech‑Layoff Radar">
-  <meta property="og:description"
-        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
+  <meta property="og:title" content="Tech-Layoff Radar">
+  <meta property="og:description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Tech‑Layoff Radar">
-  <meta name="twitter:description"
-        content="Monthly count of tech‑layoff announcements – updated hourly from publicly‑available news sources.">
-  <!-- Design tokens (pulse‑flow) -->
+  <meta name="twitter:title" content="Tech-Layoff Radar">
+  <meta name="twitter:description" content="Live monthly technology layoff news coverage tracker, updated automatically from public news sources.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap"
-        rel="stylesheet">
-  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+
+  <script>
+    if (localStorage.getItem('pf-theme') !== 'light') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- ---- JSON that holds the current count (populated by GitHub Actions) ---- -->
-  <script type="application/json" id="layoff-count-json"
-          data-json-path="data/layoff-count.json"></script>
+
+  <script type="application/json" id="layoff-count-json" data-json-path="data/layoff-count.json"></script>
 </head>
+
 <body class="site">
-  <!-- ---- Header / Nav (identical to other pages) ---- -->
+
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+
       <nav class="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
         <a href="../about.html">About</a>
-        <button class="iconbtn" id="themeToggle"
-                title="Toggle light/dark theme" aria-label="Toggle theme">
+
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
         </button>
@@ -50,65 +53,248 @@
 
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
     <div style="max-width:46rem;margin:0 auto;text-align:center;">
-      <!-- ---- Count display (filled in by JS on load, then refreshed) ---- -->
+
       <h1 style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);margin-bottom:0.5rem;">
         Tech Layoff Radar
       </h1>
-      <div style="font-size:2.2rem;font-weight:800;color:var(--lime);margin:0.5rem 0;">
-        <span id="layoff-count">‑‑‑</span>
+
+      <div style="font-size:2.8rem;font-weight:800;color:var(--lime);margin:0.5rem 0;">
+        <span id="layoff-count">—</span>
       </div>
 
-      <!-- ---- Small disclaimer (not the visual focus) ---- -->
-      <p style="font-size:0.78rem;color:var(--mist);margin-top:0.5rem;">
-        Figure is based on publicly‑available news and is approximate (≈ ± 15 %).
+      <div style="font-size:0.9rem;color:var(--muted);margin-top:-0.15rem;">
+        matching tech-layoff reports this month
+      </div>
+
+      <div id="month-change" style="font-size:0.85rem;font-weight:600;color:var(--muted);margin-top:0.9rem;">
+        —
+      </div>
+
+      <p id="updated-time" style="font-size:0.76rem;color:var(--mist);margin-top:0.8rem;">
+        Updating…
       </p>
 
-      <!-- ---- Link back to the system‑design index ---- -->
+      <p style="font-size:0.76rem;line-height:1.5;color:var(--mist);margin:0.9rem auto 0;max-width:34rem;">
+        Based on publicly available news coverage matching the radar's technology-layoff criteria. This measures news reports, not the number of people laid off.
+      </p>
+
       <p style="margin-top:1rem;font-size:0.82rem;color:var(--muted);">
         <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;">
-          <i data-lucide="arrow-left"></i> Back to System Design Index
+          <i data-lucide="arrow-left"></i>
+          Back to System Design Index
         </a>
       </p>
+
     </div>
   </main>
 
   <script>
-    // ---------- 1️⃣  Load the initial count from the JSON file ----------
     const COUNT_JSON_PATH = document.getElementById('layoff-count-json').dataset.jsonPath;
 
-    async function loadCount() {
-      try {
-        const res = await fetch(COUNT_JSON_PATH + '?t=' + Date.now()); // cache‑bust
-        if (!res.ok) throw new Error('network');
-        const data = await res.json();
-        document.getElementById('layoff-count').textContent = Number.isFinite(data.count) ? data.count : '—';
-        window.LAYOFF_LAST_UPDATED = data.lastUpdated || new Date().toISOString();
-      } catch (e) {
-        // Fallback in case the file is missing or unreadable
-        document.getElementById('layoff-count').textContent = '—';
+    const countElement = document.getElementById('layoff-count');
+    const changeElement = document.getElementById('month-change');
+    const updatedElement = document.getElementById('updated-time');
+
+    const currentDate = new Date();
+
+    const currentMonthStart = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+
+    const nextMonthStart = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      1
+    );
+
+    const previousMonthStart = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
+    );
+
+    const formatGdeltDate = date => {
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      const hour = String(date.getUTCHours()).padStart(2, '0');
+      const minute = String(date.getUTCMinutes()).padStart(2, '0');
+      const second = String(date.getUTCSeconds()).padStart(2, '0');
+
+      return `${year}${month}${day}${hour}${minute}${second}`;
+    };
+
+    const formatNumber = value =>
+      Number(value).toLocaleString('en-US');
+
+    const formatRelativeTime = date => {
+      const seconds = Math.max(
+        0,
+        Math.floor((Date.now() - date.getTime()) / 1000)
+      );
+
+      if (seconds < 60) {
+        return 'Updated just now';
+      }
+
+      const minutes = Math.floor(seconds / 60);
+
+      if (minutes < 60) {
+        return `Updated ${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+      }
+
+      const hours = Math.floor(minutes / 60);
+
+      if (hours < 24) {
+        return `Updated ${hours} hour${hours === 1 ? '' : 's'} ago`;
+      }
+
+      const days = Math.floor(hours / 24);
+
+      return `Updated ${days} day${days === 1 ? '' : 's'} ago`;
+    };
+
+    const query = encodeURIComponent(
+      '(layoff OR layoffs OR "laid off" OR "job cuts" OR "workforce reduction" OR "staff cuts") AND (technology OR tech OR software OR startup)'
+    );
+
+    async function fetchGdeltCount(startDate, endDate) {
+      const start = formatGdeltDate(startDate);
+      const end = formatGdeltDate(endDate);
+
+      const url =
+        `https://api.gdeltproject.org/api/v2/doc/doc?` +
+        `query=${query}` +
+        `&mode=timelinevolraw` +
+        `&format=json` +
+        `&startdatetime=${start}` +
+        `&enddatetime=${end}` +
+        `&maxrecords=250`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        throw new Error('GDELT request failed');
+      }
+
+      const data = await response.json();
+
+      if (!data.timeline || !Array.isArray(data.timeline)) {
+        throw new Error('Invalid GDELT response');
+      }
+
+      return data.timeline.reduce((total, item) => {
+        const value = Number(item.value);
+        return total + (Number.isFinite(value) ? value : 0);
+      }, 0);
+    }
+
+    async function loadFallback() {
+      const response = await fetch(
+        `${COUNT_JSON_PATH}?t=${Date.now()}`,
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Fallback request failed');
+      }
+
+      const data = await response.json();
+
+      if (!Number.isFinite(Number(data.count))) {
+        throw new Error('Invalid fallback data');
+      }
+
+      countElement.textContent = formatNumber(Number(data.count));
+
+      if (data.lastUpdated) {
+        updatedElement.textContent = formatRelativeTime(
+          new Date(data.lastUpdated)
+        );
+      } else {
+        updatedElement.textContent = 'Updated just now';
       }
     }
 
-    // ---------- 2️⃣  Refresh every 60 seconds ----------
-    async function refreshCount() {
+    async function updateRadar() {
       try {
-        const res = await fetch(COUNT_JSON_PATH + '?t=' + Date.now());
-        if (!res.ok) throw new Error('network');
-        const data = await res.json();
-        document.getElementById('layoff-count').textContent = Number.isFinite(data.count) ? data.count : '—';
-        window.LAYOFF_LAST_UPDATED = data.lastUpdated || new Date().toISOString();
-      } catch (e) {
-        // Silently swallow errors – the number will stay as‑is until the next interval
+        const currentCount = await fetchGdeltCount(
+          currentMonthStart,
+          nextMonthStart
+        );
+
+        const previousCount = await fetchGdeltCount(
+          previousMonthStart,
+          currentMonthStart
+        );
+
+        countElement.textContent = formatNumber(
+          Math.round(currentCount)
+        );
+
+        if (previousCount > 0) {
+          const percentage =
+            ((currentCount - previousCount) / previousCount) * 100;
+
+          const roundedPercentage =
+            Math.abs(percentage).toFixed(1);
+
+          if (percentage > 0) {
+            changeElement.textContent =
+              `↑ ${roundedPercentage}% vs last month`;
+          } else if (percentage < 0) {
+            changeElement.textContent =
+              `↓ ${roundedPercentage}% vs last month`;
+          } else {
+            changeElement.textContent =
+              '→ No change vs last month';
+          }
+        } else {
+          changeElement.textContent =
+            'Previous-month comparison unavailable';
+        }
+
+        updatedElement.textContent = 'Updated just now';
+      } catch (error) {
+        try {
+          await loadFallback();
+          changeElement.textContent = 'Live source temporarily unavailable';
+        } catch (fallbackError) {
+          countElement.textContent = '—';
+          changeElement.textContent = 'Unable to load current data';
+          updatedElement.textContent = 'Update unavailable';
+        }
       }
     }
 
-    // ---------- 3️⃣  Kick off ----------
-    loadCount();                     // render on first paint (SEO‑friendly)
-    setInterval(refreshCount, 60_000); // every 1 min (Google loves fast‑loading, non‑blocking updates)
-    // (If you prefer a less aggressive interval, change 60_000 to 300_000 for 5 min, etc.)
+    updateRadar();
 
-    // Initialise lucide icons (used elsewhere on the site)
+    setInterval(updateRadar, 5 * 60 * 1000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        updateRadar();
+      }
+    });
+
+    setInterval(() => {
+      if (window.LAYOFF_LAST_UPDATED) {
+        updatedElement.textContent =
+          formatRelativeTime(
+            new Date(window.LAYOFF_LAST_UPDATED)
+          );
+      }
+    }, 30 * 1000);
+
     lucide.createIcons();
   </script>
+
 </body>
 </html>
