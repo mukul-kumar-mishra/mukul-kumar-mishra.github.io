@@ -1,834 +1,933 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Tech Layoff Radar | Live Global Layoff News Tracker | Mukul Kumar Mishra</title>
+  <title>Tech Layoff Radar: Live Global Layoff Tracker | Mukul Kumar Mishra</title>
 
-    <meta name="description" content="Live global tracker of publicly reported technology layoff news. Track worldwide coverage, country rankings, daily activity and current-month trends.">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-    <meta name="author" content="Mukul Kumar Mishra">
-    <meta name="theme-color" content="#0b0f19">
+  <meta name="description" content="Live global tracker of publicly reported technology layoff news. Track worldwide coverage, country rankings, daily activity and current-month trends.">
+  <meta name="keywords" content="tech layoffs, technology layoffs, tech layoff tracker, layoffs tracker, global layoffs, software layoffs, startup layoffs, tech layoffs by country, layoff statistics, technology job cuts">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
-    <link rel="canonical" href="https://mukul-kumar-mishra.github.io/layoff-radar.html">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/layoff-radar.html">
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Tech Layoff Radar | Live Global Layoff News Tracker">
-    <meta property="og:description" content="Live global tracker of publicly reported technology layoff news with country rankings and daily coverage.">
-    <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
-    <meta property="og:site_name" content="Mukul Kumar Mishra">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tech Layoff Radar: Live Global Layoff Tracker">
+  <meta property="og:description" content="Track publicly reported technology layoff news worldwide with live coverage totals, country rankings and daily activity.">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Tech Layoff Radar | Live Global Layoff News Tracker">
-    <meta name="twitter:description" content="Track publicly reported technology layoff news worldwide.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.png">
+  <meta property="og:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tech Layoff Radar: Live Global Layoff Tracker">
+  <meta name="twitter:description" content="Live global tracker of publicly reported technology layoff news, country coverage and daily activity.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.png">
+  <meta name="twitter:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
 
-    <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="images/favicon.png" type="image/png">
 
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Tech Layoff Radar",
-        "url": "https://mukul-kumar-mishra.github.io/layoff-radar.html",
-        "description": "Live global tracker of publicly reported technology layoff news.",
-        "author": {
-            "@type": "Person",
-            "name": "Mukul Kumar Mishra",
-            "url": "https://mukul-kumar-mishra.github.io/"
-        }
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebPage",
+    "name":"Tech Layoff Radar",
+    "headline":"Tech Layoff Radar: Live Global Layoff Tracker",
+    "description":"Live global tracker of publicly reported technology layoff news.",
+    "url":"https://mukul-kumar-mishra.github.io/layoff-radar.html",
+    "author":{
+      "@type":"Person",
+      "name":"Mukul Kumar Mishra",
+      "url":"https://mukul-kumar-mishra.github.io/"
+    },
+    "publisher":{
+      "@type":"Person",
+      "name":"Mukul Kumar Mishra",
+      "url":"https://mukul-kumar-mishra.github.io/"
+    },
+    "isPartOf":{
+      "@type":"WebSite",
+      "name":"Mukul Kumar Mishra",
+      "url":"https://mukul-kumar-mishra.github.io/"
+    },
+    "mainEntityOfPage":{
+      "@type":"WebPage",
+      "@id":"https://mukul-kumar-mishra.github.io/layoff-radar.html"
     }
-    </script>
+  }
+  </script>
 
-    <style>
-        .radar-page {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 72px 24px 100px;
-        }
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Dataset",
+    "name":"Tech Layoff Radar",
+    "description":"Aggregated statistics of publicly reported technology layoff news articles, including worldwide coverage, publisher-country distribution and daily article counts.",
+    "url":"https://mukul-kumar-mishra.github.io/layoff-radar.html",
+    "creator":{
+      "@type":"Person",
+      "name":"Mukul Kumar Mishra",
+      "url":"https://mukul-kumar-mishra.github.io/"
+    },
+    "publisher":{
+      "@type":"Person",
+      "name":"Mukul Kumar Mishra",
+      "url":"https://mukul-kumar-mishra.github.io/"
+    },
+    "isAccessibleForFree":true,
+    "keywords":[
+      "tech layoffs",
+      "technology layoffs",
+      "global layoffs",
+      "layoff tracker",
+      "software layoffs",
+      "startup layoffs"
+    ],
+    "temporalCoverage":"2026",
+    "spatialCoverage":"Worldwide"
+  }
+  </script>
 
-        .radar-hero {
-            max-width: 900px;
-            margin: 0 auto 56px;
-            text-align: center;
-        }
+  <style>
+    .radar-page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 72px 24px 100px;
+    }
 
-        .radar-kicker {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            opacity: 0.65;
-            margin-bottom: 18px;
-        }
+    .radar-hero {
+      max-width: 900px;
+      margin: 0 auto 56px;
+      text-align: center;
+    }
 
-        .radar-kicker-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
-        }
+    .radar-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 18px;
+    }
 
-        .radar-title {
-            margin: 0;
-            font-family: "Sora", sans-serif;
-            font-size: clamp(42px, 7vw, 78px);
-            line-height: 0.98;
-            font-weight: 800;
-            letter-spacing: -0.055em;
-        }
+    .radar-kicker-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+    }
 
-        .radar-subtitle {
-            max-width: 720px;
-            margin: 24px auto 0;
-            font-family: "Montserrat", sans-serif;
-            font-size: 16px;
-            line-height: 1.7;
-            opacity: 0.65;
-        }
+    .radar-title {
+      margin: 0;
+      font-family: "Sora", sans-serif;
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 0.98;
+      font-weight: 800;
+      letter-spacing: -0.055em;
+    }
 
-        .radar-source {
-            margin-top: 14px;
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            opacity: 0.45;
-        }
+    .radar-subtitle {
+      max-width: 720px;
+      margin: 24px auto 0;
+      font-family: "Montserrat", sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      opacity: 0.65;
+    }
 
-        .radar-card {
-            border: 1px solid rgba(127, 127, 127, 0.18);
-            border-radius: 22px;
-            background: rgba(127, 127, 127, 0.045);
-            overflow: hidden;
-        }
+    .radar-source {
+      margin-top: 14px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      opacity: 0.45;
+    }
 
-        .radar-main {
-            padding: 42px;
-        }
+    .radar-card {
+      border: 1px solid rgba(127, 127, 127, 0.18);
+      border-radius: 22px;
+      background: rgba(127, 127, 127, 0.045);
+      overflow: hidden;
+    }
 
-        .radar-count-label {
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            opacity: 0.5;
-        }
+    .radar-main {
+      padding: 42px;
+    }
 
-        .radar-count {
-            margin: 10px 0 4px;
-            font-family: "Sora", sans-serif;
-            font-size: clamp(64px, 11vw, 126px);
-            line-height: 0.95;
-            font-weight: 800;
-            letter-spacing: -0.07em;
-        }
+    .radar-count-label {
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
 
-        .radar-count-description {
-            font-family: "Montserrat", sans-serif;
-            font-size: 14px;
-            opacity: 0.6;
-        }
+    .radar-count {
+      margin: 10px 0 4px;
+      font-family: "Sora", sans-serif;
+      font-size: clamp(64px, 11vw, 126px);
+      line-height: 0.95;
+      font-weight: 800;
+      letter-spacing: -0.07em;
+    }
 
-        .radar-meta {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            margin-top: 30px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(127, 127, 127, 0.14);
-        }
+    .radar-count-description {
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      opacity: 0.6;
+    }
 
-        .radar-updated {
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            opacity: 0.5;
-        }
+    .radar-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 30px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(127, 127, 127, 0.14);
+    }
 
-        .radar-refresh {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(127, 127, 127, 0.2);
-            border-radius: 999px;
-            padding: 9px 14px;
-            background: transparent;
-            color: inherit;
-            font: inherit;
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
+    .radar-updated {
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      opacity: 0.5;
+    }
 
-        .radar-refresh:hover {
-            opacity: 0.7;
-        }
+    .radar-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(127, 127, 127, 0.2);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: transparent;
+      color: inherit;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
 
-        .radar-refresh:active {
-            transform: scale(0.97);
-        }
+    .radar-refresh:hover {
+      opacity: 0.7;
+    }
 
-        .radar-refresh.loading i {
-            animation: radar-spin 0.8s linear infinite;
-        }
+    .radar-refresh:active {
+      transform: scale(0.97);
+    }
 
-        @keyframes radar-spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+    .radar-refresh.loading i {
+      animation: radar-spin 0.8s linear infinite;
+    }
 
-        .radar-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 28px 0 0;
-        }
+    @keyframes radar-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-        .radar-filter {
-            border: 1px solid rgba(127, 127, 127, 0.2);
-            border-radius: 999px;
-            padding: 9px 15px;
-            background: transparent;
-            color: inherit;
-            font-family: "Montserrat", sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            cursor: pointer;
-            opacity: 0.6;
-        }
+    .radar-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 28px 0 0;
+    }
 
-        .radar-filter.active {
-            opacity: 1;
-            background: rgba(127, 127, 127, 0.12);
-        }
+    .radar-filter {
+      border: 1px solid rgba(127, 127, 127, 0.2);
+      border-radius: 999px;
+      padding: 9px 15px;
+      background: transparent;
+      color: inherit;
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      opacity: 0.6;
+    }
 
-        .radar-error {
-            display: none;
-            margin-top: 22px;
-            padding: 14px 16px;
-            border: 1px solid rgba(220, 38, 38, 0.25);
-            border-radius: 12px;
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            line-height: 1.6;
-            color: #dc2626;
-        }
+    .radar-filter.active {
+      opacity: 1;
+      background: rgba(127, 127, 127, 0.12);
+    }
 
-        .radar-section {
-            margin-top: 30px;
-        }
+    .radar-error {
+      display: none;
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid rgba(220, 38, 38, 0.25);
+      border-radius: 12px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #dc2626;
+    }
 
-        .radar-section-header {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 16px;
-        }
+    .radar-section {
+      margin-top: 30px;
+    }
 
-        .radar-section-title {
-            margin: 0;
-            font-family: "Sora", sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-        }
+    .radar-section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
 
-        .radar-section-note {
-            font-family: "Montserrat", sans-serif;
-            font-size: 11px;
-            opacity: 0.45;
-            text-align: right;
-        }
+    .radar-section-title {
+      margin: 0;
+      font-family: "Sora", sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
 
-        .radar-table-wrap {
-            overflow-x: auto;
-        }
+    .radar-section-note {
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      opacity: 0.45;
+      text-align: right;
+    }
 
-        .radar-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: "Montserrat", sans-serif;
-        }
+    .radar-table-wrap {
+      overflow-x: auto;
+    }
 
-        .radar-table th {
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-align: left;
-            opacity: 0.45;
-        }
+    .radar-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Montserrat", sans-serif;
+    }
 
-        .radar-table td {
-            padding: 16px;
-            border-bottom: 1px solid rgba(127, 127, 127, 0.1);
-            font-size: 13px;
-        }
+    .radar-table th {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: left;
+      opacity: 0.45;
+    }
 
-        .radar-table th:first-child,
-        .radar-table td:first-child {
-            width: 60px;
-            opacity: 0.4;
-        }
+    .radar-table td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(127, 127, 127, 0.1);
+      font-size: 13px;
+    }
 
-        .radar-table th:last-child,
-        .radar-table td:last-child {
-            text-align: right;
-        }
+    .radar-table th:first-child,
+    .radar-table td:first-child {
+      width: 60px;
+      opacity: 0.4;
+    }
 
-        .radar-country {
-            font-weight: 600;
-        }
+    .radar-table th:last-child,
+    .radar-table td:last-child {
+      text-align: right;
+    }
 
-        .radar-bar-cell {
-            width: 42%;
-        }
+    .radar-country {
+      font-weight: 600;
+    }
 
-        .radar-bar {
-            height: 6px;
-            width: 100%;
-            border-radius: 999px;
-            background: rgba(127, 127, 127, 0.1);
-            overflow: hidden;
-        }
+    .radar-bar-cell {
+      width: 42%;
+    }
 
-        .radar-bar-fill {
-            height: 100%;
-            border-radius: inherit;
-            background: currentColor;
-            opacity: 0.55;
-        }
+    .radar-bar {
+      height: 6px;
+      width: 100%;
+      border-radius: 999px;
+      background: rgba(127, 127, 127, 0.1);
+      overflow: hidden;
+    }
 
-        .radar-share {
-            opacity: 0.5;
-            font-size: 11px;
-        }
+    .radar-bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0.55;
+    }
 
-        .radar-daily-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-        }
+    .radar-share {
+      opacity: 0.5;
+      font-size: 11px;
+    }
 
-        .radar-day {
-            min-height: 100px;
-            padding: 14px;
-            border: 1px solid rgba(127, 127, 127, 0.13);
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+    .radar-daily-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+    }
 
-        .radar-day-date {
-            font-family: "Montserrat", sans-serif;
-            font-size: 10px;
-            opacity: 0.45;
-        }
+    .radar-day {
+      min-height: 100px;
+      padding: 14px;
+      border: 1px solid rgba(127, 127, 127, 0.13);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 
-        .radar-day-count {
-            font-family: "Sora", sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-        }
+    .radar-day-date {
+      font-family: "Montserrat", sans-serif;
+      font-size: 10px;
+      opacity: 0.45;
+    }
 
-        .radar-day-bar {
-            height: 4px;
-            margin-top: 12px;
-            border-radius: 999px;
-            background: rgba(127, 127, 127, 0.1);
-            overflow: hidden;
-        }
+    .radar-day-count {
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
 
-        .radar-day-fill {
-            height: 100%;
-            border-radius: inherit;
-            background: currentColor;
-            opacity: 0.5;
-        }
+    .radar-day-bar {
+      height: 4px;
+      margin-top: 12px;
+      border-radius: 999px;
+      background: rgba(127, 127, 127, 0.1);
+      overflow: hidden;
+    }
 
-        .radar-note {
-            margin-top: 30px;
-            padding: 22px;
-            border-left: 2px solid rgba(127, 127, 127, 0.25);
-            font-family: "Montserrat", sans-serif;
-            font-size: 12px;
-            line-height: 1.8;
-            opacity: 0.55;
-        }
+    .radar-day-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0.5;
+    }
 
-        .radar-empty {
-            padding: 30px;
-            text-align: center;
-            font-family: "Montserrat", sans-serif;
-            font-size: 13px;
-            opacity: 0.45;
-        }
+    .radar-note {
+      margin-top: 30px;
+      padding: 22px;
+      border-left: 2px solid rgba(127, 127, 127, 0.25);
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      line-height: 1.8;
+      opacity: 0.55;
+    }
 
-        @media (max-width: 700px) {
-            .radar-page {
-                padding: 48px 16px 72px;
-            }
+    .radar-empty {
+      padding: 30px;
+      text-align: center;
+      font-family: "Montserrat", sans-serif;
+      font-size: 13px;
+      opacity: 0.45;
+    }
 
-            .radar-main {
-                padding: 26px 20px;
-            }
+    @media (max-width: 700px) {
+      .radar-page {
+        padding: 48px 16px 72px;
+      }
 
-            .radar-meta {
-                align-items: flex-start;
-                flex-direction: column;
-            }
+      .radar-main {
+        padding: 26px 20px;
+      }
 
-            .radar-section-header {
-                align-items: flex-start;
-                flex-direction: column;
-            }
+      .radar-meta {
+        align-items: flex-start;
+        flex-direction: column;
+      }
 
-            .radar-section-note {
-                text-align: left;
-            }
+      .radar-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
 
-            .radar-bar-cell {
-                display: none;
-            }
-        }
-    </style>
+      .radar-section-note {
+        text-align: left;
+      }
+
+      .radar-bar-cell {
+        display: none;
+      }
+    }
+  </style>
 </head>
 
-<body>
+<body class="site">
 
-    <main class="radar-page">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="index.html">Mukul<span class="acc"> Mishra</span></a>
+      <nav class="topnav">
+        <a href="index.html">Home</a>
+        <a href="system-design/index.html">System Design</a>
+        <a href="system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="about.html">About</a>
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
 
-        <header class="radar-hero">
-            <div class="radar-kicker">
-                <span class="radar-kicker-dot"></span>
-                Live global coverage
-            </div>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
 
-            <h1 class="radar-title">TECH LAYOFF RADAR</h1>
+    <div class="radar-page">
 
-            <p class="radar-subtitle">
-                A live tracker of publicly reported technology layoff news from publishers around the world.
-            </p>
-
-            <div class="radar-source">
-                Updated automatically every hour
-            </div>
-        </header>
-
-        <section class="radar-card">
-            <div class="radar-main">
-
-                <div class="radar-count-label" id="count-period-label">
-                    Matching reports · last 30 days
-                </div>
-
-                <div class="radar-count" id="layoff-count">
-                    —
-                </div>
-
-                <div class="radar-count-description">
-                    publicly reported technology layoff news articles
-                </div>
-
-                <div class="radar-filters" aria-label="Time period">
-                    <button class="radar-filter" data-period="24h">24H</button>
-                    <button class="radar-filter" data-period="7d">7D</button>
-                    <button class="radar-filter data-period" data-period="30d">30D</button>
-                    <button class="radar-filter" data-period="month">CURRENT MONTH</button>
-                </div>
-
-                <div class="radar-meta">
-                    <div class="radar-updated">
-                        Last updated: <span id="last-updated">Loading…</span>
-                    </div>
-
-                    <button class="radar-refresh" id="refresh-button" type="button">
-                        <i data-lucide="refresh-cw" width="14" height="14"></i>
-                        Refresh
-                    </button>
-                </div>
-
-                <div class="radar-error" id="radar-error"></div>
-
-            </div>
-        </section>
-
-        <section class="radar-section radar-card">
-            <div class="radar-main">
-
-                <div class="radar-section-header">
-                    <div>
-                        <h2 class="radar-section-title">Worldwide coverage</h2>
-                    </div>
-
-                    <div class="radar-section-note">
-                        Ranked by publisher country
-                    </div>
-                </div>
-
-                <div class="radar-table-wrap">
-                    <table class="radar-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Country</th>
-                                <th class="radar-bar-cell">Coverage</th>
-                                <th>Reports</th>
-                                <th>Share</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="country-table">
-                            <tr>
-                                <td colspan="5" class="radar-empty">
-                                    Loading global coverage…
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </section>
-
-        <section class="radar-section radar-card">
-            <div class="radar-main">
-
-                <div class="radar-section-header">
-                    <div>
-                        <h2 class="radar-section-title">Daily activity</h2>
-                    </div>
-
-                    <div class="radar-section-note" id="daily-period-label">
-                        Last 30 days
-                    </div>
-                </div>
-
-                <div class="radar-daily-grid" id="daily-grid">
-                    <div class="radar-empty">
-                        Loading daily activity…
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <div class="radar-note">
-            This tracker measures the volume of news articles matching the technology-layoff search query. It does not represent the number of people laid off. Country rankings represent the country associated with the news publisher, not necessarily the country where the layoffs occurred.
+      <header class="radar-hero">
+        <div class="radar-kicker">
+          <span class="radar-kicker-dot"></span>
+          Live global coverage
         </div>
 
-    </main>
+        <h1 class="radar-title">TECH LAYOFF RADAR</h1>
 
-    <script>
-        const API_URL = "https://freenewsapi.ai/v1/stats";
-        const SEARCH_QUERY = "tech layoffs";
-        const REFRESH_INTERVAL = 60 * 60 * 1000;
+        <p class="radar-subtitle">
+          A live tracker of publicly reported technology layoff news from publishers around the world.
+        </p>
 
-        const countryNames = {
-            US: "United States",
-            IN: "India",
-            GB: "United Kingdom",
-            CA: "Canada",
-            AU: "Australia",
-            DE: "Germany",
-            FR: "France",
-            ES: "Spain",
-            IT: "Italy",
-            NL: "Netherlands",
-            SG: "Singapore",
-            JP: "Japan",
-            KR: "South Korea",
-            BR: "Brazil",
-            MX: "Mexico",
-            AE: "United Arab Emirates",
-            IL: "Israel",
-            IE: "Ireland",
-            SE: "Sweden",
-            CH: "Switzerland",
-            NZ: "New Zealand",
-            ZA: "South Africa",
-            HK: "Hong Kong",
-            CN: "China",
-            TW: "Taiwan",
-            PH: "Philippines",
-            MY: "Malaysia",
-            ID: "Indonesia",
-            NG: "Nigeria"
-        };
+        <div class="radar-source">
+          Updated automatically every hour
+        </div>
+      </header>
 
-        let stats = null;
-        let selectedPeriod = "30d";
-        let refreshInProgress = false;
+      <section class="radar-card">
+        <div class="radar-main">
 
-        const countElement = document.getElementById("layoff-count");
-        const countPeriodLabel = document.getElementById("count-period-label");
-        const lastUpdatedElement = document.getElementById("last-updated");
-        const countryTable = document.getElementById("country-table");
-        const dailyGrid = document.getElementById("daily-grid");
-        const dailyPeriodLabel = document.getElementById("daily-period-label");
-        const errorElement = document.getElementById("radar-error");
-        const refreshButton = document.getElementById("refresh-button");
+          <div class="radar-count-label" id="count-period-label">
+            Matching reports · last 30 days
+          </div>
 
-        function formatNumber(value) {
-            return new Intl.NumberFormat("en-US").format(value || 0);
-        }
+          <div class="radar-count" id="layoff-count">—</div>
 
-        function formatDateTime(date) {
-            return new Intl.DateTimeFormat("en-IN", {
-                dateStyle: "medium",
-                timeStyle: "short",
-                timeZone: "Asia/Kolkata"
-            }).format(date);
-        }
+          <div class="radar-count-description">
+            publicly reported technology layoff news articles
+          </div>
 
-        function getCurrentMonthPrefix() {
-            const now = new Date();
-            const year = now.getUTCFullYear();
-            const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-            return `${year}-${month}`;
-        }
+          <div class="radar-filters" aria-label="Time period">
+            <button class="radar-filter" data-period="24h">24H</button>
+            <button class="radar-filter" data-period="7d">7D</button>
+            <button class="radar-filter" data-period="30d">30D</button>
+            <button class="radar-filter" data-period="month">CURRENT MONTH</button>
+          </div>
 
-        function getPeriodLabel(period) {
-            if (period === "24h") return "last 24 hours";
-            if (period === "7d") return "last 7 days";
-            if (period === "month") return "current month";
-            return "last 30 days";
-        }
+          <div class="radar-meta">
+            <div class="radar-updated">
+              Last updated: <span id="last-updated">Loading…</span>
+            </div>
 
-        function getPeriodTotal(period) {
-            if (!stats) return 0;
+            <button class="radar-refresh" id="refresh-button" type="button">
+              <i data-lucide="refresh-cw" width="14" height="14"></i>
+              Refresh
+            </button>
+          </div>
 
-            if (period === "24h") {
-                return Object.entries(stats.by_day || {})
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .slice(-1)
-                    .reduce((sum, [, count]) => sum + count, 0);
-            }
+          <div class="radar-error" id="radar-error"></div>
 
-            if (period === "7d") {
-                const cutoff = new Date();
-                cutoff.setUTCDate(cutoff.getUTCDate() - 6);
+        </div>
+      </section>
 
-                return Object.entries(stats.by_day || {}).reduce((sum, [date, count]) => {
-                    const day = new Date(`${date}T23:59:59Z`);
-                    return day >= cutoff ? sum + count : sum;
-                }, 0);
-            }
+      <section class="radar-section radar-card">
+        <div class="radar-main">
 
-            if (period === "month") {
-                const prefix = getCurrentMonthPrefix();
+          <div class="radar-section-header">
+            <div>
+              <h2 class="radar-section-title">Worldwide coverage</h2>
+            </div>
 
-                return Object.entries(stats.by_day || {}).reduce((sum, [date, count]) => {
-                    return date.startsWith(prefix) ? sum + count : sum;
-                }, 0);
-            }
+            <div class="radar-section-note">
+              Ranked by publisher country
+            </div>
+          </div>
 
-            return stats.total || 0;
-        }
+          <div class="radar-table-wrap">
+            <table class="radar-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Country</th>
+                  <th class="radar-bar-cell">Coverage</th>
+                  <th>Reports</th>
+                  <th>Share</th>
+                </tr>
+              </thead>
 
-        function renderCount() {
-            const total = getPeriodTotal(selectedPeriod);
-            const label = getPeriodLabel(selectedPeriod);
+              <tbody id="country-table">
+                <tr>
+                  <td colspan="5" class="radar-empty">
+                    Loading global coverage…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            countElement.textContent = formatNumber(total);
-            countPeriodLabel.textContent = `Matching reports · ${label}`;
-            dailyPeriodLabel.textContent = label;
-        }
+        </div>
+      </section>
 
-        function renderCountries() {
-            const countries = Object.entries(stats?.countries || {});
+      <section class="radar-section radar-card">
+        <div class="radar-main">
 
-            if (!countries.length) {
-                countryTable.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="radar-empty">
-                            No country data available for this period.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+          <div class="radar-section-header">
+            <div>
+              <h2 class="radar-section-title">Daily activity</h2>
+            </div>
 
-            const total = stats.total || 1;
-            const maxCount = countries.length ? countries[0][1] : 1;
+            <div class="radar-section-note" id="daily-period-label">
+              Last 30 days
+            </div>
+          </div>
 
-            countryTable.innerHTML = countries.slice(0, 25).map(([code, count], index) => {
-                const name = countryNames[code] || code;
-                const share = (count / total) * 100;
-                const width = (count / maxCount) * 100;
+          <div class="radar-daily-grid" id="daily-grid">
+            <div class="radar-empty">
+              Loading daily activity…
+            </div>
+          </div>
 
-                return `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td class="radar-country">${name}</td>
-                        <td class="radar-bar-cell">
-                            <div class="radar-bar">
-                                <div class="radar-bar-fill" style="width:${width}%"></div>
-                            </div>
-                        </td>
-                        <td>${formatNumber(count)}</td>
-                        <td class="radar-share">${share.toFixed(1)}%</td>
-                    </tr>
-                `;
-            }).join("");
-        }
+        </div>
+      </section>
 
-        function getDailyData() {
-            if (!stats?.by_day) return [];
+      <div class="radar-note">
+        This tracker measures the volume of news articles matching the technology-layoff search query. It does not represent the number of people laid off. Country rankings represent the country associated with the news publisher, not necessarily the country where the layoffs occurred.
+      </div>
 
-            const entries = Object.entries(stats.by_day)
-                .sort(([a], [b]) => a.localeCompare(b));
+    </div>
 
-            if (selectedPeriod === "24h") {
-                return entries.slice(-1);
-            }
+  </main>
 
-            if (selectedPeriod === "7d") {
-                return entries.slice(-7);
-            }
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
+      <span>Hosted on GitHub Pages</span>
+    </div>
+  </footer>
 
-            if (selectedPeriod === "month") {
-                const prefix = getCurrentMonthPrefix();
-                return entries.filter(([date]) => date.startsWith(prefix));
-            }
+  <script>
+    const API_URL = "https://freenewsapi.ai/v1/stats";
+    const SEARCH_QUERY = "tech layoffs";
+    const REFRESH_INTERVAL = 60 * 60 * 1000;
 
-            return entries.slice(-30);
-        }
+    const countryNames = {
+      US: "United States",
+      IN: "India",
+      GB: "United Kingdom",
+      CA: "Canada",
+      AU: "Australia",
+      DE: "Germany",
+      FR: "France",
+      ES: "Spain",
+      IT: "Italy",
+      NL: "Netherlands",
+      SG: "Singapore",
+      JP: "Japan",
+      KR: "South Korea",
+      BR: "Brazil",
+      MX: "Mexico",
+      AE: "United Arab Emirates",
+      IL: "Israel",
+      IE: "Ireland",
+      SE: "Sweden",
+      CH: "Switzerland",
+      NZ: "New Zealand",
+      ZA: "South Africa",
+      HK: "Hong Kong",
+      CN: "China",
+      TW: "Taiwan",
+      PH: "Philippines",
+      MY: "Malaysia",
+      ID: "Indonesia",
+      NG: "Nigeria"
+    };
 
-        function renderDaily() {
-            const days = getDailyData();
+    let stats = null;
+    let selectedPeriod = "30d";
+    let refreshInProgress = false;
 
-            if (!days.length) {
-                dailyGrid.innerHTML = `
-                    <div class="radar-empty">
-                        No daily activity available for this period.
-                    </div>
-                `;
-                return;
-            }
+    const countElement = document.getElementById("layoff-count");
+    const countPeriodLabel = document.getElementById("count-period-label");
+    const lastUpdatedElement = document.getElementById("last-updated");
+    const countryTable = document.getElementById("country-table");
+    const dailyGrid = document.getElementById("daily-grid");
+    const dailyPeriodLabel = document.getElementById("daily-period-label");
+    const errorElement = document.getElementById("radar-error");
+    const refreshButton = document.getElementById("refresh-button");
 
-            const maxCount = Math.max(...days.map(([, count]) => count), 1);
+    function formatNumber(value) {
+      return new Intl.NumberFormat("en-US").format(value || 0);
+    }
 
-            dailyGrid.innerHTML = days.map(([date, count]) => {
-                const formattedDate = new Intl.DateTimeFormat("en-IN", {
-                    day: "2-digit",
-                    month: "short",
-                    timeZone: "UTC"
-                }).format(new Date(`${date}T12:00:00Z`));
+    function formatDateTime(date) {
+      return new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata"
+      }).format(date);
+    }
 
-                const width = (count / maxCount) * 100;
+    function getCurrentMonthPrefix() {
+      const now = new Date();
+      const year = now.getUTCFullYear();
+      const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+      return `${year}-${month}`;
+    }
 
-                return `
-                    <div class="radar-day">
-                        <div class="radar-day-date">${formattedDate}</div>
-                        <div class="radar-day-count">${formatNumber(count)}</div>
-                        <div class="radar-day-bar">
-                            <div class="radar-day-fill" style="width:${width}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join("");
-        }
+    function getPeriodLabel(period) {
+      if (period === "24h") return "last 24 hours";
+      if (period === "7d") return "last 7 days";
+      if (period === "month") return "current month";
+      return "last 30 days";
+    }
 
-        function render() {
-            renderCount();
-            renderCountries();
-            renderDaily();
-        }
+    function getPeriodTotal(period) {
+      if (!stats) return 0;
 
-        async function fetchStats() {
-            if (refreshInProgress) return;
+      if (period === "24h") {
+        return Object.entries(stats.by_day || {})
+          .sort(([a], [b]) => a.localeCompare(b))
+          .slice(-1)
+          .reduce((sum, [, count]) => sum + count, 0);
+      }
 
-            refreshInProgress = true;
-            refreshButton.classList.add("loading");
-            errorElement.style.display = "none";
+      if (period === "7d") {
+        return Object.entries(stats.by_day || {})
+          .sort(([a], [b]) => a.localeCompare(b))
+          .slice(-7)
+          .reduce((sum, [, count]) => sum + count, 0);
+      }
 
-            try {
-                const params = new URLSearchParams({
-                    q: SEARCH_QUERY,
-                    date: "30d",
-                    top: "100"
-                });
+      if (period === "month") {
+        const prefix = getCurrentMonthPrefix();
 
-                const response = await fetch(`${API_URL}?${params.toString()}`, {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json"
-                    },
-                    cache: "no-store"
-                });
+        return Object.entries(stats.by_day || {}).reduce((sum, [date, count]) => {
+          return date.startsWith(prefix) ? sum + count : sum;
+        }, 0);
+      }
 
-                if (!response.ok) {
-                    throw new Error(`News API returned HTTP ${response.status}`);
-                }
+      return stats.total || 0;
+    }
 
-                const data = await response.json();
+    function renderCount() {
+      const total = getPeriodTotal(selectedPeriod);
+      const label = getPeriodLabel(selectedPeriod);
 
-                if (typeof data.total !== "number") {
-                    throw new Error("The news API returned an invalid response.");
-                }
+      countElement.textContent = formatNumber(total);
+      countPeriodLabel.textContent = `Matching reports · ${label}`;
+      dailyPeriodLabel.textContent = label;
+    }
 
-                stats = data;
+    function renderCountries() {
+      const countries = Object.entries(stats?.countries || {});
 
-                lastUpdatedElement.textContent = formatDateTime(new Date());
-                render();
+      if (!countries.length) {
+        countryTable.innerHTML = `
+          <tr>
+            <td colspan="5" class="radar-empty">
+              No country data available for this period.
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
-            } catch (error) {
-                errorElement.textContent = "Live data could not be refreshed right now. The previous data has been kept on screen.";
-                errorElement.style.display = "block";
-            } finally {
-                refreshInProgress = false;
-                refreshButton.classList.remove("loading");
-                lucide.createIcons();
-            }
-        }
+      const total = stats.total || 1;
+      const maxCount = countries[0]?.[1] || 1;
 
-        document.querySelectorAll(".radar-filter").forEach(button => {
-            button.addEventListener("click", () => {
-                selectedPeriod = button.dataset.period;
+      countryTable.innerHTML = countries.slice(0, 25).map(([code, count], index) => {
+        const name = countryNames[code] || code;
+        const share = (count / total) * 100;
+        const width = (count / maxCount) * 100;
 
-                document.querySelectorAll(".radar-filter").forEach(item => {
-                    item.classList.remove("active");
-                });
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="radar-country">${name}</td>
+            <td class="radar-bar-cell">
+              <div class="radar-bar">
+                <div class="radar-bar-fill" style="width:${width}%"></div>
+              </div>
+            </td>
+            <td>${formatNumber(count)}</td>
+            <td class="radar-share">${share.toFixed(1)}%</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-                button.classList.add("active");
+    function getDailyData() {
+      if (!stats?.by_day) return [];
 
-                if (stats) {
-                    render();
-                }
-            });
+      const entries = Object.entries(stats.by_day)
+        .sort(([a], [b]) => a.localeCompare(b));
+
+      if (selectedPeriod === "24h") {
+        return entries.slice(-1);
+      }
+
+      if (selectedPeriod === "7d") {
+        return entries.slice(-7);
+      }
+
+      if (selectedPeriod === "month") {
+        const prefix = getCurrentMonthPrefix();
+        return entries.filter(([date]) => date.startsWith(prefix));
+      }
+
+      return entries.slice(-30);
+    }
+
+    function renderDaily() {
+      const days = getDailyData();
+
+      if (!days.length) {
+        dailyGrid.innerHTML = `
+          <div class="radar-empty">
+            No daily activity available for this period.
+          </div>
+        `;
+        return;
+      }
+
+      const maxCount = Math.max(...days.map(([, count]) => count), 1);
+
+      dailyGrid.innerHTML = days.map(([date, count]) => {
+        const formattedDate = new Intl.DateTimeFormat("en-IN", {
+          day: "2-digit",
+          month: "short",
+          timeZone: "UTC"
+        }).format(new Date(`${date}T12:00:00Z`));
+
+        const width = (count / maxCount) * 100;
+
+        return `
+          <div class="radar-day">
+            <div class="radar-day-date">${formattedDate}</div>
+            <div class="radar-day-count">${formatNumber(count)}</div>
+            <div class="radar-day-bar">
+              <div class="radar-day-fill" style="width:${width}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      renderCount();
+      renderCountries();
+      renderDaily();
+    }
+
+    async function fetchStats() {
+      if (refreshInProgress) return;
+
+      refreshInProgress = true;
+      refreshButton.classList.add("loading");
+      errorElement.style.display = "none";
+
+      try {
+        const params = new URLSearchParams({
+          q: SEARCH_QUERY,
+          date: "30d",
+          top: "100"
         });
 
-        refreshButton.addEventListener("click", fetchStats);
+        const response = await fetch(`${API_URL}?${params.toString()}`, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json"
+          },
+          cache: "no-store"
+        });
 
-        document.querySelector('[data-period="30d"]').classList.add("active");
+        if (!response.ok) {
+          throw new Error(`News API returned HTTP ${response.status}`);
+        }
 
+        const data = await response.json();
+
+        if (typeof data.total !== "number") {
+          throw new Error("The news API returned an invalid response.");
+        }
+
+        stats = data;
+        lastUpdatedElement.textContent = formatDateTime(new Date());
+
+        render();
+      } catch (error) {
+        errorElement.textContent = "Live data could not be refreshed right now. The previous data has been kept on screen.";
+        errorElement.style.display = "block";
+      } finally {
+        refreshInProgress = false;
+        refreshButton.classList.remove("loading");
         lucide.createIcons();
+      }
+    }
 
-        fetchStats();
+    document.querySelectorAll(".radar-filter").forEach(button => {
+      button.addEventListener("click", () => {
+        selectedPeriod = button.dataset.period;
 
-        setInterval(fetchStats, REFRESH_INTERVAL);
-    </script>
+        document.querySelectorAll(".radar-filter").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        if (stats) {
+          render();
+        }
+      });
+    });
+
+    refreshButton.addEventListener("click", fetchStats);
+
+    document.querySelector('[data-period="30d"]').classList.add("active");
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const root = document.documentElement;
+
+    if (localStorage.getItem("pf-theme") === "dark") {
+      root.classList.add("dark");
+    }
+
+    function syncIcons() {
+      const dark = root.classList.contains("dark");
+      document.querySelector(".ic-sun").style.display = dark ? "none" : "";
+      document.querySelector(".ic-moon").style.display = dark ? "" : "none";
+    }
+
+    syncIcons();
+
+    document.getElementById("themeToggle").addEventListener("click", function() {
+      root.classList.toggle("dark");
+      localStorage.setItem("pf-theme", root.classList.contains("dark") ? "dark" : "light");
+      syncIcons();
+    });
+
+    lucide.createIcons();
+
+    fetchStats();
+
+    setInterval(fetchStats, REFRESH_INTERVAL);
+  </script>
 
 </body>
 </html>
