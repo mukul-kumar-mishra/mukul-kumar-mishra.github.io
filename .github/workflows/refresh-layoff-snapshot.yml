@@ -1,0 +1,40 @@
+name: Refresh layoff snapshot
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch stats and write snapshot
+        run: |
+          curl -s "https://freenewsapi.ai/v1/stats?q=tech%20layoffs&date=30d&top=100" -o /tmp/stats.json
+          python3 - <<'EOF'
+          import json, datetime
+          raw = json.load(open("/tmp/stats.json"))
+          assert isinstance(raw.get("total"), int), "API response missing total"
+          assert isinstance(raw.get("by_day"), dict), "API response missing by_day"
+          snap = {
+              "total": raw["total"],
+              "fetchedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "query": "tech layoffs",
+              "window": "30d",
+              "countries": raw.get("countries", {}),
+              "by_day": raw.get("by_day", {}),
+          }
+          json.dump(snap, open("data/layoff-count.json", "w"), indent=2)
+          print("snapshot total:", snap["total"])
+          EOF
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/layoff-count.json
+          git diff --staged --quiet || git commit -m "chore: refresh layoff snapshot"
+          git push

@@ -54,16 +54,21 @@
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="index.html">Mukul<span class="acc"> Mishra</span></a>
-      <nav class="topnav">
+      <nav class="topnav" id="topnav">
         <a href="index.html" class="on">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
         <a href="about.html">About</a>
+      </nav>
+      <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
         </button>
-      </nav>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -511,5 +516,6 @@
   <script src="js/calculators.js" defer></script>
 
   <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+<script src="js/nav.js"></script>
 </body>
 </html>

@@ -19,16 +19,16 @@
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/layoff-radar.html">
   <meta property="og:site_name" content="Mukul Kumar Mishra">
 
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.png">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.svg">
   <meta property="og:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
-  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="627">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Tech Layoff Radar: Live Global Layoff Tracker">
   <meta name="twitter:description" content="Live global tracker of publicly reported technology layoff news, country coverage and daily activity.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.png">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/layoff-radar.svg">
   <meta name="twitter:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
 
   <link rel="icon" href="images/favicon.png" type="image/png">
@@ -50,6 +50,8 @@
     "headline":"Tech Layoff Radar: Live Global Layoff Tracker",
     "description":"Live global tracker of publicly reported technology layoff news.",
     "url":"https://mukul-kumar-mishra.github.io/layoff-radar.html",
+    "datePublished":"2026-09-10",
+    "dateModified":"2026-09-10",
     "author":{
       "@type":"Person",
       "name":"Mukul Kumar Mishra",
@@ -90,6 +92,8 @@
       "url":"https://mukul-kumar-mishra.github.io/"
     },
     "isAccessibleForFree":true,
+    "datePublished":"2026-09-10",
+    "dateModified":"2026-09-10",
     "keywords":[
       "tech layoffs",
       "technology layoffs",
@@ -301,6 +305,59 @@
       background: rgba(127, 127, 127, 0.12);
     }
 
+    .radar-trend {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 26px;
+      padding: 18px 20px;
+      border: 1px solid rgba(127, 127, 127, 0.18);
+      border-radius: 14px;
+      background: rgba(127, 127, 127, 0.06);
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .radar-trend-block {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .radar-trend-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    .radar-trend-value {
+      margin-top: 6px;
+      font-family: "Sora", sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .radar-trend-sub {
+      margin-top: 4px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .radar-trend-divider {
+      width: 1px;
+      background: rgba(127, 127, 127, 0.2);
+    }
+
+    .radar-related {
+      margin: 0;
+      padding-left: 1.2em;
+      font-family: "Montserrat", sans-serif;
+      font-size: 13px;
+      line-height: 2;
+    }
+
     .radar-error {
       display: none;
       margin-top: 22px;
@@ -478,63 +535,322 @@
       opacity: 0.45;
     }
 
+    html {
+      overflow-x: hidden;
+    }
+
+    body.site {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .radar-page,
+    .radar-page *,
+    .radar-page *::before,
+    .radar-page *::after {
+      box-sizing: border-box;
+      min-width: 0;
+    }
+
+    .radar-title,
+    .radar-subtitle,
+    .radar-intro,
+    .radar-note,
+    .radar-updated,
+    .radar-section-note,
+    .radar-country {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
     @media (max-width: 700px) {
       .radar-page {
-        padding: 48px 16px 72px;
+        width: 100%;
         max-width: 100%;
+        margin: 0;
+        padding: 42px 12px 64px;
+        overflow: visible;
+      }
+
+      .radar-hero {
+        width: 100%;
+        margin-bottom: 24px;
+      }
+
+      .radar-kicker {
+        max-width: 100%;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        margin-bottom: 14px;
+      }
+
+      .radar-title {
+        font-size: clamp(36px, 12vw, 58px);
+        line-height: 1;
+        letter-spacing: -0.05em;
+      }
+
+      .radar-card {
+        width: 100%;
+        border-radius: 18px;
       }
 
       .radar-main {
-        padding: 26px 20px;
-        max-width: 100%;
+        width: 100%;
+        padding: 24px 16px;
       }
 
-      .radar-intro {
-        margin-bottom: 26px;
-        padding: 0 4px;
+      .radar-count-label {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        line-height: 1.5;
       }
 
       .radar-count {
-        font-size: clamp(56px, 20vw, 92px);
-        letter-spacing: -0.06em;
+        margin: 8px 0 6px;
+        font-size: clamp(52px, 19vw, 82px);
+        line-height: 0.98;
+        letter-spacing: -0.065em;
+        white-space: nowrap;
+      }
+
+      .radar-count-description {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .radar-filters {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .radar-filter {
+        width: 100%;
+        min-width: 0;
+        padding: 10px 8px;
+        font-size: 10px;
+        white-space: nowrap;
       }
 
       .radar-meta {
-        align-items: flex-start;
+        align-items: stretch;
         flex-direction: column;
+        gap: 12px;
+        margin-top: 22px;
+        padding-top: 18px;
+      }
+
+      .radar-updated {
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .radar-trend {
+        flex-direction: column;
+        gap: 14px;
+        padding: 16px;
+      }
+
+      .radar-trend-divider {
+        width: auto;
+        height: 1px;
+      }
+
+      .radar-trend-value {
+        font-size: 22px;
+      }
+
+      .radar-refresh {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 14px;
+      }
+
+      .radar-intro {
+        width: 100%;
+        max-width: 100%;
+        margin: 18px auto 24px;
+        padding: 0 8px;
+        font-size: 11px;
+        line-height: 1.65;
+      }
+
+      .radar-section {
+        margin-top: 22px;
       }
 
       .radar-section-header {
+        width: 100%;
         align-items: flex-start;
         flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .radar-section-title {
+        font-size: 18px;
       }
 
       .radar-section-note {
+        font-size: 10px;
         text-align: left;
+        line-height: 1.5;
       }
 
-      .radar-bar-cell {
+      .radar-table-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .radar-table {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        table-layout: fixed;
+      }
+
+      .radar-table th,
+      .radar-table td {
+        padding: 11px 6px;
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .radar-table th {
+        font-size: 8px;
+        letter-spacing: 0.06em;
+      }
+
+      .radar-table th:first-child,
+      .radar-table td:first-child {
+        width: 28px;
+      }
+
+      .radar-table th:nth-child(2),
+      .radar-table td:nth-child(2) {
+        width: auto;
+        padding-left: 8px;
+      }
+
+      .radar-table th:nth-child(3),
+      .radar-table td:nth-child(3) {
         display: none;
+      }
+
+      .radar-table th:nth-child(4),
+      .radar-table td:nth-child(4) {
+        width: 66px;
+      }
+
+      .radar-table th:nth-child(5),
+      .radar-table td:nth-child(5) {
+        width: 54px;
+      }
+
+      .radar-country {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .radar-share {
+        font-size: 10px;
+      }
+
+      .radar-daily-grid {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .radar-day {
+        min-height: 88px;
+        padding: 11px;
+        border-radius: 12px;
+      }
+
+      .radar-day-date {
+        font-size: 9px;
+      }
+
+      .radar-day-count {
+        font-size: 17px;
+      }
+
+      .radar-day-bar {
+        margin-top: 9px;
+      }
+
+      .radar-note {
+        margin-top: 22px;
+        padding: 16px;
+        font-size: 10px;
+        line-height: 1.7;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .radar-page {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .radar-main {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .radar-count {
+        font-size: clamp(48px, 18vw, 70px);
+      }
+
+      .radar-table th,
+      .radar-table td {
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+
+      .radar-table th:first-child,
+      .radar-table td:first-child {
+        width: 24px;
+      }
+
+      .radar-table th:nth-child(4),
+      .radar-table td:nth-child(4) {
+        width: 60px;
+      }
+
+      .radar-table th:nth-child(5),
+      .radar-table td:nth-child(5) {
+        width: 50px;
       }
     }
   </style>
 </head>
 
-<body class="site" style="overflow-x:hidden;">
+<body class="site">
 
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="index.html">Mukul<span class="acc"> Mishra</span></a>
-      <nav class="topnav">
+      <nav class="topnav" id="topnav">
         <a href="index.html">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
         <a href="about.html">About</a>
+      </nav>
+      <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
           <i data-lucide="sun" class="ic-sun"></i>
           <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
         </button>
-      </nav>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -560,7 +876,7 @@
             Matching reports · last 30 days
           </div>
 
-          <div class="radar-count" id="layoff-count">—</div>
+          <div class="radar-count" id="layoff-count">727</div>
 
           <div class="radar-count-description">
             publicly reported technology layoff news articles
@@ -575,7 +891,7 @@
 
           <div class="radar-meta">
             <div class="radar-updated">
-              Last updated: <span id="last-updated">Loading…</span>
+              Last updated: <span id="last-updated">10 Sep 2026</span>
             </div>
 
             <button class="radar-refresh" id="refresh-button" type="button">
@@ -585,6 +901,28 @@
           </div>
 
           <div class="radar-error" id="radar-error"></div>
+
+          <div class="radar-trend" id="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Last 7 days</div>
+              <div class="radar-trend-value" id="trend-now">235</div>
+              <div class="radar-trend-sub">matching reports</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Prior 7 days</div>
+              <div class="radar-trend-value" id="trend-prior">180</div>
+              <div class="radar-trend-sub">matching reports</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Week over week</div>
+              <div class="radar-trend-value" id="trend-delta">up 55</div>
+              <div class="radar-trend-sub" id="trend-pct">about 31 percent higher</div>
+            </div>
+          </div>
+
+          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 727 matching reports in 30 days as of 10 Sep 2026.</p></noscript>
 
         </div>
       </section>
@@ -650,6 +988,28 @@
               Loading daily activity…
             </div>
           </div>
+
+        </div>
+      </section>
+
+      <section class="radar-section radar-card">
+        <div class="radar-main">
+
+          <div class="radar-section-header">
+            <div>
+              <h2 class="radar-section-title">Related reading</h2>
+            </div>
+
+            <div class="radar-section-note">
+              Teardowns from this site
+            </div>
+          </div>
+
+          <ul class="radar-related">
+            <li><a href="system-design/index.html">All system design case studies</a></li>
+            <li><a href="system-design/replit-agent-runtime-postmortem.html">Replit agent runtime postmortem</a></li>
+            <li><a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token exhaustion postmortem</a></li>
+          </ul>
 
         </div>
       </section>
@@ -877,8 +1237,40 @@
       }).join("");
     }
 
+    function getWeekWindows() {
+      const entries = Object.entries(stats.by_day || {})
+        .sort(([a], [b]) => a.localeCompare(b));
+      const last7 = entries.slice(-7);
+      const prior7 = entries.slice(-14, -7);
+      const sum = (rows) => rows.reduce((total, [, count]) => total + count, 0);
+      return { last7: sum(last7), prior7: sum(prior7) };
+    }
+
+    function renderTrend() {
+      const trendNow = document.getElementById("trend-now");
+      const trendPrior = document.getElementById("trend-prior");
+      const trendDelta = document.getElementById("trend-delta");
+      const trendPct = document.getElementById("trend-pct");
+      if (!trendNow || !stats) return;
+      const { last7, prior7 } = getWeekWindows();
+      const delta = last7 - prior7;
+      trendNow.textContent = formatNumber(last7);
+      trendPrior.textContent = formatNumber(prior7);
+      if (delta === 0) {
+        trendDelta.textContent = "flat";
+        trendPct.textContent = "no change week over week";
+        return;
+      }
+      const direction = delta > 0 ? "up" : "down";
+      trendDelta.textContent = `${direction} ${formatNumber(Math.abs(delta))}`;
+      trendPct.textContent = prior7
+        ? `about ${Math.abs(Math.round((delta / prior7) * 100))} percent ${delta > 0 ? "higher" : "lower"}`
+        : "first full week of data";
+    }
+
     function render() {
       renderCount();
+      renderTrend();
       renderCountries();
       renderDaily();
     }
@@ -920,6 +1312,22 @@
 
         render();
       } catch (error) {
+        try {
+          const snap = await fetch("data/layoff-count.json", { cache: "no-store" });
+          if (snap.ok) {
+            const saved = await snap.json();
+            if (typeof saved.total === "number" && saved.by_day) {
+              stats = saved;
+              if (saved.fetchedAt) {
+                lastUpdatedElement.textContent = formatDateTime(new Date(saved.fetchedAt));
+              }
+              render();
+              errorElement.textContent = "Live data could not be refreshed right now. Showing the last saved snapshot instead.";
+              errorElement.style.display = "block";
+              return;
+            }
+          }
+        } catch (ignored) {}
         errorElement.textContent = "Live data could not be refreshed right now. The previous data has been kept on screen.";
         errorElement.style.display = "block";
       } finally {
@@ -978,5 +1386,6 @@
     setInterval(fetchStats, REFRESH_INTERVAL);
   </script>
 
+<script src="js/nav.js"></script>
 </body>
 </html>
