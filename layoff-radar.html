@@ -105,14 +105,18 @@
 
   <style>
     .radar-page {
+      width: 100%;
       max-width: 1180px;
+      min-width: 0;
       margin: 0 auto;
       padding: 72px 24px 100px;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .radar-hero {
       max-width: 900px;
-      margin: 0 auto 56px;
+      margin: 0 auto 30px;
       text-align: center;
     }
 
@@ -139,6 +143,8 @@
 
     .radar-title {
       margin: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
       font-family: "Sora", sans-serif;
       font-size: clamp(42px, 7vw, 78px);
       line-height: 0.98;
@@ -148,6 +154,7 @@
 
     .radar-subtitle {
       max-width: 720px;
+      overflow-wrap: anywhere;
       margin: 24px auto 0;
       font-family: "Montserrat", sans-serif;
       font-size: 16px;
@@ -162,7 +169,25 @@
       opacity: 0.45;
     }
 
+    .radar-intro {
+      margin: 0 auto 30px;
+      max-width: 760px;
+      text-align: center;
+      font-family: "Montserrat", sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+      opacity: 0.55;
+    }
+
+    .radar-intro strong {
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
     .radar-card {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       border: 1px solid rgba(127, 127, 127, 0.18);
       border-radius: 22px;
       background: rgba(127, 127, 127, 0.045);
@@ -170,7 +195,9 @@
     }
 
     .radar-main {
+      min-width: 0;
       padding: 42px;
+      box-sizing: border-box;
     }
 
     .radar-count-label {
@@ -287,10 +314,14 @@
     }
 
     .radar-section {
+      width: 100%;
+      min-width: 0;
       margin-top: 30px;
+      box-sizing: border-box;
     }
 
     .radar-section-header {
+      min-width: 0;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
@@ -314,11 +345,17 @@
     }
 
     .radar-table-wrap {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .radar-table {
       width: 100%;
+      min-width: 560px;
       border-collapse: collapse;
       font-family: "Montserrat", sans-serif;
     }
@@ -386,6 +423,7 @@
     }
 
     .radar-day {
+      min-width: 0;
       min-height: 100px;
       padding: 14px;
       border: 1px solid rgba(127, 127, 127, 0.13);
@@ -443,10 +481,22 @@
     @media (max-width: 700px) {
       .radar-page {
         padding: 48px 16px 72px;
+        max-width: 100%;
       }
 
       .radar-main {
         padding: 26px 20px;
+        max-width: 100%;
+      }
+
+      .radar-intro {
+        margin-bottom: 26px;
+        padding: 0 4px;
+      }
+
+      .radar-count {
+        font-size: clamp(56px, 20vw, 92px);
+        letter-spacing: -0.06em;
       }
 
       .radar-meta {
@@ -470,7 +520,7 @@
   </style>
 </head>
 
-<body class="site">
+<body class="site" style="overflow-x:hidden;">
 
   <header class="topbar">
     <div class="wrap">
@@ -500,13 +550,7 @@
 
         <h1 class="radar-title">TECH LAYOFF RADAR</h1>
 
-        <p class="radar-subtitle">
-          A live tracker of publicly reported technology layoff news from publishers around the world.
-        </p>
 
-        <div class="radar-source">
-          Updated automatically every hour
-        </div>
       </header>
 
       <section class="radar-card">
@@ -544,6 +588,11 @@
 
         </div>
       </section>
+
+      <div class="radar-intro">
+        A live tracker of publicly reported technology layoff news from publishers around the world.
+        <br><strong>Updated automatically every hour</strong>
+      </div>
 
       <section class="radar-section radar-card">
         <div class="radar-main">
