@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Razorpay moved UPI payments from SQS to MSK and hit partition limits plus a 3,000-connection IAM cap. How one client swap cut latency 25x.">
+  <meta name="keywords" content="Razorpay Kafka, UPI Switch, AWS MSK Serverless, Kafka partitions, franz-go, connection pooling, payment infrastructure">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/razorpay-upi-kafka-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Razorpay Kafka: 3,000 Connections Too Many">
+  <meta property="og:description" content="Five years of UPI payments on Kafka. Partition explosions, a connector that crashed, plus an IAM cap nobody knew existed.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/razorpay-kafka-meme.svg">
+  <meta property="og:image:alt" content="Kafka partitions exploding past a connection cap at Razorpay scale">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/razorpay-upi-kafka-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Razorpay Kafka: 3,000 Connections Too Many">
+  <meta name="twitter:description" content="SQS to Serverless to provisioned. One client swap cut publish latency 25x.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/razorpay-kafka-meme.svg">
+  <meta name="twitter:image:alt" content="Kafka partitions exploding past a connection cap at Razorpay scale">
+  <title>Razorpay Kafka: 3,000 Connections Too Many | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Razorpay Kafka: 3,000 Connections Too Many","description":"A technical postmortem of five years of Kafka at Razorpay UPI Switch, from SQS to MSK Serverless to provisioned, with partition, connector and IAM lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/razorpay-upi-kafka-postmortem.html"},"keywords":"Razorpay, Kafka, UPI, MSK, franz-go, partitions"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Payment Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Razorpay Kafka: 3,000 Connections Too Many</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Razorpay processes over 70 percent of its UPI volume through a Kafka-backed Switch. Five years took it from SQS to MSK Serverless to provisioned clusters. Along the way partitions choked brokers, a connector crashed weekly, plus a connection cap nobody had read about ended the Asia Cup surge before it started. Then one client library swap fixed most of it.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Razorpay rebuilt UPI payments around Kafka and learned that partitions tax brokers, connectors route poorly, plus IAM caps connections at 3,000 per broker. Swapping the client library cut publish latency from 250ms to 10ms.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 11, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows Razorpay Engineering's September 2026 five-year retrospective. Architecture details plus numbers come from the published account. Cost figures are modeled from public AWS pricing.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/razorpay-kafka-meme.svg" alt="Kafka partitions exploding past a connection cap at Razorpay scale" width="1200" height="680"><figcaption>Figure 1. The Switch in one cartoon. SQS to Serverless to provisioned. One client swap cut latency 25x.</figcaption></figure>
+      <section><h2>1. The Switch That Outgrew Every Queue</h2>
+        <p>UPI is asynchronous by nature. Money moves through NPCI in messages, so Razorpay built the Switch around a message bus from day one. Five years later the Switch carries over 70 percent of total UPI volume with a design target of 10,000 transactions per second. Switch v2 split a monolith into event-driven microservices with separate domains for customers, merchants, VPA, payments plus mandates. Each domain scales on its own. Each domain publishes events. The bus became the architecture.</p>
+        <p>The first bus was AWS SQS Standard. It served well until two missing features mattered: true pub-sub semantics plus high-throughput low-latency delivery. SQS is a queue with fan-out bolted on. A payments switch needs the reverse. A log with subscriptions. So the team moved to AWS MSK Serverless. No broker sizing. Autoscaling without capacity planning. Pay as you go. Serverless Kafka sounded like someone else's problem. It was, until the bill plus the bottlenecks arrived together.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> Serverless removes provisioning decisions. It does not remove capacity limits. It relocates them into documentation nobody reads before an incident.</div>
+      </section>
+      <section><h2>2. Three Bottlenecks in Five Years</h2>
+        <p>The first bottleneck was partitions. Kafka is infinitely scalable in theory. In practice every partition costs CPU plus memory for metadata, file handles, replica sync plus leader election. Brokers spent more time on bookkeeping than on moving bytes. Throughput was fine. The brokers were busy counting. This is the standard partition trap. Teams add partitions for concurrency, then discover the broker tax grows faster than the parallelism pays.</p>
+        <p>The second bottleneck was the MSK Connector. To keep database writes plus Kafka publishes atomic, the team wrote events into a table plus let the connector publish them. MSK source connectors publish to exactly one configured topic. The team extended the connector with custom routing across topics based on row metadata. It crashed frequently. A connector with custom code is a microservice wearing a costume. It deserves its own deploy pipeline, its own dashboards, plus its own on-call rotation. It had none of those.</p>
+        <p>The third bottleneck was the famous one. Ahead of the Asia Cup 2025 surge, pods scaled out confidently. MSK IAM authentication caps active TCP connections near 3,000 per broker. The client library in use opened connections generously. The quota saturated almost immediately. Nobody on either side had mapped the limit. The surge plan assumed infinite headroom. The broker counted to 3,000 plus stopped accepting friendship.</p>
+        <p>The math of the fix is the best part. Replacing the generic client with franz-go, a Kafka-native Go client, dropped connections from roughly 1,100 to 300 per broker. Publish latency fell from 250ms to 10ms. That is a 73 percent connection reduction plus a 25x latency improvement from changing a library. No new brokers. No new topics. No new architecture. The bottleneck was never Kafka. It was the code talking to Kafka.</p>
+        <p>The remaining fixes show the same discipline. Worker pools per consumer decoupled processing concurrency from partition count. Sequential fetch plus parallel goroutine workers plus batch offset commits kept ordering while using CPU properly. Topic consolidation grouped domain events into shared topics with consumer-side filtering instead of one topic per event type. The gateway split into VPA, Payments plus Mandates components isolated slow 15-second validation calls from money movement. Finally the team moved to provisioned MSK with SASL/SCRAM authentication, which carries no such connection cap. Each fix removed a hidden coupling. The bill is always hiding in the coupling.</p>
+      </section>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Serverless was adopted without a limits inventory.</strong> The team gained autoscaling plus lost visibility into quotas. Connection caps, partition behavior, plus throughput ceilings differ between Serverless plus provisioned. A migration checklist should enumerate every quota in both modes before traffic moves.</p>
+        <p><strong>Atomicity rode on a connector.</strong> Writing business records plus events to one table plus relying on a source connector for publishing is elegant until the connector needs custom routing. At that point the elegant hack becomes an unowned service. Either keep connectors stock or promote the custom code to a real service.</p>
+        <p><strong>Client defaults went unchallenged for years.</strong> Connection handling, batching, compression plus DNS behavior sat at library defaults while scale grew 10x around them. Client libraries are load-bearing infrastructure. They deserve the same review rigor as broker sizing.</p>
+        <p><strong>Topics modeled events instead of domains.</strong> One topic per event type exploded partition counts plus broker bookkeeping. Grouping by domain with metadata filtering cut the tax without losing routing precision. Naming is architecture. Topic names doubly so.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, inventory every managed-service quota before migration. Connections per broker, partitions per cluster, throughput per partition, plus auth-specific limits. Put each number in a runbook with the alert that fires at 70 percent. Surprises should be novel, not documented.</p>
+        <p>Second, pick Kafka-native clients from day one. Generic abstraction layers hide protocol features that matter at scale: DNS re-resolution, batching control, compression choice plus connection reuse. The 25x latency win here came from protocol fluency, not bigger machines.</p>
+        <p>Third, decouple concurrency from partitions. Worker pools with batch commits let one partition feed many goroutines while preserving order. Partitions then serve durability plus ordering. Workers serve speed. Mixing the two jobs created the original tax.</p>
+        <p>Fourth, isolate latency classes at the infrastructure level. Slow validation calls plus fast payment flows must never share partitions, consumers, or compute. The gateway split is the pattern. Separate deployables with separate topics plus separate consumer groups. Noisy neighbors get evicted, not tolerated.</p>
+        <p>Fifth, budget for the atomicity you give up. Removing the connector cost DB-to-Kafka atomicity. Separate writes plus publishes create windows where one succeeds without the other. Name those windows, measure them, plus build reconciliation before auditors ask.</p>
+        <div class="tip"><strong>Operator rule:</strong> Count connections per broker before every surge. If the number comes from a client default instead of a runbook, the surge plan is fiction.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Razorpay published one of the most honest infrastructure retrospectives of the year. Five years, three architectures, every mistake itemized with numbers. The headline lesson is unfashionable. Managed services plus good architecture still lose to client defaults plus unread quotas. The team fixed years of pain with a library swap, worker pools, topic consolidation plus an auth change. No heroics. Just measurement.</p>
+        <p>The pattern generalizes. Every team running Kafka on managed infrastructure should be able to answer three questions tonight. How many connections per broker right now. How many partitions per broker right now. What happens at 2x traffic. If any answer requires opening a console, the Asia Cup moment is already scheduled. It just needs a date.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>1,100 connections. 250ms publishes. One library swap. The broker was innocent all along.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows Razorpay Engineering's September 2026 retrospective. Numbers come from the published account. Cost framing is modeled from public AWS MSK pricing.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://engineering.razorpay.com/tryst-with-kafka-2f5cef766c45" target="_blank" rel="noopener noreferrer">Razorpay Engineering: Five Years of Kafka at the UPI Switch (Sep 2026)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

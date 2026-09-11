@@ -51,7 +51,7 @@
     "description":"Live global tracker of publicly reported technology layoff news.",
     "url":"https://mukul-kumar-mishra.github.io/layoff-radar.html",
     "datePublished":"2026-09-10",
-    "dateModified":"2026-09-10",
+    "dateModified":"2026-09-11",
     "author":{
       "@type":"Person",
       "name":"Mukul Kumar Mishra",
@@ -93,7 +93,7 @@
     },
     "isAccessibleForFree":true,
     "datePublished":"2026-09-10",
-    "dateModified":"2026-09-10",
+    "dateModified":"2026-09-11",
     "keywords":[
       "tech layoffs",
       "technology layoffs",
@@ -226,6 +226,72 @@
       font-family: "Montserrat", sans-serif;
       font-size: 14px;
       opacity: 0.6;
+    }
+
+    .radar-hero-grid {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .radar-hero-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .radar-donut-wrap {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .radar-donut-title {
+      font-family: "Montserrat", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .radar-legend {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 150px;
+    }
+
+    .radar-legend li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .radar-legend .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex: none;
+    }
+
+    .radar-legend .lname {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .radar-legend .lval {
+      margin-left: auto;
+      opacity: 0.6;
+      padding-left: 10px;
     }
 
     .radar-meta {
@@ -620,6 +686,21 @@
         line-height: 1.5;
       }
 
+      .radar-hero-grid {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 26px;
+      }
+
+      .radar-donut-wrap {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .radar-legend {
+        display: none;
+      }
+
       .radar-filters {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -861,7 +942,7 @@
       <header class="radar-hero">
         <div class="radar-kicker">
           <span class="radar-kicker-dot"></span>
-          Live global coverage
+          Live from the layoff wire
         </div>
 
         <h1 class="radar-title">TECH LAYOFF RADAR</h1>
@@ -872,14 +953,45 @@
       <section class="radar-card">
         <div class="radar-main">
 
-          <div class="radar-count-label" id="count-period-label">
-            Matching reports · last 30 days
-          </div>
+          <div class="radar-hero-grid">
+            <div class="radar-hero-left">
+              <div class="radar-count-label" id="count-period-label">
+                Layoff headlines · last 30 days
+              </div>
 
-          <div class="radar-count" id="layoff-count">727</div>
+              <div class="radar-count" id="layoff-count">925</div>
 
-          <div class="radar-count-description">
-            publicly reported technology layoff news articles
+              <div class="radar-count-description">
+                publicly reported technology layoff news articles
+              </div>
+            </div>
+
+            <div class="radar-donut-wrap">
+              <div>
+                <div class="radar-donut-title" id="donut-title">Who is shouting loudest · 30-day mix</div>
+                <svg id="radar-donut" width="180" height="180" viewBox="0 0 200 200" role="img" aria-label="Share of reports by publisher country. India leads with about 69 percent.">
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(127,127,127,0.12)" stroke-width="26"/>
+                  <g id="donut-segs" fill="none" stroke-width="26" transform="rotate(-90 100 100)">
+                    <circle cx="100" cy="100" r="80" stroke="#a3e635" stroke-dasharray="345.1 502.65" stroke-dashoffset="0"/>
+                    <circle cx="100" cy="100" r="80" stroke="#38bdf8" stroke-dasharray="92.9 502.65" stroke-dashoffset="-345.1"/>
+                    <circle cx="100" cy="100" r="80" stroke="#fb7185" stroke-dasharray="15.2 502.65" stroke-dashoffset="-438"/>
+                    <circle cx="100" cy="100" r="80" stroke="#d8a83e" stroke-dasharray="6 502.65" stroke-dashoffset="-453.2"/>
+                    <circle cx="100" cy="100" r="80" stroke="#93a4ba" stroke-dasharray="4.9 502.65" stroke-dashoffset="-459.2"/>
+                    <circle cx="100" cy="100" r="80" stroke="rgba(127,127,127,0.35)" stroke-dasharray="38.6 502.65" stroke-dashoffset="-464.1"/>
+                  </g>
+                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="currentColor">68.6%</text>
+                  <text id="donut-center-sub" x="100" y="116" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="11" fill="currentColor" opacity="0.6">India</text>
+                </svg>
+              </div>
+              <ul class="radar-legend" id="radar-legend">
+                <li><span class="dot" style="background:#a3e635"></span><span class="lname">India</span><span class="lval">635</span></li>
+                <li><span class="dot" style="background:#38bdf8"></span><span class="lname">United States</span><span class="lval">171</span></li>
+                <li><span class="dot" style="background:#fb7185"></span><span class="lname">United Kingdom</span><span class="lval">28</span></li>
+                <li><span class="dot" style="background:#d8a83e"></span><span class="lname">Singapore</span><span class="lval">11</span></li>
+                <li><span class="dot" style="background:#93a4ba"></span><span class="lname">Canada</span><span class="lval">9</span></li>
+                <li><span class="dot" style="background:rgba(127,127,127,0.35)"></span><span class="lname">Others</span><span class="lval">71</span></li>
+              </ul>
+            </div>
           </div>
 
           <div class="radar-filters" aria-label="Time period">
@@ -891,7 +1003,7 @@
 
           <div class="radar-meta">
             <div class="radar-updated">
-              Last updated: <span id="last-updated">10 Sep 2026</span>
+              Last updated: <span id="last-updated">11 Sep 2026</span>
             </div>
 
             <button class="radar-refresh" id="refresh-button" type="button">
@@ -905,24 +1017,24 @@
           <div class="radar-trend" id="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Last 7 days</div>
-              <div class="radar-trend-value" id="trend-now">235</div>
+              <div class="radar-trend-value" id="trend-now">391</div>
               <div class="radar-trend-sub">matching reports</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Prior 7 days</div>
-              <div class="radar-trend-value" id="trend-prior">180</div>
+              <div class="radar-trend-value" id="trend-prior">199</div>
               <div class="radar-trend-sub">matching reports</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Week over week</div>
-              <div class="radar-trend-value" id="trend-delta">up 55</div>
-              <div class="radar-trend-sub" id="trend-pct">about 31 percent higher</div>
+              <div class="radar-trend-value" id="trend-delta">up 192</div>
+              <div class="radar-trend-sub" id="trend-pct">about 96 percent higher</div>
             </div>
           </div>
 
-          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 727 matching reports in 30 days as of 10 Sep 2026.</p></noscript>
+          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 925 matching reports in 30 days as of 11 Sep 2026.</p></noscript>
 
         </div>
       </section>
@@ -937,7 +1049,7 @@
 
           <div class="radar-section-header">
             <div>
-              <h2 class="radar-section-title">Worldwide coverage</h2>
+              <h2 class="radar-section-title">The whole planet is typing</h2>
             </div>
 
             <div class="radar-section-note">
@@ -975,7 +1087,7 @@
 
           <div class="radar-section-header">
             <div>
-              <h2 class="radar-section-title">Daily activity</h2>
+              <h2 class="radar-section-title">Day by day, blow by blow</h2>
             </div>
 
             <div class="radar-section-note" id="daily-period-label">
@@ -997,7 +1109,7 @@
 
           <div class="radar-section-header">
             <div>
-              <h2 class="radar-section-title">Related reading</h2>
+              <h2 class="radar-section-title">More files from the mess</h2>
             </div>
 
             <div class="radar-section-note">
@@ -1015,7 +1127,7 @@
       </section>
 
       <div class="radar-note">
-        This tracker measures the volume of news articles matching the technology-layoff search query. It does not represent the number of people laid off. Country rankings represent the country associated with the news publisher, not necessarily the country where the layoffs occurred.
+        This tracker measures the volume of news articles matching the technology-layoff search query. It does not represent the number of people laid off. One widely syndicated story can produce a large single-day spike. Country rankings represent the country associated with the news publisher, not necessarily the country where the layoffs occurred. Country shares can sum below 100 percent because some articles carry no country tag. News counts come from the freenewsapi.ai stats API. This site hosts no layoff data of its own.
       </div>
 
     </div>
@@ -1025,7 +1137,7 @@
   <footer class="footer">
     <div class="wrap">
       <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
-      <span>Hosted on GitHub Pages</span>
+      <span><a href="layoff-radar.html">Tech Layoff Radar</a></span>
     </div>
   </footer>
 
@@ -1067,8 +1179,12 @@
     };
 
     let stats = null;
+    let stats30 = null;
     let selectedPeriod = "30d";
     let refreshInProgress = false;
+    const PERIOD_DATE = { "30d": "30d", "7d": "7d", "24h": "1d", "month": "30d" };
+    const DONUT_MIX = { "30d": "30-day mix", "7d": "7-day mix", "24h": "24-hour mix", "month": "30-day mix" };
+    const statsCache = {};
 
     const countElement = document.getElementById("layoff-count");
     const countPeriodLabel = document.getElementById("count-period-label");
@@ -1106,30 +1222,16 @@
     }
 
     function getPeriodTotal(period) {
-      if (!stats) return 0;
-
-      if (period === "24h") {
-        return Object.entries(stats.by_day || {})
-          .sort(([a], [b]) => a.localeCompare(b))
-          .slice(-1)
-          .reduce((sum, [, count]) => sum + count, 0);
-      }
-
-      if (period === "7d") {
-        return Object.entries(stats.by_day || {})
-          .sort(([a], [b]) => a.localeCompare(b))
-          .slice(-7)
-          .reduce((sum, [, count]) => sum + count, 0);
-      }
-
       if (period === "month") {
+        if (!stats30) return 0;
         const prefix = getCurrentMonthPrefix();
 
-        return Object.entries(stats.by_day || {}).reduce((sum, [date, count]) => {
+        return Object.entries(stats30.by_day || {}).reduce((sum, [date, count]) => {
           return date.startsWith(prefix) ? sum + count : sum;
         }, 0);
       }
 
+      if (!stats) return 0;
       return stats.total || 0;
     }
 
@@ -1138,7 +1240,7 @@
       const label = getPeriodLabel(selectedPeriod);
 
       countElement.textContent = formatNumber(total);
-      countPeriodLabel.textContent = `Matching reports · ${label}`;
+      countPeriodLabel.textContent = `Layoff headlines · ${label}`;
       dailyPeriodLabel.textContent = label;
     }
 
@@ -1181,9 +1283,10 @@
     }
 
     function getDailyData() {
-      if (!stats?.by_day) return [];
+      const source = selectedPeriod === "month" ? stats30 : stats;
+      if (!source?.by_day) return [];
 
-      const entries = Object.entries(stats.by_day)
+      const entries = Object.entries(source.by_day)
         .sort(([a], [b]) => a.localeCompare(b));
 
       if (selectedPeriod === "24h") {
@@ -1238,7 +1341,8 @@
     }
 
     function getWeekWindows() {
-      const entries = Object.entries(stats.by_day || {})
+      const source = stats30 || stats;
+      const entries = Object.entries(source?.by_day || {})
         .sort(([a], [b]) => a.localeCompare(b));
       const last7 = entries.slice(-7);
       const prior7 = entries.slice(-14, -7);
@@ -1251,7 +1355,7 @@
       const trendPrior = document.getElementById("trend-prior");
       const trendDelta = document.getElementById("trend-delta");
       const trendPct = document.getElementById("trend-pct");
-      if (!trendNow || !stats) return;
+      if (!trendNow || !(stats30 || stats)) return;
       const { last7, prior7 } = getWeekWindows();
       const delta = last7 - prior7;
       trendNow.textContent = formatNumber(last7);
@@ -1268,11 +1372,103 @@
         : "first full week of data";
     }
 
+    const DONUT_COLORS = ["#a3e635", "#38bdf8", "#fb7185", "#d8a83e", "#93a4ba"];
+
+    let donutRows = [];
+    let donutTotal = 1;
+    let donutIdx = 0;
+    let donutTimer = null;
+
+    function showDonutCenter() {
+      const centerTop = document.getElementById("donut-center-top");
+      const centerSub = document.getElementById("donut-center-sub");
+      const donut = document.getElementById("radar-donut");
+      if (!centerTop || !donutRows.length) return;
+      const [code, count] = donutRows[donutIdx % donutRows.length];
+      const name = countryNames[code] || code;
+      centerTop.textContent = `${((count / donutTotal) * 100).toFixed(1)}%`;
+      centerSub.textContent = name;
+      donut.setAttribute("aria-label", `Share of reports by publisher country. ${name} at about ${Math.round((count / donutTotal) * 100)} percent.`);
+      donutIdx += 1;
+    }
+
+    function renderDonut() {
+      const segs = document.getElementById("donut-segs");
+      const legend = document.getElementById("radar-legend");
+      const centerTop = document.getElementById("donut-center-top");
+      const centerSub = document.getElementById("donut-center-sub");
+      const donut = document.getElementById("radar-donut");
+      if (!segs || !stats) return;
+      const donutTitle = document.getElementById("donut-title");
+      if (donutTitle) donutTitle.textContent = `Who is shouting loudest · ${DONUT_MIX[selectedPeriod] || "30-day mix"}`;
+      const total = stats.total || 1;
+      const entries = Object.entries(stats.countries || {}).slice(0, 5);
+      const topSum = entries.reduce((sum, [, count]) => sum + count, 0);
+      const rows = entries.concat([["Others", total - topSum]]);
+      const CIRC = 502.65;
+      let offset = 0;
+      segs.innerHTML = rows.map(([code, count], i) => {
+        const len = Math.max((count / total) * CIRC - 0.8, 0.5);
+        const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(127,127,127,0.35)";
+        const el = `<circle cx="100" cy="100" r="80" stroke="${color}" stroke-dasharray="${len.toFixed(1)} ${CIRC}" stroke-dashoffset="${offset.toFixed(1)}"/>`;
+        offset -= (count / total) * CIRC;
+        return el;
+      }).join("");
+      donutRows = rows.slice(0, 5);
+      donutTotal = total;
+      donutIdx = 0;
+      showDonutCenter();
+      if (donutTimer) clearInterval(donutTimer);
+      donutTimer = setInterval(() => { if (!document.hidden) showDonutCenter(); }, 2000);
+      legend.innerHTML = rows.map(([code, count], i) => {
+        const name = code === "Others" ? "Others" : (countryNames[code] || code);
+        const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(127,127,127,0.35)";
+        return `<li><span class="dot" style="background:${color}"></span><span class="lname">${name}</span><span class="lval">${formatNumber(count)}</span></li>`;
+      }).join("");
+    }
+
     function render() {
       renderCount();
       renderTrend();
+      renderDonut();
       renderCountries();
       renderDaily();
+    }
+
+    async function fetchWindow(dateParam) {
+      if (statsCache[dateParam]) return statsCache[dateParam];
+      const params = new URLSearchParams({
+        q: SEARCH_QUERY,
+        date: dateParam,
+        top: "100"
+      });
+
+      const response = await fetch(`${API_URL}?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json"
+        },
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(`News API returned HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (typeof data.total !== "number" || !data.by_day) {
+        throw new Error("The news API returned an invalid response.");
+      }
+
+      statsCache[dateParam] = data;
+      return data;
+    }
+
+    async function loadPeriod(period) {
+      const win = PERIOD_DATE[period] || "30d";
+      if (!stats30) stats30 = await fetchWindow("30d");
+      stats = period === "month" ? stats30 : await fetchWindow(win);
     }
 
     async function fetchStats() {
@@ -1283,31 +1479,11 @@
       errorElement.style.display = "none";
 
       try {
-        const params = new URLSearchParams({
-          q: SEARCH_QUERY,
-          date: "30d",
-          top: "100"
-        });
-
-        const response = await fetch(`${API_URL}?${params.toString()}`, {
-          method: "GET",
-          headers: {
-            "Accept": "application/json"
-          },
-          cache: "no-store"
-        });
-
-        if (!response.ok) {
-          throw new Error(`News API returned HTTP ${response.status}`);
+        delete statsCache["30d"];
+        if (PERIOD_DATE[selectedPeriod] && PERIOD_DATE[selectedPeriod] !== "30d") {
+          delete statsCache[PERIOD_DATE[selectedPeriod]];
         }
-
-        const data = await response.json();
-
-        if (typeof data.total !== "number") {
-          throw new Error("The news API returned an invalid response.");
-        }
-
-        stats = data;
+        await loadPeriod(selectedPeriod);
         lastUpdatedElement.textContent = formatDateTime(new Date());
 
         render();
@@ -1318,6 +1494,8 @@
             const saved = await snap.json();
             if (typeof saved.total === "number" && saved.by_day) {
               stats = saved;
+              stats30 = saved;
+              statsCache["30d"] = saved;
               if (saved.fetchedAt) {
                 lastUpdatedElement.textContent = formatDateTime(new Date(saved.fetchedAt));
               }
@@ -1338,7 +1516,7 @@
     }
 
     document.querySelectorAll(".radar-filter").forEach(button => {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", async () => {
         selectedPeriod = button.dataset.period;
 
         document.querySelectorAll(".radar-filter").forEach(item => {
@@ -1347,8 +1525,13 @@
 
         button.classList.add("active");
 
-        if (stats) {
+        try {
+          await loadPeriod(selectedPeriod);
+          errorElement.style.display = "none";
           render();
+        } catch (error) {
+          errorElement.textContent = "That time window could not be loaded right now. The previous data has been kept on screen.";
+          errorElement.style.display = "block";
         }
       });
     });

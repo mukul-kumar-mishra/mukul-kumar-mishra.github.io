@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A cooling failure cut power to an AWS US-EAST-1 zone and impaired EC2 plus EBS for hours. Postmortem of snapshot recovery math and multi-AZ design.">
+  <meta name="keywords" content="AWS outage, US-EAST-1, thermal event, EC2 impaired, EBS snapshot recovery, multi-AZ architecture, data center cooling">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AWS Thermal Postmortem: Cooling Failed First">
+  <meta property="og:description" content="One hot zone in Virginia impaired EC2 plus EBS for hours. Coinbase plus FanDuel felt it. Snapshots became the recovery plan.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/aws-thermal-meme.svg">
+  <meta property="og:image:alt" content="An overheating AWS data center zone with impaired instances">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AWS Thermal Postmortem: Cooling Failed First">
+  <meta name="twitter:description" content="Cooling died. Power followed. Snapshots became the recovery plan.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/aws-thermal-meme.svg">
+  <meta name="twitter:image:alt" content="An overheating AWS data center zone with impaired instances">
+  <title>AWS Thermal Postmortem: Cooling Failed First | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"AWS Thermal Postmortem: Cooling Failed First","description":"A technical postmortem of the AWS US-EAST-1 thermal event, EC2 and EBS impairment, snapshot recovery math and multi-AZ design lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html"},"keywords":"AWS, thermal event, US-EAST-1, EBS snapshots, multi-AZ"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS Thermal Postmortem: Cooling Failed First</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On a Thursday night in Virginia, cooling failed in one AWS zone. Power followed. EC2 plus EBS went impaired for hours across eight services. Coinbase plus FanDuel paused. The official guidance was two verbs. Restore. Relaunch. The bill for single-AZ optimism came due in public.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A thermal event cut power to one US-EAST-1 zone and impaired EC2 plus EBS for hours. Recovery meant snapshots plus fresh launches in healthy zones. Multi-AZ is not a premium feature. It is the design.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 11, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the AWS status report plus CRN reporting. A full AWS postmortem is pending, so blast radius details come from published service lists. Cost figures are modeled from public AWS pricing.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/aws-thermal-meme.svg" alt="An overheating AWS data center zone with impaired instances" width="1200" height="680"><figcaption>Figure 1. The thermal event in one cartoon. Cooling failed first. Power followed. Snapshots became the recovery plan.</figcaption></figure>
+      <section><h2>1. The Hottest Zone in Virginia</h2>
+        <p>Thursday evening. US-EAST-1, the busiest AWS region on earth. A cooling failure in one Availability Zone pushed hardware past thermal limits. Power dropped to protect the building. AWS phrased it precisely. Instance impairments increased within the affected zone during a loss of power in a thermal event. Translation: servers went dark to save the structure around them.</p>
+        <p>The impaired list kept growing. EC2 instances plus EBS volumes first. Then Redshift, SageMaker, ElastiCache, IoT Core, EKS, NAT Gateway plus OpenSearch. Eight services from one zone's air conditioning. Power returned to a subset of infrastructure within hours. Full recovery lagged into Friday morning for EC2, EBS, SageMaker, ElastiCache plus OpenSearch. Coinbase halted exchange functions for hours. FanDuel went dark plus resumed. One zone's thermostat moved two public companies.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> Every availability zone is one cooling loop away from this exact incident. Redundancy you never test is a paragraph in a design doc, not an architecture.</div>
+      </section>
+      <section><h2>2. Why Heat Beats Software</h2>
+        <p>Software failures are debuggable. Thermal failures are physical. When cooling dies, temperature rises on a curve nobody negotiates with. Breakers trip. Hardware protects itself by refusing to run. No deploy can fix a room that is too hot for silicon. No rollback cools concrete. The failure domain here is thermodynamics. Thermodynamics does not accept feature flags.</p>
+        <p>The impaired-versus-lost distinction matters for recovery math. Impaired EC2 plus EBS means the resources exist but cannot serve. AWS guidance split cleanly. Restore from EBS snapshots. Replace affected resources by launching in unaffected zones. Both paths assume the customer did homework before Thursday. Snapshots must exist, must be recent, plus must be tested. Launch templates must target multiple zones. If either assumption is missing, the guidance reads like a recipe demanding ingredients nobody bought.</p>
+        <p>Model the snapshot path. A 1 TB EBS volume restores at roughly the speed of the snapshot service plus first-touch latency on restored blocks. Lazy loading means the volume is usable before every block arrives, but database workloads touch blocks randomly, so effective recovery stretches for hours on large data sets. A fleet of 50 such volumes restores in parallel only if snapshot throughput plus instance limits allow it. Nobody had practiced this at 2 a.m. Practice is the whole game.</p>
+        <p>The multi-AZ math is simpler than teams pretend. Stateless compute across zones costs roughly 2x for two zones, minus reserved-instance discounts. Managed data services with synchronous replication carry a similar premium. Against that, price one incident like this one. Hours of impaired primary plus engineering overtime plus customer credits plus status page theater. For Coinbase-scale revenue per hour, multi-AZ pays for itself in a single evening. The bill is hiding in the zone you skipped.</p>
+      </section>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Single-AZ deployment treated as temporary.</strong> Temporary single-zone architectures have a way of becoming permanent. Every quarter they survive feels like validation. Then a thermal event collects the debt with interest. Zones are the unit of failure. Deploying to one zone is deploying to one point of failure.</p>
+        <p><strong>Snapshots existed but recovery was unrehearsed.</strong> Most teams back up. Few restore on a schedule. An untested snapshot is a rumor of safety. Restore drills expose the real numbers: throughput limits, first-touch latency, ordering constraints plus the three manual steps the runbook forgot.</p>
+        <p><strong>Managed services hid the blast radius.</strong> Eight services impaired from one zone's cooling. Customers of SageMaker plus ElastiCache rarely map those services to physical zones. Abstraction is wonderful until the abstraction shares a thermostat. Know which zone your managed service lives in, or accept surprise tenancy.</p>
+        <p><strong>Failover needed humans at machine speed.</strong> Guidance said relaunch in healthy zones. Relaunching stateful systems means promotion decisions, DNS changes, plus consistency checks. Manual failover during an active incident is slow plus error-prone. Automation rehearsed quarterly beats heroics performed never.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, run production across at least two zones with traffic live in both. Active-active removes the failover step entirely. Active-passive keeps a cold path that rots. The cost delta is the cheapest insurance in cloud architecture. Pay it before Thursday, not after.</p>
+        <p>Second, drill snapshot restores quarterly. Restore a full data tier into an isolated VPC. Time it. Record block-warmup behavior under production query patterns. The drill output is two numbers leadership understands. Recovery time plus recovery cost. Everything else is commentary.</p>
+        <p>Third, map every managed service to its zones. Inventory which AZ each dependency occupies. Alert when a single zone hosts a critical path without a tested alternate. The map takes an afternoon. The incident it prevents takes a quarter to explain.</p>
+        <p>Fourth, automate promotion plus traffic shifts. Database failover, DNS updates, plus health-gated rollouts should run from playbooks, not from memory. Test them against a real zone evacuation drill. Humans approve. Machines execute. Never the reverse during an outage.</p>
+        <p>Fifth, keep launch capacity warm elsewhere. Relaunching in healthy zones assumes capacity plus quotas plus AMIs exist there. Pre-warm machine images, reserve quota headroom, plus keep infrastructure code deployable to every zone by default. Recovery should be a command, not a project.</p>
+        <div class="tip"><strong>Operator rule:</strong> If you cannot name the zone your database runs in plus the last date you restored it elsewhere, you are single-AZ with extra steps.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>AWS communicated clearly within the limits of an active incident. The status language was precise. The guidance was correct. Restore plus relaunch is genuinely the right advice. The uncomfortable part is that the advice only works for customers who prepared. The cloud gives you zones. Using one of them is a choice. Thursday priced that choice in public.</p>
+        <p>This was also AWS's second rough chapter of 2026 in US-EAST-1 after a 28-hour outage earlier in the year, plus reported drone damage to Middle East facilities in March. A hard year for concrete. The lesson for everyone else stays constant across causes. Cooling, power, fiber cuts, bad deploys, plus geopolitics all converge on the same design answer. Spread the blast radius before physics spreads it for you.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Cooling failed. Power followed. The snapshot was the only server that stayed cool.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows the AWS status report plus CRN coverage of the US-EAST-1 thermal event. Recovery math is modeled from public EBS snapshot behavior. A full vendor postmortem is pending.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.crn.com/news/cloud/2026/aws-confirms-data-center-outage-caused-by-thermal-event-some-services-still-impacted" target="_blank" rel="noopener noreferrer">CRN: AWS Confirms Data Center Outage Caused by Thermal Event</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

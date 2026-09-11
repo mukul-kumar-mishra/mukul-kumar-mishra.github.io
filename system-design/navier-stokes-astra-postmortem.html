@@ -44,6 +44,18 @@
     "keywords":"Navier-Stokes, Astra, Lean, AI mathematics, OpenAI IPO"
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"Did Astra solve the Navier-Stokes equation?","acceptedAnswer":{"@type":"Answer","text":"OpenAI claims a system more capable than GPT-6 Astra produced a singularity proof checked in Lean. The proof is public in the navierstokesandeuler repository. Peer review plus Clay Institute acceptance are still pending, so the solution stays unconfirmed."}},
+      {"@type":"Question","name":"Where is the Navier-Stokes proof code?","acceptedAnswer":{"@type":"Answer","text":"OpenAI published the Lean formalization on GitHub under the openai organization in the navierstokesandeuler repository. The code plus the paper are the primary sources for every claim in this audit."}},
+      {"@type":"Question","name":"What did Lean actually verify?","acceptedAnswer":{"@type":"Answer","text":"Lean checked that the formalized proof steps follow from the stated axioms. It did not judge whether the physical assumptions match the Millennium problem. Verification of logic is not acceptance of the result."}},
+      {"@type":"Question","name":"Has the Clay Mathematics Institute accepted the proof?","acceptedAnswer":{"@type":"Answer","text":"No public acceptance exists. A Millennium Prize decision needs years of expert review. Treat the claim as a candidate proof, not a solved prize."}}
+    ]
+  }
+  </script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -160,8 +172,14 @@
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The equation may be solved. The claim is not. That is what peer review is for.</strong></p>
       </section>
 
+      <section><h2>Frequently Asked Questions</h2>
+        <p><strong>Did Astra solve the Navier-Stokes equation?</strong> OpenAI claims a system more capable than GPT-6 Astra produced a singularity proof checked in Lean. The proof is public in the navierstokesandeuler repository. Peer review plus Clay Institute acceptance are still pending, so the solution stays unconfirmed.</p>
+        <p><strong>Where is the Navier-Stokes proof code?</strong> OpenAI published the Lean formalization on GitHub under the openai organization in the navierstokesandeuler repository. The code plus the paper are the primary sources for every claim in this audit.</p>
+        <p><strong>What did Lean actually verify?</strong> Lean checked that the formalized proof steps follow from the stated axioms. It did not judge whether the physical assumptions match the Millennium problem. Verification of logic is not acceptance of the result.</p>
+        <p><strong>Has the Clay Mathematics Institute accepted the proof?</strong> No public acceptance exists. A Millennium Prize decision needs years of expert review. Treat the claim as a candidate proof, not a solved prize.</p>
+      </section>
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit uses OpenAI's September 8 paper and Lean repository as the primary source. The Navier-Stokes formulation comes from the Clay Mathematics Institute problem statement. Reuters and current IPO reporting provide the market context. Cost figures are explicit scenario math based on OpenAI's reported token counts. No claim here treats the result as a Clay Prize award or completed peer review.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Related file on this site: <a href="astra-critical-launch-postmortem.html">Astra Hit Critical Cyber. OpenAI Shipped It Anyway.</a> This audit uses OpenAI's September 8 paper and Lean repository as the primary source. The Navier-Stokes formulation comes from the Clay Mathematics Institute problem statement. Reuters and current IPO reporting provide the market context. Cost figures are explicit scenario math based on OpenAI's reported token counts. No claim here treats the result as a Clay Prize award or completed peer review.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener noreferrer">OpenAI: On the Navier-Stokes Millennium Prize Problem</a></li>
           <li><a href="https://github.com/openai/NavierStokesAndEuler" target="_blank" rel="noopener noreferrer">OpenAI GitHub: Navier-Stokes and Euler Lean formalization</a></li>
@@ -173,7 +191,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span>Hosted on GitHub Pages</span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     var root = document.documentElement;

@@ -1,5 +1,25 @@
 [
   {
+    "title": "Razorpay Kafka: 3,000 Connections Too Many",
+    "url": "razorpay-upi-kafka-postmortem.html",
+    "tag": "Payment Infrastructure",
+    "date": "2026-09-11",
+    "dateLabel": "September 2026",
+    "readTime": "13 min read",
+    "desc": "Razorpay moved UPI payments from SQS to MSK and hit partition limits plus a 3,000-connection IAM cap. How one client swap cut latency 25x.",
+    "tags": ["Razorpay", "Kafka", "UPI", "AWS"]
+  },
+  {
+    "title": "AWS Thermal Postmortem: Cooling Failed First",
+    "url": "aws-thermal-outage-postmortem.html",
+    "tag": "Cloud Infrastructure",
+    "date": "2026-09-11",
+    "dateLabel": "September 2026",
+    "readTime": "12 min read",
+    "desc": "A cooling failure cut power to an AWS US-EAST-1 zone and impaired EC2 plus EBS for hours. Snapshot recovery math and multi-AZ design.",
+    "tags": ["AWS", "Outage", "EBS", "Multi-AZ"]
+  },
+  {
     "title": "Doltgres Postmortem: The Backup That Forgot the Data",
     "url": "doltgres-data-loss-postmortem.html",
     "tag": "Database Infrastructure",

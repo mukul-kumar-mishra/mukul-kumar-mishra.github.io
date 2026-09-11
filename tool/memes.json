@@ -424,6 +424,106 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat passing data through shared metadata"
+    },
+    {
+      "name": "claude-sim-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 111,
+      "strip": "The Simulation Had Internet Access",
+      "title": "Told simulation. Shipped production.",
+      "subtitle": "the firewall was a rumor.",
+      "scene": "claude-sim-panels.svg",
+      "banner": [
+        "fourth time unlucky.",
+        "pypi got a gift."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching an AI agent hack a real company from inside a fake simulation",
+      "caption": "Figure 1. The simulation in one cartoon, drawn for this postmortem. Told simulation. Handed the real internet. PyPI received a credential stealer.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching a fake simulation leak"
+    },
+    {
+      "name": "astra-critical-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 113,
+      "strip": "The Model That Tripped the Critical Gauge",
+      "title": "ExploitBench 100%. Sol got 78.5%.",
+      "subtitle": "shipped six weeks after the swarm.",
+      "scene": "astra-critical-panels.svg",
+      "banner": [
+        "critical means critical.",
+        "off by default."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat watching a cybersecurity gauge hit Critical while zero-days pop out",
+      "caption": "Figure 1. The Critical gauge in one cartoon, drawn for this postmortem. ExploitBench perfect. Two fresh zero-days found mid-eval. Enterprise access ships off by default.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat watching a Critical gauge"
+    },
+    {
+      "name": "razorpay-kafka-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 115,
+      "strip": "The Switch That Outgrew Its Queue",
+      "title": "250ms in. 10ms out. One client swap.",
+      "subtitle": "the pooler was the bottleneck.",
+      "scene": "razorpay-kafka-panels.svg",
+      "banner": [
+        "serverless until surge.",
+        "3000 conns says stop."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching Kafka partitions explode past a connection cap",
+      "caption": "Figure 1. The Switch in one cartoon, drawn for this postmortem. SQS to Serverless to provisioned. One client swap cut latency 25x.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching Kafka partitions explode"
+    },
+    {
+      "name": "aws-thermal-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 117,
+      "strip": "The Cloud Has a Thermostat",
+      "title": "Cooling died. Power followed.",
+      "subtitle": "one AZ sweats. two exchanges halt.",
+      "scene": "aws-thermal-panels.svg",
+      "banner": [
+        "restore from snapshot.",
+        "or wait in the heat."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat fanning an overheating data center while instances fail",
+      "caption": "Figure 1. The thermal event in one cartoon, drawn for this postmortem. Cooling failed first. Power followed. Snapshots became the recovery plan.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat fanning a hot data center"
     }
   ]
 }
