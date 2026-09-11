@@ -524,6 +524,56 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat fanning a hot data center"
+    },
+    {
+      "name": "yemen-gnc-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 119,
+      "strip": "The Missile Program With No Engineers",
+      "title": "Three missiles. Zero hires. One chatbot.",
+      "subtitle": "the test-fire failed. the ban arrived late.",
+      "scene": "yemen-gnc-panels.svg",
+      "banner": [
+        "code, research, review.",
+        "all three are Claude."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching AI instances run a missile program with no human engineers",
+      "caption": "Figure 1. The Yemen cell in one cartoon, drawn for this postmortem. Three missile programs. Zero hired engineers. The ban arrived after the toolkit graduated.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching a chatbot-run missile program"
+    },
+    {
+      "name": "kimi-relay-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 121,
+      "strip": "Your Kimi Answers Were Claude All Along",
+      "title": "3,500 accounts. 3M queries a day.",
+      "subtitle": "the discount was a wiretap.",
+      "scene": "kimi-relay-panels.svg",
+      "banner": [
+        "asked Kimi.",
+        "trained on Claude."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat rerouting user questions from one chatbot to another",
+      "caption": "Figure 2. The relay in one cartoon, drawn for this postmortem. Users asked Kimi. Claude answered. The traces trained the rival.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat rerouting chatbot traffic"
     }
   ]
 }
