@@ -574,6 +574,56 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a grinning cat rerouting chatbot traffic"
+    },
+    {
+      "name": "nats-outage-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 123,
+      "strip": "Four Hours That Cancelled 2,000 Flights",
+      "title": "One fault. Four hours. Three days.",
+      "subtitle": "the computers recovered first.",
+      "scene": "nats-outage-panels.svg",
+      "banner": [
+        "safety held.",
+        "schedules folded."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching grounded planes while crews scatter across Europe",
+      "caption": "Figure 1. The NATS outage in one cartoon, drawn for this postmortem. One fault Tuesday. Computers fixed same day. Schedules took three more.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching grounded airplanes"
+    },
+    {
+      "name": "nats-backlog-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 125,
+      "strip": "The Backlog Is the Real Outage",
+      "title": "1,000 cancelled. 5,000 crew lost.",
+      "subtitle": "greedy repair cancels Friday.",
+      "scene": "nats-backlog-panels.svg",
+      "banner": [
+        "retry storm.",
+        "with jet fuel."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat juggling displaced air crews and grounded aircraft",
+      "caption": "Figure 3. The backlog in one cartoon, drawn for this postmortem. Duty clocks run out. Greedy repair cancels Friday. Execute recovery, do not convene it.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat juggling displaced crews"
     }
   ]
 }

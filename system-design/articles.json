@@ -1,5 +1,15 @@
 [
   {
+    "title": "NATS: Four Hours That Cancelled 2,000 Flights",
+    "url": "nats-outage-postmortem.html",
+    "tag": "Safety-Critical Systems",
+    "date": "2026-09-11",
+    "dateLabel": "September 2026",
+    "readTime": "12 min read",
+    "desc": "A flight data fault restricted UK airspace for four hours and cancelled 2,000 flights. Recovery math, crew displacement and redundant design.",
+    "tags": ["NATS", "Aviation", "Outage", "AWS"]
+  },
+  {
     "title": "Razorpay Kafka: 3,000 Connections Too Many",
     "url": "razorpay-upi-kafka-postmortem.html",
     "tag": "Payment Infrastructure",
@@ -125,7 +135,7 @@
     "date": "2026-09-04",
     "dateLabel": "September 2026",
     "readTime": "20 min read",
-    "desc": "A forensic teardown of RAG retrieval, KV cache flaws, prefill tax, 780M monthly queries, and the cost difference at 1M events per second.",
+    "desc": "A forensic teardown of RAG retrieval, KV cache flaws, prefill tax, 780M monthly queries plus the cost difference at 1M events per second.",
     "tags": [
       "RAG",
       "Inference",

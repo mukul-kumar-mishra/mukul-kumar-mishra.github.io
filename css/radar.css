@@ -1,0 +1,361 @@
+/* Tech Layoff Radar hero card — shared by layoff-radar.html and the homepage embed.
+   Same exact UI in both places. Rules copied verbatim from the radar page. */
+
+.radar-card {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid rgba(127, 127, 127, 0.18);
+  border-radius: 22px;
+  background: rgba(127, 127, 127, 0.045);
+  overflow: hidden;
+}
+
+.radar-main {
+  min-width: 0;
+  padding: 42px;
+  box-sizing: border-box;
+}
+
+.radar-count-label {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.radar-count {
+  margin: 10px 0 4px;
+  font-family: "Sora", sans-serif;
+  font-size: clamp(64px, 11vw, 126px);
+  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: -0.07em;
+}
+
+.radar-count-description {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.radar-hero-grid {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.radar-hero-left {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.radar-donut-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.radar-donut-wrap > div {
+  text-align: center;
+}
+
+.radar-donut-wrap svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.radar-donut-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.radar-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 150px;
+}
+
+.radar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.radar-legend .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.radar-legend .lname {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-legend .lval {
+  margin-left: auto;
+  opacity: 0.6;
+  padding-left: 10px;
+}
+
+.radar-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 30px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(127, 127, 127, 0.14);
+}
+
+.radar-updated {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.radar-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: transparent;
+  color: inherit;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.radar-refresh:hover {
+  opacity: 0.7;
+}
+
+.radar-refresh:active {
+  transform: scale(0.97);
+}
+
+.radar-refresh.loading i {
+  animation: radar-spin 0.8s linear infinite;
+}
+
+@keyframes radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0 0;
+}
+
+.radar-filter {
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  border-radius: 999px;
+  padding: 9px 15px;
+  background: transparent;
+  color: inherit;
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.radar-filter.active {
+  opacity: 1;
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.radar-error {
+  display: none;
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #dc2626;
+}
+
+.radar-trend {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 26px;
+  padding: 18px 20px;
+  border: 1px solid rgba(127, 127, 127, 0.18);
+  border-radius: 14px;
+  background: rgba(127, 127, 127, 0.06);
+  font-family: "Montserrat", sans-serif;
+}
+
+.radar-trend-block {
+  min-width: 0;
+  text-align: center;
+}
+
+.radar-trend-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.radar-trend-value {
+  margin-top: 6px;
+  font-family: "Sora", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.radar-trend-sub {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.radar-trend-divider {
+  width: 1px;
+  background: rgba(127, 127, 127, 0.2);
+}
+
+@media (max-width: 700px) {
+  .radar-card {
+    width: 100%;
+    border-radius: 18px;
+  }
+
+  .radar-main {
+    width: 100%;
+    padding: 24px 16px;
+  }
+
+  .radar-count-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  .radar-count {
+    margin: 8px 0 6px;
+    font-size: clamp(52px, 19vw, 82px);
+    line-height: 0.98;
+    letter-spacing: -0.065em;
+    white-space: nowrap;
+  }
+
+  .radar-count-description {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .radar-hero-grid {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 26px;
+  }
+
+  .radar-hero-left {
+    text-align: center;
+  }
+
+  .radar-donut-wrap {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .radar-legend {
+    display: none;
+  }
+
+  .radar-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .radar-filter {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .radar-meta {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 18px;
+  }
+
+  .radar-updated {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .radar-trend {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .radar-trend-divider {
+    width: auto;
+    height: 1px;
+  }
+
+  .radar-trend-value {
+    font-size: 22px;
+  }
+
+  .radar-refresh {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .radar-main {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .radar-count {
+    font-size: clamp(48px, 18vw, 70px);
+  }
+}

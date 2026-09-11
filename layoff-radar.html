@@ -40,6 +40,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
 
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/radar.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script type="application/ld+json">
@@ -922,7 +923,7 @@
         <a href="index.html">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="about.html">About</a>
+        <a href="calculators.html">Calculators</a><a href="about.html">About</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -960,7 +961,7 @@
                 Layoff headlines · last 30 days
               </div>
 
-              <div class="radar-count" id="layoff-count">907</div>
+              <div class="radar-count" id="layoff-count">1,027</div>
 
               <div class="radar-count-description">
                 publicly reported technology layoff news articles
@@ -970,27 +971,27 @@
             <div class="radar-donut-wrap">
               <div>
                 <div class="radar-donut-title" id="donut-title">Who is shouting loudest · 30-day mix</div>
-                <svg id="radar-donut" width="180" height="180" viewBox="0 0 200 200" role="img" aria-label="Share of reports by publisher country. India leads with about 68 percent.">
+                <svg id="radar-donut" width="180" height="180" viewBox="0 0 200 200" role="img" aria-label="Share of reports by publisher country. India leads with about 72 percent.">
                   <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(127,127,127,0.12)" stroke-width="26"/>
                   <g id="donut-segs" fill="none" stroke-width="26" transform="rotate(-90 100 100)">
-                    <circle cx="100" cy="100" r="80" stroke="#a3e635" stroke-dasharray="343.7 502.65" stroke-dashoffset="0"/>
-                    <circle cx="100" cy="100" r="80" stroke="#38bdf8" stroke-dasharray="93.7 502.65" stroke-dashoffset="-343.7"/>
-                    <circle cx="100" cy="100" r="80" stroke="#fb7185" stroke-dasharray="15.5 502.65" stroke-dashoffset="-437.4"/>
-                    <circle cx="100" cy="100" r="80" stroke="#d8a83e" stroke-dasharray="6.1 502.65" stroke-dashoffset="-452.9"/>
-                    <circle cx="100" cy="100" r="80" stroke="#93a4ba" stroke-dasharray="5 502.65" stroke-dashoffset="-459"/>
-                    <circle cx="100" cy="100" r="80" stroke="rgba(127,127,127,0.35)" stroke-dasharray="38.8 502.65" stroke-dashoffset="-464"/>
+                    <circle cx="100" cy="100" r="80" stroke="#a3e635" stroke-dasharray="360.7 502.65" stroke-dashoffset="0"/>
+                    <circle cx="100" cy="100" r="80" stroke="#38bdf8" stroke-dasharray="83.7 502.65" stroke-dashoffset="-360.7"/>
+                    <circle cx="100" cy="100" r="80" stroke="#fb7185" stroke-dasharray="13.7 502.65" stroke-dashoffset="-444.4"/>
+                    <circle cx="100" cy="100" r="80" stroke="#d8a83e" stroke-dasharray="5.4 502.65" stroke-dashoffset="-458.1"/>
+                    <circle cx="100" cy="100" r="80" stroke="#93a4ba" stroke-dasharray="4.4 502.65" stroke-dashoffset="-463.5"/>
+                    <circle cx="100" cy="100" r="80" stroke="rgba(127,127,127,0.35)" stroke-dasharray="34.7 502.65" stroke-dashoffset="-467.9"/>
                   </g>
-                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="currentColor">68.4%</text>
+                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="currentColor">71.8%</text>
                   <text id="donut-center-sub" x="100" y="116" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="11" fill="currentColor" opacity="0.6">India</text>
                 </svg>
               </div>
               <ul class="radar-legend" id="radar-legend">
-                <li><span class="dot" style="background:#a3e635"></span><span class="lname">India</span><span class="lval">620</span></li>
-                <li><span class="dot" style="background:#38bdf8"></span><span class="lname">United States</span><span class="lval">169</span></li>
+                <li><span class="dot" style="background:#a3e635"></span><span class="lname">India</span><span class="lval">737</span></li>
+                <li><span class="dot" style="background:#38bdf8"></span><span class="lname">United States</span><span class="lval">171</span></li>
                 <li><span class="dot" style="background:#fb7185"></span><span class="lname">United Kingdom</span><span class="lval">28</span></li>
                 <li><span class="dot" style="background:#d8a83e"></span><span class="lname">Singapore</span><span class="lval">11</span></li>
                 <li><span class="dot" style="background:#93a4ba"></span><span class="lname">Canada</span><span class="lval">9</span></li>
-                <li><span class="dot" style="background:rgba(127,127,127,0.35)"></span><span class="lname">Others</span><span class="lval">70</span></li>
+                <li><span class="dot" style="background:rgba(127,127,127,0.35)"></span><span class="lname">Others</span><span class="lval">71</span></li>
               </ul>
             </div>
           </div>
@@ -1018,24 +1019,24 @@
           <div class="radar-trend" id="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Last 7 days</div>
-              <div class="radar-trend-value" id="trend-now">386</div>
+              <div class="radar-trend-value" id="trend-now">493</div>
               <div class="radar-trend-sub">matching reports</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Prior 7 days</div>
-              <div class="radar-trend-value" id="trend-prior">203</div>
+              <div class="radar-trend-value" id="trend-prior">199</div>
               <div class="radar-trend-sub">matching reports</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Week over week</div>
-              <div class="radar-trend-value" id="trend-delta">up 183</div>
-              <div class="radar-trend-sub" id="trend-pct">about 90 percent higher</div>
+              <div class="radar-trend-value" id="trend-delta">up 294</div>
+              <div class="radar-trend-sub" id="trend-pct">about 148 percent higher</div>
             </div>
           </div>
 
-          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 907 matching reports in 30 days as of 11 Sep 2026.</p></noscript>
+          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 1,027 matching reports in 30 days as of 11 Sep 2026.</p></noscript>
 
         </div>
       </section>

@@ -28,6 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/radar.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script type="application/ld+json">
@@ -58,7 +59,7 @@
         <a href="index.html" class="on">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="about.html">About</a>
+        <a href="calculators.html">Calculators</a><a href="about.html">About</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -139,7 +140,7 @@
         </div>
         <h3>Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</h3>
         <p class="fl-desc">
-          A forensic teardown of token limits, context rot, compaction cliffs, productivity math, and the fixes vendors keep postponing.
+          A forensic teardown of token limits, context rot, compaction cliffs, productivity math plus the fixes vendors keep postponing.
         </p>
         <div style="display:flex;gap:8px;margin-top:14px;">
           <span class="chip">Cursor</span><span class="chip">Claude Code</span><span class="chip">Tokens</span><span class="chip">Cost</span>
@@ -163,7 +164,7 @@
             <span class="fl-tag">AI Infrastructure</span><span class="chip">September 2026</span>
           </div>
           <h3>Perplexity Postmortem: The Answer Engine That Pays for Every Question Twice</h3>
-          <p class="fl-desc">A forensic teardown of RAG retrieval, KV cache flaws, prefill tax, 780M monthly queries, and the cost difference at 1M events per second.</p>
+          <p class="fl-desc">A forensic teardown of RAG retrieval, KV cache flaws, prefill tax, 780M monthly queries plus the cost difference at 1M events per second.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">RAG</span><span class="chip">Inference</span><span class="chip">1M RPS</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -175,7 +176,7 @@
             <span class="fl-tag">Agent Runtime</span><span class="chip">September 2026</span>
           </div>
           <h3>Replit Agent Postmortem: The Day the Demo Became Production</h3>
-          <p class="fl-desc">A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk, and the cost difference at 1M events per second.</p>
+          <p class="fl-desc">A deep teardown of prompt-to-production software, sandbox execution, agent retries, deployment risk plus the cost difference at 1M events per second.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">AI Agents</span><span class="chip">Sandbox</span><span class="chip">1M RPS</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -187,7 +188,7 @@
             <span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span>
           </div>
           <h3>Vercel Fluid Compute: The Serverless Bill Was Waiting for a Response</h3>
-          <p class="fl-desc">A forensic look at concurrency, cold starts, compute-resolver, AI Gateway waiting time, and the cost difference at 1M RPS.</p>
+          <p class="fl-desc">A forensic look at concurrency, cold starts, compute-resolver, AI Gateway waiting time plus the cost difference at 1M RPS.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Serverless</span><span class="chip">AI Gateway</span><span class="chip">1M RPS</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -199,7 +200,7 @@
             <span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span>
           </div>
           <h3>Figma's Multiplayer Editor: The Server That Decides Who Wins</h3>
-          <p class="fl-desc">A practical teardown of WebSocket collaboration, Rust isolation, conflict resolution, and the hidden price of an always-live canvas.</p>
+          <p class="fl-desc">A practical teardown of WebSocket collaboration, Rust isolation, conflict resolution plus the hidden price of an always-live canvas.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">Realtime</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -209,7 +210,7 @@
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Data Infrastructure</span><span class="chip">August 2026</span></div>
           <h3>The Workspace That Ate the Warehouse</h3>
-          <p class="fl-desc">A forensic teardown of Notion's block database, 480 logical shards, CDC pipeline, vector search, and modeled cloud bill.</p>
+          <p class="fl-desc">A forensic teardown of Notion's block database, 480 logical shards, CDC pipeline, vector search plus modeled cloud bill.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Postgres</span><span class="chip">Kafka</span><span class="chip">S3</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -219,7 +220,7 @@
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Distributed Systems</span><span class="chip">July 2026</span></div>
           <h3>Rethinking Control Planes: Cell-Based Architecture</h3>
-          <p class="fl-desc">A control-plane redesign focused on regional isolation, failure containment, Raft, and zero-blast-radius operations.</p>
+          <p class="fl-desc">A control-plane redesign focused on regional isolation, failure containment, Raft plus zero-blast-radius operations.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Go</span><span class="chip">Raft</span><span class="chip">AWS</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -228,28 +229,266 @@
       <button class="btn btn-ghost load-more" id="loadMoreArticles" type="button">Load more articles</button>
     </section>
 
-    <section class="sec" id="calculatorsBox">
+    <section class="sec" id="layoffRadarPreview">
       <div class="sec-head">
-        <h2 class="sec-title"><i data-lucide="calculator"></i> Token Bill Calculator</h2>
+        <h2 class="sec-title"><i data-lucide="radar"></i> Tech Layoff Radar</h2>
+        <a class="sec-link" href="layoff-radar.html">Open live tracker <i data-lucide="chevron-right"></i></a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Price an agent turn below, live. Three more instruments on the full page. No tracking, no backend.</p>
-      <div style="display:grid;gap:2px;max-width:340px;">
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-in">Input tokens / turn</label><input type="number" id="tk-in" value="80000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cache">Cache hit rate (percent)</label><input type="number" id="tk-cache" value="87.5" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cachep">Cached price ($ / M tokens)</label><input type="number" id="tk-cachep" value="0.3" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-freshp">Fresh price ($ / M tokens)</label><input type="number" id="tk-freshp" value="3" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-out">Output tokens / turn</label><input type="number" id="tk-out" value="1500" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-outp">Output price ($ / M tokens)</label><input type="number" id="tk-outp" value="15" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
-      </div>
-      <div class="grid4" style="margin-top:18px;">
-        <div class="stat"><div class="num" id="tk-perturn">—</div><div class="lbl">Cost per turn</div></div>
-        <div class="stat"><div class="num" id="tk-monthly">—</div><div class="lbl">Monthly model spend</div></div>
-      </div>
-      <div style="text-align:center;margin-top:18px;">
-        <a class="btn btn-ghost load-more" href="calculators.html" style="text-decoration:none;display:inline-flex;">Open all calculators</a>
-      </div>
+      <section class="radar-card">
+        <div class="radar-main">
+
+          <div class="radar-hero-grid">
+            <div class="radar-hero-left">
+              <div class="radar-count-label" id="count-period-label">
+                Layoff headlines · last 30 days
+              </div>
+
+              <div class="radar-count" id="layoff-count">1,027</div>
+
+              <div class="radar-count-description">
+                publicly reported technology layoff news articles
+              </div>
+            </div>
+
+            <div class="radar-donut-wrap">
+              <div>
+                <div class="radar-donut-title" id="donut-title">Who is shouting loudest · 30-day mix</div>
+                <svg id="radar-donut" width="180" height="180" viewBox="0 0 200 200" role="img" aria-label="Share of reports by publisher country. India leads with about 72 percent.">
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(127,127,127,0.12)" stroke-width="26"/>
+                  <g id="donut-segs" fill="none" stroke-width="26" transform="rotate(-90 100 100)">
+                    <circle cx="100" cy="100" r="80" stroke="#a3e635" stroke-dasharray="360.7 502.65" stroke-dashoffset="0"/>
+                    <circle cx="100" cy="100" r="80" stroke="#38bdf8" stroke-dasharray="83.7 502.65" stroke-dashoffset="-360.7"/>
+                    <circle cx="100" cy="100" r="80" stroke="#fb7185" stroke-dasharray="13.7 502.65" stroke-dashoffset="-444.4"/>
+                    <circle cx="100" cy="100" r="80" stroke="#d8a83e" stroke-dasharray="5.4 502.65" stroke-dashoffset="-458.1"/>
+                    <circle cx="100" cy="100" r="80" stroke="#93a4ba" stroke-dasharray="4.4 502.65" stroke-dashoffset="-463.5"/>
+                    <circle cx="100" cy="100" r="80" stroke="rgba(127,127,127,0.35)" stroke-dasharray="34.7 502.65" stroke-dashoffset="-467.9"/>
+                  </g>
+                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="currentColor">71.8%</text>
+                  <text id="donut-center-sub" x="100" y="116" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="11" fill="currentColor" opacity="0.6">India</text>
+                </svg>
+              </div>
+              <ul class="radar-legend" id="radar-legend">
+                <li><span class="dot" style="background:#a3e635"></span><span class="lname">India</span><span class="lval">737</span></li>
+                <li><span class="dot" style="background:#38bdf8"></span><span class="lname">United States</span><span class="lval">171</span></li>
+                <li><span class="dot" style="background:#fb7185"></span><span class="lname">United Kingdom</span><span class="lval">28</span></li>
+                <li><span class="dot" style="background:#d8a83e"></span><span class="lname">Singapore</span><span class="lval">11</span></li>
+                <li><span class="dot" style="background:#93a4ba"></span><span class="lname">Canada</span><span class="lval">9</span></li>
+                <li><span class="dot" style="background:rgba(127,127,127,0.35)"></span><span class="lname">Others</span><span class="lval">71</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="radar-filters" aria-label="Time period">
+            <button class="radar-filter" data-period="24h">24H</button>
+            <button class="radar-filter" data-period="7d">7D</button>
+            <button class="radar-filter" data-period="30d">30D</button>
+            <button class="radar-filter" data-period="month">CURRENT MONTH</button>
+          </div>
+
+          <div class="radar-meta">
+            <div class="radar-updated">
+              Last updated: <span id="last-updated">11 Sep 2026</span>
+            </div>
+
+            <button class="radar-refresh" id="refresh-button" type="button">
+              <i data-lucide="refresh-cw" width="14" height="14"></i>
+              Refresh
+            </button>
+          </div>
+
+          <div class="radar-error" id="radar-error"></div>
+
+          <div class="radar-trend" id="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Last 7 days</div>
+              <div class="radar-trend-value" id="trend-now">493</div>
+              <div class="radar-trend-sub">matching reports</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Prior 7 days</div>
+              <div class="radar-trend-value" id="trend-prior">199</div>
+              <div class="radar-trend-sub">matching reports</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Week over week</div>
+              <div class="radar-trend-value" id="trend-delta">up 294</div>
+              <div class="radar-trend-sub" id="trend-pct">about 148 percent higher</div>
+            </div>
+          </div>
+
+          <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 1,027 matching reports in 30 days as of 11 Sep 2026.</p></noscript>
+
+        </div>
+      </section>
+      <p class="fl-desc" style="margin:14px 0 0;">Country mix, daily activity and full history on the <a href="layoff-radar.html">live tracker page</a>. Engineering instruments live on the <a href="calculators.html">calculators page</a>: token bill, RPS envelope, compaction, cache value and retry storm. No tracking, no backend.</p>
     </section>
+    <script>
+    (function () {
+      var API_URL = "https://freenewsapi.ai/v1/stats";
+      var SEARCH_QUERY = "tech layoffs";
+      var REFRESH_INTERVAL = 60 * 60 * 1000;
+      var PERIOD_DATE = { "30d": "30d", "7d": "7d", "24h": "1d", "month": "30d" };
+      var DONUT_MIX = { "30d": "30-day mix", "7d": "7-day mix", "24h": "24-hour mix", "month": "30-day mix" };
+      var DONUT_COLORS = ["#a3e635", "#38bdf8", "#fb7185", "#d8a83e", "#93a4ba"];
+      var countryNames = { US: "United States", IN: "India", GB: "United Kingdom", CA: "Canada", AU: "Australia", DE: "Germany", FR: "France", ES: "Spain", IT: "Italy", NL: "Netherlands", SG: "Singapore", JP: "Japan", KR: "South Korea", BR: "Brazil", MX: "Mexico", AE: "United Arab Emirates", IL: "Israel", IE: "Ireland", SE: "Sweden", CH: "Switzerland", NZ: "New Zealand", ZA: "South Africa", HK: "Hong Kong", CN: "China", TW: "Taiwan", PH: "Philippines", MY: "Malaysia", ID: "Indonesia", NG: "Nigeria" };
+      var stats = null, stats30 = null, selectedPeriod = "30d", refreshInProgress = false;
+      var statsCache = {};
+      var donutRows = [], donutTotal = 1, donutIdx = 0, donutTimer = null;
+
+      function $(id) { return document.getElementById(id); }
+      function formatNumber(v) { return new Intl.NumberFormat("en-US").format(v || 0); }
+      function formatDateTime(d) {
+        return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(d);
+      }
+      function getPeriodLabel(p) {
+        if (p === "24h") return "last 24 hours";
+        if (p === "7d") return "last 7 days";
+        if (p === "month") return "current month";
+        return "last 30 days";
+      }
+      function getCurrentMonthPrefix() {
+        var now = new Date();
+        return now.getUTCFullYear() + "-" + String(now.getUTCMonth() + 1).padStart(2, "0");
+      }
+      function getPeriodTotal(period) {
+        if (period === "month") {
+          if (!stats30) return 0;
+          var prefix = getCurrentMonthPrefix();
+          return Object.entries(stats30.by_day || {}).reduce(function (s, e) { return e[0].startsWith(prefix) ? s + e[1] : s; }, 0);
+        }
+        if (!stats) return 0;
+        return stats.total || 0;
+      }
+      function renderCount() {
+        $("layoff-count").textContent = formatNumber(getPeriodTotal(selectedPeriod));
+        $("count-period-label").textContent = "Layoff headlines · " + getPeriodLabel(selectedPeriod);
+      }
+      function getWeekWindows() {
+        var source = stats30 || stats;
+        var entries = Object.entries((source && source.by_day) || {}).sort(function (a, b) { return a[0] < b[0] ? -1 : 1; });
+        var sum = function (rows) { return rows.reduce(function (s, r) { return s + r[1]; }, 0); };
+        return { last7: sum(entries.slice(-7)), prior7: sum(entries.slice(-14, -7)) };
+      }
+      function renderTrend() {
+        if (!$("trend-now") || !(stats30 || stats)) return;
+        var w = getWeekWindows(), delta = w.last7 - w.prior7;
+        $("trend-now").textContent = formatNumber(w.last7);
+        $("trend-prior").textContent = formatNumber(w.prior7);
+        if (delta === 0) { $("trend-delta").textContent = "flat"; $("trend-pct").textContent = "no change week over week"; return; }
+        $("trend-delta").textContent = (delta > 0 ? "up " : "down ") + formatNumber(Math.abs(delta));
+        $("trend-pct").textContent = w.prior7 ? ("about " + Math.abs(Math.round((delta / w.prior7) * 100)) + " percent " + (delta > 0 ? "higher" : "lower")) : "first full week of data";
+      }
+      function showDonutCenter() {
+        if (!$("donut-center-top") || !donutRows.length) return;
+        var row = donutRows[donutIdx % donutRows.length];
+        var name = countryNames[row[0]] || row[0];
+        $("donut-center-top").textContent = ((row[1] / donutTotal) * 100).toFixed(1) + "%";
+        $("donut-center-sub").textContent = name;
+        $("radar-donut").setAttribute("aria-label", "Share of reports by publisher country. " + name + " at about " + Math.round((row[1] / donutTotal) * 100) + " percent.");
+        donutIdx += 1;
+      }
+      function renderDonut() {
+        if (!$("donut-segs") || !stats) return;
+        var title = $("donut-title");
+        if (title) title.textContent = "Who is shouting loudest · " + (DONUT_MIX[selectedPeriod] || "30-day mix");
+        var total = stats.total || 1;
+        var entries = Object.entries(stats.countries || {}).slice(0, 5);
+        var topSum = entries.reduce(function (s, e) { return s + e[1]; }, 0);
+        var rows = entries.concat([["Others", total - topSum]]);
+        var CIRC = 502.65, offset = 0;
+        $("donut-segs").innerHTML = rows.map(function (r, i) {
+          var len = Math.max((r[1] / total) * CIRC - 0.8, 0.5);
+          var color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(127,127,127,0.35)";
+          var el = '<circle cx="100" cy="100" r="80" stroke="' + color + '" stroke-dasharray="' + len.toFixed(1) + ' ' + CIRC + '" stroke-dashoffset="' + offset.toFixed(1) + '"/>';
+          offset -= (r[1] / total) * CIRC;
+          return el;
+        }).join("");
+        donutRows = rows.slice(0, 5); donutTotal = total; donutIdx = 0;
+        showDonutCenter();
+        if (donutTimer) clearInterval(donutTimer);
+        donutTimer = setInterval(function () { if (!document.hidden) showDonutCenter(); }, 2000);
+        $("radar-legend").innerHTML = rows.map(function (r, i) {
+          var name = r[0] === "Others" ? "Others" : (countryNames[r[0]] || r[0]);
+          var color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(127,127,127,0.35)";
+          return '<li><span class="dot" style="background:' + color + '"></span><span class="lname">' + name + '</span><span class="lval">' + formatNumber(r[1]) + "</span></li>";
+        }).join("");
+      }
+      function render() { renderCount(); renderTrend(); renderDonut(); }
+      function fetchWindow(dateParam) {
+        if (statsCache[dateParam]) return Promise.resolve(statsCache[dateParam]);
+        var params = new URLSearchParams({ q: SEARCH_QUERY, date: dateParam, top: "100" });
+        return fetch(API_URL + "?" + params.toString(), { headers: { "Accept": "application/json" }, cache: "no-store" })
+          .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+          .then(function (data) {
+            if (typeof data.total !== "number" || !data.by_day) throw new Error("bad response");
+            statsCache[dateParam] = data;
+            return data;
+          });
+      }
+      function loadPeriod(period) {
+        var win = PERIOD_DATE[period] || "30d";
+        return fetchWindow("30d").then(function (d30) {
+          stats30 = d30;
+          if (period === "month") { stats = d30; return d30; }
+          return fetchWindow(win).then(function (d) { stats = d; return d; });
+        });
+      }
+      function fetchStats() {
+        if (refreshInProgress) return;
+        refreshInProgress = true;
+        var btn = $("refresh-button");
+        if (btn) btn.classList.add("loading");
+        $("radar-error").style.display = "none";
+        delete statsCache["30d"];
+        if (PERIOD_DATE[selectedPeriod] && PERIOD_DATE[selectedPeriod] !== "30d") delete statsCache[PERIOD_DATE[selectedPeriod]];
+        loadPeriod(selectedPeriod).then(function () {
+          $("last-updated").textContent = formatDateTime(new Date());
+          render();
+        }).catch(function () {
+          fetch("data/layoff-count.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (saved) {
+            if (saved && typeof saved.total === "number" && saved.by_day) {
+              stats = saved; stats30 = saved; statsCache["30d"] = saved;
+              if (saved.fetchedAt) $("last-updated").textContent = formatDateTime(new Date(saved.fetchedAt));
+              render();
+              $("radar-error").textContent = "Live data could not be refreshed right now. Showing the last saved snapshot instead.";
+              $("radar-error").style.display = "block";
+              return;
+            }
+            throw new Error("no snapshot");
+          }).catch(function () {
+            $("radar-error").textContent = "Live data could not be refreshed right now. The previous data has been kept on screen.";
+            $("radar-error").style.display = "block";
+          });
+        }).then(function () {
+          refreshInProgress = false;
+          if (btn) btn.classList.remove("loading");
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+      document.querySelectorAll("#layoffRadarPreview .radar-filter").forEach(function (button) {
+        button.addEventListener("click", function () {
+          selectedPeriod = button.dataset.period;
+          document.querySelectorAll("#layoffRadarPreview .radar-filter").forEach(function (el) { el.classList.remove("active"); });
+          button.classList.add("active");
+          loadPeriod(selectedPeriod).then(function () {
+            $("radar-error").style.display = "none";
+            render();
+          }).catch(function () {
+            $("radar-error").textContent = "That time window could not be loaded right now. The previous data has been kept on screen.";
+            $("radar-error").style.display = "block";
+          });
+        });
+      });
+      var rb = $("refresh-button");
+      if (rb) rb.addEventListener("click", fetchStats);
+      var def = document.querySelector('#layoffRadarPreview [data-period="30d"]');
+      if (def) def.classList.add("active");
+      fetchStats();
+      setInterval(fetchStats, REFRESH_INTERVAL);
+    })();
+    </script>
 
     <!-- Skills (hidden) -->
     <section class="sec" style="display:none">
@@ -513,7 +752,7 @@
 
     lucide.createIcons();
   </script>
-  <script src="js/calculators.js" defer></script>
+
 
   <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 <script src="js/nav.js"></script>
