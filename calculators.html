@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free AI cost calculators you can run in the browser. Price token bills with cache, RPS envelopes at 1M RPS, compaction survival and retry storm waste in seconds.">
+  <meta name="description" content="Nine free engineering calculators that run in the browser. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost in seconds.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/calculators.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Free AI Cost Calculators: Token Bill, RPS Envelope, Retry Storm | Mukul Kumar Mishra">
-  <meta property="og:description" content="Price token bills with cache, RPS at 1M RPS, compaction survival and retry storms. The postmortem math, runnable in the browser.">
+  <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Mukul Kumar Mishra">
+  <meta property="og:description" content="Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost. The postmortem math, runnable in the browser.">
   <meta property="og:url" content="https://mukul-kumar-mishra.github.io/calculators.html">
-  <title>Free AI Cost Calculators: Token Bill, RPS Envelope, Retry Storm | Mukul Kumar Mishra</title>
+  <title>Free Engineering Calculators: Cost, SLO, Scaling | Mukul Kumar Mishra</title>
   <link rel="icon" href="images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,10 @@
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How much does 1M agent turns cost with token caching?","acceptedAnswer":{"@type":"Answer","text":"Enter input tokens, cache hit rate and output price in the Token Bill calculator. It prices one turn then scales to one million turns. At 80k input tokens with 87.5 percent cache hits the example shows the monthly bill in seconds."}},
-      {"@type":"Question","name":"What is the difference between token cost and RPS envelope?","acceptedAnswer":{"@type":"Answer","text":"Token cost prices per turn with cache. RPS envelope prices events per second at 1M RPS for a month. Use Token Bill for agent cost and RPS Envelope for infrastructure cost."}}
+      {"@type":"Question","name":"What is the difference between token cost and RPS envelope?","acceptedAnswer":{"@type":"Answer","text":"Token cost prices per turn with cache. RPS envelope prices events per second at 1M RPS for a month. Use Token Bill for agent cost and RPS Envelope for infrastructure cost."}},
+      {"@type":"Question","name":"How many minutes of downtime does a 99.9 percent SLO allow?","acceptedAnswer":{"@type":"Answer","text":"A 99.9 percent SLO over a 30-day month allows 43.2 minutes of downtime. Enter the SLO plus burned minutes in the Error Budget calculator to see what is left and how fast the current burn rate exhausts it."}},
+      {"@type":"Question","name":"How does the Kubernetes HPA decide replica count?","acceptedAnswer":{"@type":"Answer","text":"Desired replicas equal current replicas times current utilization over target utilization, rounded up. Enter live CPU numbers in the HPA Sizer to get the exact replica count plus any max cap warning."}},
+      {"@type":"Question","name":"How do I size a database connection pool?","acceptedAnswer":{"@type":"Answer","text":"Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor. Enter peak load plus pod count in the Pool Sizer to get total pool size and per-pod connections."}}
     ]
   }
   </script>
@@ -57,10 +60,10 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">No tracking</span><span class="chip">AI cost</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free AI Cost Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Free AI token cost calculator plus RPS envelope, compaction and retry storm tools. Enter input tokens and cache hit rate to price 1M turns at 1M RPS in seconds. All four run in your browser with no data sent. Each links to its teardown.</p>
-      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a> and <a href="system-design/vercel-fluid-compute-cost-postmortem.html">Vercel RPS</a> teardowns.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">No tracking</span><span class="chip">9 calculators</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine instruments for developers, SREs and CTOs. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost, all runnable in seconds. Everything runs in your browser with no data sent. Each links to its teardown.</p>
+      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a> · <a href="#error-budget">Error Budget</a> · <a href="#hpa-size">HPA Sizer</a> · <a href="#obs-sample">Sampling Fit</a> · <a href="#pool-size">Pool Sizer</a> · <a href="#downtime-cost">Downtime Cost</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a>, <a href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="system-design/aws-thermal-outage-postmortem.html">AWS thermal</a> teardowns.</p>
     </header>
 
     <div class="calc-tabs" role="tablist" aria-label="Calculators">
@@ -68,6 +71,11 @@
       <button class="calc-tab" role="tab" data-target="rps-bill" aria-selected="false">RPS Envelope</button>
       <button class="calc-tab" role="tab" data-target="compaction" aria-selected="false">Compaction</button>
       <button class="calc-tab" role="tab" data-target="retry-storm" aria-selected="false">Retry Storm</button>
+      <button class="calc-tab" role="tab" data-target="error-budget" aria-selected="false">Error Budget</button>
+      <button class="calc-tab" role="tab" data-target="hpa-size" aria-selected="false">HPA Sizer</button>
+      <button class="calc-tab" role="tab" data-target="obs-sample" aria-selected="false">Sampling Fit</button>
+      <button class="calc-tab" role="tab" data-target="pool-size" aria-selected="false">Pool Sizer</button>
+      <button class="calc-tab" role="tab" data-target="downtime-cost" aria-selected="false">Downtime Cost</button>
     </div>
     <noscript><style>.calc-tabs{display:none}</style></noscript>
 
@@ -76,7 +84,8 @@
         <h2 class="sec-title"><i data-lucide="coins"></i> Token Bill Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits plus 1.5k output tokens.</p>
-      <div style="display:grid;gap:2px;max-width:340px;">
+      <div class="calc-grid">
+      <div class="calc-inputs">
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-in">Input tokens / turn</label><input type="number" id="tk-in" value="80000" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-cache">Cache hit rate (percent)</label><input type="number" id="tk-cache" value="87.5" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-cachep">Cached price ($ / M tokens)</label><input type="number" id="tk-cachep" value="0.3" step="0.01" class="field-input"></div>
@@ -85,11 +94,15 @@
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-outp">Output price ($ / M tokens)</label><input type="number" id="tk-outp" value="15" step="0.01" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
       </div>
-      <div class="grid4" style="margin-top:18px;">
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
         <div class="stat"><div class="num" id="tk-perturn">-</div><div class="lbl">Cost per turn</div></div>
         <div class="stat"><div class="num" id="tk-monthly">-</div><div class="lbl">Monthly model spend</div></div>
       </div>
-      <a class="article-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
           <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
           <div class="title">Your $20 Subscription Meets a Paywall at 11:47 AM</div>
@@ -105,17 +118,22 @@
         <h2 class="sec-title"><i data-lucide="activity"></i> RPS Envelope Estimator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, plus fixed platform spend.</p>
-      <div style="display:grid;gap:2px;max-width:340px;">
+      <div class="calc-grid">
+      <div class="calc-inputs">
         <div style="margin:0 0 12px;"><label class="field-label" for="rps-rps">Events / second</label><input type="number" id="rps-rps" value="1000000" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="rps-price">Blended price ($ / M events)</label><input type="number" id="rps-price" value="1.8" step="0.01" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="rps-fixed">Fixed platform spend ($k / month)</label><input type="number" id="rps-fixed" value="2600" class="field-input"></div>
       </div>
-      <div class="grid4" style="margin-top:18px;">
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
         <div class="stat"><div class="num" id="rps-monthly">-</div><div class="lbl">Monthly envelope</div></div>
         <div class="stat"><div class="num" id="rps-daily">-</div><div class="lbl">Daily burn</div></div>
         <div class="stat"><div class="num" id="rps-perreq">-</div><div class="lbl">Cost per request</div></div>
       </div>
-      <a class="article-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
           <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
           <div class="title">The Dashboard That Deployed Itself</div>
@@ -131,18 +149,23 @@
         <h2 class="sec-title"><i data-lucide="scissors"></i> Compaction Survival Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. Defaults mirror the measured median: 575k crushed to about 4.3k, then roughly 28 steps of re-reading.</p>
-      <div style="display:grid;gap:2px;max-width:340px;">
+      <div class="calc-grid">
+      <div class="calc-inputs">
         <div style="margin:0 0 12px;"><label class="field-label" for="cx-win">Window tokens</label><input type="number" id="cx-win" value="575000" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="cx-surv">Survival rate (percent)</label><input type="number" id="cx-surv" value="0.75" step="0.01" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="cx-steps">Re-read steps after compaction</label><input type="number" id="cx-steps" value="28" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="cx-stepc">Cost per re-read step ($)</label><input type="number" id="cx-stepc" value="0.074" step="0.001" class="field-input"></div>
       </div>
-      <div class="grid4" style="margin-top:18px;">
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
         <div class="stat"><div class="num" id="cx-summary">-</div><div class="lbl">Summary size</div></div>
         <div class="stat"><div class="num" id="cx-lost">-</div><div class="lbl">Context lost</div></div>
         <div class="stat"><div class="num" id="cx-reread">-</div><div class="lbl">Re-read bill</div></div>
       </div>
-      <a class="article-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
           <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
           <div class="title">Your $20 Subscription Meets a Paywall at 11:47 AM</div>
@@ -160,22 +183,186 @@
         <h2 class="sec-title"><i data-lucide="refresh-cw"></i> Retry-Storm Cost Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Failed agent attempts rebill every retry. Multiply tasks by retries by attempt cost and watch the storm's share of the budget.</p>
-      <div style="display:grid;gap:2px;max-width:340px;">
+      <div class="calc-grid">
+      <div class="calc-inputs">
         <div style="margin:0 0 12px;"><label class="field-label" for="rt-tasks">Agent tasks / day</label><input type="number" id="rt-tasks" value="10000" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="rt-retries">Wasted retries / task</label><input type="number" id="rt-retries" value="2" step="0.1" class="field-input"></div>
         <div style="margin:0 0 12px;"><label class="field-label" for="rt-cost">Cost / attempt ($)</label><input type="number" id="rt-cost" value="0.05" step="0.01" class="field-input"></div>
       </div>
-      <div class="grid4" style="margin-top:18px;">
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
         <div class="stat"><div class="num" id="rt-daily">-</div><div class="lbl">Daily waste</div></div>
         <div class="stat"><div class="num" id="rt-monthly">-</div><div class="lbl">Monthly waste</div></div>
       </div>
-      <a class="article-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
         <div class="article-card-body">
           <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
           <div class="title">The Dashboard That Deployed Itself</div>
           <span class="article-read">Read the teardown</span>
         </div>
         <img src="images/articles/replit-agent-runtime-postmortem.png" alt="Replit Agent system design architecture showing prompt, agent, sandbox, runtime, database, deployment and cost pressure" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
+      </a>
+
+    </section>
+
+    <section class="sec" id="error-budget">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="shield-alert"></i> Error Budget Burn Calculator</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
+      <div class="calc-grid">
+      <div class="calc-inputs">
+        <div style="margin:0 0 12px;"><label class="field-label" for="eb-slo">SLO (percent)</label><input type="number" id="eb-slo" value="99.9" step="0.01" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="eb-used">Budget already burned (minutes)</label><input type="number" id="eb-used" value="12" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="eb-burn">Current burn multiple</label><input type="number" id="eb-burn" value="2" step="0.1" class="field-input"></div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
+        <div class="stat"><div class="num" id="eb-budget">-</div><div class="lbl">Monthly budget</div></div>
+        <div class="stat"><div class="num" id="eb-left">-</div><div class="lbl">Budget left</div></div>
+        <div class="stat"><div class="num" id="eb-days">-</div><div class="lbl">Days to exhaustion</div></div>
+      </div>
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/simultaneous-ai-outage-postmortem.html" style="margin-top:18px;">
+        <div class="article-card-body">
+          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
+          <div class="title">Simultaneous AI Model Outage: The Single Point We All Ignored</div>
+          <span class="article-read">Read the teardown</span>
+        </div>
+        <img src="images/articles/simultaneous-ai-outage-postmortem.png" alt="Four frontier AI providers failing together inside one shared four-hour window" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
+      </a>
+
+    </section>
+
+    <section class="sec" id="hpa-size">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layers"></i> HPA Replica Estimator</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">The real Kubernetes autoscaler formula. Desired replicas equal current replicas times current utilization over target utilization, rounded up. Defaults scale 8 replicas at 72 percent toward a 60 percent target.</p>
+      <div class="calc-grid">
+      <div class="calc-inputs">
+        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (percent)</label><input type="number" id="hpa-util" value="72" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (percent)</label><input type="number" id="hpa-target" value="60" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" class="field-input"></div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
+        <div class="stat"><div class="num" id="hpa-desired">-</div><div class="lbl">Desired replicas</div></div>
+        <div class="stat"><div class="num" id="hpa-delta">-</div><div class="lbl">Scale action</div></div>
+        <div class="stat"><div class="num" id="hpa-cap">-</div><div class="lbl">Cap status</div></div>
+      </div>
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/cell-based-control-plane.html" style="margin-top:18px;">
+        <div class="article-card-body">
+          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
+          <div class="title">Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</div>
+          <span class="article-read">Read the teardown</span>
+        </div>
+        <img src="images/articles/cellbased-architect-meme.svg" alt="Cell-based control plane architecture with autonomous regional Raft cells" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
+      </a>
+
+    </section>
+
+    <section class="sec" id="obs-sample">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="activity"></i> Observability Sampling Fitter</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Spans per second times bytes per span is your daily ingest. Price it, then compute the keep rate that fits the budget. Defaults ingest 50k spans a second at 2 KB against a $20k monthly budget.</p>
+      <div class="calc-grid">
+      <div class="calc-inputs">
+        <div style="margin:0 0 12px;"><label class="field-label" for="obs-rps">Spans / second</label><input type="number" id="obs-rps" value="50000" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="obs-bytes">Bytes / span</label><input type="number" id="obs-bytes" value="2048" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="obs-price">Ingest price ($ / GB)</label><input type="number" id="obs-price" value="0.3" step="0.01" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="obs-budget">Monthly budget ($)</label><input type="number" id="obs-budget" value="20000" class="field-input"></div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
+        <div class="stat"><div class="num" id="obs-gb">-</div><div class="lbl">Daily ingest</div></div>
+        <div class="stat"><div class="num" id="obs-cost">-</div><div class="lbl">Monthly cost unsampled</div></div>
+        <div class="stat"><div class="num" id="obs-keep">-</div><div class="lbl">Keep rate to fit budget</div></div>
+      </div>
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/notion-data-lake-cost-postmortem.html" style="margin-top:18px;">
+        <div class="article-card-body">
+          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
+          <div class="title">The Workspace That Ate the Warehouse</div>
+          <span class="article-read">Read the teardown</span>
+        </div>
+        <img src="images/articles/notion-data-lake-cost-postmortem.png" alt="Notion data platform architecture with PostgreSQL sharding and data lake cost" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
+      </a>
+
+    </section>
+
+    <section class="sec" id="pool-size">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="database"></i> Connection Pool Sizer</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Little's law for pools. Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor, spread across pods. Defaults mirror a 10k TPS payments switch at 45ms p99.</p>
+      <div class="calc-grid">
+      <div class="calc-inputs">
+        <div style="margin:0 0 12px;"><label class="field-label" for="pool-rps">Peak RPS</label><input type="number" id="pool-rps" value="10000" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="pool-lat">p99 latency (ms)</label><input type="number" id="pool-lat" value="45" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="pool-safety">Safety factor</label><input type="number" id="pool-safety" value="1.5" step="0.1" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="pool-pods">Application pods</label><input type="number" id="pool-pods" value="40" class="field-input"></div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
+        <div class="stat"><div class="num" id="pool-conc">-</div><div class="lbl">Concurrent in flight</div></div>
+        <div class="stat"><div class="num" id="pool-total">-</div><div class="lbl">Pool size</div></div>
+        <div class="stat"><div class="num" id="pool-perpod">-</div><div class="lbl">Connections / pod</div></div>
+      </div>
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/razorpay-upi-kafka-postmortem.html" style="margin-top:18px;">
+        <div class="article-card-body">
+          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
+          <div class="title">Razorpay Kafka: 3,000 Connections Too Many</div>
+          <span class="article-read">Read the teardown</span>
+        </div>
+        <img src="images/articles/razorpay-kafka-meme.svg" alt="Kafka partitions exploding past a connection cap at Razorpay scale" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
+      </a>
+
+    </section>
+
+    <section class="sec" id="downtime-cost">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="coins"></i> Downtime Cost Calculator</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
+      <div class="calc-grid">
+      <div class="calc-inputs">
+        <div style="margin:0 0 12px;"><label class="field-label" for="dt-rev">Monthly revenue at risk ($)</label><input type="number" id="dt-rev" value="4000000" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="dt-mins">Downtime (minutes)</label><input type="number" id="dt-mins" value="240" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="dt-bill">Monthly cloud bill ($)</label><input type="number" id="dt-bill" value="320000" class="field-input"></div>
+        <div style="margin:0 0 12px;"><label class="field-label" for="dt-credit">SLA credit (percent of bill)</label><input type="number" id="dt-credit" value="25" class="field-input"></div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-results-label">Live result</div>
+      <div class="grid4">
+        <div class="stat"><div class="num" id="dt-loss">-</div><div class="lbl">Revenue lost</div></div>
+        <div class="stat"><div class="num" id="dt-sla">-</div><div class="lbl">SLA credit owed</div></div>
+        <div class="stat"><div class="num" id="dt-total">-</div><div class="lbl">Total exposure</div></div>
+      </div>
+      </div>
+      </div>
+      <a class="article-card calc-card" href="system-design/aws-thermal-outage-postmortem.html" style="margin-top:18px;">
+        <div class="article-card-body">
+          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
+          <div class="title">AWS Thermal Postmortem: Cooling Failed First</div>
+          <span class="article-read">Read the teardown</span>
+        </div>
+        <img src="images/articles/aws-thermal-meme.svg" alt="An overheating AWS data center zone with impaired instances" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
       </a>
 
     </section>
