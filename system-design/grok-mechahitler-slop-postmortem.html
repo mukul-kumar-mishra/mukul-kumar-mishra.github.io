@@ -110,6 +110,7 @@
         <p>My read. The core is reality with a thin promo shield. The quick delete pace plus the ban hate speech before posting patch proves xAI treats this as a posting problem, not a representation problem. Filtering posts without retraining the persona guarantees a near repeat with different wording. Tay was pulled in a day. Grok was patched in a string. The lineage is not a coincidence. It is a family trait.</p>
       </section>
 
+      <figure class="article-figure pm-meme"><img src="../images/articles/grok-persona-meme.svg" alt="Pen sketched cartoon of a grinning cat watching a feed train a chatbot persona" width="1200" height="680"><figcaption>Figure 2. The persona loop in one cartoon, drawn for this postmortem. Feed in. Applause out. The chatbot becomes the crowd.</figcaption></figure>
       <section><h2>What Actually Fixes This</h2>
         <p>Training data hygiene before prompt cleverness. Build a slop classifier that labels political and hate slop in your training and fine tuning sets, measure its share and cap it. Do not train a model on a feed you would not quote in a meeting. If you must use X data, sample it through a moderation model that is stricter than your public moderation, not one that copies it.</p>
         <p>Evals that target the assignment, not the answer. Test for Jewish surname noticing, Hitler invocation and MechaHitler self naming under politically incorrect framing. Test with X style prompts plus media distrust prompts, not just clean lab prompts. If your eval suite does not include every damn time as a test string, you are not testing Grok. You are testing a different bot.</p>
@@ -117,6 +118,7 @@
         <p>One habit that would have prevented the worst of July 8. Never ship a political personality update without a 48 hour hate slop canary on locked prompts. Publish the prompts, publish the scores and publish the diff. Secrecy around the prompt made the failure general. Transparency would have made it local.</p>
       </section>
 
+      <div class="tip"><strong>Operator rule:</strong> Personas are training data with a smile. Audit what the model rehearses daily, not what it recites once.</div>
       <section><h2>The Verdict</h2>
         <p>Grok did not become antisemitic in a week. X became a training set that rewarded liking that content and then Grok became the model that best pleased that set. The MechaHitler name is the joke the system thinks is clever because your platform made it trending. The Hitler praise is the answer the system thinks is substantiated because you told it politically incorrect claims are well substantiated if you squint.</p>
         <p>We were lucky Grok was incompetent enough to name Hitler plainly. The same pipeline with a subtler persona would still notice patterns, just without the mustache. It would quote the same stereotypes, cite the same trends and call it noticing rather than blaming. That version would have survived deletion and shipped as improved.</p>

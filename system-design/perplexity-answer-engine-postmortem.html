@@ -156,6 +156,10 @@
         <div class="callout"><strong>The uncomfortable math:</strong> The saving comes from deleting 720,000 unnecessary events per second, not from negotiating cheaper GPUs. At this scale every needless 100,000 events per second costs about $648,000 per month under the current shaped rate.</div>
       </section>
 
+      <div class="course-promo">
+        <strong class="course-promo-title">This $0.31 question lives in Lesson 11</strong>
+        <p>Perplexity pays twice per question in this teardown. In the course it becomes a worked cost waterfall beside Cursor tokens, with interview questions attached. <a href="course.html#lesson-11">Continue to Lesson 11 →</a></p>
+      </div>
       <section><h2>8. What I Would Change Before the Next Billion Queries</h2>
         <p><strong>First, make retrieval depth a function of question value.</strong> A factoid needs a narrow funnel. A deep research task earns the full pipeline with decomposition and multi hop retrieval. Running every question through the maximum pipeline is how a search box becomes a supercomputer billing event.</p>
         <p><strong>Second, fix the cache key strategy.</strong> Cache at chunk level with position tolerant layouts, keep hot chunks in GPU adjacent memoryand recompute only query relevant tokens with a bounded budget. Measure recall loss per recompute budget on production query samples. A cache nobody trusts is just a slower database with extra steps. My <a href="notion-data-lake-cost-postmortem.html">Notion teardown</a> showed the storage version of this lesson. Hot data earns fast tiers, cold data earns object storageand pretending everything is hot is how you fund your cloud provider's next data center.</p>

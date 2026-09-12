@@ -130,6 +130,7 @@
         </section>
 
         <section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/cell-raft-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching a Raft election inside one cell" width="1200" height="680"><figcaption>Figure 2. The Raft round in one cartoon, drawn for this postmortem. Leader falls. Followers vote. The cell never blinks.</figcaption></figure>
           <h2>2. Proposed Target Architecture</h2>
 
           <p>
@@ -182,6 +183,7 @@ func (r *Router) GetCellID(tenantID string) int {
         </section>
 
         <section>
+      <div class="tip"><strong>Operator rule:</strong> Cells must fail without calling home. If failover needs the control plane, the control plane is the blast radius.</div>
           <h2>4. Trade-Off Evaluation</h2>
           <div style="overflow-x:auto;">
             <table>

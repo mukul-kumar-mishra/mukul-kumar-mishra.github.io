@@ -126,6 +126,7 @@
         <div class="tip"><strong>Load test tip:</strong> Simulate connection churn separately from query throughput. A benchmark that reuses one client for one thousand queries hides the 3 AM storm where five hundred fresh processes connect at once.</div>
       </section>
 
+      <figure class="article-figure pm-meme"><img src="../images/articles/supabase-rls-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching every database row ask permission" width="1200" height="680"><figcaption>Figure 2. The RLS check in one cartoon, drawn for this postmortem. Every row asks permission. The tax hides in plain sight.</figcaption></figure>
       <section id="cost-model"><h2>6. The Cost Model: What Pooling Actually Saves</h2>
         <p>Host a Postgres fleet for this model. Assume eight hundred provisioned databases spread across regions with primary plus replica, backups and observability. At one hundred fifty dollars per month blended for a small project, platform base compute is one hundred twenty thousand dollars per month. Add pooler fleet, routing, auth and edge capacity at seventy thousand per month.</p>
         <p>Database memory drives the pooled bill. Postgres backends consume resident memory. Assume one hundred thousand concurrent transactions touching hot data with buffer hits. Allocate managed memory pool at two hundred thousand dollars per month including cache. Add replication and storage IO at ninety thousand per month. Add realtime fan out and WebSocket layer at sixty thousand per month. Total scenario envelope lands around five hundred forty thousand dollars per month or roughly eighteen thousand per day.</p>
@@ -179,6 +180,7 @@
         <div class="tip"><strong>Ops tip:</strong> Alert on pool wait time, active backend count and replication slot lag before you alert on CPU. By the time CPU moves at pooling scale the incident was already queuing at the pooler ten minutes ago.</div>
       </section>
 
+      <div class="tip"><strong>Operator rule:</strong> Measure the tax before scaling the system. RLS, pooling plus auth multiply per query, silently.</div>
       <section><h2>9. The Verdict</h2>
         <p>Supabase earned its fleet the hard way. It gives every project a real Postgres, a real extension market and a real wire protocol, then accepts the burden of pooling that fleet for a world that spawns functions like confetti. Supavisor is the admission that hosted Postgres plus autoscaling functions needs a bouncer, a queue and a shared vocabulary for connections.</p>
         <p>The cost is not Postgres itself. It is the mismatch between serverless burst and transactional backends plus policy work evaluated per row at platform scale. Pooling decides how many backends you run. Indexed RLS decides how much work each backend does. Replica routing decides whether the primary pays for everything. Get those three right and the bill reflects value rather than waste.</p>

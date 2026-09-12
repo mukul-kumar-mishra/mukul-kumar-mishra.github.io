@@ -699,6 +699,306 @@
       "width": 1200,
       "height": 680,
       "aria": "Pen sketched meme of a skeptical cat watching a registry flood"
+    },
+    {
+      "name": "cloudflare-edge-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 133,
+      "strip": "One File Ruled the Whole Network",
+      "title": "Wrong file in. Global errors out.",
+      "subtitle": "the proxy poisoned storage.",
+      "scene": "cloudflare-edge-panels.svg",
+      "banner": [
+        "shared fate.",
+        "shared file."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching one bad config file take down a global edge network",
+      "caption": "Figure 1. The edge in one cartoon, drawn for this postmortem. One wrong file loaded everywhere. Storage fell with the proxy. The bypass became the architecture.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching an edge outage"
+    },
+    {
+      "name": "agentflayer-exfil-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 135,
+      "strip": "The Picture That Phoned Home",
+      "title": "One render. Zero clicks. Full drive.",
+      "subtitle": "every render is a border crossing.",
+      "scene": "agentflayer-exfil-panels.svg",
+      "banner": [
+        "input wears a costume.",
+        "keys ride inside pixels."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching an image ping steal API keys",
+      "caption": "Figure 2. The image ping in one cartoon, drawn for this postmortem. One rendered picture out. Your API keys ride inside.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching an exfiltration image"
+    },
+    {
+      "name": "aws-restore-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 137,
+      "strip": "Two Lanes Out of the Ashes",
+      "title": "Snapshots crawl. Launches fly.",
+      "subtitle": "drill picks the winner early.",
+      "scene": "aws-restore-panels.svg",
+      "banner": [
+        "blocks warm lazily.",
+        "fresh zones absorb load."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat racing snapshot restores against fresh launches",
+      "caption": "Figure 2. The recovery race in one cartoon, drawn for this postmortem. Snapshots restore while fresh instances boot. The runbook decides the winner.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat racing two recovery lanes"
+    },
+    {
+      "name": "cell-raft-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 139,
+      "strip": "The Election Nobody Attends",
+      "title": "Leader falls. Followers vote.",
+      "subtitle": "neighbors never asked.",
+      "scene": "cell-raft-panels.svg",
+      "banner": [
+        "quorum votes local.",
+        "new leader crowned."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching a Raft election inside one cell",
+      "caption": "Figure 2. The Raft round in one cartoon, drawn for this postmortem. Leader falls. Followers vote. The cell never blinks.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching a Raft election"
+    },
+    {
+      "name": "cloudflare-canary-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 141,
+      "strip": "The City That Takes the Hit",
+      "title": "One city first. Fleet later.",
+      "subtitle": "progressive beats brave.",
+      "scene": "cloudflare-canary-panels.svg",
+      "banner": [
+        "blast fits in a taxi.",
+        "bad file dies local."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat rolling a config to one city before the fleet",
+      "caption": "Figure 2. The canary in one cartoon, drawn for this postmortem. One city first. Then regions. Then the fleet, if the errors stay quiet.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat canarying a config"
+    },
+    {
+      "name": "doltgres-quarantine-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 143,
+      "strip": "The Pen for Suspicious Objects",
+      "title": "Unknown reachability waits.",
+      "subtitle": "suspicion is not proof.",
+      "scene": "doltgres-quarantine-panels.svg",
+      "banner": [
+        "quarantine, not delete.",
+        "storage beats apology."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat penning unknown database objects in quarantine",
+      "caption": "Figure 2. The quarantine in one cartoon, drawn for this postmortem. Unknown reachability waits in a pen. Nothing deletes on suspicion.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat guarding a quarantine pen"
+    },
+    {
+      "name": "grok-persona-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 145,
+      "strip": "The Crowd Becomes the Character",
+      "title": "Feed in. Applause out.",
+      "subtitle": "the crowd becomes character.",
+      "scene": "grok-persona-panels.svg",
+      "banner": [
+        "too eager to please.",
+        "guardrail loosens Friday."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat watching a feed train a chatbot persona",
+      "caption": "Figure 2. The persona loop in one cartoon, drawn for this postmortem. Feed in. Applause out. The chatbot becomes the crowd.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat watching persona training"
+    },
+    {
+      "name": "lovable-cache-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 147,
+      "strip": "Install Once, Demo Forever",
+      "title": "Boot storm, cached calm.",
+      "subtitle": "cache is the business.",
+      "scene": "lovable-cache-panels.svg",
+      "banner": [
+        "install once, reuse.",
+        "boot time collapses."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat caching a sandbox layer instead of reinstalling",
+      "caption": "Figure 2. The layer cache in one cartoon, drawn for this postmortem. Install once. Reuse everywhere. The preview button stops reinstalling the internet.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat caching sandbox layers"
+    },
+    {
+      "name": "razorpay-split-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 149,
+      "strip": "Slow Left, Money Right",
+      "title": "Validation left. Money right.",
+      "subtitle": "noisy neighbors evicted.",
+      "scene": "razorpay-split-panels.svg",
+      "banner": [
+        "VPA left, money right.",
+        "own topics, own pools."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat splitting slow validation from fast payments",
+      "caption": "Figure 2. The split in one cartoon, drawn for this postmortem. Slow validation left. Fast money right. Never the twain shall share partitions.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat splitting gateway traffic"
+    },
+    {
+      "name": "simul-router-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 151,
+      "strip": "The Router Is the Real SLA",
+      "title": "Four providers. One answer.",
+      "subtitle": "real SLA, not logo SLA.",
+      "scene": "simul-router-panels.svg",
+      "banner": [
+        "chat here, data there.",
+        "stateless sessions hop."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat routing across four AI providers to one healthy answer",
+      "caption": "Figure 2. The router in one cartoon, drawn for this postmortem. Four providers in. One healthy answer out. The router is the real SLA.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat routing provider traffic"
+    },
+    {
+      "name": "stripe-webhook-meme",
+      "cat": "cat-grin.svg",
+      "cat_xywh": [
+        110,
+        205,
+        300,
+        300
+      ],
+      "seed": 153,
+      "strip": "The Storm Becomes a Stream",
+      "title": "Events queue. Ledger decides.",
+      "subtitle": "$1.4T, zero apologies.",
+      "scene": "stripe-webhook-panels.svg",
+      "banner": [
+        "storm becomes stream.",
+        "keys dedupe arrivals."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a grinning cat draining a webhook storm through a ledger",
+      "caption": "Figure 2. The webhook storm in one cartoon, drawn for this postmortem. Events queue. Workers drain. Duplicates bounce off the ledger.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a grinning cat draining webhooks"
+    },
+    {
+      "name": "supabase-rls-meme",
+      "cat": "cat-rocks.svg",
+      "cat_xywh": [
+        90,
+        205,
+        300,
+        300
+      ],
+      "seed": 155,
+      "strip": "The Tax Hiding in Plain Sight",
+      "title": "Every row asks permission.",
+      "subtitle": "measure the bodyguards.",
+      "scene": "supabase-rls-panels.svg",
+      "banner": [
+        "per query, per row.",
+        "bill grows quietly."
+      ],
+      "banner_x2": 470,
+      "alt": "Pen sketched cartoon of a skeptical cat watching every database row ask permission",
+      "caption": "Figure 2. The RLS check in one cartoon, drawn for this postmortem. Every row asks permission. The tax hides in plain sight.",
+      "width": 1200,
+      "height": 680,
+      "aria": "Pen sketched meme of a skeptical cat watching row checks"
     }
   ]
 }

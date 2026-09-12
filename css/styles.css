@@ -458,6 +458,10 @@ h1, h2, h3, h4, h5, h6 {
 .calc-results .grid4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .calc-results .stat { min-width: 0; }
 .calc-results .stat .num { font-size: clamp(1.15rem, 2.5vw + 0.9rem, 1.9rem); overflow-wrap: anywhere; }
+.course-promo { margin: 1.6em 0; padding: 18px 20px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--lime) 32%, var(--line)); background: linear-gradient(135deg, color-mix(in srgb, var(--lime) 9%, var(--card)), var(--card)); }
+.course-promo-title { display: block; font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; color: var(--heading); margin-bottom: 6px; }
+.course-promo p { margin: 0; font-size: 0.9rem; color: var(--mist); }
+.course-promo a { font-weight: 700; }
 .stat { min-width: 0; }
 .stat .num { overflow-wrap: anywhere; }
 .calc-card img { order: -1; width: 100% !important; margin: 0 !important; border: none !important; border-bottom: 1px solid var(--line) !important; border-radius: 0 !important; aspect-ratio: auto !important; }

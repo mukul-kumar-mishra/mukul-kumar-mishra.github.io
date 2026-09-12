@@ -133,6 +133,8 @@
         <p>The three approaches share a common theme: they move the dependence from a single controllable endpoint to a set of controllable endpoints. The cost is operational complexity. The benefit is resilience that no single vendor can cancel.</p>
       </section>
 
+      <div class="tip"><strong>Operator rule:</strong> Two providers on one substrate is one provider with marketing. Map the shared layer before buying the backup.</div>
+      <figure class="article-figure pm-meme"><img src="../images/articles/simul-router-meme.svg" alt="Pen sketched cartoon of a skeptical cat routing across four AI providers to one healthy answer" width="1200" height="680"><figcaption>Figure 2. The router in one cartoon, drawn for this postmortem. Four providers in. One healthy answer out. The router is the real SLA.</figcaption></figure>
       <section><h2>8. What We Should Have Learned</h2>
         <p>The 3 September outage was not a once-in-a-generation event. It was a foreseeable convergence of known infrastructure dependencies. The reason it felt exceptional is that most of us have come to treat AI as a utility that just works. The outage pulled the curtain back and showed the machinery. The question now is whether the industry will treat this as a one-off incident or as the wake-up call that forces a redesign of the stack.</p>
         <p>History suggests the latter is unlikely in the short term. Vendors will pat their own systems. Customers will wait for normal service. And the next time four providers go dark at once the incident will be described as "unprecedented" all over again. The cycle repeats until the cost of repetition exceeds the cost of redesign. That is the incentive structure we are all operating inside.</p>

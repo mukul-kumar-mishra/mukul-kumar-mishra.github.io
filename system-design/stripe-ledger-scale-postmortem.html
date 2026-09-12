@@ -169,6 +169,7 @@
         </div>
       </section>
 
+      <figure class="article-figure pm-meme"><img src="../images/articles/stripe-webhook-meme.svg" alt="Pen sketched cartoon of a grinning cat draining a webhook storm through a ledger" width="1200" height="680"><figcaption>Figure 2. The webhook storm in one cartoon, drawn for this postmortem. Events queue. Workers drain. Duplicates bounce off the ledger.</figcaption></figure>
       <section><h2>8. How I Would Cut the Bill Without Cutting Correctness</h2>
         <p><strong>Serve idempotency at the edge.</strong> Cache idempotency responses in a globally replicated store close to the client with a strongly consistent origin fallback. A duplicate that gets answered at the edge costs a lookup, not a ledger lock. At payments scale the edge is a financial control.</p>
         <p><strong>Make ledger entries compact.</strong> Represent fees, transfers and settlement as separate streams derived from the canonical payment event rather than writing every derived balance inline on the payment transaction. Keep per transaction ledger work minimal and fan out downstream</p>
@@ -179,6 +180,7 @@
         <div class="tip"><strong>Ops tip:</strong> Alert on duplicate rate, idempotency hit ratio and webhook queue depth before you alert on CPU. By the time API CPU moves at payments scale the retry storm already doubled origin load.</div>
       </section>
 
+      <div class="tip"><strong>Operator rule:</strong> Money movements need receipts before results. Record first, execute second, reconcile always.</div>
       <section><h2>9. The Verdict</h2>
         <p>Stripe looks boring in the best way. The API is predictable, the errors are explicit and the ledger never argues about arithmetic. The postmortem is not that Stripe charges too much or scales poorly. It is that financial infrastructure pays a correctness premium on every retry that other domains dismiss as noise.</p>
         <p>Idempotency turns retries into cached responses. Double entry turns one user action into multiple auditable entries. Webhook semantics turn one payment into many delivery attempts. Each guarantee is worth the cost because the alternative is a double charge, a mismatched balance or a silent settlement failure. The win is not removing the guarantees. It is moving them to the cheapest place where they still hold.</p>

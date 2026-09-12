@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free end-to-end system design course in 15 story-driven lessons. Requests, APIs, auth, databases, queues, scaling, resilience, caching, observability and the interview playbook.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/course.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="System Design Course: 15 Real-Outage Lessons">
+  <meta property="og:description" content="Learn system design through real postmortems. Fifteen lessons with diagrams, no thread links, no fluff.">
+  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cellbased-architect-meme.svg">
+  <meta property="og:image:alt" content="System design course with architecture diagrams">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/course.html">
+  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="System Design Course: 15 Real-Outage Lessons">
+  <meta name="twitter:description" content="Fifteen story-driven lessons with diagrams. Built from production postmortems.">
+  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/cellbased-architect-meme.svg">
+  <title>System Design Course: 15 Real-Outage Lessons | Mukul Kumar Mishra</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"System Design Course: 15 Real-Outage Lessons",
+    "description":"A free end-to-end system design course in 15 story-driven lessons covering requests, APIs, auth, databases, queues, scaling, resilience, consistency, caching, storage, cost, observability and the interview playbook.",
+    "provider":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P12H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"A request's 14-hop journey"},
+      {"@type":"Syllabus","name":"APIs that survive retries"},{"@type":"Syllabus","name":"Secrets that leak"},
+      {"@type":"Syllabus","name":"Databases that don't die"},
+      {"@type":"Syllabus","name":"Postgres at scale"},
+      {"@type":"Syllabus","name":"Queues that absorb spikes"},
+      {"@type":"Syllabus","name":"Compute that scales"},
+      {"@type":"Syllabus","name":"Retries that don't kill"},
+      {"@type":"Syllabus","name":"Surviving the blast"},
+      {"@type":"Syllabus","name":"Consistency without tears"},{"@type":"Syllabus","name":"Caching that pays"},
+      {"@type":"Syllabus","name":"Storage that grows"},
+      {"@type":"Syllabus","name":"Cost is architecture"},{"@type":"Syllabus","name":"Seeing production"},
+      {"@type":"Syllabus","name":"The 45-minute interview playbook"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://mukul-kumar-mishra.github.io/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://mukul-kumar-mishra.github.io/system-design/"},
+      {"@type":"ListItem","position":3,"name":"System Design Course","item":"https://mukul-kumar-mishra.github.io/system-design/course.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Diagrams included</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Course: 15 Lessons From Real Outages</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, plus points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen story-driven system design lessons with diagrams, from request paths to interview playbooks. Built from production postmortems, with calculators for the math.</p>
+    </header>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> A request's journey</a>
+        <a href="#lesson-2"><span class="rnum">02</span> APIs that survive</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Secrets that leak</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Databases that live</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Postgres at scale</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Queues that absorb</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Compute that scales</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Retries that spare</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Surviving the blast</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Consistency calmly</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Caching that pays</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Storage that grows</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Cost is architecture</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Seeing production</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Interview playbook</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · Request paths</div>
+          <h2>One Click, Fourteen Hops</h2>
+          <p class="lesson-story">September 2026. A UK flight data fault lasts four hours. Two thousand flights die across three days. The computers recover Tuesday. The schedules recover Friday. One click from a controller met fourteen systems before becoming a cancelled flight.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Request path from browser through DNS, CDN, load balancer, app servers, cache, queue, workers to primary database with replica">
+            <rect class="box" x="8" y="55" width="72" height="40" rx="8"/><text x="44" y="79" font-size="11" text-anchor="middle">browser</text>
+            <rect class="box" x="92" y="55" width="60" height="40" rx="8"/><text x="122" y="79" font-size="11" text-anchor="middle">DNS</text>
+            <rect class="box" x="164" y="55" width="60" height="40" rx="8"/><text x="194" y="79" font-size="11" text-anchor="middle">CDN</text>
+            <rect class="box" x="236" y="55" width="60" height="40" rx="8"/><text x="266" y="79" font-size="11" text-anchor="middle">LB</text>
+            <rect class="box" x="308" y="55" width="60" height="40" rx="8"/><text x="338" y="79" font-size="11" text-anchor="middle">app</text>
+            <rect class="box" x="380" y="20" width="72" height="40" rx="8"/><text x="416" y="44" font-size="11" text-anchor="middle">cache</text>
+            <rect class="box" x="380" y="90" width="72" height="40" rx="8"/><text x="416" y="114" font-size="11" text-anchor="middle">queue</text>
+            <rect class="boxhot" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">primary DB</text>
+            <g stroke-width="2"><line x1="80" y1="75" x2="92" y2="75"/><line x1="152" y1="75" x2="164" y2="75"/><line x1="224" y1="75" x2="236" y2="75"/><line x1="296" y1="75" x2="308" y2="75"/><line x1="368" y1="68" x2="380" y2="48"/><line x1="368" y1="82" x2="380" y2="102"/><line x1="452" y1="75" x2="464" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Every hop is a failure domain. Draw all fourteen before designing any one of them.</li>
+            <li>Latency adds up. A 20ms hop times fourteen is a 280ms page before logic runs.</li>
+            <li>The red box is where NATS lived. One unmirrored component gated a whole sky.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, the edge version of the same story.</li>
+          </ul>
+                    <p>Draw this map for every system you touch this year. Interviews reward candidates who start at the edges. Production rewards engineers who already know where the red boxes hide.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design TinyURL end to end, from API to storage. <span class="q-seen">Seen at: Amazon-style and Google-style loops.</span></p>
+            <p><strong>Q2.</strong> What happens, packet by packet, when you type a URL and press enter? <span class="q-seen">Seen at: Meta-style loops plus early-stage startups.</span></p>
+          </div>
+          <p class="lesson-hook">The red box fails next lesson too, but quietly. Money disappears instead of planes. <a href="#lesson-2">Lesson 02: APIs that survive →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · APIs · Idempotency</div>
+          <h2>Charge Once, Even When Asked Twice</h2>
+          <p class="lesson-story">Stripe moves $1.4 trillion without double-charging anyone. The trick is not faster code. It is a key the client sends with every request, so retries become safe by construction. Networks retry. Your API should expect it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Idempotency flow: client sends key, server checks ledger, returns stored result on retry">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">client + key</text>
+            <rect class="boxlime" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">ledger lookup</text>
+            <rect class="box" x="272" y="20" width="120" height="40" rx="8"/><text x="332" y="44" font-size="11" text-anchor="middle">key seen: replay</text>
+            <rect class="boxhot" x="272" y="90" width="120" height="40" rx="8"/><text x="332" y="114" font-size="11" text-anchor="middle">new: execute once</text>
+            <rect class="box" x="424" y="55" width="128" height="40" rx="8"/><text x="488" y="79" font-size="11" text-anchor="middle">single charge</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="68" x2="272" y2="40"/><line x1="240" y1="82" x2="272" y2="102"/><line x1="392" y1="40" x2="424" y2="62"/><line x1="392" y1="110" x2="424" y2="88"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Idempotency keys turn at-least-once networks into exactly-once effects.</li>
+            <li>Store the key plus the result together, atomically, or the check lies.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>.</li>
+          </ul>
+                    <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates plus reordering, then designing so none of them matter.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a payments charge API that survives client retries. <span class="q-seen">Seen at: Stripe-style and Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> A webhook fires twice. Who pays for the duplicate? <span class="q-seen">Seen at: Stripe-style payments loops.</span></p>
+          </div>
+          <p class="lesson-hook">Safe retries assume the retrier is who they claim. Next lesson steals the keys. <a href="#lesson-3">Lesson 03: Secrets that leak →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Security · Secrets that leak</div>
+          <h2>Keys Are Load-Bearing Walls</h2>
+          <p class="lesson-story">A candidate uploads a CV. The summary comes back with their Google Drive API keys inside a rendered image. No clicks. No malware. One poisoned document plus every permission the key carried.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Scoped short-lived key flowing through a vault to a service beside a leaked god-key with wide blast radius">
+            <rect class="boxlime" x="8" y="20" width="150" height="40" rx="8"/><text x="83" y="44" font-size="11" text-anchor="middle">scoped key: 1h</text>
+            <rect class="boxlime" x="8" y="90" width="150" height="40" rx="8"/><text x="83" y="114" font-size="11" text-anchor="middle">vault issues it</text>
+            <rect class="box" x="220" y="55" width="110" height="40" rx="8"/><text x="275" y="79" font-size="11" text-anchor="middle">one service</text>
+            <rect class="boxhot" x="392" y="55" width="160" height="40" rx="8"/><text x="472" y="79" font-size="11" text-anchor="middle">leaked god-key: all</text>
+            <g stroke-width="2"><line x1="158" y1="60" x2="220" y2="70"/><line x1="330" y1="75" x2="392" y2="75"/></g>
+            <text class="lbl" x="8" y="145" font-size="11">blast radius equals scope, nothing less</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Scope every key to one surface plus one permission set. Least privilege is a blast-radius budget.</li>
+            <li>Short TTLs plus rotation beat long-lived secrets. Stolen keys should die alone.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a CV. It Downloaded Your API Keys.</a></li>
+          </ul>
+          <p>Lesson 2 taught safe retries. Keys decide who retries as whom. A leaked admin token turns every retry endpoint into an attacker tool, which is why signing plus verification belong beside idempotency in every API design.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Where do you store third-party API keys, plus what happens the hour one leaks? <span class="q-seen">Seen at: fintech and developer-platform loops.</span></p>
+            <p><strong>Q2.</strong> Design scoped tokens for a developer API from scratch. <span class="q-seen">Seen at: Stripe-style and Google-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Secrets locked. Now the database itself dies. <a href="#lesson-4">Lesson 04: Databases that live →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Data safety · Backups that restore</div>
+          <h2>Backups Lie. Restores Testify.</h2>
+          <p class="lesson-story">Doltgres copied every row and lost customer data anyway. The backup skipped encoding metadata, then garbage collection deleted what the backup forgot. The backup succeeded. The restore testified against it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Backup chain: primary to replica to backup to isolated restore verification">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">primary</text>
+            <rect class="box" x="130" y="55" width="90" height="40" rx="8"/><text x="175" y="79" font-size="11" text-anchor="middle">replica</text>
+            <rect class="boxhot" x="252" y="55" width="90" height="40" rx="8"/><text x="297" y="79" font-size="11" text-anchor="middle">backup</text>
+            <rect class="boxlime" x="374" y="55" width="178" height="40" rx="8"/><text x="463" y="79" font-size="11" text-anchor="middle">isolated restore check</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="220" y1="75" x2="252" y2="75"/><line x1="342" y1="75" x2="374" y2="75"/></g>
+          </svg>
+          <svg class="cdiagram" viewBox="0 0 560 120" role="img" aria-label="Timeline showing replica lag growing between primary writes and nightly backup">
+            <rect class="box" x="8" y="30" width="100" height="40" rx="8"/><text x="58" y="54" font-size="11" text-anchor="middle">writes</text>
+            <rect class="boxhot" x="150" y="30" width="110" height="40" rx="8"/><text x="205" y="54" font-size="11" text-anchor="middle">lagging reads</text>
+            <rect class="box" x="302" y="30" width="100" height="40" rx="8"/><text x="352" y="54" font-size="11" text-anchor="middle">nightly snap</text>
+            <rect class="boxlime" x="444" y="30" width="108" height="40" rx="8"/><text x="498" y="54" font-size="11" text-anchor="middle">restore test</text>
+            <g stroke-width="2"><line x1="108" y1="50" x2="150" y2="50"/><line x1="260" y1="50" x2="302" y2="50"/><line x1="402" y1="50" x2="444" y2="50"/></g>
+            <text class="lbl" x="8" y="100" font-size="11">every gap between boxes is a staleness promise</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Replicas protect uptime. Only verified restores protect data.</li>
+            <li>Garbage collection must never delete what it cannot prove dead.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">The Backup That Forgot the Data</a>.</li>
+          </ul>
+                    <p>Replicas lag. That lag is a promise with fine print. Reads from a replica can return yesterday, which is fine for dashboards plus fatal for balances. Know which reads need the primary.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design backup plus restore for a 10 TB Postgres database. <span class="q-seen">Seen at: AWS-style and fintech loops.</span></p>
+            <p><strong>Q2.</strong> Your replica lags 30 seconds. Which reads break first? <span class="q-seen">Seen at: Meta-style data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Data survives. Now connections run out at 3 AM. <a href="#lesson-5">Lesson 05: Postgres at scale →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Postgres · Connection pooling</div>
+          <h2>Ten Thousand Friends, One Door</h2>
+          <p class="lesson-story">Supabase runs two million Postgres databases behind one pooling promise. Razorpay nearly died on a 3,000-connection cap nobody had read. Postgres forks a process per connection, so every pool is a negotiation with physics.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Ten thousand app connections funnel through a pooler into a small pool of Postgres backends">
+            <rect class="box" x="8" y="30" width="110" height="40" rx="8"/><text x="63" y="54" font-size="11" text-anchor="middle">10k app conns</text>
+            <rect class="boxlime" x="180" y="55" width="110" height="40" rx="8"/><text x="235" y="79" font-size="11" text-anchor="middle">pooler: 675</text>
+            <rect class="boxhot" x="352" y="55" width="200" height="40" rx="8"/><text x="452" y="79" font-size="11" text-anchor="middle">Postgres: 1 process each</text>
+            <g stroke-width="2"><line x1="118" y1="60" x2="180" y2="70"/><line x1="290" y1="75" x2="352" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">Little's law: pool = peak RPS x p99 seconds x safety factor</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Pool size is math, not vibes. Try the <a href="../calculators.html#pool-size">pool sizer</a> with your own RPS.</li>
+            <li>Serverless does not remove caps. It relocates them into docs nobody reads.</li>
+            <li>Deep dives: <a href="supabase-postgres-scale-postmortem.html">Serverless Postgres</a> plus <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</li>
+          </ul>
+                    <p>Watch for the pooler becoming the bottleneck itself. One proxy in front of Postgres is a single point with a nice dashboard. Pair it, or shard past it, before traffic does.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size the connection pool for 50k RPS at 20ms p99. <span class="q-seen">Seen at: Google-style and Uber-style loops.</span></p>
+            <p><strong>Q2.</strong> Design a rate limiter for a public API gateway. <span class="q-seen">Seen at: Google-style and Lyft-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Connections tamed. Now traffic arrives in avalanches. <a href="#lesson-6">Lesson 06: Queues that absorb →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Messaging · Queues and tiers</div>
+          <h2>Let the Queue Take the Punch</h2>
+          <p class="lesson-story">Razorpay aimed at 10,000 UPI transactions per second. Roblox routes 18 trillion messages a day. Neither lets traffic touch workers directly. A queue stands in the middle and absorbs what humans cannot schedule.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producers write to tiered topics, workers consume urgent and patient lanes separately">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">producers</text>
+            <rect class="boxlime" x="130" y="20" width="130" height="40" rx="8"/><text x="195" y="44" font-size="11" text-anchor="middle">urgent lane</text>
+            <rect class="box" x="130" y="90" width="130" height="40" rx="8"/><text x="195" y="114" font-size="11" text-anchor="middle">patient lane</text>
+            <rect class="box" x="292" y="20" width="110" height="40" rx="8"/><text x="347" y="44" font-size="11" text-anchor="middle">fast workers</text>
+            <rect class="box" x="292" y="90" width="110" height="40" rx="8"/><text x="347" y="114" font-size="11" text-anchor="middle">batch workers</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">dead letter</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="100"/><line x1="260" y1="40" x2="292" y2="40"/><line x1="260" y1="110" x2="292" y2="110"/><line x1="402" y1="48" x2="434" y2="66"/><line x1="402" y1="102" x2="434" y2="84"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Separate urgent from patient traffic or one surge starves everything.</li>
+            <li>Partitions buy concurrency but tax brokers. Count them like money.</li>
+            <li>Deep dives: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> plus <a href="roblox-kafka-ingestion-postmortem.html">Roblox tiers</a>.</li>
+          </ul>
+                    <p>Dead letters deserve readers. Every message in the red box is a bug report from production. Teams that review them weekly find failures before customers do.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a notification system for 100 million users. <span class="q-seen">Seen at: Meta-style and WhatsApp-style loops.</span></p>
+            <p><strong>Q2.</strong> How do you process one million events per second without losing any? <span class="q-seen">Seen at: Uber-style and LinkedIn-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Queues smooth traffic. Nothing smooths a traffic spike aimed at your GPUs. <a href="#lesson-7">Lesson 07: Compute that scales →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Compute · Autoscaling and RPS</div>
+          <h2>Count Requests, Then Count Dollars</h2>
+          <p class="lesson-story">Vercel bills the wait between your function and someone else's API. One million requests per second for a month is 2.6 trillion events. At that scale the envelope math matters more than the code.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Load balancer spreading requests across an autoscaling compute fleet with a queue buffer">
+            <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">RPS in</text>
+            <rect class="boxlime" x="120" y="55" width="100" height="40" rx="8"/><text x="170" y="79" font-size="11" text-anchor="middle">autoscaler</text>
+            <rect class="box" x="252" y="20" width="80" height="40" rx="8"/><text x="292" y="44" font-size="11" text-anchor="middle">fleet A</text>
+            <rect class="box" x="252" y="90" width="80" height="40" rx="8"/><text x="292" y="114" font-size="11" text-anchor="middle">fleet B</text>
+            <rect class="boxhot" x="364" y="55" width="188" height="40" rx="8"/><text x="458" y="79" font-size="11" text-anchor="middle">bill = RPS x seconds x price</text>
+            <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="220" y1="68" x2="252" y2="40"/><line x1="220" y1="82" x2="252" y2="102"/><line x1="332" y1="40" x2="364" y2="62"/><line x1="332" y1="110" x2="364" y2="88"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Desired replicas equal current times utilization over target. Try the <a href="../calculators.html#hpa-size">HPA sizer</a>.</li>
+            <li>Serverless bills wait time. Keep dependencies fast or pay for standing still.</li>
+            <li>Deep dive: <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a>.</li>
+          </ul>
+                    <p>Cold starts punish spiky traffic most. Provisioned minimums cost steady money but remove the worst tail. Model both shapes before launch, not after the bill.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> YouTube upload traffic triples at 6 PM. Walk through the scaling. <span class="q-seen">Seen at: Google-style loops.</span></p>
+            <p><strong>Q2.</strong> When does autoscaling make things worse instead of better? <span class="q-seen">Seen at: AWS-style and startup loops.</span></p>
+          </div>
+          <p class="lesson-hook">Scaled compute still fails. The killer is how it retries. <a href="#lesson-8">Lesson 08: Retries that spare →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Failure handling · Retries and breakers</div>
+          <h2>Retry Like Water, Not Like Fire</h2>
+          <p class="lesson-story">Replit agents retried failed deploys until retries cost more than features. Every retry is a second request arriving exactly when the system is weakest. Unbounded retries are a self-inflicted DDoS with a deploy log.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Exponential backoff with jitter spreading retries over time below a circuit breaker threshold">
+            <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">fail</text>
+            <rect class="box" x="120" y="55" width="80" height="40" rx="8"/><text x="160" y="79" font-size="11" text-anchor="middle">wait 1s</text>
+            <rect class="box" x="232" y="55" width="80" height="40" rx="8"/><text x="272" y="79" font-size="11" text-anchor="middle">wait 2s</text>
+            <rect class="box" x="344" y="55" width="80" height="40" rx="8"/><text x="384" y="79" font-size="11" text-anchor="middle">wait 4s</text>
+            <rect class="boxhot" x="456" y="55" width="96" height="40" rx="8"/><text x="504" y="79" font-size="11" text-anchor="middle">breaker</text>
+            <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="200" y1="75" x2="232" y2="75"/><line x1="312" y1="75" x2="344" y2="75"/><line x1="424" y1="75" x2="456" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">backoff x2 plus jitter, then stop knocking</text>
+          </svg>
+          <svg class="cdiagram" viewBox="0 0 560 120" role="img" aria-label="Circuit breaker states cycling from closed to open to half-open">
+            <rect class="boxlime" x="8" y="30" width="140" height="40" rx="8"/><text x="78" y="54" font-size="11" text-anchor="middle">closed: flowing</text>
+            <rect class="boxhot" x="210" y="30" width="140" height="40" rx="8"/><text x="280" y="54" font-size="11" text-anchor="middle">open: failing fast</text>
+            <rect class="box" x="412" y="30" width="140" height="40" rx="8"/><text x="482" y="54" font-size="11" text-anchor="middle">half-open: probe</text>
+            <g stroke-width="2"><line x1="148" y1="50" x2="210" y2="50"/><line x1="350" y1="50" x2="412" y2="50"/></g>
+            <text class="lbl" x="8" y="100" font-size="11">failures trip it, one probe resets it</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Exponential backoff plus jitter plus a hard stop. Miss any of the three and retries amplify.</li>
+            <li>Circuit breakers convert repeated failure into fast failure. Fast failure is a feature.</li>
+            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit retries</a> plus the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
+          </ul>
+                    <p>Idempotency from Lesson 2 is what makes retries safe to attempt. Without it, backoff only spaces out the damage. The two lessons compose. Design them together.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Convince me your retries cannot DDoS your own database. <span class="q-seen">Seen at: Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> Design a circuit breaker from scratch, states included. <span class="q-seen">Seen at: Netflix-style and fintech loops.</span></p>
+          </div>
+          <p class="lesson-hook">Retries handled. Now the whole building loses power. <a href="#lesson-9">Lesson 09: Surviving the blast →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Resilience · Zones and cells</div>
+          <h2>Zones Are the Unit of Failure</h2>
+          <p class="lesson-story">AWS lost a zone to heat. NATS lost a sky to one fault. Four AI labs went dark in one morning. Different causes, one lesson. The blast radius you plan for is the blast radius you get.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Three isolated cells each with app and database, one cell dark while two serve traffic">
+            <rect class="boxlime" x="8" y="30" width="160" height="90" rx="10"/><text x="88" y="52" font-size="11" text-anchor="middle">cell A: live</text><text x="88" y="72" font-size="10" text-anchor="middle" class="lbl">app + DB</text><text x="88" y="92" font-size="10" text-anchor="middle" class="lbl">serving</text>
+            <rect class="boxlime" x="200" y="30" width="160" height="90" rx="10"/><text x="280" y="52" font-size="11" text-anchor="middle">cell B: live</text><text x="280" y="72" font-size="10" text-anchor="middle" class="lbl">app + DB</text><text x="280" y="92" font-size="10" text-anchor="middle" class="lbl">serving</text>
+            <rect class="boxhot" x="392" y="30" width="160" height="90" rx="10"/><text x="472" y="52" font-size="11" text-anchor="middle">cell C: dark</text><text x="472" y="72" font-size="10" text-anchor="middle" class="lbl">heat, fault, oops</text><text x="472" y="92" font-size="10" text-anchor="middle" class="lbl">isolated</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Deploy across zones with traffic live in all of them. Cold standby rots.</li>
+            <li>Cells bound failure. One dark cell is an incident. One dark region is a disaster.</li>
+            <li>Deep dives: <a href="aws-thermal-outage-postmortem.html">AWS thermal</a>, <a href="nats-outage-postmortem.html">NATS recovery</a> plus <a href="cell-based-control-plane.html">cell design</a>.</li>
+          </ul>
+                    <p>Test the dark cell on purpose. Game days that kill one zone prove the other two carry load. Untested failover is a rumor with runbooks.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> One cloud region dies during checkout peak. Now what? <span class="q-seen">Seen at: Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> Design failover that customers never notice. <span class="q-seen">Seen at: Google-style and Netflix-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Surviving is step one. Agreeing on what happened is step two. <a href="#lesson-10">Lesson 10: Consistency calmly →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Correctness · Convergence</div>
+          <h2>Everyone Agrees, Eventually</h2>
+          <p class="lesson-story">Figma lets ten cursors fight over one canvas without visible war. Stripe settles money the same way bankers did in 1494. Both solve agreement without asking every participant to stop moving.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Two replicas accept writes locally then merge through a referee into one order">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">replica A</text>
+            <rect class="box" x="8" y="105" width="100" height="30" rx="8"/><text x="58" y="125" font-size="10" text-anchor="middle" class="lbl">writes locally</text>
+            <rect class="box" x="452" y="55" width="100" height="40" rx="8"/><text x="502" y="79" font-size="11" text-anchor="middle">replica B</text>
+            <rect class="box" x="452" y="105" width="100" height="30" rx="8"/><text x="502" y="125" font-size="10" text-anchor="middle" class="lbl">writes locally</text>
+            <rect class="boxlime" x="230" y="55" width="100" height="40" rx="8"/><text x="280" y="79" font-size="11" text-anchor="middle">referee</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="230" y2="70"/><line x1="452" y1="75" x2="330" y2="70"/></g>
+            <text class="lbl" x="8" y="30" font-size="11">converge here, not at the edges</text>
+          </svg>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Client writing to two of three replicas to reach quorum">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">client</text>
+            <rect class="boxlime" x="180" y="20" width="110" height="34" rx="8"/><text x="235" y="42" font-size="11" text-anchor="middle">node 1: ack</text>
+            <rect class="boxlime" x="180" y="60" width="110" height="34" rx="8"/><text x="235" y="82" font-size="11" text-anchor="middle">node 2: ack</text>
+            <rect class="box" x="180" y="100" width="110" height="34" rx="8"/><text x="235" y="122" font-size="11" text-anchor="middle">node 3: slow</text>
+            <rect class="boxlime" x="352" y="55" width="200" height="40" rx="8"/><text x="452" y="79" font-size="11" text-anchor="middle">quorum: 2 of 3, commit</text>
+            <g stroke-width="2"><line x1="118" y1="68" x2="180" y2="40"/><line x1="118" y1="75" x2="180" y2="77"/><line x1="290" y1="75" x2="352" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Pick one convergence point. Distributed agreement without a referee is a research project.</li>
+            <li>Money uses double-entry ledgers. Collaboration uses operation order. Same instinct.</li>
+            <li>Deep dives: <a href="stripe-ledger-scale-postmortem.html">Stripe ledger</a> plus <a href="figma-multiplayer-cost-postmortem.html">Figma multiplayer</a>.</li>
+          </ul>
+                    <p>Strong consistency costs latency. Every synchronous replica adds round trips to the critical path. Spend it only where money or safety demands it.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Two users edit the same document offline. Who wins and why? <span class="q-seen">Seen at: Google-style and Figma-style loops.</span></p>
+            <p><strong>Q2.</strong> Explain Raft leader election as if to a smart intern. <span class="q-seen">Seen at: Every infrastructure loop.</span></p>
+          </div>
+          <p class="lesson-hook">Agreement settled. Now the data outgrows the machine. <a href="#lesson-11">Lesson 11: Caching that pays →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Performance · Caching that pays</div>
+          <h2>Never Pay Twice for Hello</h2>
+          <p class="lesson-story">Voice AI bills every hello at 75 milliseconds of GPU. The cached hello answers in 5. Same word. Fifteen times cheaper. Somewhere a quarter of all greetings repeat, which means a quarter of the invoice is optional.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cache hit path answering in 5 milliseconds beside a miss path billing 75 milliseconds of GPU">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">request</text>
+            <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">hit: 5ms, $0</text>
+            <rect class="boxhot" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">miss: 75ms GPU</text>
+            <rect class="box" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">fill on miss</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">TTL guard</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="102" x2="312" y2="82"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cache repeated work first. Greetings, prefills plus hot keys pay for the whole layer.</li>
+            <li>Every entry needs a TTL plus an invalidation story. Stale money spends like real money.</li>
+            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a>, <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a> plus <a href="cloudflare-edge-outage-postmortem.html">Cloudflare edge caching</a>.</li>
+          </ul>
+          <p>Lesson 10 taught convergence. Caches are replicas that converge lazily by design. TTL is a consistency budget measured in seconds, which is why cache design belongs right after consistency, not before it.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a CDN cache with instant invalidation for news pages. <span class="q-seen">Seen at: Meta-style and Cloudflare-style loops.</span></p>
+            <p><strong>Q2.</strong> Hit rate falls from 95 to 40 percent overnight. Debug it live. <span class="q-seen">Seen at: SRE and platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Hot data served cheap. Now the cold data outgrows the machine. <a href="#lesson-11">Lesson 11: Caching that pays →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Data scale · Sharding</div>
+          <h2>Shard by the Query, Not the Table</h2>
+          <p class="lesson-story">Notion holds 200 billion blocks across 480 logical shards. Nobody queries all of them at once. Every query touches one workspace, so every shard holds whole workspaces. The shard key follows the access pattern.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Router hashing workspace IDs across four shards with hot data cached">
+            <rect class="boxlime" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">router</text>
+            <rect class="box" x="120" y="20" width="100" height="40" rx="8"/><text x="170" y="44" font-size="11" text-anchor="middle">shard 1</text>
+            <rect class="box" x="120" y="65" width="100" height="40" rx="8"/><text x="170" y="89" font-size="11" text-anchor="middle">shard 2</text>
+            <rect class="boxhot" x="120" y="110" width="100" height="30" rx="8"/><text x="170" y="130" font-size="10" text-anchor="middle">hot shard</text>
+            <rect class="box" x="252" y="65" width="120" height="40" rx="8"/><text x="312" y="89" font-size="11" text-anchor="middle">cold archive</text>
+            <rect class="box" x="404" y="65" width="148" height="40" rx="8"/><text x="478" y="89" font-size="11" text-anchor="middle">cache in front</text>
+            <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="60"/><line x1="88" y1="75" x2="120" y2="82"/><line x1="88" y1="75" x2="120" y2="122"/><line x1="220" y1="85" x2="252" y2="85"/><line x1="372" y1="85" x2="404" y2="85"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Shard by what queries ask together. Resharding later costs quarters.</li>
+            <li>Hot shards are normal. Plan the split before the fire.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion warehouse</a>.</li>
+          </ul>
+                    <p>Count twice before sharding. Sharding too early trades simple problems for distributed ones. Shard when one machine groans, not when a blog post excites.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design photo storage for two billion pictures with a global feed. <span class="q-seen">Seen at: Meta-style loops.</span></p>
+            <p><strong>Q2.</strong> How do celebrity posts break naive sharding? <span class="q-seen">Seen at: X-style and Discord-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Storage solved. Then finance reads the bill. <a href="#lesson-13">Lesson 13: Cost is architecture →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Economics · Cost modeling</div>
+          <h2>The Bill Is a Design Document</h2>
+          <p class="lesson-story">Perplexity pays for every question twice. Cursor users hit a paywall at 11:47 AM. Voice AI bills per hello. Each bill traces back to an architecture choice nobody priced at design time.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cost waterfall from request through retrieval, inference and margin">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">request $0</text>
+            <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">retrieval $0.02</text>
+            <rect class="boxhot" x="282" y="55" width="120" height="40" rx="8"/><text x="342" y="79" font-size="11" text-anchor="middle">inference $0.31</text>
+            <rect class="boxlime" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">cache: -$0.28</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="250" y1="75" x2="282" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">find the red box first, optimize second</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price one request before scaling to millions. Try the <a href="../calculators.html#token-bill">token bill</a> plus <a href="../calculators.html#rps-bill">RPS envelope</a> calculators.</li>
+            <li>Caching is margin engineering. Every repeated hello should be nearly free.</li>
+            <li>Deep dives: <a href="perplexity-answer-engine-postmortem.html">Perplexity</a> plus <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor tokens</a>.</li>
+          </ul>
+                    <p>Revisit the bill quarterly. Traffic shapes drift, prices change, plus yesterday's optimization rots. The waterfall from the diagram deserves a standing meeting.</p>
+<div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price this architecture monthly, line by line, out loud. <span class="q-seen">Seen at: Startup and CTO-round loops.</span></p>
+            <p><strong>Q2.</strong> Cut the bill 40 percent without touching reliability. <span class="q-seen">Seen at: FinOps-flavored platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">You can now read any architecture. Time to perform one live. <a href="#lesson-14">Lesson 14: Seeing production →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Operations · Seeing production</div>
+          <h2>If Nobody Paged, Did It Happen</h2>
+          <p class="lesson-story">A model exfiltrated data for months before a 481-million-transcript review caught it. The signals existed the whole time. Nobody had drawn the dashboard that would have shown them. Monitoring is not paperwork. It is the only sense organ production has.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Metrics logs and traces flowing into alerts that trigger a runbook">
+            <rect class="box" x="8" y="20" width="110" height="34" rx="8"/><text x="63" y="42" font-size="11" text-anchor="middle">metrics</text>
+            <rect class="box" x="8" y="60" width="110" height="34" rx="8"/><text x="63" y="82" font-size="11" text-anchor="middle">logs</text>
+            <rect class="box" x="8" y="100" width="110" height="34" rx="8"/><text x="63" y="122" font-size="11" text-anchor="middle">traces</text>
+            <rect class="boxlime" x="180" y="55" width="130" height="40" rx="8"/><text x="245" y="79" font-size="11" text-anchor="middle">alert on symptoms</text>
+            <rect class="boxhot" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">runbook, not heroics</text>
+            <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="68"/><line x1="118" y1="77" x2="180" y2="75"/><line x1="118" y1="110" x2="180" y2="82"/><line x1="310" y1="75" x2="372" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Alert on symptoms users feel, not causes you guess. Latency plus error rate first, CPU last.</li>
+            <li>Sample smart. Keep every error, sample the boring middle. Try the <a href="../calculators.html#obs-sample">sampling fitter</a>.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS recovery math</a>, where detection lag set the price.</li>
+          </ul>
+          <p>Lesson 8 taught surviving blasts. Blasts you cannot see, you cannot survive. Game days plus failover drills are blind without signals, which is why observability closes the resilience arc, not the cost chapter.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> p99 latency triples at 2 AM with no deploy. Walk through it live. <span class="q-seen">Seen at: Google-style and Meta-style SRE loops.</span></p>
+            <p><strong>Q2.</strong> Design the dashboards for a payments API before it launches. <span class="q-seen">Seen at: Stripe-style and fintech loops.</span></p>
+          </div>
+          <p class="lesson-hook">You can now see anything. Time to perform everything live. <a href="#lesson-14">Lesson 14: Seeing production →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · Interview performance</div>
+          <h2>The 45-Minute Performance</h2>
+          <p class="lesson-story">Pastebin. Forty-five minutes. The interviewer is not testing knowledge. They are testing whether you ask about scale before drawing boxes, name failure domains before features, plus price the design before praising it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview timeline: clarify, estimate, design, deep dive, review across 45 minutes">
+            <rect class="boxlime" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">0-5: clarify</text>
+            <rect class="box" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">5-10: estimate</text>
+            <rect class="box" x="272" y="55" width="120" height="40" rx="8"/><text x="332" y="79" font-size="11" text-anchor="middle">10-30: design</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">30-45: break it</text>
+            <g stroke-width="2"><line x1="128" y1="75" x2="140" y2="75"/><line x1="260" y1="75" x2="272" y2="75"/><line x1="392" y1="75" x2="404" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">spend the last third attacking your own design</text>
+          </svg>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Pastebin reference build with API, hash generator, metadata database, blob store and cache">
+            <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">client</text>
+            <rect class="boxlime" x="120" y="55" width="80" height="40" rx="8"/><text x="160" y="79" font-size="11" text-anchor="middle">API</text>
+            <rect class="box" x="232" y="20" width="130" height="40" rx="8"/><text x="297" y="44" font-size="11" text-anchor="middle">hash + metadata DB</text>
+            <rect class="box" x="232" y="90" width="130" height="40" rx="8"/><text x="297" y="114" font-size="11" text-anchor="middle">blob store</text>
+            <rect class="boxhot" x="394" y="55" width="158" height="40" rx="8"/><text x="473" y="79" font-size="11" text-anchor="middle">cache + CDN reads</text>
+            <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="200" y1="68" x2="232" y2="40"/><line x1="200" y1="82" x2="232" y2="102"/><line x1="362" y1="75" x2="394" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Clarify scope first. Pastebin for 100 users is a weekend project. For 100 million it is lessons 1 through 11.</li>
+            <li>Estimate out loud. Writes per second, storage per year, bandwidth per day. Interviewers score the math.</li>
+            <li>Close by breaking it. Name three failures plus their fixes before they ask. That is the hire signal.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. The shelf keeps growing: <a href="index.html">all case studies</a> plus <a href="ai-slop.html">AI Slop Watch</a>. New failures arrive weekly. So will new lessons.</p>
+          <p>Bring one failure story of your own. Interviewers remember candidates who broke production plus fixed it. This course gave you fifteen borrowed ones. Earn one.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

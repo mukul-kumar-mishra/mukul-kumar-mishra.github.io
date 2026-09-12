@@ -170,6 +170,7 @@
         </div>
       </section>
 
+      <figure class="article-figure pm-meme"><img src="../images/articles/lovable-cache-meme.svg" alt="Pen sketched cartoon of a skeptical cat caching a sandbox layer instead of reinstalling" width="1200" height="680"><figcaption>Figure 2. The layer cache in one cartoon, drawn for this postmortem. Install once. Reuse everywhere. The preview button stops reinstalling the internet.</figcaption></figure>
       <section><h2>8. How I Would Cut the Bill Without Cutting the Demo</h2>
         <p><strong>Hash the lockfile and never reinstall for free.</strong> Cache node_modules layers by package lock hash plus Node version plus registry mirror. Keep a content addressed store for tarballs. A prompt that tweaks a button should not reinstall 900 packages through the same registry ten times.</p>
         <p><strong>Snapshot the filesystem between turns.</strong> Preserve the sandbox filesystem as a snapshot after a successful Vite build. Next prompt restores the snapshot in milliseconds, applies a diff and rebuilds only changed routes. Warm pool for five minutes per project turns a cold boot into a warm patch.</p>
@@ -180,6 +181,7 @@
         <div class="tip"><strong>Ops tip:</strong> Alert on preview build time, lockfile miss rate and prompt cache hit ratio before you alert on GPU or CPU. At builder scale those three ratios move the bill ten minutes before CPU graphs notice.</div>
       </section>
 
+      <div class="tip"><strong>Operator rule:</strong> Cache the layer, not the invoice. Repeated work without a cache is a billing strategy, not an architecture.</div>
       <section><h2>9. The Verdict</h2>
         <p>Lovable earned its $6.6 billion by making software creation feel like a conversation. The loop is the product. Chat in, preview out, iterate. The cost is every part of that loop that reinstalls the world to change a line of text. One billion tokens per minute is not a flex. It is a routing and caching problem that must be solved every minute before someone notices.</p>
         <p>The pattern is bigger than one builder. My Supabase teardown showed pooling decides Postgres cost. My Vercel teardown showed waiting work must not occupy executing capacity. Lovable proves preview cost behaves the same way. Reuse the backend connection, reuse the prompt cache and reuse the filesystem layer before you scale the fleet. The cheapest preview is the one that never repeats work the prior prompt already paid for.</p>

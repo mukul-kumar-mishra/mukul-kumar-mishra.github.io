@@ -1,5 +1,15 @@
 [
   {
+    "title": "Cloudflare Loaded the Wrong File",
+    "url": "cloudflare-edge-outage-postmortem.html",
+    "tag": "Edge Infrastructure",
+    "date": "2026-09-11",
+    "dateLabel": "September 2026",
+    "readTime": "13 min read",
+    "desc": "Cloudflare loaded a wrong internal file network-wide and error pages replaced X plus OpenAI. Shared fate, KV coupling and the proxy bypass.",
+    "tags": ["Cloudflare", "CDN", "Outage", "Edge"]
+  },
+  {
     "title": "NATS: Four Hours That Cancelled 2,000 Flights",
     "url": "nats-outage-postmortem.html",
     "tag": "Safety-Critical Systems",
