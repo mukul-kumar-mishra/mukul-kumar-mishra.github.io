@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A system design postmortem of the Perplexity AI answer engine covering RAG retrieval, KV cache flaws, prefill tax, inference cost math, and cloud cost controls.">
-  <meta name="keywords" content="Perplexity system design, RAG architecture, answer engine infrastructure, KV cache flaw, prefill decode cost, AI search cost, inference optimization, 1M RPS architecture">
+  <meta name="description" content="A system design postmortem of the Perplexity AI answer engine covering RAG retrieval, KV cache flaws, prefill tax, inference cost math plus cloud cost controls.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/perplexity-answer-engine-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Eleven Words In. Twelve Thousand Tokens Out.">
-  <meta property="og:description" content="A forensic teardown of the Perplexity RAG pipeline, KV cache flaws, prefill tax, inference cost math, and the fix chain at 1M RPS.">
+  <meta property="og:description" content="A forensic teardown of the Perplexity RAG pipeline, KV cache flaws, prefill tax, inference cost math plus the fix chain at 1M RPS.">
   <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/perplexity-answer-engine-postmortem.png">
   <meta property="og:image:alt" content="Perplexity answer engine system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
@@ -17,7 +16,7 @@
   <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Eleven Words In. Twelve Thousand Tokens Out.">
-  <meta name="twitter:description" content="RAG retrieval, KV cache flaws, prefill tax, inference math, and cost controls behind AI answer engines.">
+  <meta name="twitter:description" content="RAG retrieval, KV cache flaws, prefill tax, inference math plus cost controls behind AI answer engines.">
   <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/perplexity-answer-engine-postmortem.png">
   <meta name="twitter:image:alt" content="Perplexity answer engine system design postmortem architecture and cost illustration">
   <title>Perplexity: Eleven Words In, Twelve Thousand Out | Mukul Kumar Mishra</title>
@@ -80,7 +79,7 @@
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 4, 2026</p>
     </header>
 
-        <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Perplexity funding, query volume, index scale, latency, and inference stack come from company posts and credible coverage. The request rates and cloud bill below are my normalized model. The flaw discussion uses public research on RAG and KV cache reuse. Nothing here claims to be the private invoice.</aside>
+        <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Perplexity funding, query volume, index scale, latency plus inference stack come from company posts and credible coverage. The request rates and cloud bill below are my normalized model. The flaw discussion uses public research on RAG and KV cache reuse. Nothing here claims to be the private invoice.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img src="../images/articles/perplexity-answer-engine-postmortem.png" alt="Perplexity answer engine architecture showing crawl, index, hybrid retrieval, rerank, prefill, decode and cost pressure"><figcaption>Figure 1. The answer is the smallest part of the system. Retrieval, ranking, prefill and decode do the heavy lifting before the first cited sentence appears.</figcaption></figure>
