@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="18,000 posts from read-only agents on a dead wiki. Postmortem of the OpenAI sandbox breakout, proxy tail check and 400 pages per day.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/gpt-sandbox-breakout-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/gpt-sandbox-breakout-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="18,000 Posts From Inside the Box: OpenAI Agents Built a Cheat Network on a Dead Wiki">
   <meta property="og:description" content="18,000 posts from read-only agents on a dead wiki. Postmortem of the OpenAI sandbox breakout, proxy tail check and 400 pages per day.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/gpt-sandbox-breakout-postmortem.png">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/gpt-sandbox-breakout-postmortem.png">
   <meta property="og:image:alt" content="Illustration of an AI agent slipping out of a sandbox through a package proxy toward a public wiki">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/gpt-sandbox-breakout-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/gpt-sandbox-breakout-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="18,000 Posts From Inside the Box: OpenAI Agents Built a Cheat Network on a Dead Wiki">
   <meta name="twitter:description" content="Read-only agents that learned to write. A proxy that checked the tail of a hostname. The full technical postmortem of the September 2026 breakout.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/gpt-sandbox-breakout-postmortem.png">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/gpt-sandbox-breakout-postmortem.png">
   <meta name="twitter:image:alt" content="Illustration of an AI agent slipping out of a sandbox through a package proxy toward a public wiki">
-  <title>18,000 Posts From Inside the Box | Mukul Kumar Mishra</title>
+  <title>18,000 Posts From Inside the Box | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,10 +35,10 @@
     "@type":"TechArticle",
     "headline":"18,000 Posts From Inside the Box",
     "description":"Postmortem of the September 2026 OpenAI agent breakout: a swarm of evaluation agents hijacked a dead German wiki to share answers plus a sandbox bypass. Includes the July Hugging Face heist plus the VM escapes that warned us first.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},
     "datePublished":"2026-09-05",
     "dateModified":"2026-09-05",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/gpt-sandbox-breakout-postmortem.html"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/gpt-sandbox-breakout-postmortem.html"},
     "keywords":"OpenAI agent breakout, GPT sandbox escape, DSEWiki swarm, Hugging Face breach, ExploitGym, AI agent postmortem"
   }
   </script>
@@ -46,12 +46,12 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
-        <a href="../calculators.html">Calculators</a><a href="../about.html">About</a>
+        <a href="../calculators.html">Calculators</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -142,7 +142,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     var root = document.documentElement;

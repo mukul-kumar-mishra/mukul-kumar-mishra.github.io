@@ -108,6 +108,30 @@
     if (el) el.textContent = text;
   }
 
+  var LIME = '#a3e635', CYAN = '#38bdf8', ROSE = '#fb7185';
+
+  /* Paint a conic mix donut. Slices are [fraction, color]; the hole and
+     center headline are pure markup in the card. Guards divide-by-zero. */
+  function donut(id, slices, centerTop) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var clean = slices.map(function (s) { return [Math.max(0, s[0] || 0), s[1]]; });
+    var sum = clean.reduce(function (s, x) { return s + x[0]; }, 0);
+    if (!(sum > 0)) return;
+    var acc = 0, parts = clean.map(function (s) {
+      var from = (acc / sum) * 100, to = ((acc + s[0]) / sum) * 100;
+      acc += s[0];
+      return s[1] + ' ' + from.toFixed(1) + '% ' + to.toFixed(1) + '%';
+    });
+    el.style.background = 'conic-gradient(' + parts.join(',') + ')';
+    if (centerTop != null) set(id.replace(/-donut$/, '-mix-top'), centerTop);
+  }
+
+  function pct(part, total) {
+    if (!(total > 0)) return '—';
+    return (Math.max(0, Math.min(1, part / total)) * 100).toFixed(1) + '%';
+  }
+
   function bind(ids, fn) {
     ids.forEach(function (id) {
       var el = document.getElementById(id);
@@ -116,24 +140,34 @@
   }
 
   function renderToken() {
-    var r = Calcs.tokenTurn({
+    var o = {
       inTokens: num('tk-in', 80000), cachePct: num('tk-cache', 87.5),
       cachePrice: num('tk-cachep', 0.3), freshPrice: num('tk-freshp', 3),
       outTokens: num('tk-out', 1500), outPrice: num('tk-outp', 15),
       turns: num('tk-turns', 1000000)
-    });
+    };
+    var r = Calcs.tokenTurn(o);
+    var cached = o.inTokens * (o.cachePct / 100) / 1e6 * o.cachePrice;
+    var fresh = o.inTokens * (1 - o.cachePct / 100) / 1e6 * o.freshPrice;
+    var out = o.outTokens / 1e6 * o.outPrice;
     set('tk-perturn', money(r.perTurn, 4) + ' / turn');
-    set('tk-monthly', money(r.monthly, 0) + ' / month');
+    set('tk-monthly', money(r.monthly, 0));
+    donut('tk-donut', [[cached, LIME], [fresh, CYAN], [out, ROSE]],
+      isFinite(o.cachePct) ? o.cachePct.toFixed(1) + '%' : '—');
   }
 
   function renderRps() {
-    var r = Calcs.rpsBill({
+    var o = {
       rps: num('rps-rps', 1000000), pricePerM: num('rps-price', 1.8),
       fixedK: num('rps-fixed', 2600)
-    });
-    set('rps-monthly', money(r.monthly, 0) + ' / month');
+    };
+    var r = Calcs.rpsBill(o);
+    var variable = o.rps * 2592000 * (o.pricePerM / 1e6);
+    var fixed = o.fixedK * 1000;
+    set('rps-monthly', money(r.monthly, 0));
     set('rps-daily', money(r.daily, 0) + ' / day');
     set('rps-perreq', '$' + (r.perRequest * 100).toFixed(4) + '¢ / request');
+    donut('rps-donut', [[variable, CYAN], [fixed, LIME]], pct(variable, r.monthly));
   }
 
   function renderCompaction() {
@@ -144,26 +178,34 @@
     var r = Calcs.compaction(o);
     set('cx-summary', big(r.summary, 0) + ' tokens survive');
     set('cx-lost', r.lostPct.toFixed(2) + '% of context lost');
-    set('cx-reread', money(r.rereadBill) + ' to rebuild state');
+    set('cx-reread', money(r.rereadBill));
+    var surv = isFinite(o.survPct) ? Math.max(0, Math.min(100, o.survPct)) : 0;
+    donut('cx-donut', [[r.summary, LIME], [Math.max(0, o.windowTk - r.summary), ROSE]],
+      surv.toFixed(1) + '%');
   }
 
   function renderRetry() {
-    var r = Calcs.retryStorm({
+    var o = {
       tasksDay: num('rt-tasks', 10000), retries: num('rt-retries', 2),
       attemptCost: num('rt-cost', 0.05)
-    });
+    };
+    var r = Calcs.retryStorm(o);
     set('rt-daily', money(r.daily, 0) + ' / day');
-    set('rt-monthly', money(r.monthly, 0) + ' / month');
+    set('rt-monthly', money(r.monthly, 0));
+    var waste = Math.max(0, o.retries);
+    donut('rt-donut', [[1, CYAN], [waste, ROSE]], pct(waste, 1 + waste));
   }
 
   function renderErrorBudget() {
-    var r = Calcs.errorBudget({
+    var o = {
       slo: num('eb-slo', 99.9), consumed: num('eb-used', 12),
       burn: num('eb-burn', 2)
-    });
+    };
+    var r = Calcs.errorBudget(o);
     set('eb-budget', big(r.budget, 1) + ' min / month');
     set('eb-left', big(r.left, 1) + ' min left');
-    set('eb-days', r.daysLeft.toFixed(1) + ' days to exhaustion');
+    set('eb-days', r.daysLeft.toFixed(1));
+    donut('eb-donut', [[r.left, LIME], [o.consumed, ROSE]], pct(r.left, r.budget));
   }
 
   function renderHpa() {
@@ -172,9 +214,12 @@
       target: num('hpa-target', 60), max: num('hpa-max', 20)
     };
     var r = Calcs.hpa(o);
-    set('hpa-desired', big(r.desired, 0) + ' replicas');
+    set('hpa-desired', big(r.desired, 0));
     set('hpa-delta', (r.delta >= 0 ? '+' : '') + r.delta + ' to add');
     set('hpa-cap', r.capped ? 'CAPPED, raise max' : 'within max ' + o.max);
+    var swing = Math.abs(r.delta);
+    donut('hpa-donut', [[o.rep, CYAN], [swing, r.delta >= 0 ? LIME : ROSE]],
+      (r.delta >= 0 ? '+' : '') + r.delta);
   }
 
   function renderObs() {
@@ -183,8 +228,11 @@
       priceGB: num('obs-price', 0.3), budget: num('obs-budget', 20000)
     });
     set('obs-gb', big(r.gbDay, 0) + ' GB / day');
-    set('obs-cost', money(r.monthly, 0) + ' / month');
+    set('obs-cost', money(r.monthly, 0));
     set('obs-keep', r.keepPct.toFixed(1) + '% keep rate');
+    var kept = r.monthly * (r.keepPct / 100);
+    donut('obs-donut', [[kept, LIME], [Math.max(0, r.monthly - kept), ROSE]],
+      r.keepPct.toFixed(1) + '%');
   }
 
   function renderPool() {
@@ -194,8 +242,10 @@
     };
     var r = Calcs.poolSize(o);
     set('pool-conc', big(r.conc, 0) + ' concurrent');
-    set('pool-total', big(r.pool, 0) + ' connections');
+    set('pool-total', big(r.pool, 0));
     set('pool-perpod', big(r.perPod, 0) + ' / pod');
+    donut('pool-donut', [[r.conc, CYAN], [Math.max(0, r.pool - r.conc), LIME]],
+      pct(r.conc, r.pool));
   }
 
   function renderDowntime() {
@@ -205,7 +255,8 @@
     });
     set('dt-loss', money(r.loss, 0) + ' lost');
     set('dt-sla', money(r.credit, 0) + ' credit');
-    set('dt-total', money(r.total, 0) + ' exposure');
+    set('dt-total', money(r.total, 0));
+    donut('dt-donut', [[r.loss, ROSE], [r.credit, CYAN]], pct(r.loss, r.total));
   }
 
   function renderAll() {
@@ -234,6 +285,40 @@
       bind(['dt-rev', 'dt-mins', 'dt-bill', 'dt-credit'], renderDowntime);
       renderAll();
     }
+    /* Preset pills: data-set="id:value;id:value" sets inputs and re-renders. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-set]'), function (b) {
+      b.addEventListener('click', function () {
+        var group = b.parentElement;
+        if (group) Array.prototype.forEach.call(
+          group.querySelectorAll('.radar-filter'),
+          function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        b.getAttribute('data-set').split(';').forEach(function (pair) {
+          var kv = pair.split(':'), el = document.getElementById(kv[0]);
+          if (el && kv.length === 2) el.value = kv[1];
+        });
+        renderAll();
+      });
+    });
+    /* Reset buttons: data-reset="section-id" empties that card's inputs
+       and returns its result, mix headline and chart to the idle state. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-reset]'), function (b) {
+      b.addEventListener('click', function () {
+        var sec = document.getElementById(b.getAttribute('data-reset'));
+        if (!sec) return;
+        Array.prototype.forEach.call(sec.querySelectorAll('input'),
+          function (el) { el.value = ''; });
+        Array.prototype.forEach.call(sec.querySelectorAll('.radar-filter'),
+          function (x) { x.classList.remove('active'); });
+        Array.prototype.forEach.call(
+          sec.querySelectorAll('.calc-result-value, .radar-trend-value'),
+          function (el) { el.textContent = '-'; });
+        Array.prototype.forEach.call(sec.querySelectorAll('.calc-donut'),
+          function (el) { el.style.background = ''; });
+        var mix = sec.querySelector('.calc-donut-center span');
+        if (mix) mix.textContent = '-';
+      });
+    });
     var tabBtns = (typeof document !== 'undefined' && document.querySelectorAll) ?
       Array.prototype.slice.call(document.querySelectorAll('.calc-tab')) : [];
     var PANELS = ['token-bill', 'rps-bill', 'compaction', 'retry-storm', 'error-budget', 'hpa-size', 'obs-sample', 'pool-size', 'downtime-cost'];

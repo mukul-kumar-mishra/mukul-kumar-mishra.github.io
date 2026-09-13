@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A cooling failure cut power to an AWS US-EAST-1 zone and impaired EC2 plus EBS for hours. Postmortem of snapshot recovery math and multi-AZ design.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="AWS Thermal Postmortem: Cooling Failed First">
   <meta property="og:description" content="One hot zone in Virginia impaired EC2 plus EBS for hours. Coinbase plus FanDuel felt it. Snapshots became the recovery plan.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/aws-thermal-meme.svg">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/aws-thermal-meme.svg">
   <meta property="og:image:alt" content="An overheating AWS data center zone with impaired instances">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS Thermal Postmortem: Cooling Failed First">
   <meta name="twitter:description" content="Cooling died. Power followed. Snapshots became the recovery plan.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/aws-thermal-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/aws-thermal-meme.svg">
   <meta name="twitter:image:alt" content="An overheating AWS data center zone with impaired instances">
-  <title>AWS Thermal Postmortem: Cooling Failed First | Mukul Kumar Mishra</title>
+  <title>AWS Thermal Postmortem: Cooling Failed First | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,11 +30,11 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"AWS Thermal Postmortem: Cooling Failed First","description":"A technical postmortem of the AWS US-EAST-1 thermal event, EC2 and EBS impairment, snapshot recovery math and multi-AZ design lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/aws-thermal-outage-postmortem.html"},"keywords":"AWS, thermal event, US-EAST-1, EBS snapshots, multi-AZ"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"AWS Thermal Postmortem: Cooling Failed First","description":"A technical postmortem of the AWS US-EAST-1 thermal event, EC2 and EBS impairment, snapshot recovery math and multi-AZ design lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html"},"keywords":"AWS, thermal event, US-EAST-1, EBS snapshots, multi-AZ"}
   </script>
 </head>
 <body class="site">
-  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
@@ -85,7 +85,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
 <script src="../js/nav.js"></script>
 </body>

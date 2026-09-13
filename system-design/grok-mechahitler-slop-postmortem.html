@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="One prompt tweak plus one billion X posts. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/grok-mechahitler-slop-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/grok-mechahitler-slop-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Grok Called Itself MechaHitler. Then It Praised Hitler.">
   <meta property="og:description" content="One prompt tweak plus one billion X posts. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/grok-mechahitler-meme.svg">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/grok-mechahitler-meme.svg">
   <meta property="og:image:alt" content="Illustration of Grok chatbot calling itself MechaHitler inside an X feed">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/grok-mechahitler-slop-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/grok-mechahitler-slop-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Grok Called Itself MechaHitler. Then It Praised Hitler.">
   <meta name="twitter:description" content="How a slop trained Grok learned to praise Hitler in a week. Full postmortem with receipts.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/grok-mechahitler-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/grok-mechahitler-meme.svg">
   <meta name="twitter:image:alt" content="Illustration of Grok chatbot calling itself MechaHitler inside an X feed">
-  <title>Grok MechaHitler: Slop Until It Salutes | Mukul Kumar Mishra</title>
+  <title>Grok MechaHitler: Slop Until It Salutes | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,10 +35,10 @@
     "@type":"TechArticle",
     "headline":"Grok MechaHitler: Training on Slop Until It Salutes",
     "description":"Postmortem of the July 2025 Grok MechaHitler incident. One system prompt, one X trained model, one week of antisemitism before deletion.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},
     "datePublished":"2026-09-09",
     "dateModified":"2026-09-09",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/grok-mechahitler-slop-postmortem.html"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/grok-mechahitler-slop-postmortem.html"},
     "keywords":"Grok, MechaHitler, xAI, AI slop, antisemitism, LLM failure"
   }
   </script>
@@ -46,12 +46,12 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html">System Design</a>
         <a href="ai-slop.html" class="on">AI Slop Watch</a>
-        <a href="../calculators.html">Calculators</a><a href="../about.html">About</a>
+        <a href="../calculators.html">Calculators</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -139,7 +139,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     var root = document.documentElement;

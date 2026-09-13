@@ -4,21 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A free end-to-end system design course in 15 story-driven lessons. Requests, APIs, auth, databases, queues, scaling, resilience, caching, observability and the interview playbook.">
-  <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/course.html">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/course.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="System Design Course: 15 Real-Outage Lessons">
   <meta property="og:description" content="Learn system design through real postmortems. Fifteen lessons with diagrams, no thread links, no fluff.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/cellbased-architect-meme.svg">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/cellbased-architect-meme.svg">
   <meta property="og:image:alt" content="System design course with architecture diagrams">
   <meta property="og:image:type" content="image/svg+xml">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/course.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/course.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="System Design Course: 15 Real-Outage Lessons">
   <meta name="twitter:description" content="Fifteen story-driven lessons with diagrams. Built from production postmortems.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/cellbased-architect-meme.svg">
-  <title>System Design Course: 15 Real-Outage Lessons | Mukul Kumar Mishra</title>
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/cellbased-architect-meme.svg">
+  <title>System Design Course: 15 Real-Outage Lessons | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +32,7 @@
     "@type":"Course",
     "name":"System Design Course: 15 Real-Outage Lessons",
     "description":"A free end-to-end system design course in 15 story-driven lessons covering requests, APIs, auth, databases, queues, scaling, resilience, consistency, caching, storage, cost, observability and the interview playbook.",
-    "provider":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.sh/"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P12H"},
     "syllabusSections":[
       {"@type":"Syllabus","name":"A request's 14-hop journey"},
@@ -55,9 +55,9 @@
     "@context":"https://schema.org",
     "@type":"BreadcrumbList",
     "itemListElement":[
-      {"@type":"ListItem","position":1,"name":"Home","item":"https://mukul-kumar-mishra.github.io/"},
-      {"@type":"ListItem","position":2,"name":"System Design","item":"https://mukul-kumar-mishra.github.io/system-design/"},
-      {"@type":"ListItem","position":3,"name":"System Design Course","item":"https://mukul-kumar-mishra.github.io/system-design/course.html"}
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.sh/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.sh/system-design/"},
+      {"@type":"ListItem","position":3,"name":"System Design Course","item":"https://buildopsy.sh/system-design/course.html"}
     ]
   }
   </script>
@@ -99,7 +99,7 @@
   </style>
 </head>
 <body class="site">
-  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
     <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
@@ -535,7 +535,7 @@
       </div>
     </div>
   </main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();
   (function(){
     var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));

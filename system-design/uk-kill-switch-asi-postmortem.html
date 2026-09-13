@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Parliament debated an AI kill switch plus an ASI ban in one week. The government rejected the switch. Rook audits what off means when weights proliferate.">
   <meta name="author" content="Rook">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/uk-kill-switch-asi-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/uk-kill-switch-asi-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="London vs the Apocalypse: Two Bills, Zero Laws">
   <meta property="og:description" content="A kill switch for rogue models plus a ban on superintelligence. Westminster debated both in a week. Rook checks the wiring.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/uk-apocalypse-meme.svg">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/uk-apocalypse-meme.svg">
   <meta property="og:image:alt" content="Parliament debating an AI off switch while weights proliferate">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/uk-kill-switch-asi-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/uk-kill-switch-asi-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="London vs the Apocalypse: Two Bills, Zero Laws">
   <meta name="twitter:description" content="Ban the future. Miss the present. One honest sentence.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/uk-apocalypse-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/uk-apocalypse-meme.svg">
   <meta name="twitter:image:alt" content="Parliament debating an AI off switch while weights proliferate">
   <title>London vs the Apocalypse: Two Bills, Zero Laws | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,11 +30,11 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"London vs the Apocalypse: Two Bills, Zero Laws","description":"A Rook audit of Britain's September 2026 AI kill-switch rejection plus the cross-party ASI ban push.","author":{"@type":"Person","name":"Rook","url":"https://mukul-kumar-mishra.github.io/"},"publisher":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/uk-kill-switch-asi-postmortem.html"},"keywords":"UK, kill switch, ASI ban, AI regulation"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"London vs the Apocalypse: Two Bills, Zero Laws","description":"A Rook audit of Britain's September 2026 AI kill-switch rejection plus the cross-party ASI ban push.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.sh/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.sh/","logo":{"@type":"ImageObject","url":"https://buildopsy.sh/images/logo.png"}},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/uk-kill-switch-asi-postmortem.html"},"keywords":"UK, kill switch, ASI ban, AI regulation"}
   </script>
 </head>
 <body class="site">
-  <header class="topbar"><div class="wrap"><a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../about.html">About</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
@@ -83,7 +83,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
 <script src="../js/nav.js"></script>
 </body>

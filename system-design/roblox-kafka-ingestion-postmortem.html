@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Roblox routes 18 trillion Kafka messages a day. Postmortem of tiers, SSD fleets, standby clusters and the 1M RPS cost that proves half could wait.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/roblox-kafka-ingestion-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="18 Trillion Messages a Day. Half of Them Could Have Waited.">
   <meta property="og:description" content="Roblox routes 18 trillion Kafka messages a day. Postmortem of tiers, SSD fleets, standby clusters and the 1M RPS cost that proves half could wait.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/roblox-kafka-ingestion-postmortem.png">
   <meta property="og:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/roblox-kafka-ingestion-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="18 Trillion Messages a Day. Half of Them Could Have Waited.">
   <meta name="twitter:description" content="Roblox Kafka teardown: tiered traffic, standby clusters, gossip ceilings, plus a normalized cost model.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/roblox-kafka-ingestion-postmortem.png">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/roblox-kafka-ingestion-postmortem.png">
   <meta name="twitter:image:alt" content="Roblox event ingestion architecture showing producers, latency tiers, Kafka clusters and cost pressure">
-  <title>Roblox: 18 Trillion Kafka Messages a Day | Mukul Kumar Mishra</title>
+  <title>Roblox: 18 Trillion Kafka Messages a Day | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,10 +35,10 @@
     "@type":"TechArticle",
     "headline":"Roblox: 18 Trillion Kafka Messages a Day",
     "description":"A system design postmortem of Roblox event ingestion at 18 trillion messages a day. Kafka tiers, SSD fleets, standby clusters, gossip limits, plus a normalized 1M msgs/sec cost model.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},
     "datePublished":"2026-09-06",
     "dateModified":"2026-09-06",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/roblox-kafka-ingestion-postmortem.html"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/roblox-kafka-ingestion-postmortem.html"},
     "keywords":"Roblox system design, Kafka at scale, event ingestion cost, Redis gossip protocol, infrastructure cost"
   }
   </script>
@@ -46,12 +46,12 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
-        <a href="../calculators.html">Calculators</a><a href="../about.html">About</a>
+        <a href="../calculators.html">Calculators</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -157,7 +157,7 @@
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
   </div></main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     var root = document.documentElement;

@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Notion scaled to 200 billion blocks on 480 Postgres shards. Postmortem of CDC, Kafka, Hudi and the warehouse cost hiding in a blank page.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.sh/system-design/notion-data-lake-cost-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="The Workspace That Ate the Warehouse: Notion's Data Architecture">
   <meta property="og:description" content="Notion scaled to 200 billion blocks on 480 Postgres shards. Postmortem of CDC, Kafka, Hudi and the warehouse cost hiding in a blank page.">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/articles/notion-data-lake-cost-postmortem.png">
+  <meta property="og:image" content="https://buildopsy.sh/images/articles/notion-data-lake-cost-postmortem.png">
   <meta property="og:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html">
-  <meta property="og:site_name" content="Mukul Kumar Mishra | System Design">
+  <meta property="og:url" content="https://buildopsy.sh/system-design/notion-data-lake-cost-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="The Workspace That Ate the Warehouse">
   <meta name="twitter:description" content="Notion's 200B-block data architecture, modeled RPS, cloud-cost teardownand practical ways to cut the bill.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/articles/notion-data-lake-cost-postmortem.png">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/notion-data-lake-cost-postmortem.png">
   <meta name="twitter:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
-  <title>Notion: The Workspace That Ate the Warehouse | Mukul Kumar Mishra</title>
+  <title>Notion: The Workspace That Ate the Warehouse | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,10 +32,10 @@
     "@type":"TechArticle",
     "headline":"Notion: The Workspace That Ate the Warehouse",
     "description":"A system design postmortem of Notion's block database, data lake, vector search, RPS assumptionsand cloud-cost optimization.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://mukul-kumar-mishra.github.io/"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},
     "datePublished":"2026-08-31",
     "dateModified":"2026-08-31",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://mukul-kumar-mishra.github.io/system-design/notion-data-lake-cost-postmortem.html"},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/notion-data-lake-cost-postmortem.html"},
     "keywords":"Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization"
   }
   </script>
@@ -43,12 +43,12 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="../index.html">Mukul<span class="acc"> Mishra</span></a>
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         <a href="../index.html">Home</a>
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
-        <a href="../calculators.html">Calculators</a><a href="../about.html">About</a>
+        <a href="../calculators.html">Calculators</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -269,7 +269,7 @@
     </div>
   </main>
 
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Mukul Kumar Mishra</span><span><a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();

@@ -4,28 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Nine free engineering calculators that run in the browser. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost in seconds.">
-  <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://mukul-kumar-mishra.github.io/calculators.html">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.sh/calculators.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Mukul Kumar Mishra">
+  <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
   <meta property="og:description" content="Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost. The postmortem math, runnable in the browser.">
-  <meta property="og:url" content="https://mukul-kumar-mishra.github.io/calculators.html">
-  <meta property="og:image" content="https://mukul-kumar-mishra.github.io/images/logo.png">
+  <meta property="og:url" content="https://buildopsy.sh/calculators.html">
+  <meta property="og:image" content="https://buildopsy.sh/images/logo.png">
   <meta property="og:image:alt" content="Free engineering calculators for cost, SLO and scaling">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1408">
-  <meta property="og:image:height" content="768">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling">
   <meta name="twitter:description" content="Nine browser tools for token bills, error budgets, HPA sizing and downtime cost.">
-  <meta name="twitter:image" content="https://mukul-kumar-mishra.github.io/images/logo.png">
-  <title>Free Engineering Calculators: Cost, SLO, Scaling | Mukul Kumar Mishra</title>
-  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+  <meta name="twitter:image" content="https://buildopsy.sh/images/logo.png">
+  <title>Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy</title>
+  <link rel="icon" href="images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/radar.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
   {
@@ -44,12 +45,12 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="index.html">Mukul<span class="acc"> Mishra</span></a>
+      <a class="brand brand-logo" href="index.html"><img src="images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         <a href="index.html">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="calculators.html" class="on">Calculators</a><a href="about.html">About</a>
+        <a href="calculators.html" class="on">Calculators</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -86,40 +87,67 @@
       <button class="calc-tab" role="tab" data-target="pool-size" aria-selected="false">Pool Sizer</button>
       <button class="calc-tab" role="tab" data-target="downtime-cost" aria-selected="false">Downtime Cost</button>
     </div>
-    <noscript><style>.calc-tabs{display:none}</style></noscript>
+    <noscript><style>.calc-tabs{display:none}</style><p class="fl-desc">These calculators need JavaScript. Every formula is documented in the linked teardowns.</p></noscript>
 
     <section class="sec" id="token-bill">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="coins"></i> Token Bill Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits plus 1.5k output tokens.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-in">Input tokens / turn</label><input type="number" id="tk-in" value="80000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cache">Cache hit rate (percent)</label><input type="number" id="tk-cache" value="87.5" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-cachep">Cached price ($ / M tokens)</label><input type="number" id="tk-cachep" value="0.3" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-freshp">Fresh price ($ / M tokens)</label><input type="number" id="tk-freshp" value="3" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-out">Output tokens / turn</label><input type="number" id="tk-out" value="1500" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-outp">Output price ($ / M tokens)</label><input type="number" id="tk-outp" value="15" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="tk-perturn">-</div><div class="lbl">Cost per turn</div></div>
-        <div class="stat"><div class="num" id="tk-monthly">-</div><div class="lbl">Monthly model spend</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">Your $20 Subscription Meets a Paywall at 11:47 AM</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly model spend</span>
+              <span class="radar-count-description"> — One turn priced from cache mix, scaled to a full month of agent traffic.</span>
+            <div class="radar-filters" aria-label="Turn presets">
+              <button class="radar-filter" data-set="tk-turns:100000">100K TURNS</button>
+              <button class="radar-filter active" data-set="tk-turns:1000000">1M TURNS</button>
+              <button class="radar-filter" data-set="tk-turns:10000000">10M TURNS</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-in">Input tokens / turn</label><input type="number" id="tk-in" value="80000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-cache">Cache hit rate (percent)</label><input type="number" id="tk-cache" value="87.5" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-cachep">Cached price ($ / M tokens)</label><input type="number" id="tk-cachep" value="0.3" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-freshp">Fresh price ($ / M tokens)</label><input type="number" id="tk-freshp" value="3" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-out">Output tokens / turn</label><input type="number" id="tk-out" value="1500" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-outp">Output price ($ / M tokens)</label><input type="number" id="tk-outp" value="15" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="tk-turns">Turns / month</label><input type="number" id="tk-turns" value="1000000" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly spend</div>
+                <div class="calc-result-value" id="tk-monthly">-</div>
+                <div class="radar-count-description">per month · turns × cost per turn</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix per turn</div>
+                  <div class="calc-donut" id="tk-donut" role="img" aria-label="Share of per-turn cost across cached input, fresh input and output"><div class="calc-donut-center"><span id="tk-mix-top">-</span><small>cached</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Cached input</span></li>
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Fresh input</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Output</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="token-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Cost per turn</div>
+              <div class="radar-trend-value" id="tk-perturn">-</div>
+              <div class="radar-trend-sub">cached plus fresh plus output</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion architecture and cost illustration" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Developer Tools</span></div><h3><a class="feature-link-title" href="system-design/cursor-claude-token-exhaustion-postmortem.html">Your $20 Subscription Meets a Paywall at 11:47 AM</a></h3><p class="fl-desc">Token limits, context rot, compaction cliffs and the productivity math vendors keep postponing.</p></article>
     </section>
 
     <section class="sec" id="rps-bill">
@@ -127,30 +155,61 @@
         <h2 class="sec-title"><i data-lucide="activity"></i> RPS Envelope Estimator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, plus fixed platform spend.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="rps-rps">Events / second</label><input type="number" id="rps-rps" value="1000000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="rps-price">Blended price ($ / M events)</label><input type="number" id="rps-price" value="1.8" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="rps-fixed">Fixed platform spend ($k / month)</label><input type="number" id="rps-fixed" value="2600" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="rps-monthly">-</div><div class="lbl">Monthly envelope</div></div>
-        <div class="stat"><div class="num" id="rps-daily">-</div><div class="lbl">Daily burn</div></div>
-        <div class="stat"><div class="num" id="rps-perreq">-</div><div class="lbl">Cost per request</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">The Dashboard That Deployed Itself</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly envelope</span>
+              <span class="radar-count-description"> — Edge throughput plus fixed platform, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Throughput presets">
+              <button class="radar-filter" data-set="rps-rps:100000">100K RPS</button>
+              <button class="radar-filter active" data-set="rps-rps:1000000">1M RPS</button>
+              <button class="radar-filter" data-set="rps-rps:10000000">10M RPS</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="rps-rps">Events / second</label><input type="number" id="rps-rps" value="1000000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rps-price">Blended price ($ / M events)</label><input type="number" id="rps-price" value="1.8" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rps-fixed">Fixed platform spend ($k / month)</label><input type="number" id="rps-fixed" value="2600" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly envelope</div>
+                <div class="calc-result-value" id="rps-monthly">-</div>
+                <div class="radar-count-description">per month · rate × seconds × price</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Monthly mix</div>
+                  <div class="calc-donut" id="rps-donut" role="img" aria-label="Share of monthly envelope across usage variable cost and fixed platform spend"><div class="calc-donut-center"><span id="rps-mix-top">-</span><small>variable</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Usage variable</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Fixed platform</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="rps-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Daily burn</div>
+              <div class="radar-trend-value" id="rps-daily">-</div>
+              <div class="radar-trend-sub">envelope per day</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Cost per request</div>
+              <div class="radar-trend-value" id="rps-perreq">-</div>
+              <div class="radar-trend-sub">blended unit cost</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/replit-agent-runtime-postmortem.png" alt="Replit Agent system design architecture showing prompt, agent, sandbox, runtime, database, deployment and cost pressure" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Agent Runtime</span></div><h3><a class="feature-link-title" href="system-design/replit-agent-runtime-postmortem.html">The Dashboard That Deployed Itself</a></h3><p class="fl-desc">Sandbox execution, agent retries and the cost of prompt-to-production infrastructure.</p></article>
     </section>
 
     <section class="sec" id="compaction">
@@ -158,63 +217,118 @@
         <h2 class="sec-title"><i data-lucide="scissors"></i> Compaction Survival Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. Defaults mirror the measured median: 575k crushed to about 4.3k, then roughly 28 steps of re-reading.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="cx-win">Window tokens</label><input type="number" id="cx-win" value="575000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="cx-surv">Survival rate (percent)</label><input type="number" id="cx-surv" value="0.75" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="cx-steps">Re-read steps after compaction</label><input type="number" id="cx-steps" value="28" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="cx-stepc">Cost per re-read step ($)</label><input type="number" id="cx-stepc" value="0.074" step="0.001" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="cx-summary">-</div><div class="lbl">Summary size</div></div>
-        <div class="stat"><div class="num" id="cx-lost">-</div><div class="lbl">Context lost</div></div>
-        <div class="stat"><div class="num" id="cx-reread">-</div><div class="lbl">Re-read bill</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/cursor-claude-token-exhaustion-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">Your $20 Subscription Meets a Paywall at 11:47 AM</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Re-read bill</span>
+              <span class="radar-count-description"> — What it costs to rebuild state after the window gets crushed.</span>
+            <div class="radar-filters" aria-label="Window presets">
+              <button class="radar-filter" data-set="cx-win:200000">200K WINDOW</button>
+              <button class="radar-filter active" data-set="cx-win:575000">575K WINDOW</button>
+              <button class="radar-filter" data-set="cx-win:1000000">1M WINDOW</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="cx-win">Window tokens</label><input type="number" id="cx-win" value="575000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="cx-surv">Survival rate (percent)</label><input type="number" id="cx-surv" value="0.75" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="cx-steps">Re-read steps after compaction</label><input type="number" id="cx-steps" value="28" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="cx-stepc">Cost per re-read step ($)</label><input type="number" id="cx-stepc" value="0.074" step="0.001" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Re-read bill</div>
+                <div class="calc-result-value" id="cx-reread">-</div>
+                <div class="radar-count-description">steps × cost per step</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Window fate</div>
+                  <div class="calc-donut" id="cx-donut" role="img" aria-label="Share of context window across survived summary and lost context"><div class="calc-donut-center"><span id="cx-mix-top">-</span><small>survived</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Survived</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Lost</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="compaction" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Summary size</div>
+              <div class="radar-trend-value" id="cx-summary">-</div>
+              <div class="radar-trend-sub">tokens that survive</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Context lost</div>
+              <div class="radar-trend-value" id="cx-lost">-</div>
+              <div class="radar-trend-sub">share of the window</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion architecture and cost illustration" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Developer Tools</span></div><h3><a class="feature-link-title" href="system-design/cursor-claude-token-exhaustion-postmortem.html">Your $20 Subscription Meets a Paywall at 11:47 AM</a></h3><p class="fl-desc">Token limits, context rot, compaction cliffs and the productivity math vendors keep postponing.</p></article>
     </section>
-
-
 
     <section class="sec" id="retry-storm">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="refresh-cw"></i> Retry-Storm Cost Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Failed agent attempts rebill every retry. Multiply tasks by retries by attempt cost and watch the storm's share of the budget.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="rt-tasks">Agent tasks / day</label><input type="number" id="rt-tasks" value="10000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="rt-retries">Wasted retries / task</label><input type="number" id="rt-retries" value="2" step="0.1" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="rt-cost">Cost / attempt ($)</label><input type="number" id="rt-cost" value="0.05" step="0.01" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="rt-daily">-</div><div class="lbl">Daily waste</div></div>
-        <div class="stat"><div class="num" id="rt-monthly">-</div><div class="lbl">Monthly waste</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/replit-agent-runtime-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">The Dashboard That Deployed Itself</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly waste</span>
+              <span class="radar-count-description"> — Failed attempts, rebilled every single day.</span>
+            <div class="radar-filters" aria-label="Retry presets">
+              <button class="radar-filter" data-set="rt-retries:1">1 RETRY</button>
+              <button class="radar-filter active" data-set="rt-retries:2">2 RETRIES</button>
+              <button class="radar-filter" data-set="rt-retries:5">5 RETRIES</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="rt-tasks">Agent tasks / day</label><input type="number" id="rt-tasks" value="10000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rt-retries">Wasted retries / task</label><input type="number" id="rt-retries" value="2" step="0.1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rt-cost">Cost / attempt ($)</label><input type="number" id="rt-cost" value="0.05" step="0.01" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly waste</div>
+                <div class="calc-result-value" id="rt-monthly">-</div>
+                <div class="radar-count-description">per month · tasks × retries × cost</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Attempt mix</div>
+                  <div class="calc-donut" id="rt-donut" role="img" aria-label="Share of attempts across first tries and wasted retries"><div class="calc-donut-center"><span id="rt-mix-top">-</span><small>wasted</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">First attempts</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Wasted retries</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="retry-storm" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Daily waste</div>
+              <div class="radar-trend-value" id="rt-daily">-</div>
+              <div class="radar-trend-sub">rebilled every day</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/replit-agent-runtime-postmortem.png" alt="Replit Agent system design architecture showing prompt, agent, sandbox, runtime, database, deployment and cost pressure" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Agent Runtime</span></div><h3><a class="feature-link-title" href="system-design/replit-agent-runtime-postmortem.html">The Dashboard That Deployed Itself</a></h3><p class="fl-desc">Sandbox execution, agent retries and the cost of prompt-to-production infrastructure.</p></article>
     </section>
 
     <section class="sec" id="error-budget">
@@ -222,30 +336,61 @@
         <h2 class="sec-title"><i data-lucide="shield-alert"></i> Error Budget Burn Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="eb-slo">SLO (percent)</label><input type="number" id="eb-slo" value="99.9" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="eb-used">Budget already burned (minutes)</label><input type="number" id="eb-used" value="12" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="eb-burn">Current burn multiple</label><input type="number" id="eb-burn" value="2" step="0.1" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="eb-budget">-</div><div class="lbl">Monthly budget</div></div>
-        <div class="stat"><div class="num" id="eb-left">-</div><div class="lbl">Budget left</div></div>
-        <div class="stat"><div class="num" id="eb-days">-</div><div class="lbl">Days to exhaustion</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/simultaneous-ai-outage-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">Simultaneous AI Model Outage: The Single Point We All Ignored</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Error budget runway</span>
+              <span class="radar-count-description"> — Days until the budget runs dry at this burn rate.</span>
+            <div class="radar-filters" aria-label="SLO presets">
+              <button class="radar-filter active" data-set="eb-slo:99.9">99.9 SLO</button>
+              <button class="radar-filter" data-set="eb-slo:99.95">99.95 SLO</button>
+              <button class="radar-filter" data-set="eb-slo:99.99">99.99 SLO</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-slo">SLO (percent)</label><input type="number" id="eb-slo" value="99.9" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-used">Budget already burned (minutes)</label><input type="number" id="eb-used" value="12" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-burn">Current burn multiple</label><input type="number" id="eb-burn" value="2" step="0.1" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Runway</div>
+                <div class="calc-result-value" id="eb-days">-</div>
+                <div class="radar-count-description">days remaining</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Budget mix</div>
+                  <div class="calc-donut" id="eb-donut" role="img" aria-label="Share of error budget across minutes left and minutes burned"><div class="calc-donut-center"><span id="eb-mix-top">-</span><small>left</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Budget left</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Burned</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="error-budget" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Monthly budget</div>
+              <div class="radar-trend-value" id="eb-budget">-</div>
+              <div class="radar-trend-sub">minutes per month</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Budget left</div>
+              <div class="radar-trend-value" id="eb-left">-</div>
+              <div class="radar-trend-sub">minutes remaining</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/simultaneous-ai-outage-postmortem.png" alt="Four frontier AI providers failing together inside one shared four-hour window" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/simultaneous-ai-outage-postmortem.html">Simultaneous AI Model Outage: The Single Point We All Ignored</a></h3><p class="fl-desc">Four frontier providers dark in one window, and the shared layer beneath them.</p></article>
     </section>
 
     <section class="sec" id="hpa-size">
@@ -253,31 +398,62 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> HPA Replica Estimator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">The real Kubernetes autoscaler formula. Desired replicas equal current replicas times current utilization over target utilization, rounded up. Defaults scale 8 replicas at 72 percent toward a 60 percent target.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (percent)</label><input type="number" id="hpa-util" value="72" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (percent)</label><input type="number" id="hpa-target" value="60" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="hpa-desired">-</div><div class="lbl">Desired replicas</div></div>
-        <div class="stat"><div class="num" id="hpa-delta">-</div><div class="lbl">Scale action</div></div>
-        <div class="stat"><div class="num" id="hpa-cap">-</div><div class="lbl">Cap status</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/cell-based-control-plane.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">Rethinking Control Planes: Cell-Based Architectures for Zero-Blast Radius</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Desired replicas</span>
+              <span class="radar-count-description"> — The autoscaler formula, computed live.</span>
+            <div class="radar-filters" aria-label="Utilization presets">
+              <button class="radar-filter" data-set="hpa-util:50">50 PCT CPU</button>
+              <button class="radar-filter active" data-set="hpa-util:72">72 PCT CPU</button>
+              <button class="radar-filter" data-set="hpa-util:95">95 PCT CPU</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (percent)</label><input type="number" id="hpa-util" value="72" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (percent)</label><input type="number" id="hpa-target" value="60" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Desired</div>
+                <div class="calc-result-value" id="hpa-desired">-</div>
+                <div class="radar-count-description">replicas · current × util ÷ target</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Replica mix</div>
+                  <div class="calc-donut" id="hpa-donut" role="img" aria-label="Share of desired replicas across current replicas and replicas to add or remove"><div class="calc-donut-center"><span id="hpa-mix-top">-</span><small>current</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Current replicas</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">To add or remove</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="hpa-size" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Scale action</div>
+              <div class="radar-trend-value" id="hpa-delta">-</div>
+              <div class="radar-trend-sub">replicas to add</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Cap status</div>
+              <div class="radar-trend-value" id="hpa-cap">-</div>
+              <div class="radar-trend-sub">against max replicas</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/cellbased-architect-meme.svg" alt="Cell-based control plane architecture with autonomous regional Raft cells" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Distributed Systems</span></div><h3><a class="feature-link-title" href="system-design/cell-based-control-plane.html">Rethinking Control Planes: Cell-Based Architecture</a></h3><p class="fl-desc">Regional isolation, failure containment and zero-blast-radius control planes.</p></article>
     </section>
 
     <section class="sec" id="obs-sample">
@@ -285,31 +461,62 @@
         <h2 class="sec-title"><i data-lucide="activity"></i> Observability Sampling Fitter</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Spans per second times bytes per span is your daily ingest. Price it, then compute the keep rate that fits the budget. Defaults ingest 50k spans a second at 2 KB against a $20k monthly budget.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="obs-rps">Spans / second</label><input type="number" id="obs-rps" value="50000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="obs-bytes">Bytes / span</label><input type="number" id="obs-bytes" value="2048" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="obs-price">Ingest price ($ / GB)</label><input type="number" id="obs-price" value="0.3" step="0.01" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="obs-budget">Monthly budget ($)</label><input type="number" id="obs-budget" value="20000" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="obs-gb">-</div><div class="lbl">Daily ingest</div></div>
-        <div class="stat"><div class="num" id="obs-cost">-</div><div class="lbl">Monthly cost unsampled</div></div>
-        <div class="stat"><div class="num" id="obs-keep">-</div><div class="lbl">Keep rate to fit budget</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/notion-data-lake-cost-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">The Workspace That Ate the Warehouse</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Unsampled monthly cost</span>
+              <span class="radar-count-description"> — Full-fidelity ingest, priced before sampling.</span>
+            <div class="radar-filters" aria-label="Budget presets">
+              <button class="radar-filter" data-set="obs-budget:5000">$5K BUDGET</button>
+              <button class="radar-filter active" data-set="obs-budget:20000">$20K BUDGET</button>
+              <button class="radar-filter" data-set="obs-budget:100000">$100K BUDGET</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="obs-rps">Spans / second</label><input type="number" id="obs-rps" value="50000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="obs-bytes">Bytes / span</label><input type="number" id="obs-bytes" value="2048" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="obs-price">Ingest price ($ / GB)</label><input type="number" id="obs-price" value="0.3" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="obs-budget">Monthly budget ($)</label><input type="number" id="obs-budget" value="20000" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly cost</div>
+                <div class="calc-result-value" id="obs-cost">-</div>
+                <div class="radar-count-description">per month · spans × bytes × price</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Ingest mix</div>
+                  <div class="calc-donut" id="obs-donut" role="img" aria-label="Share of ingest cost across kept spans and discarded spans"><div class="calc-donut-center"><span id="obs-mix-top">-</span><small>kept</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Kept</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Discarded</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="obs-sample" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Daily ingest</div>
+              <div class="radar-trend-value" id="obs-gb">-</div>
+              <div class="radar-trend-sub">gigabytes per day</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Keep rate to fit budget</div>
+              <div class="radar-trend-value" id="obs-keep">-</div>
+              <div class="radar-trend-sub">share worth keeping</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/notion-data-lake-cost-postmortem.png" alt="Notion data platform architecture with PostgreSQL sharding and data lake cost" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">Shards, CDC, vector search and the modeled bill of a 200-billion-block platform.</p></article>
     </section>
 
     <section class="sec" id="pool-size">
@@ -317,31 +524,62 @@
         <h2 class="sec-title"><i data-lucide="database"></i> Connection Pool Sizer</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Little's law for pools. Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor, spread across pods. Defaults mirror a 10k TPS payments switch at 45ms p99.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="pool-rps">Peak RPS</label><input type="number" id="pool-rps" value="10000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="pool-lat">p99 latency (ms)</label><input type="number" id="pool-lat" value="45" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="pool-safety">Safety factor</label><input type="number" id="pool-safety" value="1.5" step="0.1" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="pool-pods">Application pods</label><input type="number" id="pool-pods" value="40" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="pool-conc">-</div><div class="lbl">Concurrent in flight</div></div>
-        <div class="stat"><div class="num" id="pool-total">-</div><div class="lbl">Pool size</div></div>
-        <div class="stat"><div class="num" id="pool-perpod">-</div><div class="lbl">Connections / pod</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/razorpay-upi-kafka-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">Razorpay Kafka: 3,000 Connections Too Many</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Pool size</span>
+              <span class="radar-count-description"> — Little's law, plus a safety factor.</span>
+            <div class="radar-filters" aria-label="Latency presets">
+              <button class="radar-filter" data-set="pool-lat:20">20MS P99</button>
+              <button class="radar-filter active" data-set="pool-lat:45">45MS P99</button>
+              <button class="radar-filter" data-set="pool-lat:200">200MS P99</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="pool-rps">Peak RPS</label><input type="number" id="pool-rps" value="10000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="pool-lat">p99 latency (ms)</label><input type="number" id="pool-lat" value="45" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="pool-safety">Safety factor</label><input type="number" id="pool-safety" value="1.5" step="0.1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="pool-pods">Application pods</label><input type="number" id="pool-pods" value="40" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Pool size</div>
+                <div class="calc-result-value" id="pool-total">-</div>
+                <div class="radar-count-description">connections · RPS × p99 × safety</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Pool mix</div>
+                  <div class="calc-donut" id="pool-donut" role="img" aria-label="Share of pool across connections in flight and spare headroom"><div class="calc-donut-center"><span id="pool-mix-top">-</span><small>in flight</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">In flight</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Spare</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="pool-size" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Concurrent in flight</div>
+              <div class="radar-trend-value" id="pool-conc">-</div>
+              <div class="radar-trend-sub">Little's law output</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Connections / pod</div>
+              <div class="radar-trend-value" id="pool-perpod">-</div>
+              <div class="radar-trend-sub">spread across pods</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/razorpay-kafka-meme.svg" alt="Kafka partitions exploding past a connection cap at Razorpay scale" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Payment Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka: 3,000 Connections Too Many</a></h3><p class="fl-desc">Partitions, connectors and the IAM cap that ended the surge before it started.</p></article>
     </section>
 
     <section class="sec" id="downtime-cost">
@@ -349,31 +587,62 @@
         <h2 class="sec-title"><i data-lucide="coins"></i> Downtime Cost Calculator</h2>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
-      <div class="calc-grid">
-      <div class="calc-inputs">
-        <div style="margin:0 0 12px;"><label class="field-label" for="dt-rev">Monthly revenue at risk ($)</label><input type="number" id="dt-rev" value="4000000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="dt-mins">Downtime (minutes)</label><input type="number" id="dt-mins" value="240" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="dt-bill">Monthly cloud bill ($)</label><input type="number" id="dt-bill" value="320000" class="field-input"></div>
-        <div style="margin:0 0 12px;"><label class="field-label" for="dt-credit">SLA credit (percent of bill)</label><input type="number" id="dt-credit" value="25" class="field-input"></div>
-      </div>
-      <div class="calc-results">
-        <div class="calc-results-label">Live result</div>
-      <div class="grid4">
-        <div class="stat"><div class="num" id="dt-loss">-</div><div class="lbl">Revenue lost</div></div>
-        <div class="stat"><div class="num" id="dt-sla">-</div><div class="lbl">SLA credit owed</div></div>
-        <div class="stat"><div class="num" id="dt-total">-</div><div class="lbl">Total exposure</div></div>
-      </div>
-      </div>
-      </div>
-      <a class="article-card calc-card" href="system-design/aws-thermal-outage-postmortem.html" style="margin-top:18px;">
-        <div class="article-card-body">
-          <div class="fl-desc" style="margin:0 0 6px;">Suggested article</div>
-          <div class="title">AWS Thermal Postmortem: Cooling Failed First</div>
-          <span class="article-read">Read the teardown</span>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Total exposure</span>
+              <span class="radar-count-description"> — Revenue gone plus the credit you owe.</span>
+            <div class="radar-filters" aria-label="Downtime presets">
+              <button class="radar-filter" data-set="dt-mins:30">30 MIN</button>
+              <button class="radar-filter active" data-set="dt-mins:240">4 HOURS</button>
+              <button class="radar-filter" data-set="dt-mins:1440">24 HOURS</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="dt-rev">Monthly revenue at risk ($)</label><input type="number" id="dt-rev" value="4000000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="dt-mins">Downtime (minutes)</label><input type="number" id="dt-mins" value="240" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="dt-bill">Monthly cloud bill ($)</label><input type="number" id="dt-bill" value="320000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="dt-credit">SLA credit (percent of bill)</label><input type="number" id="dt-credit" value="25" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Exposure</div>
+                <div class="calc-result-value" id="dt-total">-</div>
+                <div class="radar-count-description">revenue lost + SLA credit</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Exposure mix</div>
+                  <div class="calc-donut" id="dt-donut" role="img" aria-label="Share of total exposure across revenue lost and SLA credit owed"><div class="calc-donut-center"><span id="dt-mix-top">-</span><small>lost</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Revenue lost</span></li>
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">SLA credit</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="downtime-cost" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Revenue lost</div>
+              <div class="radar-trend-value" id="dt-loss">-</div>
+              <div class="radar-trend-sub">minutes times revenue rate</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">SLA credit owed</div>
+              <div class="radar-trend-value" id="dt-sla">-</div>
+              <div class="radar-trend-sub">share of cloud bill</div>
+            </div>
+          </div>
         </div>
-        <img src="images/articles/aws-thermal-meme.svg" alt="An overheating AWS data center zone with impaired instances" style="width:50%;margin:0 auto 18px;display:block;border:1px solid var(--line);border-radius:10px;">
-      </a>
-
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/aws-thermal-outage-postmortem.html">AWS Thermal Postmortem: Cooling Failed First</a></h3><p class="fl-desc">Cooling died, power followed, and snapshots became the recovery plan.</p></article>
     </section>
 
 
@@ -381,8 +650,8 @@
 
   <footer class="footer">
     <div class="wrap">
-      <span>&copy; <span id="year"></span> Mukul Kumar Mishra</span>
-      <span><a href="layoff-radar.html">Tech Layoff Radar</a></span>
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="about.html">About</a> · <a href="layoff-radar.html">Tech Layoff Radar</a></span>
     </div>
   </footer>
 
