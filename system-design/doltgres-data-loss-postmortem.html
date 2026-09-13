@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Doltgres lost values when adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and safer recovery design.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/doltgres-data-loss-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Doltgres: The Backup That Forgot the Data">
   <meta property="og:description" content="Doltgres lost values after adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and recovery design.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/doltgres-loss-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/doltgres-loss-meme.svg">
   <meta property="og:image:alt" content="Doltgres backup losing metadata during garbage collection">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/doltgres-data-loss-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Doltgres: The Backup That Forgot the Data">
   <meta name="twitter:description" content="Out-of-band metadata, incomplete backup, upgrade and garbage collection. A database data-loss postmortem.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/doltgres-loss-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/doltgres-loss-meme.svg">
   <meta name="twitter:image:alt" content="Doltgres backup losing metadata during garbage collection">
   <title>Doltgres: The Backup That Forgot the Data | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"Doltgres: The Backup That Forgot the Data","description":"A technical postmortem of Doltgres adaptive encoding metadata loss during upgrade, backup and garbage collection.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/doltgres-data-loss-postmortem.html"},"keywords":"Doltgres, data loss, backup integrity, garbage collection"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Doltgres: The Backup That Forgot the Data","description":"A technical postmortem of Doltgres adaptive encoding metadata loss during upgrade, backup and garbage collection.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html"},"keywords":"Doltgres, data loss, backup integrity, garbage collection"}
   </script>
 </head>
 <body class="site">

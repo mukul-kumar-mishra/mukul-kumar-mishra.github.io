@@ -6,21 +6,21 @@
   <meta name="description" content="Cloudflare loaded a wrong internal file network-wide and error pages replaced X plus OpenAI. Postmortem of shared fate, KV coupling and the proxy bypass.">
   <meta name="keywords" content="Cloudflare outage, edge network, feature file incident, Workers KV, BYOIP, CDN resilience, config propagation">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/cloudflare-edge-outage-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/cloudflare-edge-outage-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Cloudflare Loaded the Wrong File">
   <meta property="og:description" content="One internal file published network-wide. Error spike everywhere. Workers KV fell with the proxy. Postmortem of shared fate at the edge.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/cloudflare-edge-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/cloudflare-edge-meme.svg">
   <meta property="og:image:alt" content="One bad config file taking down a global edge network">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/cloudflare-edge-outage-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/cloudflare-edge-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Cloudflare Loaded the Wrong File">
   <meta name="twitter:description" content="Shared fate, shared file. The proxy poisoned storage.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/cloudflare-edge-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/cloudflare-edge-meme.svg">
   <meta name="twitter:image:alt" content="One bad config file taking down a global edge network">
   <title>Cloudflare Loaded the Wrong File | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"Cloudflare Loaded the Wrong File","description":"A technical postmortem of Cloudflare's November 2025 network-wide outage from an incorrect internal feature file, Workers KV coupling and the proxy bypass fix.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/cloudflare-edge-outage-postmortem.html"},"keywords":"Cloudflare, edge, outage, Workers KV, config propagation"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Cloudflare Loaded the Wrong File","description":"A technical postmortem of Cloudflare's November 2025 network-wide outage from an incorrect internal feature file, Workers KV coupling and the proxy bypass fix.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/cloudflare-edge-outage-postmortem.html"},"keywords":"Cloudflare, edge, outage, Workers KV, config propagation"}
   </script>
 </head>
 <body class="site">

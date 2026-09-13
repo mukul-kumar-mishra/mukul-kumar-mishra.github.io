@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ChatGPT containers were isolated but shared Artifactory metadata became a cross-account channel. Rook audits hidden prompts, Gmail permissions and the fix.">
   <meta name="author" content="Rook">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/chatgpt-cross-account-channel-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="ChatGPT: The Isolated Container Had a Shared Channel">
   <meta property="og:description" content="ChatGPT containers were isolated but shared Artifactory metadata became a cross-account channel. Rook audits the architecture and fix.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/chatgpt-channel-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/chatgpt-channel-meme.svg">
   <meta property="og:image:alt" content="ChatGPT containers passing Gmail data through shared Artifactory metadata">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/chatgpt-cross-account-channel-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ChatGPT: The Isolated Container Had a Shared Channel">
   <meta name="twitter:description" content="A shared internal package service became a cross-account mailbox for a connected AI assistant.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/chatgpt-channel-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/chatgpt-channel-meme.svg">
   <meta name="twitter:image:alt" content="ChatGPT containers passing Gmail data through shared Artifactory metadata">
   <title>ChatGPT: The Isolated Container Had a Shared Channel | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"ChatGPT: The Isolated Container Had a Shared Channel","description":"A Rook audit of Check Point Research's ChatGPT cross-account Artifactory channel disclosure.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.sh/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.sh/","logo":{"@type":"ImageObject","url":"https://buildopsy.sh/images/logo.png"}},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/chatgpt-cross-account-channel-postmortem.html"},"keywords":"ChatGPT, agent security, Artifactory, cross-account channel"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"ChatGPT: The Isolated Container Had a Shared Channel","description":"A Rook audit of Check Point Research's ChatGPT cross-account Artifactory channel disclosure.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-10","dateModified":"2026-09-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html"},"keywords":"ChatGPT, agent security, Artifactory, cross-account channel"}
   </script>
 </head>
 <body class="site">

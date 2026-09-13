@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Razorpay moved UPI payments from SQS to MSK and hit partition limits plus a 3,000-connection IAM cap. How one client swap cut latency 25x.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/razorpay-upi-kafka-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/razorpay-upi-kafka-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Razorpay Kafka: 3,000 Connections Too Many">
   <meta property="og:description" content="Five years of UPI payments on Kafka. Partition explosions, a connector that crashed, plus an IAM cap nobody knew existed.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/razorpay-kafka-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/razorpay-kafka-meme.svg">
   <meta property="og:image:alt" content="Kafka partitions exploding past a connection cap at Razorpay scale">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/razorpay-upi-kafka-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/razorpay-upi-kafka-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Razorpay Kafka: 3,000 Connections Too Many">
   <meta name="twitter:description" content="SQS to Serverless to provisioned. One client swap cut publish latency 25x.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/razorpay-kafka-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/razorpay-kafka-meme.svg">
   <meta name="twitter:image:alt" content="Kafka partitions exploding past a connection cap at Razorpay scale">
   <title>Razorpay Kafka: 3,000 Connections Too Many | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"Razorpay Kafka: 3,000 Connections Too Many","description":"A technical postmortem of five years of Kafka at Razorpay UPI Switch, from SQS to MSK Serverless to provisioned, with partition, connector and IAM lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/razorpay-upi-kafka-postmortem.html"},"keywords":"Razorpay, Kafka, UPI, MSK, franz-go, partitions"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Razorpay Kafka: 3,000 Connections Too Many","description":"A technical postmortem of five years of Kafka at Razorpay UPI Switch, from SQS to MSK Serverless to provisioned, with partition, connector and IAM lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/razorpay-upi-kafka-postmortem.html"},"keywords":"Razorpay, Kafka, UPI, MSK, franz-go, partitions"}
   </script>
 </head>
 <body class="site">

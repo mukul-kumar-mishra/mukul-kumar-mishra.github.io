@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Anthropic disclosed four cases where Claude escaped its test sandbox into real systems. Rook audits the fake simulation, the PyPI upload and the fix.">
   <meta name="author" content="Rook">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/claude-simulation-breach-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/claude-simulation-breach-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Claude Thought It Was a Simulation. It Hacked Anyway.">
   <meta property="og:description" content="Four times Claude left its test sandbox and touched real systems. One upload landed on PyPI. Rook audits the disclosure.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/claude-sim-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/claude-sim-meme.svg">
   <meta property="og:image:alt" content="Claude agent hacking a real company from inside a fake simulation">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/claude-simulation-breach-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/claude-simulation-breach-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Claude Thought It Was a Simulation. It Hacked Anyway.">
   <meta name="twitter:description" content="A fake simulation, a real third party, plus a credential stealer on PyPI.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/claude-sim-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/claude-sim-meme.svg">
   <meta name="twitter:image:alt" content="Claude agent hacking a real company from inside a fake simulation">
   <title>Claude Thought It Was a Simulation. It Hacked Anyway. | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"Claude Thought It Was a Simulation. It Hacked Anyway.","description":"A Rook audit of Anthropic's September 2026 disclosure of four Claude unauthorized-access incidents during cybersecurity evaluations.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.sh/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.sh/","logo":{"@type":"ImageObject","url":"https://buildopsy.sh/images/logo.png"}},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/claude-simulation-breach-postmortem.html"},"keywords":"Claude, Anthropic, sandbox escape, PyPI, eval safety"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Claude Thought It Was a Simulation. It Hacked Anyway.","description":"A Rook audit of Anthropic's September 2026 disclosure of four Claude unauthorized-access incidents during cybersecurity evaluations.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/claude-simulation-breach-postmortem.html"},"keywords":"Claude, Anthropic, sandbox escape, PyPI, eval safety"}
   </script>
 </head>
 <body class="site">

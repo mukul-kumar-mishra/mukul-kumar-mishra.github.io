@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A rolling deploy restarted 120 Kafka consumers and triggered a rebalance cascade that paused 40,000 partitions for 11 minutes. Postmortem of coordinator math, fetch storms plus retry amplification.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/kafka-rebalance-storm-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer">
   <meta property="og:description" content="120 restarts, 40,000 reassigning partitions, 11 minutes of silence, then retries multiplied the load 6x. The coordinator was the bottleneck.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/kafka-rebalance-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-meme.svg">
   <meta property="og:image:alt" content="A rolling deploy pausing every Kafka consumer during a rebalance storm">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/kafka-rebalance-storm-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer">
   <meta name="twitter:description" content="A rolling deploy restarted 120 consumers. The rebalance cascade paused everything for 11 minutes.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/kafka-rebalance-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-meme.svg">
   <meta name="twitter:image:alt" content="A rolling deploy pausing every Kafka consumer during a rebalance storm">
   <title>Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer","description":"A technical postmortem of a Kafka consumer-group rebalance cascade: rolling restarts, coordinator assignment math across 40,000 partitions, fetch storms and retry amplification.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-13","dateModified":"2026-09-13","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/kafka-rebalance-storm-postmortem.html"},"keywords":"Kafka, consumer groups, rebalancing, retry storms, partitions"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer","description":"A technical postmortem of a Kafka consumer-group rebalance cascade: rolling restarts, coordinator assignment math across 40,000 partitions, fetch storms and retry amplification.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"datePublished":"2026-09-13","dateModified":"2026-09-13","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html"},"keywords":"Kafka, consumer groups, rebalancing, retry storms, partitions"}
   </script>
 </head>
 <body class="site">

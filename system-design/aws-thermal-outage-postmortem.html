@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A cooling failure cut power to an AWS US-EAST-1 zone and impaired EC2 plus EBS for hours. Postmortem of snapshot recovery math and multi-AZ design.">
   <meta name="author" content="Mukul Kumar Mishra">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="AWS Thermal Postmortem: Cooling Failed First">
   <meta property="og:description" content="One hot zone in Virginia impaired EC2 plus EBS for hours. Coinbase plus FanDuel felt it. Snapshots became the recovery plan.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/aws-thermal-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/aws-thermal-meme.svg">
   <meta property="og:image:alt" content="An overheating AWS data center zone with impaired instances">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS Thermal Postmortem: Cooling Failed First">
   <meta name="twitter:description" content="Cooling died. Power followed. Snapshots became the recovery plan.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/aws-thermal-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-thermal-meme.svg">
   <meta name="twitter:image:alt" content="An overheating AWS data center zone with impaired instances">
   <title>AWS Thermal Postmortem: Cooling Failed First | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"AWS Thermal Postmortem: Cooling Failed First","description":"A technical postmortem of the AWS US-EAST-1 thermal event, EC2 and EBS impairment, snapshot recovery math and multi-AZ design lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.sh/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/aws-thermal-outage-postmortem.html"},"keywords":"AWS, thermal event, US-EAST-1, EBS snapshots, multi-AZ"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"AWS Thermal Postmortem: Cooling Failed First","description":"A technical postmortem of the AWS US-EAST-1 thermal event, EC2 and EBS impairment, snapshot recovery math and multi-AZ design lessons.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html"},"keywords":"AWS, thermal event, US-EAST-1, EBS snapshots, multi-AZ"}
   </script>
 </head>
 <body class="site">

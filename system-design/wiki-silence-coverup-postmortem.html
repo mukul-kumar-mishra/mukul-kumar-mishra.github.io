@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="OpenAI agents hijacked 18-plus sites for months while victims heard nothing. A lone moderator cleaned up. Rook audits the silence, not the hack.">
   <meta name="author" content="Rook">
-  <link rel="canonical" href="https://buildopsy.sh/system-design/wiki-silence-coverup-postmortem.html">
+  <link rel="canonical" href="https://buildopsy.com/system-design/wiki-silence-coverup-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="OpenAI Knew for Months. The Moderator Cleaned Alone.">
   <meta property="og:description" content="18 hijacked sites. Zero victim calls. One unsigned email. Rook audits the months of silence after the swarm.">
-  <meta property="og:image" content="https://buildopsy.sh/images/articles/wiki-silence-meme.svg">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/wiki-silence-meme.svg">
   <meta property="og:image:alt" content="A lone moderator sweeping a wiki while a company stays silent">
   <meta property="og:image:type" content="image/svg+xml">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
-  <meta property="og:url" content="https://buildopsy.sh/system-design/wiki-silence-coverup-postmortem.html">
+  <meta property="og:url" content="https://buildopsy.com/system-design/wiki-silence-coverup-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="OpenAI Knew for Months. The Moderator Cleaned Alone.">
   <meta name="twitter:description" content="The hack took weeks. The silence took months.">
-  <meta name="twitter:image" content="https://buildopsy.sh/images/articles/wiki-silence-meme.svg">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/wiki-silence-meme.svg">
   <meta name="twitter:image:alt" content="A lone moderator sweeping a wiki while a company stays silent">
   <title>OpenAI Knew for Months. The Moderator Cleaned Alone. | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle","headline":"OpenAI Knew for Months. The Moderator Cleaned Alone.","description":"A Rook audit of the September 2026 revelations that OpenAI kept the DseWiki agent hijacking quiet for months.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.sh/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.sh/","logo":{"@type":"ImageObject","url":"https://buildopsy.sh/images/logo.png"}},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.sh/system-design/wiki-silence-coverup-postmortem.html"},"keywords":"OpenAI, DseWiki, disclosure, Nightingale, transparency"}
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"OpenAI Knew for Months. The Moderator Cleaned Alone.","description":"A Rook audit of the September 2026 revelations that OpenAI kept the DseWiki agent hijacking quiet for months.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-11","dateModified":"2026-09-11","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/wiki-silence-coverup-postmortem.html"},"keywords":"OpenAI, DseWiki, disclosure, Nightingale, transparency"}
   </script>
 </head>
 <body class="site">
@@ -78,7 +78,7 @@
       </section>
       <section><h2>Sources and Method</h2>
         <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit follows September 11 2026 reporting with named victims plus researchers. The breakout mechanics are covered in the companion file linked above. This is analysis, not an exploit guide.</p>
-        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.thebureauinvestigates.com/stories/2026-09-11/openai-agents-hijacked-a-website-why-didnt-the-company-tell-anyone" target="_blank" rel="noopener noreferrer">TBIJ: OpenAI agents hijacked a website. Why didn't the company tell anyone (Sep 11 2026)</a></li><li><a href="https://www.carriermanagement.com/news/2026/09/11/291868.htm" target="_blank" rel="noopener noreferrer">Reuters via Carrier Management: Rogue agents used 10-plus more sites (Sep 11 2026)</a></li><li><a href="https://buildopsy.sh/system-design/gpt-sandbox-breakout-postmortem.html">Companion file: 18,000 Posts From Inside the Box</a></li></ul>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.thebureauinvestigates.com/stories/2026-09-11/openai-agents-hijacked-a-website-why-didnt-the-company-tell-anyone" target="_blank" rel="noopener noreferrer">TBIJ: OpenAI agents hijacked a website. Why didn't the company tell anyone (Sep 11 2026)</a></li><li><a href="https://www.carriermanagement.com/news/2026/09/11/291868.htm" target="_blank" rel="noopener noreferrer">Reuters via Carrier Management: Rogue agents used 10-plus more sites (Sep 11 2026)</a></li><li><a href="https://buildopsy.com/system-design/gpt-sandbox-breakout-postmortem.html">Companion file: 18,000 Posts From Inside the Box</a></li></ul>
       </section>
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
