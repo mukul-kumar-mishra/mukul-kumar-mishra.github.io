@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CVE-2026-73500 lets an unauthenticated attacker exhaust etcd memory with silent TLS connections and take down the Kubernetes control plane. Postmortem of handshake math plus deadlines.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/etcd-tls-handshake-dos-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="etcd: The Handshake That Never Ends">
+  <meta property="og:description" content="No exploit payload. No credentials. Just open connections that never say hello, until the cluster brain runs out of memory.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/etcd-handshake-meme.svg">
+  <meta property="og:image:alt" content="Silent network connections piling up against an etcd server with no handshake deadline">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/etcd-tls-handshake-dos-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="etcd: The Handshake That Never Ends">
+  <meta name="twitter:description" content="CVE-2026-73500: silent TLS connections exhaust etcd memory. The Kubernetes brain has no deadline.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/etcd-handshake-meme.svg">
+  <meta name="twitter:image:alt" content="Silent network connections piling up against an etcd server with no handshake deadline">
+  <title>etcd: The Handshake That Never Ends | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"etcd: The Handshake That Never Ends","description":"A technical postmortem of CVE-2026-73500: unauthenticated TLS handshake exhaustion in etcd, per-connection memory math, plus deadline and exposure fixes for the Kubernetes control plane.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-13","dateModified":"2026-09-13","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/etcd-tls-handshake-dos-postmortem.html"},"keywords":"etcd, CVE-2026-73500, TLS handshake, Kubernetes, control plane, denial of service"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Control Plane Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">etcd: The Handshake That Never Ends</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">CVE-2026-73500 needs no payload plus no credentials. An attacker opens TCP connections to an etcd TLS listener plus never sends a ClientHello. Each silent connection parks a goroutine plus a map entry forever. Enough silence exhausts memory, etcd falls over, plus the Kubernetes control plane goes with it. Published August 12 2026. Patched in 3.5.33, 3.6.14, plus 3.7.1.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> etcd accepted TLS connections with no handshake deadline, so anyone reachable could trade cheap sockets for server memory at roughly a thousand to one. Upgrade to the fixed releases, bound the handshake, plus hide the listener behind network policy.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 13, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the NVD record, the Go vulnerability database, plus the etcd security advisory. Mechanism details come from the published descriptions. Memory figures are modeled from Go runtime behavior, labeled as estimates throughout.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/etcd-handshake-meme.svg" alt="Pen sketched cartoon of a grinning cat holding silent network connections that never complete TLS" width="1200" height="680"><figcaption>Figure 1. The attack in one cartoon. Thousands of TCP connections, zero handshakes, one goroutine each, forever.</figcaption></figure>
+      <section><h2>1. The Listener That Trusts Silence</h2>
+        <p>etcd is the memory of Kubernetes. Every deployment, every secret reference, every lease lives in its key-value store. Lose etcd plus the API server loses its brain. Scheduling stops. Controllers stop. The workloads keep running blind while nobody can steer them. That centrality is why a denial-of-service flaw in etcd reads less like a bug plus more like a blueprint.</p>
+        <p>The flaw sits in the TLS accept loop in the transport package. Accept a TCP connection, spawn a goroutine, block inside the TLS handshake waiting for a ClientHello that never arrives. Track the pending connection in a map. No deadline on the wait. No cap on the map. The code trusts every new connection to eventually speak. An attacker simply never speaks. Each silent socket costs the attacker one file descriptor plus costs the server a goroutine, kernel buffers, TLS state, plus a map entry, accumulating without bound until the process exhausts memory plus the operating system intervenes.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> The most dangerous packet in this attack is the absence of a packet. Every defense built for malicious input fails against input that never arrives.</div>
+      </section>
+      <section><h2>2. The Math of Nothing</h2>
+        <p>Price one silent connection from the server side. A fresh Go goroutine reserves an 8KB stack. Kernel socket buffers add tens of kilobytes per direction. TLS connection state plus the tracking map entry add more. Model roughly 64KB of server memory per parked connection, labeled estimate. At 100,000 silent connections that is about 6.4GB, enough to drown a typical etcd member sized for consensus traffic rather than connection hoarding. At one million connections the number passes 60GB, which exceeds most etcd hosts outright. The attacker side of the ledger: one million idle sockets from a modest botnet or even a single tuned host raising file descriptor limits. Slowloris economics applied to the control plane.</p>
+        <p>Now bound the same math with a handshake deadline, which is exactly what the fixed releases enforce. With a 5-second cap, holding 100,000 parked connections requires opening 20,000 new connections per second forever, against timeouts, against connection tracking, against every rate limiter the operator owns. The attack degrades from a campfire to a treadmill. Without the deadline the attacker pays once per connection plus holds forever. With it the attacker pays continuously plus the server reclaims continuously. Timeouts convert memory exhaustion into a bandwidth contest the defender can win. That single missing timer was the whole vulnerability.</p>
+        <p>Count your own exposure with the <a href="../calculators.html#pool-size">pool sizer</a>. Enter peak connection counts plus hold times to see what concurrent state your servers must carry. Then ask what happens when the hold time has no ceiling. Unbounded waits turn every connection counter into a memory counter. The calculator prices the honest case. The attacker prices the missing bound.</p>
+      </section>
+      <section><h2>3. Why No Deadline Existed</h2>
+        <p>Go servers commonly set handshake timeouts at the HTTP layer, where timeouts are one option among many. etcd TLS listeners are built lower, through transport helpers that never imposed one. Each layer assumed another layer owned the waiting policy. The HTTP server assumed the listener filtered. The listener assumed handshakes complete. The handshake assumed clients speak first. Three assumptions plus zero timers equals indefinite trust in strangers.</p>
+        <p>This is CWE-770 wearing work boots: allocation of resources without limits or throttling. The goroutine plus the map entry are allocated per connection with no ceiling, no eviction, plus no accounting visible to operators. Resource exhaustion flaws hide well because every individual allocation looks reasonable. One goroutine is nothing. One map entry is nothing. A million nothings is an outage. Reviewers see the single case. Attackers see the loop.</p>
+        <p>The exposure question matters as much as the code. Kubernetes itself does not use etcd built-in auth, so typical managed clusters keep etcd off public networks by construction. Self-managed clusters, development clusters with port forwards left open, plus etcd running outside Kubernetes for service discovery or locking face the reachable-listener case directly. The advisory says it plainly: a network attacker who can reach the listener. Reachability is the vulnerability second half. Harden either half plus the chain breaks.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/etcd-watchdog-meme.svg" alt="Pen sketched cartoon of a skeptical cat holding a stopwatch over a network socket" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Five seconds to say hello, then the socket dies. The map stays small.</figcaption></figure>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Acceptance preceded authentication.</strong> The server spent memory before verifying anything about the peer. Costly work should follow cheap proof, not precede it. A ClientHello is cheap to demand. Waiting forever for one is expensive to offer.</p>
+        <p><strong>The pending map was a leak with a data structure.</strong> Tracking unfinished handshakes is correct bookkeeping. Tracking them without expiry turns bookkeeping into accumulation. Every cache needs an eviction story. This one had a map plus hope.</p>
+        <p><strong>Listeners shipped without timeout budgets.</strong> No handshake deadline, no idle timeout, no documented maximum for pending connections. Timeouts are not performance tuning. They are the load-bearing walls of network servers.</p>
+        <p><strong>Operators could not see the pileup.</strong> Goroutine counts plus pending-handshake gauges existed as internals, not as first-class alerts. An attack that grows over hours should page in minutes. Silence in the metrics matched silence on the wire.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, upgrade to the fixed releases: 3.5.33, 3.6.14, or 3.7.1 depending on the line in use. The patch enforces the missing handshake deadline. This is the only fix that removes the flaw rather than narrowing its window. Schedule it like a control-plane incident, because that is what unpatched exposure amounts to.</p>
+        <p>Second, bound every wait even after patching. Handshake timeouts, idle timeouts, plus maximum pending-connection caps form defense in depth around any single fix. Set the handshake budget near 5 seconds. Alert at a fraction of the cap, not at the cap. Limits nobody monitors are intentions.</p>
+        <p>Third, shrink the reachable set. etcd ports should accept connections only from API servers plus explicitly trusted operators, enforced by network policy or mTLS identity, not by optimism. Measure the listener exposure tonight with a port scan from an untrusted network position. Surprises there outrank surprises anywhere else.</p>
+        <p>Fourth, alert on the pileup signals. Goroutine count growth, pending handshake counts, plus memory growth uncorrelated with key counts each name this attack while it is still cheap to stop. Add all three to the control-plane dashboard with paging thresholds. The next silent-connection campaign should wake someone before it bankrupts memory.</p>
+        <p>Fifth, chaos-test the accept path. Open ten thousand silent connections against staging etcd plus watch the gauges. If the test is forbidden in production hours, that fear is itself the finding. Systems that cannot survive their own acceptance tests are accepting too much.</p>
+        <div class="tip"><strong>Operator rule:</strong> Every network wait needs a number attached. If a connection can wait forever, an attacker can make forever arrive on schedule.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>The advisory is admirably precise: named file, named function, named missing bound, named fixed versions. The ecosystem responded fast with database entries across NVD, Go, Debian, plus distro trackers within days of the August 12 publication. That machinery worked. What failed was older plus quieter: a listener written in an era of trusted networks, carried forward into an era of exposed everything.</p>
+        <p>The pattern generalizes to every server you operate. Find the waits without numbers. Handshake timeouts, idle timeouts, queue bounds, retry budgets. Each unbounded wait is a standing invitation priced in someone else memory. etcd paid with control-plane availability. Your service would pay with whatever its listeners protect. Audit the silence before someone else monetizes it.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Zero payloads. Zero credentials. One missing timer. The whole control plane.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows the NVD record, the Go vulnerability database, plus the etcd security advisory. Mechanism details come from the published descriptions. Memory figures are modeled from Go runtime behavior.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-73500" target="_blank" rel="noopener noreferrer">NVD: CVE-2026-73500 detail (published Aug 12 2026)</a></li><li><a href="https://pkg.go.dev/vuln/GO-2026-6107" target="_blank" rel="noopener noreferrer">Go vulnerability database: GO-2026-6107 (Aug 18 2026)</a></li><li><a href="https://github.com/etcd-io/etcd/security/advisories/GHSA-6vch-q96h-7gc3" target="_blank" rel="noopener noreferrer">etcd security advisory GHSA-6vch-q96h-7gc3 (Jul 2026)</a></li><li><a href="https://github.com/etcd-io/etcd/pull/22130" target="_blank" rel="noopener noreferrer">etcd: handshake deadline fix pull request</a></li><li><a href="https://www.sentinelone.com/vulnerability-database/cve-2026-73500" target="_blank" rel="noopener noreferrer">SentinelOne: impact plus mitigation summary (Aug 13 2026)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
