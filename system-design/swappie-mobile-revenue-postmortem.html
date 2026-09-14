@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Swappie cut page load 23 percent and lifted mobile revenue 42 percent in three months of Core Web Vitals work. A priced teardown of speed as respect, with 2026 field data.">
+  <meta name="author" content="Marta">
+  <link rel="canonical" href="https://buildopsy.com/system-design/swappie-mobile-revenue-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Swappie: 23% Faster, 42% Richer">
+  <meta property="og:description" content="Ten points of mobile conversion bought with milliseconds. Server renders, fixed slots, plus a bundle diet, priced against 2026 field data.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/swappie-revenue-meme.svg">
+  <meta property="og:image:alt" content="Bar chart showing mobile conversion rising from twenty-four to thirty-four percent">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/swappie-mobile-revenue-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Swappie: 23% Faster, 42% Richer">
+  <meta name="twitter:description" content="A three-month performance program that paid for itself fourteen times over.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/swappie-revenue-meme.svg">
+  <meta name="twitter:image:alt" content="Bar chart showing mobile conversion rising from twenty-four to thirty-four percent">
+  <title>Swappie: 23% Faster, 42% Richer | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Swappie: 23% Faster, 42% Richer","description":"A performance field postmortem of Swappie mobile revenue turnaround: Core Web Vitals program, server-rendered heroes, layout discipline, plus 2026 field data context.","author":{"@type":"Person","name":"Marta","url":"https://buildopsy.com/about.html#author-marta"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-14","dateModified":"2026-09-14","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/swappie-mobile-revenue-postmortem.html"},"keywords":"Swappie, Core Web Vitals, mobile revenue, LCP, performance economics"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Web Performance</span><span class="chip">September 2026</span><span class="chip">12 min read</span><span class="chip">Marta</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Swappie: 23% Faster, 42% Richer</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Here is my thesis, stated plainly before the evidence: speed is respect. Respect converts. A European refurbished-phone retailer proved it in three months. Page loads fell 23 percent. Mobile revenue rose 42 percent. No rebrand, no new funnel, no discount. Just milliseconds, removed with intent.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Swappie measured mobile conversion against load time, then spent three months on server-rendered heroes, layout discipline, plus bundle hygiene. Relative mobile conversion rose from 24 to 34 percent. The program paid for itself many times over.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Marta · Performance field postmortem · Updated September 14, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the web.dev case study plus published Core Web Vitals field data through August 2026. Business figures come from the company-reported case. Field statistics are attributed inline.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/swappie-revenue-meme.svg" alt="Bar chart showing mobile conversion rising from twenty-four to thirty-four percent" width="1200" height="680"><figcaption>Figure 1. The receipt in one cartoon. Relative mobile conversion from 24 to 34 percent.</figcaption></figure>
+      <section><h2>1. The Thesis</h2>
+        <p>Every performance article opens with a statistic about impatience. I will open with a principle instead. A slow page tells the visitor their time matters less than your roadmap. A fast page tells the opposite. Conversion is simply what respect looks like inside a funnel. Swappie tested this principle the honest way, with a spreadsheet rather than a slogan. The spreadsheet now belongs in every performance review I conduct.</p>
+        <p>The method deserves attention before the numbers. The team correlated relative mobile conversion against average page load time in analytics before changing anything. That single chart did more political work than any audit. It converted speed from a feeling engineers complained about into a revenue line executives could read. Measurement first is not a platitude. It is the permit for everything that follows.</p>
+        <div class="callout"><strong>The thesis, testable:</strong> Ten points of mobile conversion were purchasable with milliseconds. Price per point: roughly three months of disciplined, unglamorous work.</div>
+      </section>
+      <section><h2>2. The Patient</h2>
+        <p>Swappie sells refurbished phones across Europe, overwhelmingly on mobile web. The funnel showed the classic symptom: traffic rich, conversion poor, with relative mobile conversion near 24 percent. Field data pointed at paint plus stability. The largest contentful element arrived late. Layout shifted beneath thumbs at the worst moments. Nothing exotic. The ordinary slowness of a successful site that grew faster than its frontend discipline.</p>
+        <p>What impresses me, reviewing the case, is restraint in diagnosis. The team tracked Core Web Vitals from real users into analytics plus BigQuery rather than optimizing lab scores in isolation. Lab scores flatter. Field data accuses. They chose accusation, which meant fixing what actual visitors felt instead of what Lighthouse applauded.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/swappie-lcp-flow.svg" alt="Flow diagram from paint time cut to revenue gained" width="1200" height="680"><figcaption>Figure 2. The treatment in one cartoon. Server-render the hero, fix the slots, prune the bundle.</figcaption></figure>
+      <section><h2>3. The Treatment</h2>
+        <p>The program ran three months and reads like a checklist I would prescribe. Render the largest element on the server wherever possible instead of the client. Reserve space for images so content below stops jumping. Wrap dynamic components in min-height containers sized from observed averages, releasing the constraint after render. Prune unused JavaScript plus CSS. Rationalize bundling and imports. None of these is clever. All of them compound, which is precisely why undisciplined teams skip them for cleverer projects.</p>
+        <p>Two decisions show taste. First, layout shifts were studied across viewports plus languages rather than assumed from one desktop test, catching shifts that only appear on narrow screens with long translations. Second, field metrics rode alongside lab scores the whole quarter, so every fix proved itself against visitors rather than simulators. Process is the product here. The fixes are commodity. The measurement discipline is the moat.</p>
+      </section>
+      <section><h2>4. The Receipt</h2>
+        <p>Page load time fell 23 percent. Largest paint fell 55 percent. Relative mobile conversion climbed from 24 to 34 percent. Mobile revenue rose 42 percent. Read the ratio again: roughly two points of conversion per point of load improvement, sustained across a quarter, on the highest-traffic surface the company owns. Vodafone Italy reported the same physics at different scale: 31 percent better paint, 8 percent more sales. iCook fixed layout slots for 15 percent better stability plus 10 percent more ad revenue. The pattern replicates because human impatience replicates.</p>
+        <blockquote class="pullquote">42 percent more mobile revenue. No rebrand. No discount. Just milliseconds.<cite>Swappie case results, via web.dev</cite></blockquote>
+        <p>Price it in reverse with the <a href="../calculators.html#downtime-cost">downtime calculator</a>. Revenue at risk per minute makes slowness legible the same way outages are legible: as money left outside. A funnel leaking ten conversion points to latency is a slow-motion outage nobody pages for. Marta pages for it.</p>
+      </section>
+      <section><h2>5. Field Notes, 2026</h2>
+        <p>The broader field has moved since this case without changing its moral. Chrome UX data through August 2026 puts 55.7 percent of origins in the green across all three vitals, up from barely half two years ago. Progress is real plus unevenly distributed. Interaction to Next Paint remains the hardest vital, with over four in ten sites missing its 200ms bar. Mobile still trails desktop by roughly seven points while carrying most of the traffic. Mobile converts near half the desktop rate. The industry keeps debating frameworks. Users keep rewarding milliseconds.</p>
+        <p>That gap is Marta professional territory. Every point of it is some team future case study, provided they measure first. The Swappie template travels intact across years because the underlying transaction never changes: respect, rendered fast, converts.</p>
+      </section>
+      <section><h2>6. What to Steal</h2>
+        <p>First, correlate before you optimize. One chart of conversion against load time buys more roadmap than ten audits. Without it you are asking for faith. With it you are reporting revenue.</p>
+        <p>Second, fix paint plus stability before interaction. Largest paint and layout shift respond to concrete, cheap interventions: server rendering, reserved space, pruned bundles. Interaction metrics follow a calm page the way applause follows performance.</p>
+        <p>Third, measure in the field alongside the lab. Ship every fix against real-user data. Simulators suggest. Visitors decide.</p>
+        <p>Fourth, protect the win with culture. Regressions arrive as features with deadlines. A performance budget enforced in review costs less than one quarterly rescue.</p>
+        <div class="tip"><strong>Marta's rule:</strong> If a fix cannot be priced in conversion, it cannot be prioritized. Price everything.</div>
+      </section>
+      <section><h2>7. The Verdict</h2>
+        <p>I opened with a thesis and close with its receipt. Speed is respect. Respect converts. Swappie proved it at continental scale in a single quarter with tools available to any team: server rendering, layout discipline, bundle hygiene, plus relentless measurement. Nothing in this file requires permission, budget approval beyond one quarter, or new technology. It requires only the decision that milliseconds matter as much as features.</p>
+        <p>The question I leave every team: what is your 23 percent worth? Until you correlate conversion against load, the answer is a shrug with a roadmap attached. Afterward it is a number with a deadline. Measure first. The revenue follows the respect.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>23 percent faster. 42 percent richer. Respect, compounded.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows the web.dev Swappie case study plus published field datasets. Business figures are company-reported via the case. Field statistics are attributed to Chrome UX Report plus industry compilations.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://web.dev/case-studies/swappie" target="_blank" rel="noopener noreferrer">web.dev: Swappie mobile revenue plus 42 percent case study</a></li><li><a href="https://web.dev/case-studies/vitals-business-impact" target="_blank" rel="noopener noreferrer">web.dev: Business impact of Core Web Vitals (Vodafone, iCook, Tokopedia)</a></li><li><a href="https://developer.chrome.com/docs/crux/release-notes.md.txt" target="_blank" rel="noopener noreferrer">Chrome UX Report release notes through August 2026</a></li><li><a href="https://www.corewebvitals.io/state-of-cwv" target="_blank" rel="noopener noreferrer">State of Web Vitals Q2 2026 field snapshot</a></li><li><a href="https://thestacc.com/blog/core-web-vitals-statistics" target="_blank" rel="noopener noreferrer">Core Web Vitals statistics compilation, July 2026</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Marta</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

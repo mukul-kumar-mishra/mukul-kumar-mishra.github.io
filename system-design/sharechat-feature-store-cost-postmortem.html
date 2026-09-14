@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShareChat scaled a feature store from 1M to 1B features per second, then got told to make it 10x cheaper. Fat rows, Flink discipline, plus a reco engine cut to a tenth of its bill.">
+  <meta name="author" content="Ira">
+  <link rel="canonical" href="https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ShareChat: The 10x Cheaper Assignment">
+  <meta property="og:description" content="A billion features a second, then an order to cut the bill tenfold. Tiles, fat rows, Flink, plus compression did what scaling never could.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/sharechat-cost-meme.svg">
+  <meta property="og:image:alt" content="Bar chart showing a feature store cost index falling from 100 to 10">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ShareChat: The 10x Cheaper Assignment">
+  <meta name="twitter:description" content="Scale to a billion first. Then make it ten times cheaper. A data bill postmortem.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/sharechat-cost-meme.svg">
+  <meta name="twitter:image:alt" content="Bar chart showing a feature store cost index falling from 100 to 10">
+  <title>ShareChat: The 10x Cheaper Assignment | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"ShareChat: The 10x Cheaper Assignment","description":"A data field postmortem of ShareChat ML feature store economics: 1M to 1B features per second, fat-row schema design, Flink discipline, plus a recommendation engine cut to a tenth of its bill.","author":{"@type":"Person","name":"Ira","url":"https://buildopsy.com/about.html#author-ira"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-14","dateModified":"2026-09-14","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html"},"keywords":"ShareChat, feature store, ScyllaDB, Flink, data costs, ML infrastructure"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Data Infrastructure</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Ira</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">ShareChat: The 10x Cheaper Assignment</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">I have sat in the review where the congratulations end plus the real assignment begins. ShareChat earned theirs the hard way: a feature store scaled a thousandfold to a billion features a second, without growing its database at all. Then leadership asked for the same system at a tenth of the cost. What followed is the finest cost postmortem in recent data engineering.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fat-row schemas cut row reads a hundredfold. Cache locality plus a 27-service split carried the rest. Then Flink discipline, compression, plus managed-service exits cut the wider bill to a tenth, with latency falling from 40ms to 8ms along the way.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Ira · Data field postmortem · Updated September 14, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows ShareChat engineering publications, conference talks, plus ScyllaDB case coverage. Throughput figures plus optimization steps come from the published accounts. Cost framing is modeled from public cloud list prices.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/sharechat-cost-meme.svg" alt="Bar chart showing a feature store cost falling from index 100 to 10" width="1200" height="680"><figcaption>Figure 1. The bill in one cartoon. Scale to a billion first. Then make it ten times cheaper.</figcaption></figure>
+      <section><h2>1. The Review After the Applause</h2>
+        <p>Picture the scene, because every data engineer has lived some version of it. Your team just did the impossible. The feature store went from a million features a second to a billion, a thousandfold climb, without adding a single database node. Somebody brings sweets. Somebody says the words you will remember for years. Great system. Now please make it ten times cheaper.</p>
+        <p>I confess a tenderness for this moment. The first climb proved the team could scale. The second assignment proved whether they understood what they had built. Anybody can buy headroom. Reading your own architecture well enough to delete 90 percent of its cost while it serves a billion requests a second, that is comprehension with a deadline. ShareChat engineers have now published both halves of the story, which is why this file exists.</p>
+        <div class="callout"><strong>What this postmortem prices:</strong> a real-time ML feature store past a billion features a second, plus a recommendation engine serving hundreds of millions of users, both rebuilt for cost with receipts.</div>
+      </section>
+      <section><h2>2. How the Machine Worked</h2>
+        <p>The feature store feeds content recommendations with near-real-time signals: likes, views, plus counters across time windows. Underneath sit tiles, pre-aggregated buckets per minute or per range, computed over Flink streams from more than two billion daily events. A feature service answers ranking requests against ScyllaDB plus caches what it computes. At peak the system serves close to a billion features a second at p99 under 20ms while reading over 30 billion rows a day. Those are the published operating numbers. Sit with them a moment. Thirty billion rows a day. Somebody decided that was the expensive shape of the problem.</p>
+        <p>The first scaling war nearly ended the project. The initial schema gave every feature its own row, so one ranking request fanned into roughly 70 tile fetches per feature. At a million features a second the system fell over with latencies through the roof. The fix was a schema insight wearing work clothes: features requested together should sleep together. Fat rows packed co-requested features into single protobuf values per tile. Row reads fell from around 2 billion a second to 200 million, a hundredfold cut from naming things better. Leveled compaction doubled effective capacity on top. When the database still looked small, the team refused the obvious 4x scale-up because the budget said no, then kept going.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/sharechat-tiles-flow.svg" alt="Flow diagram from seventy tiles to one fat row to ninety-five percent cache hits" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Store requested-together features together. Cache the rest.</figcaption></figure>
+      <section>
+        <p>Cache locality came next. Here my affection for this team deepened. A two-step hash spread entities across pods for locality, then the team split the feature service into 27 pieces with client-side entity routing. Practical, inelegant, devastatingly effective: 95 percent cache hits plus ScyllaDB load down to 18.4 million rows a second. A billion features a second by March, with headroom the team measured toward three billion. Scale solved. Then the applause. Then the assignment.</p>
+        <p>Run the serving shape through the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> to feel the stakes. A billion events a second across a month is a number with twelve digits before the decimal point of any price. At that scale the database row is the unit of money, which is why every optimization above reads as finance wearing an engineering costume.</p>
+      </section>
+      <section><h2>3. The Bill Autopsy</h2>
+        <p>The cost pass started where cloud bills always hide: the network between zones. ShareChat calls inter-zone egress the cloud tax. At their traffic the tax office always wins. Isolating reads plus writes into separate data centers would have doubled infrastructure for cleaner latency graphs. They declined the pretty option. Continuous profiling instead found over half the serving compute to delete. Backfill jobs spiking read latency got isolation thinking rather than hardware. Flink autoscaling finally matched stream workers to actual load instead of peak imagination.</p>
+        <blockquote class="pullquote">Great system. Now please make it ten times cheaper.<cite>The assignment, as reported by The New Stack</cite></blockquote>
+        <p>The sibling saga, the recommendation engine, cut deeper because it started from managed everything: Bigtable, Dataflow, plus Pub/Sub. Lovely for prototyping, punishing at 300 million users. Dataflow streaming jobs moved to self-run Flink for a 93 percent cost cut. Bigtable gave way to provisioned ScyllaDB, cheaper even fully provisioned, with workload prioritization shaving queue costs by roughly two thirds. Post IDs got delta compression after Bloom filters failed on false positives plus Roaring Bitmaps failed on distribution: storage down 60 percent, CPU down 25 percent, that subsystem to a fifth of its cost. Sent posts moved out of Redis once somebody proved ScyllaDB cheaper per gigabyte. Latency fell from 40ms to 8ms p99 while infrastructure fell to a tenth over about a year. Faster plus cheaper is supposed to be impossible. It took a year of refusing that premise.</p>
+      </section>
+      <section><h2>4. The Ledger</h2>
+        <table class="claimtable">
+          <thead><tr><th>Reported</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>1M to 1B features a second, no DB growth</td><td>Schema plus caching absorbed three orders of magnitude. Hardware stayed flat.</td></tr>
+            <tr><td>2B down to 18.4M rows a second</td><td>Fat rows removed the features multiplier. Cache locality removed the rest.</td></tr>
+            <tr><td>95 percent cache hit rate</td><td>Twenty-seven services with client-routed entities. Locality by construction.</td></tr>
+            <tr><td>Streaming cost down 93 percent</td><td>Managed Dataflow exited for self-run Flink. Operations burden accepted deliberately.</td></tr>
+            <tr><td>Infrastructure to a tenth, 40ms to 8ms</td><td>Compression, engine swaps, plus Redis exit compounded. Speed followed cost.</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section><h2>5. What to Steal</h2>
+        <p>First, store what is requested together, together. Audit the fan-in of the hottest request before touching hardware. Seventy fetches per feature was never a database problem. It was a naming problem with a cluster attached.</p>
+        <p>Second, make cost a design constraint from the tile up, not a review topic after launch. Every optimization above was available on day one. What arrived later was permission to care. Give that permission early.</p>
+        <p>Third, distrust managed pricing at stable scale. Prototyping bills differ from steady-state bills by orders of magnitude. Reprice every managed service yearly against self-run alternatives, with operations burden on the same spreadsheet.</p>
+        <p>Fourth, profile before purchasing. Half the serving compute deleted itself under a profiler. The cheapest node is the one continuous profiling proves unnecessary.</p>
+        <p>Fifth, consolidate onto engines you can run hot. Thirty clusters at 80 to 100 percent utilization beat a hundred clusters at 30 percent. Utilization is a cost strategy wearing an operations costume.</p>
+        <div class="tip"><strong>Ira's rule:</strong> When leadership asks for ten times cheaper, thank them. They just assigned the most interesting system design of your year.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>I keep returning to the emotional shape of this story. Most cost sagas read as apologies. This one reads as craft. A team scaled a thousandfold on wit, then cut tenfold on discipline, then published both halves with numbers attached. The industry usually hides either the scale or the spend. ShareChat itemized both.</p>
+        <p>The lesson I carry into every pipeline review: the row is the rupee, the tile is the tax form, plus the cache is the only honest employee. Design like the bill arrives monthly, because it does. The boundary between engineering plus finance was always imaginary. This team simply stopped pretending.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Scale first if you must. Budget second if you are lucky. Understand both, always.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows ShareChat engineering publications, conference talks, plus ScyllaDB case coverage. Throughput figures plus optimization steps come from the published accounts. Cost framing is modeled from public cloud list prices.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.scylladb.com/2026/03/04/optimizing-a-fast-feature-store-for-costs-lessons-learned" target="_blank" rel="noopener noreferrer">ScyllaDB: Optimizing a fast feature store for costs (Mar 2026)</a></li><li><a href="https://thenewstack.io/scylladb-database-sharechat" target="_blank" rel="noopener noreferrer">The New Stack: A billion features, then 10x cheaper (Feb 2026)</a></li><li><a href="https://sharechat.com/blogs/artificial-intelligence/how-sharechat-built-a-scalable-cost-efficient-ml-feature-system" target="_blank" rel="noopener noreferrer">ShareChat: Scalable cost-efficient ML feature system</a></li><li><a href="https://p99conf.io/session/from-1m-to-1b-features-per-second-scaling-sharechats-ml-feature-store" target="_blank" rel="noopener noreferrer">P99 CONF: 1M to 1B features per second talk</a></li><li><a href="http://scylladb.com/2026/03/02/how-sharechat-cut-recommendation-engine-costs-90" target="_blank" rel="noopener noreferrer">ScyllaDB: Recommendation engine costs cut 90 percent (Mar 2026)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Ira</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
