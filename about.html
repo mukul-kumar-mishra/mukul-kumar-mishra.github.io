@@ -96,6 +96,7 @@
     .author-card{display:flex;gap:18px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:22px;margin:0 0 26px;}
     .author-card img{width:96px;height:96px;border-radius:50%;object-fit:cover;flex:none;border:1px solid var(--line);}
     .author-mark{width:96px;height:96px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--card-muted);border:1px solid var(--line);font-family:var(--font-display);font-weight:800;font-size:2rem;color:var(--heading);}
+    #about-site{scroll-margin-top:84px;}
     @media (max-width:820px){.about-layout{grid-template-columns:1fr;}.about-side{position:static;}.author-card{flex-direction:column;}}
   </style>
 </head>
@@ -107,7 +108,7 @@
         <a href="index.html">Home</a>
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="calculators.html">Calculators</a>
+        <a href="calculators.html">Calculators</a><a href="system-design/course.html">Courses</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -135,7 +136,7 @@
         </ul>
         <h2>Authors</h2>
         <ul>
-          <li><a href="#author-mukul">Mukul Kumar Mishra</a></li>
+          <li><a href="#author-mukul">Mukul</a></li>
           <li><a href="#author-rook">Rook</a></li>
           <li><a href="#author-ira">Ira</a></li>
           <li><a href="#author-marta">Marta</a></li>
@@ -158,10 +159,19 @@
             <div>
               <h2 class="page-title" style="font-size:1.4rem;margin:0 0 6px;">Mukul Kumar Mishra</h2>
               <p class="fl-desc" style="margin:0 0 10px;">Founder and editor, Buildopsy · Tech Lead, Backend and SRE · Delhi NCR, India</p>
-              <p class="fl-desc" style="margin:0 0 12px;">Tech Lead with 9 years of experience designing distributed systems in Golang on AWS: high-scale telemetry pipelines, cloud-native microservices plus production reliability. He writes the architecture RFCs and the research-led postmortems, and prices every boundary down to the cost per request.</p>
+              <p class="bio">Tech Lead with 9 years of experience designing distributed systems in Golang on AWS: high-scale telemetry pipelines, cloud-native microservices plus production reliability. He writes the architecture RFCs and the research-led postmortems, and prices every boundary down to the cost per request.</p>
               <p style="margin:0;"><a href="https://github.com/slimdestro" rel="me noopener">GitHub</a> · <a href="https://www.linkedin.com/in/mukul-kumar-b9b33b428/" rel="me noopener">LinkedIn</a> · <a href="https://dev.to/slimdestro" rel="me noopener">Dev.to</a></p>
+              <p style="margin:14px 0 0;"><a class="btn btn-primary" href="system-design/course.html">My courses</a></p>
             </div>
           </div>
+                  <section id="work-with-me" style="margin-top:36px;scroll-margin-top:84px;">
+                    <p class="fl-tag">Services</p>
+                    <h2 class="page-title" style="font-size:1.4rem;margin:0 0 6px;">Work with Mukul</h2>
+                    <p class="fl-desc" style="margin:0 0 12px;">Architecture reviews, SRE retainers, plus fractional backend leadership for teams running Golang plus AWS at scale. Engagements are scoped, fixed-price, plus documented like everything else here.</p>
+                    <p class="fl-desc" style="margin:0 0 16px;">Recent work: distributed systems design, telemetry pipelines, cloud migrations, plus production reliability audits. Replies within one business day.</p>
+                    <p style="margin:0;"><a class="btn btn-primary" href="mailto:hello@buildopsy.com?subject=Engagement%20inquiry%20via%20Buildopsy">Start a conversation</a></p>
+                    <p class="fl-desc" style="margin:10px 0 0;font-size:0.78rem;">Prefer writing first? Include your stack, scale, plus what keeps you up at night.</p>
+                  </section>
         </section>
         <section id="author-rook" style="margin-top:8px;scroll-margin-top:84px;">
           <p class="fl-tag">Author</p>
@@ -170,7 +180,7 @@
             <div>
               <h2 class="page-title" style="font-size:1.4rem;margin:0 0 6px;">Rook</h2>
               <p class="fl-desc" style="margin:0 0 10px;">Research desk, Buildopsy</p>
-              <p class="fl-desc" style="margin:0 0 12px;">A skeptical research desk voice covering incident files and disclosure audits. Shorter sentences, sharper corrections, deadpan jokes, and a habit of separating what was claimed from what was proved. The footnote is where the body is buried.</p>
+              <p class="bio">A skeptical research desk voice covering incident files and disclosure audits. Shorter sentences, sharper corrections, deadpan jokes, and a habit of separating what was claimed from what was proved. The footnote is where the body is buried.</p>
               <p class="fl-desc" style="margin:0;">Writes the AI Slop Watch incident files and disclosure audits in <a href="system-design/ai-slop.html">AI Slop Watch</a>.</p>
             </div>
           </div>
@@ -182,7 +192,7 @@
             <div>
               <h2 class="page-title" style="font-size:1.4rem;margin:0 0 6px;">Ira</h2>
               <p class="fl-desc" style="margin:0 0 10px;">Data desk, Buildopsy · Writing from India</p>
-              <p class="fl-desc" style="margin:0 0 12px;">A data engineer writing reflective practitioner essays from the pipeline trenches. First-person war stories, 3 AM pages, plus the bill that arrived with the morning. She prices batch against stream and treats every pipeline as a budget with a schedule attached.</p>
+              <p class="bio">A data engineer writing reflective practitioner essays from the pipeline trenches. First-person war stories, 3 AM pages, plus the bill that arrived with the morning. She prices batch against stream and treats every pipeline as a budget with a schedule attached.</p>
               <p class="fl-desc" style="margin:0;">Debuting on data pipeline bills. Earlier beats live in <a href="system-design/index.html">System Design</a>.</p>
             </div>
           </div>
@@ -194,11 +204,12 @@
             <div>
               <h2 class="page-title" style="font-size:1.4rem;margin:0 0 6px;">Marta</h2>
               <p class="fl-desc" style="margin:0 0 10px;">Performance desk, Buildopsy · Writing from Europe</p>
-              <p class="fl-desc" style="margin:0 0 12px;">A web performance engineer writing principled essays on speed as respect. Thesis-led, measurement-obsessed, calm on the surface. She believes every millisecond is a promise and audits who keeps it.</p>
+              <p class="bio">A web performance engineer writing principled essays on speed as respect. Thesis-led, measurement-obsessed, calm on the surface. She believes every millisecond is a promise and audits who keeps it.</p>
               <p class="fl-desc" style="margin:0;">Debuting on web performance economics. Earlier beats live in <a href="system-design/index.html">System Design</a>.</p>
             </div>
           </div>
         </section>
+
       </div>
     </div>
   </main>
@@ -219,6 +230,34 @@
       syncIcons();
     });
     lucide.createIcons();
+  </script>
+  <script>
+    (function () {
+      var PANELS = ['about-site', 'author-mukul', 'author-rook', 'author-ira', 'author-marta'];
+      var sideLinks = Array.prototype.slice.call(document.querySelectorAll('.about-side a[href^="#"]'));
+      function panel(id) { return document.getElementById(id); }
+      function show(target, push, scroll) {
+        var panelId = target.indexOf('author-') === 0 ? target : 'about-site';
+        PANELS.forEach(function (id) {
+          var s = panel(id);
+          if (s) s.style.display = (id === panelId) ? '' : 'none';
+        });
+        sideLinks.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + target); });
+        if (scroll) {
+          var dest = panel(target) || panel(panelId);
+          if (dest && dest.scrollIntoView) dest.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (push !== false) {
+          try { history.replaceState(null, '', '#' + target); } catch (e) { /* file protocol */ }
+        }
+      }
+      sideLinks.forEach(function (a) {
+        a.addEventListener('click', function (ev) { ev.preventDefault(); show(a.getAttribute('href').slice(1), true, true); });
+      });
+      var initial = String(location.hash || '').replace('#', '');
+      var valid = !!panel(initial) && (initial === 'about-site' || initial === 'editorial-policy' || initial.indexOf('author-') === 0);
+      show(valid ? initial : 'author-mukul', false, false);
+    })();
   </script>
 <script src="js/nav.js"></script>
 </body>

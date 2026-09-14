@@ -532,6 +532,10 @@ h1, h2, h3, h4, h5, h6 {
 .calc-donut-center small { font-family: var(--font-body); font-size: 11px; color: var(--mist); }
 .radar-card .calc-inputs { margin-top: 26px; max-width: 560px; }
 .radar-card .feature-link { margin-top: 0; }
+/* Newsletter capture band: single row on desktop, stacked on mobile. */
+.newsletter-band { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; }
+.newsletter-band form { display: flex; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 700px) { .newsletter-band { flex-direction: column; align-items: stretch; } }
 /* Rotating article modules: pull quotes plus claim ledgers. Same chrome,
    different interiors, so long-form pieces stop marching identically. */
 .pullquote { margin: 30px 0; padding: 6px 0 6px 22px; border-left: 3px solid var(--lime); font-family: var(--font-serif); font-size: 1.25rem; line-height: 1.6; color: var(--heading); }
@@ -539,6 +543,11 @@ h1, h2, h3, h4, h5, h6 {
 .claimtable { width: 100%; border-collapse: collapse; margin: 26px 0; font-family: var(--font-body); font-size: 0.88rem; }
 .claimtable th { text-align: left; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); padding: 10px 12px; border-bottom: 2px solid var(--line); }
 .claimtable td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+/* Author bio body copy: full-size text, not caption treatment. */
+.author-card .bio { font-size: 1rem; line-height: 1.7; color: var(--paper); margin: 0 0 12px; }
+/* Corner ribbon for the live course card. */
+.course-card { position: relative; overflow: hidden; }
+.ribbon { position: absolute; top: 20px; right: -42px; transform: rotate(45deg); background: var(--lime); color: #052e16; font-family: var(--font-display); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.12em; padding: 6px 46px; box-shadow: var(--shadow); }
 @media (max-width: 900px) { .calc-grid { grid-template-columns: 1fr; } }
 .load-more { display: none; margin: 18px auto 0; }
 .incident-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 1.4em 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
