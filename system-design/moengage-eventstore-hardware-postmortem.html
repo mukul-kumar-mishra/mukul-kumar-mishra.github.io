@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MoEngage serves 250,000 writes a second at one millisecond average on owned NVMe hardware after rented disks failed the math. A data field postmortem on write-heavy economics.">
+  <meta name="author" content="Ira">
+  <link rel="canonical" href="https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="MoEngage: Rent Nothing, Own the Millisecond">
+  <meta property="og:description" content="Managed disks priced them out of their own workload. Local NVMe plus honest hardware math brought the millisecond home.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/moengage-nvme-meme.svg">
+  <meta property="og:image:alt" content="Three stat panels showing write throughput, latency and data volume">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MoEngage: Rent Nothing, Own the Millisecond">
+  <meta name="twitter:description" content="250K writes a second at 1ms average. The disks are owned, not rented.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/moengage-nvme-meme.svg">
+  <meta name="twitter:image:alt" content="Three stat panels showing write throughput, latency and data volume">
+  <title>MoEngage: Rent Nothing, Own the Millisecond | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"MoEngage: Rent Nothing, Own the Millisecond","description":"A data field postmortem of MoEngage Eventstore economics: 250K writes per second at one millisecond average on local NVMe, plus a services rebuild at ten times the writes for the same invoice.","author":{"@type":"Person","name":"Ira","url":"https://buildopsy.com/about.html#author-ira"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-15","dateModified":"2026-09-15","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html"},"keywords":"MoEngage, ScyllaDB, NVMe, write-heavy workloads, event store, latency"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Data Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span><span class="chip">Ira</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">MoEngage: Rent Nothing, Own the Millisecond</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">I have learned to distrust any architecture where the disks belong to somebody optimism. MoEngage learned it at 250,000 writes a second. Their event store needed one-millisecond averages on a relentlessly write-heavy stream. Every rented disk option failed the math in a different instructive way. So they bought the physics instead.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Managed volumes priced MoEngage out of its own workload. Local NVMe carried 250K writes a second at 1ms average over 200TB. A services rebuild separately delivered ten times the writes at a third of the latency for the exact same invoice.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Ira · Data field postmortem · Updated September 15, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows MoEngage engineering talks plus ScyllaDB case coverage. Throughput, latency, plus hardware decisions come from the published accounts. Cost framing is modeled from public cloud list prices.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/moengage-nvme-meme.svg" alt="Three stat panels showing write throughput, latency and data volume" width="1200" height="680"><figcaption>Figure 1. The workload in one cartoon. A quarter million writes a second at one millisecond.</figcaption></figure>
+      <section><h2>1. The Smell of Rented Disks</h2>
+        <p>Every data engineer develops a nose for mismatched hardware. Mine tingles whenever somebody serves a write firehose from disks designed for photo albums. MoEngage story starts exactly there. Their Eventstore ingests hundreds of billions of events a month for hyper-personalization: the last product viewed inside an email, the last article inside a recommendation, the last cart addition inside web content. The gap between a user action plus the platform reaction is the whole product. Batch was never going to survive contact with that promise.</p>
+        <p>The requirements read like a dare. At least 250,000 events a second. One millisecond average. Under ten at p99. Horizontal scaling with no degradation. Over 200 terabytes of raw data underneath. I have seen smaller numbers kill larger budgets, because the numbers were never the hard part. The hard part was admitting that every comfortable disk choice failed them, one by one, in public.</p>
+        <div class="callout"><strong>What this postmortem prices:</strong> a write-heavy event store at 250K events a second, plus the hardware economics that made rented storage the most expensive option on the menu.</div>
+      </section>
+      <section><h2>2. Three Disks Walk Into a Workload</h2>
+        <p>Memory-optimized instances with network storage went first. For a write firehose they were simply the wrong animal. The team said so plainly. High-performance io2 volumes came next with pricing the team called prohibitive at their scale. Prohibitive is finance language for correct architecture at impossible cost. The affordable GP3 volumes failed differently: no p99 guarantee plus throttling risk during bursts, which for a millisecond product means failing exactly when success arrives.</p>
+        <p>Then the guidance that sealed it. Even AWS documentation positions network block storage better for read-heavy profiles, the precise opposite of this workload. Trusting rented disks here meant paying premium rates for someone else throttling policy. Local NVMe won on the only metric that mattered: sustained sub-millisecond writes under a relentless stream, owned outright instead of metered nervously. The delay between action plus reaction, in their words, is the difference between a conversion plus a missed opportunity. They bought the difference in hardware.</p>
+        <blockquote class="pullquote">The delay between a user action and our ability to react to it is the difference between a conversion and a missed opportunity.<cite>MoEngage talk, via ScyllaDB</cite></blockquote>
+        <p>Price the serving shape through the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. A quarter million events a second across a month is roughly 650 billion events. At any per-million price, the envelope dwarfs the hardware line it rides on, which is why the disk decision outranks every tuning decision beneath it. Pick the wrong storage tax bracket first plus no index tuning ever recovers the difference.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/moengage-uis-flow.svg" alt="Flow diagram from ten times write performance to three times latency cut at same cost" width="1200" height="680"><figcaption>Figure 2. The rebuild in one cartoon. Ten times the writes, a third of the latency, the same invoice.</figcaption></figure>
+      <section><h2>3. The Rebuild at the Same Invoice</h2>
+        <p>Years earlier the same company had already rehearsed this lesson on its services layer. Users-in-segment, the base of their personalization stack, hit scale walls plus got rebuilt for ten times the write performance at three times lower latency for the exact same cost. Read that triple again slowly, because teams routinely trade two of the three. Ten times the throughput. A third of the latency. The same invoice. Whoever led that review understood something most reviews miss: cost, speed, plus scale form a triangle only when the architecture stays fixed. Change the architecture plus the triangle redraws itself.</p>
+        <p>I keep this story pinned beside the ShareChat saga from my last file. Different companies, different continents, identical moral. ShareChat cut rows read. MoEngage cut milliseconds rented. Both treated the bill as a design input rather than a weather event. The industry keeps two kinds of data teams: those who price their workload before choosing hardware, plus those who choose hardware before pricing anything. Guess which team sleeps through traffic spikes.</p>
+      </section>
+      <section><h2>4. What to Steal</h2>
+        <p>First, match the disk to the dominant direction. Write firehoses want local NVMe. Read lakes want networked capacity. The catalogue page will not tell you which workload you run. Your p99 graph will, usually at 3 AM.</p>
+        <p>Second, price managed options at steady state, not at prototype. Rented performance looks gentle in week one plus becomes the largest line by month six. Reprice yearly with operations burden on the same page.</p>
+        <p>Third, demand p99 guarantees in writing before trusting shared infrastructure. Averages soothe dashboards. Tails page humans. If the vendor will not promise the tail, assume the tail belongs to you.</p>
+        <p>Fourth, rebuild services at fixed cost as a discipline, not as heroics. Ten times the writes at the same invoice started as a scale problem plus ended as a design review. Schedule that review before the wall schedules it for you.</p>
+        <div class="tip"><strong>Ira's rule:</strong> If your disks belong to somebody optimism, your latency belongs to somebody throttle policy. Own the millisecond or rent the excuse.</div>
+      </section>
+      <section><h2>5. The Verdict</h2>
+        <p>I admire restrained engineering. This is among the most restrained stories I have filed. No exotic database, no heroic rewrite, no mythology. A team measured its workload honestly, priced three disk options honestly, plus chose the boring fast one. Then, years earlier, they had already proven the same discipline on services. Twice is a culture. Once is luck.</p>
+        <p>The sentence I want every data review to open with: describe the dominant direction of your bytes, then show me the hardware receipt. If those two answers disagree, the postmortem has already started. It just needs a date.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>250,000 writes. One millisecond. Zero rented excuses.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows MoEngage engineering talks plus ScyllaDB case coverage. Throughput, latency, plus hardware decisions come from the published accounts. Cost framing is modeled from public cloud list prices.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.scylladb.com/2026/01/16/moengage-millisecond-personalization" target="_blank" rel="noopener noreferrer">ScyllaDB: MoEngage millisecond personalization (Jan 2026)</a></li><li><a href="https://www.scylladb.com/tech-talk/from-batch-to-real-time-how-moengage-achieved-millisecond-personalization-with-scylladb" target="_blank" rel="noopener noreferrer">Monster Scale Summit: Batch to real-time talk (Mar 2026)</a></li><li><a href="https://www.moengage.com/blog/moengage-engineering-review-2022" target="_blank" rel="noopener noreferrer">MoEngage: Engineering review on UIS rebuild (2022)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Ira</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
