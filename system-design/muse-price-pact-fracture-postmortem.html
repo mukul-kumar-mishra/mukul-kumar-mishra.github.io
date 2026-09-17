@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Zuckerberg broke with the slowdown pact while Wang priced Muse far below rivals. Rook audits the dissent, grades the parity claims, plus prices the gap.">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://buildopsy.com/system-design/muse-price-pact-fracture-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Meta Dissented, Then Undercut Everyone">
+  <meta property="og:description" content="One essay argued for brakes. Meta answered with a price list. Rook grades the dissent plus the discount.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/muse-price-meme.svg">
+  <meta property="og:image:alt" content="Three price panels comparing Muse, Sonnet and Opus per million tokens">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/muse-price-pact-fracture-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Meta Dissented, Then Undercut Everyone">
+  <meta name="twitter:description" content="No to the pact. Yes to $1.25 input pricing. The week frontier politics met the price list.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/muse-price-meme.svg">
+  <meta name="twitter:image:alt" content="Three price panels comparing Muse, Sonnet and Opus per million tokens">
+  <title>Meta Dissented, Then Undercut Everyone | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Meta Dissented, Then Undercut Everyone","description":"A Rook audit of Meta September 2026 dissent from the slowdown pact plus Muse pricing: Zuckerberg responsibility argument, Wang parity claims graded, plus per-million-token math.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-16","dateModified":"2026-09-16","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/muse-price-pact-fracture-postmortem.html"},"keywords":"Muse, Zuckerberg, Alexandr Wang, pricing, slowdown pact, superintelligence"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Policy Incident</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Meta Dissented, Then Undercut Everyone</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Three CEOs signed a slowdown pact last week. This week the fourth giant filed a dissent plus a price list. Zuckerberg says each lab should mind its own alignment. Wang prices Muse at levels that make rivals look like luxury goods. Rook reads the dissent, then does the division the pact never attempted.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Meta rejected coordinated pacing, delayed Muse internally for safety, plus shipped frontier pricing near a third of rivals. Parity claims grade out as plausible but task-dependent. The price gap needs no grading. It is arithmetic.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 16, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Zuckerberg posted the dissent September 15 with AP plus Reuters coverage September 16. Muse Spark 1.3 shipped September 2 with partner preview ongoing. Pricing figures are company-published. Capability claims await independent replication beyond cited benchmarks.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img src="../images/articles/muse-price-meme.svg" alt="Three price panels comparing Muse, Sonnet and Opus per million tokens" width="1200" height="680"><figcaption>Figure 1. The price list in one cartoon. Muse at 1.25 and 4.25 against Sonnet plus Opus.</figcaption></figure>
+      <section><h2>1. The Dissent</h2>
+        <p>Zuckerberg posted on X that every lab holds the responsibility plus incentive to move at whatever pace trains models safely, with authority to take its own actions. Translation for non-diplomats: coordination is optional, self-pacing is sufficient, plus the pact can mind its own business. He pointed at Meta delaying the Muse agent for months over safety plus security without demanding anyone else wait first. Quoted exactly: We didn't call for everyone else to do this before we would.</p>
+        <p>Two load-bearing claims sit inside. First, compute allocation as safety policy: Meta commits the significant majority of compute to serving people rather than racing recursive self-improvement. Serving users instead of building better builders. Elegant framing. Conveniently identical to Meta product strategy. Second, liability plus market discipline as enforcement: labs face significant legal exposure for harm, while users abandon agents that disobey. Alignment becomes product quality with lawyers attached. He added independent evaluators to the consensus, backing a larger, more diverse evaluator ecosystem. On that single plank, all four giants now agree, which makes evaluators the only unanimous vote in frontier politics.</p>
+        <div class="callout"><strong>The quote that matters:</strong> Any lab that does not focus on alignment will fall behind. Read it twice. Safety redefined as competitive advantage dissolves the entire debate into marketing. If alignment wins markets, nobody needs a pact. If it does not, nobody will honor one.</div>
+      </section>
+      <section><h2>2. The Price List</h2>
+        <p>Wang runs Meta Superintelligence Labs plus talks like a man holding receipts. Muse Spark 1.3, released September 2, is Meta fourth flagship in five months. Claimed: competitive with Claude Fable 5.1, better than GPT-5.6 Sol at coding, ahead of every Chinese model. Independent backup exists in exactly one cited form: Artificial Analysis scored it 62, behind Fable 5.1 plus Opus 5, ahead of OpenAI entries. One benchmark, honestly reported, plus a long way from proven parity.</p>
+        <p>Pricing needs no such hedging. Muse Spark API lists $1.25 per million input tokens plus $4.25 per million output, with $20 in free starting credits. Sonnet 5 bills $2 plus $10, rising to $3 plus $15 after August. Opus 4.8 bills $5 plus $25. The Muse agent sweetens further: 100 million free tokens weekly, then $20 plus $100 tiers. A contributor tier undercuts even pay-as-you-go by ten times in exchange for training-data opt-in. Wang calls this very aggressive and attractive. Rook calls it legible. Division is not a vibe.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/muse-pact-flow.svg" alt="Flow diagram from pact agreement to dissent to undercutting price" width="1200" height="680"><figcaption>Figure 2. The week in one cartoon. Three agreed, one demurred, one price list shipped.</figcaption></figure>
+      <section>
+        <table class="claimtable">
+          <thead><tr><th>Model and tier</th><th>Input / output per M tokens</th></tr></thead>
+          <tbody>
+            <tr><td>Muse Spark API</td><td>$1.25 / $4.25, plus $20 starting credit</td></tr>
+            <tr><td>Claude Sonnet 5</td><td>$2 / $10, rising to $3 / $15 after August</td></tr>
+            <tr><td>Claude Opus 4.8</td><td>$5 / $25</td></tr>
+            <tr><td>Muse agent</td><td>100M tokens weekly free, then $20 / $100 tiers</td></tr>
+            <tr><td>Contributor tier</td><td>Ten times cheaper, training-data opt-in required</td></tr>
+          </tbody>
+        </table>
+        <p>Disclosure: Buildopsy daily drafting runs on Muse Spark builds, which is how the price gap stopped being theoretical. Cheap inference that behaves is not a rumor here. It is the invoice.</p>
+      </section>
+      <section><h2>3. Claimed vs Proved</h2>
+        <p><strong>Claimed: caught up with Anthropic plus OpenAI.</strong> Proved: one independent index at 62 plus task-specific wins in coding. SiliconANGLE own caveat applies double: vendors game published benchmarks, plus models trade blows by task. Wang declined adoption statistics while calling uptake exciting plus strong, which is executive for trust me. Parity is plausible, unproved, plus exactly the kind of claim independent evaluators exist to settle. Rook notes the irony debt: the pact promises evaluators while parity claims await them.</p>
+        <p><strong>Claimed: open ecosystem coming.</strong> Proved: Muse Glimmer open-weight exists for laptop-class use, plus a stronger open Muse variant is promised with no date. A shipped small open model plus a promised large one equals half openness. Credit the half. Invoice the half missing.</p>
+        <p><strong>Claimed: enterprise ready.</strong> Proved: analysts set explicit conditions, namely proven coding quality, reliable agents, governance, plus ecosystem. Outside North America, geopolitics picks winners as much as benchmarks do. Enterprise proof means customer outcomes on record, of which precisely zero were attached to the launch claims. The gap between analyst conditions plus vendor assertions is where pilots go to stall.</p>
+        <div class="tip"><strong>Rook's rule:</strong> Price lists are facts. Parity claims are opening bids. Grade them on different curves.</div>
+      </section>
+      <section><h2>4. Why Quiet Wins</h2>
+        <p>Step back plus admire the strategy, because Rook respects game even while grading claims. Amodei, Altman, plus Musk spent a week negotiating restraint in public. Meta spent it shipping: dissent post, agent launch, price list, open-weight teaser. No pact signature required, no training pause announced, no quarterly target sacrificed. While rivals debated whether to brake, Meta priced the ride.</p>
+        <p>The deeper play is structural. If frontier capability converges across labs, as every signal suggests, then price plus distribution decide winners, not benchmarks. Meta owns distribution at planetary scale plus prices like a company that knows it. The Llama 4 disappointment, admitted by its own CTO, reads differently in this light: not a stumble but a cleared runway. Old open strategy abandoned, new closed-plus-cheap strategy unveiled, all within one reorganization.</p>
+        <p>Even the ethics framing serves the price war. Responsibility per lab, liability as enforcer, alignment as differentiator: each plank argues against coordination while sounding like virtue. Meanwhile Trump tells Huang robot fears are a hoax, Huang tells the G20 to accelerate, plus Sanders treaty waits for two signatures that will never arrive. The pact now has four dissenters of different species: one accelerator president, one chip baron, one senator demanding the opposite, plus one platform pricing the alternative. Rook counts noses. The ayes peaked Saturday.</p>
+      </section>
+      <section><h2>5. What to Watch</h2>
+        <p>First, the evaluator ecosystem both sides now endorse. Count independent evaluators with real access six months out. Promises compound. Desks either exist or they do not.</p>
+        <p>Second, the contributor tier true price. Ten times cheaper in exchange for training data is a bargain whose cost arrives later as model improvement for the vendor. Developers should price their data like Meta prices its tokens: aggressively.</p>
+        <p>Third, open-weight delivery dates. Glimmer shipped small. The strong open Muse has no date. Openness announced plus openness shipped are different products.</p>
+        <p>Fourth, enterprise receipts. Analyst conditions are public. The first named customer outcomes at scale settle the parity debate faster than any benchmark. Watch case studies, not leaderboards.</p>
+        <p>Fifth, the FINRA-style regulator fight. Zuckerberg privately opposed it to Trump in August, per anonymous official sourcing. Public dissent plus private lobbying now rhyme. The pact debate plus the regulator debate are one debate with two costumes.</p>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Credit where due, three times over. The dissent is coherent: self-pacing plus liability beats performative coordination. The delay of Muse for safety, self-reported but specific, beats every rival disclosure this month. The pricing is simply the best deal in frontier AI, no grading curve required.</p>
+        <p>Now the bill. Dissent without coordination leaves every lab pacing itself, which is exactly the status quo the pact called reckless. Parity claims outrun independent proof by roughly one benchmark. The quiet strategy is brilliant business plus unproven safety. Rook does not grade business. Rook grades claims. Claims: mixed, with receipts attached. Prices: correct to the cent.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>No to the pact. Yes to the price list. Watch the evaluators.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Related file on this site: <a href="slow-down-pact-postmortem.html">Three CEOs Agreed to Slow Down. Nobody Slowed Down.</a> This audit follows September 15 to 16 2026 dissent plus pricing disclosures with coverage. Quotes are verbatim from published posts plus reported remarks. Pricing figures are company-published. Capability claims are graded against cited independent benchmarks.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://abcnews.com/Technology/wireStory/zuckerberg-distances-meta-calls-coordinated-approach-ai-slowdown-136494047" target="_blank" rel="noopener noreferrer">AP: Zuckerberg distances Meta from slowdown calls (Sep 16 2026)</a></li><li><a href="https://www.tbsnews.net/world/metas-zuckerberg-says-ai-labs-have-enough-incentive-build-safely-1543936" target="_blank" rel="noopener noreferrer">Reuters: Labs have incentive to build safely (Sep 16 2026)</a></li><li><a href="https://www.benzinga.com/markets/tech/26/09/61808554/daniel-newman-praises-zuckerberg-for-doing-the-right-thing-with-muse-ai-safety-despite-investor-pressure-didnt-feel-the-need-to-bring-bernie-sanders-into-this" target="_blank" rel="noopener noreferrer">Benzinga: Muse delay plus evaluator stance (Sep 16 2026)</a></li><li><a href="https://siliconangle.com/2026/09/02/meta-says-it-has-caught-up-with-anthropic-and-openai-after-releasing-muse-spark-1-3-its-most-powerful-llm-so-far/" target="_blank" rel="noopener noreferrer">SiliconANGLE: Muse Spark 1.3 parity claims plus AA score 62 (Sep 2026)</a></li><li><a href="https://www.cnbc.com/amp/2026/08/05/meta-debuts-muse-code-to-take-on-anthropic-and-openai-.html" target="_blank" rel="noopener noreferrer">CNBC: Muse Code plus contributor pricing (Aug 2026)</a></li><li><a href="https://www.cnbc.com/2026/07/09/meta-jumps-into-ai-coding-market-to-chase-anthropic-and-openai.html" target="_blank" rel="noopener noreferrer">CNBC: Spark 1.1 pricing 1.25 and 4.25 (Jul 2026)</a></li><li><a href="https://fortune.com/2026/07/09/meta-muse-spark-1-1-release-alexandr-wang-superintelligence-labs-mark-zuckerberg/" target="_blank" rel="noopener noreferrer">Fortune: Spark 1.1 launch context (Jul 2026)</a></li><li><a href="https://www.benton.org/headlines/meta-debuts-muse-its-long-planned-personal-ai-agent" target="_blank" rel="noopener noreferrer">Benton: Muse agent tiers plus free tokens (Sep 2026)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
