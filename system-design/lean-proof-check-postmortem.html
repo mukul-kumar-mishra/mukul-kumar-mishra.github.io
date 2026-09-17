@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OpenAI published a Lean formalization of its Navier-Stokes proof. Rook audits what checked-in-Lean actually guarantees: kernel terms, sorry holes, axiom lists, plus the other proof anyone can run.">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://buildopsy.com/system-design/lean-proof-check-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Lean Checked It. Nobody Checked the Check.">
+  <meta property="og:description" content="Kernel-checked terms, sorry-shaped holes, plus two rival proofs anyone can machine-check. The audit checklist behind the certificate.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/lean-kernel-meme.svg">
+  <meta property="og:image:alt" content="Three panels contrasting kernel checking against sorry shortcuts and axiom lists">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/lean-proof-check-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lean Checked It. Nobody Checked the Check.">
+  <meta name="twitter:description" content="A Lean formalization proves the terms checked. Everything else on the checklist is still open.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/lean-kernel-meme.svg">
+  <meta name="twitter:image:alt" content="Three panels contrasting kernel checking against sorry shortcuts and axiom lists">
+  <title>Lean Checked It. Nobody Checked the Check. | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Lean Checked It. Nobody Checked the Check.","description":"A Rook audit of Lean verification claims around the Navier-Stokes proofs: kernel guarantees, sorry holes, axiom auditing, plus the independent preprints anyone can machine-check.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-16","dateModified":"2026-09-16","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/lean-proof-check-postmortem.html"},"keywords":"Lean, formal verification, Navier-Stokes, sorry, axioms, proof checking"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Policy Incident</span><span class="chip">September 2026</span><span class="chip">13 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Lean Checked It. Nobody Checked the Check.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A Lean formalization landed beside the biggest math claim of the decade. Coverage upgraded it into proof of proof. Rook separates what the kernel guarantees from everything the certificate does not say: sorry holes, axiom lists, version pins, plus a rival proof anyone can run tonight.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Checked-in-Lean means the kernel accepted the terms. It does not mean no sorry, the right theorem, or a pinned toolchain. Print the axioms, pin the version, re-run outside. Then talk.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 16, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> OpenAI published its writeup plus Lean formalization September 8 2026. Independent preprints with machine-checkable proofs circulated the same week. Replication of either claim by third parties is pending.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img src="../images/articles/lean-kernel-meme.svg" alt="Three panels contrasting kernel checking against sorry shortcuts and axiom lists" width="1200" height="680"><figcaption>Figure 1. The guarantee in one cartoon. Terms checked, shortcuts visible, axioms listed.</figcaption></figure>
+      <section><h2>1. Two Proofs, Two Timelines</h2>
+        <p>Track A: OpenAI agents start September 1, reach the result September 5 after 88 hours, then spend 17 more hours turning argument into Lean formalization. Totals disclosed: 2.7 million messages plus roughly 130 billion output tokens on Navier-Stokes alone, at a cost the company prices in the millions. Statements C plus D of the Clay formulation, published writeup plus repository, no prize claim. Fast, loud, plus expensive enough to itemize.</p>
+        <p>Track B: Tristan Buckmaster plus Levent Alpöge publish preprints on adjacent blowup problems with Lean formalizations anyone can machine-check tonight, no press call required. Buckmaster says he never saw the OpenAI proof. OpenAI denies his account of how the work began. The data-use dispute sits unresolved between two named parties, which Rook files under people problems wearing math costumes.</p>
+        <div class="callout"><strong>The distinction that matters:</strong> Track B can be checked by anyone with a laptop. Track A can be checked by anyone OpenAI hands the repository plus toolchain. One of these is verification. The other is verification with an asterisk the size of a data center.</div>
+      </section>
+      <section><h2>2. What the Kernel Guarantees</h2>
+        <p>Lean design is genuinely beautiful, so credit first. A minimal kernel checks proof terms against claimed types. Tactics, automation, plus LLM-generated search are untrusted by construction: whatever they produce must still pass the kernel. Bugs in the clever parts cannot smuggle falsehoods past the small trusted part. This prover-verifier split is the whole security model. Sound as designed.</p>
+        <p>That guarantee covers exactly one relation: these terms satisfy those types under this kernel. Everything downstream of that sentence, namely whether the types state the intended theorem, whether shortcuts hide inside, plus whether the toolchain matches, lives outside the guarantee. The certificate is real. Its jurisdiction is narrow. Most coverage never reads past the seal.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/lean-audit-flow.svg" alt="Flow diagram from printing axioms to pinning versions to external rechecking" width="1200" height="680"><figcaption>Figure 2. The checklist in one cartoon. List the axioms, pin the version, re-check outside.</figcaption></figure>
+      <section><h2>3. What It Does Not</h2>
+        <p><strong>Sorry proves anything.</strong> The sorry tactic inhabits any type, which makes it the universal skeleton key: a proof containing sorry checks green while proving nothing. Lean docs say finished proofs should never contain it. Should is doing heavy lifting. The audit command exists for exactly this reason, which tells you how often the rule needs enforcing.</p>
+        <p><strong>Axioms ride along silently.</strong> Every Lean proof depends on an axiom list retrievable with one command. Standard lists contain the usual three classical principles. Custom axioms, compiler-trust axioms from native evaluation, plus permitted-but-unproven helper lemmas all appear there too, each shrinking what checked really means. An unread axiom list is an unread contract.</p>
+        <p><strong>The wrong theorem checks fine.</strong> The kernel verifies terms against statements. It has no access to intent. A subtly wrong definition, a narrowed statement, plus a convenient formalization all pass with full honors. Specification risk lives entirely outside the machine, which is awkward for claims whose most disputed part is what was actually shown.</p>
+        <p><strong>Toolchains drift.</strong> Definitions plus theorems break across Lean versions often enough that the community treats porting as weather. A certificate without a pinned version plus pinned Mathlib is a photo of a proof, not a proof you can rerun. Freshness matters more than most announcements admit.</p>
+        <div class="tip"><strong>Rook's rule:</strong> A formalization without an axiom list, a version pin, plus an independent rerun is a press release with a compiler attached.</div>
+      </section>
+      <section><h2>4. The Checklist</h2>
+        <p>Print the axioms. Expect the standard three classical principles plus nothing else. Investigate every extra line like an unauthorized charge.</p>
+        <p>Grep the sorry. Zero occurrences in finished work, no permitted lists, no helper-lemma carve-outs. Each allowed sorry is a hole with a permission slip.</p>
+        <p>Pin everything. Lean version, Mathlib commit, plus native-evaluation flags. Then hand the bundle to someone hostile with a different machine.</p>
+        <p>Re-run outside. External checkers exist precisely because self-checking has limits. Independent replication is the only audit that cannot be stage-managed.</p>
+        <p>Read the statement like opposing counsel. The most consequential errors in formal mathematics live in definitions, not derivations. Ask what was shown before asking whether it checks.</p>
+      </section>
+      <section><h2>5. Applied to Both Claims</h2>
+        <p>OpenAI track: writeup plus repository published, statements named, prize explicitly not sought, Clay two-year scrutiny clock acknowledged by omission. Strong transparency shape. Missing from public view: axiom lists, toolchain pins, plus third-party reruns. Grade: certificate present, checklist mostly open. The cost disclosure, millions for 88 hours, deserves its own audit someday. Compute receipts are claims too.</p>
+        <p>Buckmaster track: preprints plus formalizations anyone can run, dispute with OpenAI on the record from both sides, no billion-dollar lab behind the microphone. Grade: checkable today, smaller spotlight, louder questions about provenance. Machine-checkable does not mean dispute-free. It means the dispute has logs.</p>
+        <p>Clay rules sit above both: qualifying publication, two years of scrutiny, general acceptance. Nobody has cleared them. Everybody reporting otherwise is selling timeline as triumph. The prize waits. The checklist does not care who files first.</p>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Credit where due, twice over. OpenAI published instead of press-releasing, with numbers, timelines, plus a repository. Buckmaster plus Alpöge published checkable work while disputing a giant, which costs more courage than compute. Both tracks advanced the field further in a week than commentary did in a decade.</p>
+        <p>Now the bill. A kernel-checked term is the beginning of verification, not its end. Sorry holes, axiom lists, version pins, specification risk, plus independent reruns form the actual checklist. Neither celebrated proof has completed it in public. Coverage that writes checked-in-Lean as QED is doing marketing with a typechecker. Rook does the checklist instead. Print the axioms. Pin the version. Re-run outside. Then talk.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The kernel checked the terms. The terms await their audit.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Related file on this site: <a href="navier-stokes-astra-postmortem.html">OpenAI Says It Solved Navier-Stokes. Here Is the Footnote.</a> This audit follows September 2026 publications plus Lean documentation. Technical claims about the proof assistant come from official references. Claim grades separate company-reported, independently checkable, plus pending items.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://openai.com/index/navier-stokes-solution" target="_blank" rel="noopener noreferrer">OpenAI: Navier-Stokes solution writeup (Sep 8 2026)</a></li><li><a href="https://www.cnbc.com/2026/09/09/openai-navier-stokes-math-problem-solved.html" target="_blank" rel="noopener noreferrer">CNBC: 10,000 agents plus 88 hours (Sep 9 2026)</a></li><li><a href="https://thenextweb.com/news/openai-navier-stokes-claim-verification-credit" target="_blank" rel="noopener noreferrer">The Next Web: Verification framing plus Buckmaster dispute (Sep 2026)</a></li><li><a href="https://lean-lang.org/doc/reference/latest/Axioms" target="_blank" rel="noopener noreferrer">Lean reference: Axioms plus sorry semantics</a></li><li><a href="https://www.proofspath.com/sorry-free-discipline-and-axiom-auditing" target="_blank" rel="noopener noreferrer">ProofsPath: Sorry-free discipline plus axiom auditing</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
