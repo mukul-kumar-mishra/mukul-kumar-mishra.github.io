@@ -97,6 +97,7 @@
       <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
       <div id="articleList" style="display:grid;gap:16px;">
         <article class="feature-link"><div><span class="fl-tag">Free Course</span> <span class="chip">15 lessons</span></div><h3><a class="feature-link-title" href="course.html">System Design Course: 15 Lessons From Real Outages</a></h3><p class="fl-desc">Start here. Story-driven lessons with diagrams from request paths to interview playbooks, built from production postmortems.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">SaaS Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce: The Login Queue That Ate Dreamforce</a></h3><p class="fl-desc">Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Web Performance</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="godaddy-weakest-vital-postmortem.html">GoDaddy: The Lab Applauded. The Field Accused.</a></h3><p class="fl-desc">Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Data Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="moengage-eventstore-hardware-postmortem.html">MoEngage: Rent Nothing, Own the Millisecond</a></h3><p class="fl-desc">250,000 writes a second at 1ms average on owned NVMe hardware. Write-heavy economics, priced.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Data Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="sharechat-feature-store-cost-postmortem.html">ShareChat: The 10x Cheaper Assignment</a></h3><p class="fl-desc">A billion features a second, then an order to cut the bill tenfold. Fat rows, Flink discipline, plus compression.</p></article>
@@ -130,7 +131,7 @@
   <footer class="footer">
     <div class="wrap">
       <span>&copy; <span id="year"></span> Buildopsy</span>
-      <span><a href="../about.html">About</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span>
     </div>
   </footer>
 
@@ -160,6 +161,7 @@
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
       var embeddedArticles = [
+        {"title": "Salesforce: The Login Queue That Ate Dreamforce", "url": "salesforce-dreamforce-login-queue-postmortem.html", "tag": "SaaS Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.", "tags": ["Salesforce", "Outage", "Dreamforce", "Queueing"]},
         {"title": "GoDaddy: The Lab Applauded. The Field Accused.", "url": "godaddy-weakest-vital-postmortem.html", "tag": "Web Performance", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.", "tags": ["GoDaddy", "Core Web Vitals", "CLS", "Field"]},
         {"title": "MoEngage: Rent Nothing, Own the Millisecond", "url": "moengage-eventstore-hardware-postmortem.html", "tag": "Data Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "250,000 writes a second at 1ms average on owned NVMe hardware. Write-heavy economics, priced.", "tags": ["MoEngage", "ScyllaDB", "NVMe", "Writes"]},
         {"title": "ShareChat: The 10x Cheaper Assignment", "url": "sharechat-feature-store-cost-postmortem.html", "tag": "Data Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "A billion features a second, then an order to cut the bill tenfold. Fat rows, Flink discipline, plus compression.", "tags": ["ShareChat", "Feature Store", "Flink", "Costs"]},

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Salesforce went dark worldwide on day two of Dreamforce when requests piled up behind an internal login service. Postmortem of queue math, shared capacity, plus support going dark too.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Salesforce: The Login Queue That Ate Dreamforce">
+  <meta property="og:description" content="One login service slowed. Hundreds of instances darkened across six countries. Support could not take tickets about the outage.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/sf-queue-meme.svg">
+  <meta property="og:image:alt" content="Stat panels showing outage start, scope and duration of the Salesforce outage">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Salesforce: The Login Queue That Ate Dreamforce">
+  <meta name="twitter:description" content="Requests stuck behind login. Hundreds of instances dark on conference day two.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/sf-queue-meme.svg">
+  <meta name="twitter:image:alt" content="Stat panels showing outage start, scope and duration of the Salesforce outage">
+  <title>Salesforce: The Login Queue That Ate Dreamforce | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Salesforce: The Login Queue That Ate Dreamforce","description":"A technical postmortem of the September 16 2026 Salesforce global outage: login-service queueing, shared capacity exhaustion across hundreds of instances, plus support fate-sharing on Dreamforce day two.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-16","dateModified":"2026-09-16","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html"},"keywords":"Salesforce, outage, Dreamforce, login service, queueing, multitenant"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="../index.html">Home</a><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">SaaS Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Salesforce: The Login Queue That Ate Dreamforce</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On the second morning of Dreamforce, customer requests started sticking behind an internal login service. Increased load on one core component drained shared capacity. Hundreds of instances across six countries slowed, errored, plus went dark. The support system behind complaints went dark with them.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A login-service queue backed up from 8:30 UTC, capacity drained fleet-wide, major impact ran over seven hours. The fix validated plus rolled out by late morning UTC. One shared dependency, hundreds of tenants, zero working support channel.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 16, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the Salesforce status page plus same-day reporting. Timings plus scope come from published accounts. Queue figures are modeled from the disclosed mechanism.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/sf-queue-meme.svg" alt="Three stat panels showing outage start, scope and duration of the Salesforce outage" width="1200" height="680"><figcaption>Figure 1. The morning in one cartoon. Errors at 8:30 UTC, hundreds of instances dark, fix rolling by noon.</figcaption></figure>
+      <section><h2>1. Wednesday on the Biggest Stage</h2>
+        <p>Dreamforce day two opened with the worst possible keynote: silence where software should be. First customer reports landed around 8:30 UTC on September 16. The status page confirmed requests sticking while waiting on an internal login service. By late morning UTC the company named the deeper cause: increased load on a core system component had reduced its ability to process customer requests. A validated fix began fleet rollout mid-morning UTC. Independent trackers logged major impact across roughly seven and a half hours, with full resolution on the trust site by evening UTC.</p>
+        <p>The scope is what makes this a postmortem instead of an incident note. Hundreds of customer instances across the United States, Britain, Germany, France, India, plus Japan. Severe delays, intermittent errors, plus unreachable services. American users mostly slept through it. European plus Asian business hours absorbed it whole. Timing spared one continent plus billed two others, which is geography as load balancer, minus the balancing.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> The flagship product failed during the flagship marketing event. The support channel built for exactly this moment failed with it. Redundancy covered everything except the two things that mattered.</div>
+      </section>
+      <section><h2>2. The Queue Mechanics</h2>
+        <p>Login sits in front of everything, which makes it the cheapest place to cause the most expensive outage. Model it with Little law. Pending requests equal arrival rate times time stuck waiting. Normally the stuck time is milliseconds, so the pending set stays small. When the login service slows under load, stuck time grows, the pending set grows with it, plus each stuck request holds a connection, a thread, plus a timeout budget while contributing nothing. The queue becomes a workload of its own, consuming the capacity it waits for. This is the classic congestion collapse shape: the slower the service, the more load arrives asking about the slowness.</p>
+        <p>Now multiply by multitenancy. One shared login path serves hundreds of instances, so the collapse transmits instantly across tenant boundaries that exist everywhere except the one component that matters. Noisy tenants did not cause this. Shared fate did. The capacity number that counts is not per-instance headroom but the shared service ceiling. The status updates describe exactly that ceiling draining: increased load on a core component, reduced ability to process requests, fleet-wide symptoms. When the chokepoint is shared, every tenant inherits the worst tenant hour simultaneously.</p>
+        <p>Price the shape with the <a href="../calculators.html#downtime-cost">downtime calculator</a>. Hours of degraded CRM across six countries, times revenue teams priced per minute, plus SLA exposure on top. Conference-day timing adds unmodeled cost no calculator captures: every prospect demo becomes a reliability demo.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img src="../images/articles/sf-login-flow.svg" alt="Flow diagram from stuck requests to queue exhaustion to dark status" width="1200" height="680"><figcaption>Figure 2. The mechanism in one cartoon. Stuck logins pile up, capacity drains, support goes dark too.</figcaption></figure>
+      <section><h2>3. The Blast Radius, Including Support</h2>
+        <p>The cruelest detail sits one line deep in the status updates: the outage degraded support case creation itself. Customers could not open tickets about being unable to open anything. Fate-sharing between product plus support tooling turns every incident into a communications blackout at the worst hour. Status pages carried the load instead, which is why status-page clarity deserves postmortem-grade attention. Salesforce updates were frequent plus specific, credit where due. The channel that failed was the private one.</p>
+        <p>A secondary vendor footnote deserves separation from the main cause. Same-day reporting noted browser freezing tied to Chrome plus Edge versions, with vendor fixes rolling separately. Distinct mechanism, distinct fix, overlapping morning. Incident reports often braid two failures into one story. The login queue explains the fleet-wide delays. The browser note explains some frozen tabs. Conflating them would misassign both fixes, so this file keeps them on separate shelves.</p>
+      </section>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Authentication had no bulkhead.</strong> Every request path funneled through one login service with no isolation between tenants or traffic classes. Bulkheads exist precisely so one slow dependency cannot tax all callers. Login is the last place to skip them plus the first place they were skipped.</p>
+        <p><strong>Queue depth had no circuit breaker.</strong> Requests waited instead of failing fast, so the pending set grew without bound while timeouts stretched. Fail-fast with clear errors would have bounded the blast radius to slowness instead of darkness. Waiting politely is how queues become outages.</p>
+        <p><strong>Support rode the same fate.</strong> Case creation depended on the same distressed core, removing the escape hatch during the fire. Support tooling should fail over to island mode: static forms, queued intake, plus independent storage. Anything less converts incidents into silence.</p>
+        <p><strong>Load shedding arrived as a fix, not a feature.</strong> The mitigation restored capacity, which proves capacity controls existed to be operated. Static priority tiers plus automatic shedding under queue pressure would have degraded gracefully instead of collapsing globally. The knob existed. Nobody turned it until morning.</p>
+      </section>
+      <section><h2>5. What Should Happen Instead</h2>
+        <p>First, bulkhead the login path per tenant cohort plus traffic class. Interactive logins, API tokens, plus internal calls should draw from separate pools with separate ceilings. One cohort pain must never spend another cohort budget.</p>
+        <p>Second, fail fast with budgets. Cap queue wait per request class, then shed with explicit errors plus retry guidance. A fast no beats a slow maybe at fleet scale. Timeouts are load-bearing walls, not tuning knobs.</p>
+        <p>Third, island-mode the support plane. Case intake must survive core distress on independent storage with async replay. Test it by failing the core in staging quarterly. The drill that never runs is the drill that fails on conference day.</p>
+        <p>Fourth, autoscale the chokepoint on queue depth, not CPU. Login services saturate on waits long before they saturate on compute. Queue length is the scaling signal. CPU graphs will report calm seas while the harbor fills.</p>
+        <p>Fifth, rehearse conference-day load explicitly. Marketing calendars are capacity forecasts. Flagship events deserve pre-scaled headroom plus frozen deploys, priced against the alternative the whole world just watched.</p>
+        <div class="tip"><strong>Operator rule:</strong> If one shared service can darken hundreds of tenants, its bulkheads are the architecture. Everything else is interior design.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Credit the response first. Detection within the hour, named cause by late morning, validated fix rolling before noon UTC, frequent status updates throughout. That is a functioning incident machine. The machine worked. The architecture it protects did not, because no incident process fixes a missing bulkhead at 9 AM. It only discovers it, loudly, on stage.</p>
+        <p>The lesson travels to every multitenant system with a shared front door. Find yours tonight. Measure its queue depth under normal load. Then imagine that depth times ten with support sharing the same fate. If the picture scares you, the postmortem is already scheduled. It just needs a conference.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>One queue. Hundreds dark. Zero working support tickets.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This postmortem follows the Salesforce status page plus same-day reporting on September 16 2026. Timings plus scope come from the published accounts. Queue figures are modeled from the disclosed mechanism.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.hindustantimes.com/world-news/us-news/salesforce-outage-hits-customers-worldwide-with-delays-errors-and-service-access-issues-101789559786036.html" target="_blank" rel="noopener noreferrer">Hindustan Times: Worldwide delays plus errors timeline (Sep 16 2026)</a></li><li><a href="https://sea.mashable.com/tech/54942/salesforce-goes-down-during-the-companys-dreamforce-event-what-we-know" target="_blank" rel="noopener noreferrer">Mashable: Dreamforce-day outage plus vendor browser note (Sep 16 2026)</a></li><li><a href="https://qz.com/salesforce-global-outage-dreamforce-conference-091626" target="_blank" rel="noopener noreferrer">Quartz: Global outage during Dreamforce (Sep 16 2026)</a></li><li><a href="https://www.theregister.com/saas/2026/09/16/salesforce-suffers-global-outage-amid-dreamforce-shindig/5296800" target="_blank" rel="noopener noreferrer">The Register: Outage amid Dreamforce (Sep 16 2026)</a></li><li><a href="https://www.thousandeyes.com/blog/salesforce-outage-analysis-september-16-2026" target="_blank" rel="noopener noreferrer">ThousandEyes: Outage analysis (Sep 16 2026)</a></li><li><a href="https://statusstack.com/blog/salesforce-september-2026-outage" target="_blank" rel="noopener noreferrer">StatusStack: Core disruption timeline (Sep 16 2026)</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
