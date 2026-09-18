@@ -82,7 +82,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A routine deploy restarts consumers one by one. Each restart rejoins the group. Each rejoin reassigns every partition. This guide explains the rebalance protocol, why it cascades at scale plus the three settings that end the loop.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eager rebalancing stops the world on every membership change. Rolling restarts arrive faster than rebalances complete, so the group never settles. Static membership plus cooperative assignment break the cycle.</p>
@@ -92,10 +92,10 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Pause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">11 Min</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Retry Amplifier</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">6x Load</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · System design guide · Published September 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the protocol works plus how to configure it. Numbers below illustrate a labeled modeled scenario, not a claimed company incident. For the full cascade analysis with coordinator math, read <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the cascade analysis plus the coordinator math: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>. This postmortem answers how the protocol works, why it cascades plus how to configure it.</aside>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Protocol behavior follows Apache Kafka documentation plus KIPs. Scenario numbers illustrate a labeled model from the companion teardown, not a claimed company incident. Replace my assumptions with your telemetry wherever they differ.</aside>
 

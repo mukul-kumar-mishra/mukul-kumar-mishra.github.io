@@ -82,7 +82,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Messaging Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Open a popular channel and thousands of readers hit one database partition within seconds. This guide explains how Discord survived that fan-in: channel partitioning, quorum reads, a Rust coalescing layer plus an engine swap from 177 nodes to 72.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Discord partitions messages by channel plus time bucket. Popular channels overheated partitions while quorum reads spread the pain. Coalescing merged the crowd into one query. ScyllaDB removed the pause tax.</p>
@@ -92,10 +92,10 @@
           <div class="stat" style="padding:14px;"><div class="lbl">After</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">72 Nodes</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Read p99</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">15ms</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · System design guide · Published September 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the storage works, why reads broke plus what fixed them. For the full forensic teardown with overkill math and operator rules, read <a href="discord-messages-scale-postmortem.html">Discord: Trillions of Messages, 177 Nodes Too Many</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the overkill math plus the operator rules: <a href="discord-messages-scale-postmortem.html">Discord: Trillions of Messages, 177 Nodes Too Many</a>. This postmortem answers how the storage works, why reads broke plus what fixed them.</aside>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Node counts, latencies plus migration steps follow Discord Engineering publications plus ScyllaDB case coverage. Cost framing is modeled from public cloud list prices. Replace my assumptions with your telemetry wherever they differ.</aside>
 

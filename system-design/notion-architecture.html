@@ -82,7 +82,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Forensic Architecture</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every block looks free. Behind each one sits a sharded database, a change stream, an index, a permission graph plus a meter that never sleeps. This guide explains how Notion turned notes into a 200-billion-block data platform without letting the warehouse eat the product.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion stores blocks in 480 Postgres shards. CDC through Kafka feeds a decoupled lake plus search. Vector search runs tiered. One edit fans into six workloads, priced below.</p>
@@ -92,10 +92,10 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · System design guide · Published September 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the system works, where the money goes plus what to steal. For the full forensic teardown with workload tables and the 1M RPS test, read <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete workload tables plus the 1M RPS test: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>. This postmortem answers how the system works, where the money goes plus what to steal.</aside>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Block counts, shard layout plus vector costs come from Notion engineering plus company posts. Workload and bill figures are a labeled scenario model from the companion teardown. Replace my assumptions with your telemetry wherever they differ.</aside>
 
