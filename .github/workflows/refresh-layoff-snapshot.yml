@@ -31,10 +31,119 @@ jobs:
           json.dump(snap, open("data/layoff-count.json", "w"), indent=2)
           print("snapshot total:", snap["total"])
           EOF
+      - name: Regenerate radar HTML fallbacks
+        run: |
+          python3 - <<'EOF'
+          import json, re, datetime
+
+          COUNTRY_NAMES = {"US": "United States", "IN": "India", "GB": "United Kingdom",
+              "CA": "Canada", "AU": "Australia", "DE": "Germany", "FR": "France",
+              "ES": "Spain", "IT": "Italy", "NL": "Netherlands", "SG": "Singapore",
+              "JP": "Japan", "KR": "South Korea", "BR": "Brazil", "MX": "Mexico",
+              "AE": "United Arab Emirates", "IL": "Israel", "IE": "Ireland",
+              "SE": "Sweden", "CH": "Switzerland", "NZ": "New Zealand",
+              "ZA": "South Africa", "HK": "Hong Kong", "CN": "China", "TW": "Taiwan",
+              "PH": "Philippines", "MY": "Malaysia", "ID": "Indonesia", "NG": "Nigeria"}
+          COLORS = ["#a3e635", "#38bdf8", "#fb7185", "#d8a83e", "#93a4ba"]
+          OTHER_COLOR = "rgba(127,127,127,0.35)"
+          CIRC = 502.65
+
+          snap = json.load(open("data/layoff-count.json"))
+          total = snap["total"]
+          dt = datetime.datetime.strptime(snap["fetchedAt"], "%Y-%m-%dT%H:%M:%SZ")
+          date_s = "%d %s" % (dt.day, dt.strftime("%b %Y"))  # portable: no %-d (Linux-only)
+
+          countries = sorted(snap.get("countries", {}).items(), key=lambda kv: -kv[1])
+          top = countries[:5]
+          rows = top + [("Others", total - sum(c for _, c in top))]
+
+          def cname(code):
+              return "Others" if code == "Others" else COUNTRY_NAMES.get(code, code)
+
+          seg_tpl = ('<circle cx="100" cy="100" r="80" stroke="%s" '
+                     'stroke-dasharray="%.1f %.2f" stroke-dashoffset="%.1f"/>')
+          seg_rows, offset = [], 0.0
+          for i, (code, count) in enumerate(rows):
+              color = COLORS[i] if i < len(COLORS) else OTHER_COLOR
+              seg_rows.append(seg_tpl % (
+                  color, max(count / total * CIRC - 0.8, 0.5), CIRC, offset))
+              offset -= count / total * CIRC
+
+          legend_tpl = ('<li><span class="dot" style="background:%s"></span>'
+                        '<span class="lname">%s</span><span class="lval">%s</span></li>')
+          legend_rows = []
+          for i, (code, count) in enumerate(rows):
+              color = COLORS[i] if i < len(COLORS) else OTHER_COLOR
+              legend_rows.append(legend_tpl % (color, cname(code), f"{count:,}"))
+
+          top_code, top_count = top[0]
+          top_name, top_pct = cname(top_code), top_count / total * 100
+
+          days = sorted(snap.get("by_day", {}).items())
+          last7 = sum(c for _, c in days[-7:])
+          prior7 = sum(c for _, c in days[-14:-7])
+          delta = last7 - prior7
+          if delta == 0:
+              delta_s, pct_s = "flat", "no change week over week"
+          elif prior7:
+              delta_s = "%s %s" % ("up" if delta > 0 else "down", f"{abs(delta):,}")
+              pct_s = "about %d percent %s" % (
+                  abs(round(delta / prior7 * 100)), "higher" if delta > 0 else "lower")
+          else:
+              delta_s, pct_s = "up %s" % f"{delta:,}", "first full week of data"
+
+          def sub_block(text, tag, attr, lines):
+              leb = "\r\n" if "\r\n" in text else "\n"
+              pat = re.compile(
+                  r'(^[ \t]*<%s %s>\r?\n)(.*?)(\r?\n[ \t]*</%s>)' % (tag, attr, tag),
+                  re.S | re.M)
+              m = pat.search(text)
+              assert m, "block not found: %s %s" % (tag, attr)
+              inner_indent = m.group(2).split("\n")[0]
+              indent = inner_indent[:len(inner_indent) - len(inner_indent.lstrip())]
+              return (text[:m.start()] + m.group(1) + leb.join(indent + ln for ln in lines)
+                      + m.group(3) + text[m.end():])
+
+          def sub_once(text, pattern, repl, label):
+              text2, n = re.subn(pattern, repl, text)
+              assert n >= 1, "not found: " + label
+              return text2
+
+          for page in ["index.html", "layoff-radar.html"]:
+              t = open(page, "rb").read().decode("utf-8")
+              t = sub_once(t, r'id="layoff-count">[\d,]+<',
+                           'id="layoff-count">%s<' % f"{total:,}", page + " count")
+              t = sub_once(t, r'<span id="last-updated">[^<]*</span>',
+                           '<span id="last-updated">%s</span>' % date_s, page + " date")
+              t = sub_once(t, r'counted [\d,]+ matching reports in 30 days as of [^.<]+',
+                           'counted %s matching reports in 30 days as of %s'
+                           % (f"{total:,}", date_s), page + " noscript")
+              t = sub_block(t, "g", 'id="donut-segs"[^>]*', seg_rows)
+              t = sub_block(t, "ul", 'class="radar-legend" id="radar-legend"', legend_rows)
+              t = sub_once(t, r'(id="donut-center-top"[^>]*>)[\d.]+%(</text>)',
+                           r'\g<1>%.1f%%\g<2>' % top_pct, page + " donut pct")
+              t = sub_once(t, r'(id="donut-center-sub"[^>]*>)[^<]*(</text>)',
+                           r'\g<1>%s\g<2>' % top_name, page + " donut name")
+              t = sub_once(t, r'aria-label="Share of reports by publisher country\. [^"]*"',
+                           'aria-label="Share of reports by publisher country. %s at '
+                           'about %d percent."' % (top_name, round(top_pct)),
+                           page + " aria")
+              t = sub_once(t, r'(id="trend-now">)[\d,]+(<)',
+                           r'\g<1>%s\g<2>' % f"{last7:,}", page + " trend now")
+              t = sub_once(t, r'(id="trend-prior">)[\d,]+(<)',
+                           r'\g<1>%s\g<2>' % f"{prior7:,}", page + " trend prior")
+              t = sub_once(t, r'(id="trend-delta">)[^<]*(<)',
+                           r'\g<1>%s\g<2>' % delta_s, page + " trend delta")
+              t = sub_once(t, r'(id="trend-pct">)[^<]*(</)',
+                           r'\g<1>%s\g<2>' % pct_s, page + " trend pct")
+              open(page, "wb").write(t.encode("utf-8"))
+              print(page, "regenerated:", f"{total:,}", date_s, top_name, "%.1f" % top_pct)
+          print("DONE")
+          EOF
       - name: Commit snapshot
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/layoff-count.json
+          git add data/layoff-count.json index.html layoff-radar.html
           git diff --staged --quiet || git commit -m "chore: refresh layoff snapshot"
           git push
