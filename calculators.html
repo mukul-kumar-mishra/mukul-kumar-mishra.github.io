@@ -27,7 +27,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/radar.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -656,7 +656,7 @@
   <footer class="footer">
     <div class="wrap">
       <span>&copy; <span id="year"></span> Buildopsy</span>
-      <span><a href="about.html">About</a> · <a href="about.html#work-with-me">Contact</a> · <a href="layoff-radar.html">Tech Layoff Radar</a></span>
+      <span><a href="about.html">About</a> · <a href="about.html#work-with-me">Contact</a></span>
     </div>
   </footer>
 
@@ -675,7 +675,7 @@
       localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
       syncIcons();
     });
-    lucide.createIcons();
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
   </script>
   <script src="js/calculators.js" defer></script>
 <script src="js/nav.js"></script>
