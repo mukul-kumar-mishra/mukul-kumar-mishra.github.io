@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"TechArticle",
     "headline":"Vercel Fluid Compute: The Bill Was Waiting",
-    "description":"A system design postmortem of Vercel Fluid Compute, concurrency, compute-resolver, cold startsand cloud cost optimization.",
+    "description":"A system design postmortem of Vercel Fluid Compute, concurrency, compute-resolver, cold starts and cloud cost optimization.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},
     "datePublished":"2026-09-01",
     "dateModified":"2026-09-01",
@@ -103,7 +103,7 @@
 
         <section>
           <h2>2. Why Vercel Became a Billion-Dollar Infrastructure Bet</h2>
-          <p>Vercel began with a sharp developer experience around Next.js deployment. It grew into a platform for building and serving web applications, then pushed into AI Cloud infrastructure. In September 2025, Vercel announced a $300M Series F at a $9.3B post-money valuation. The round included Accel, GIC, BlackRock, Khosla Venturesand existing investors.</p>
+          <p>Vercel began with a sharp developer experience around Next.js deployment. It grew into a platform for building and serving web applications, then pushed into AI Cloud infrastructure. In September 2025, Vercel announced a $300M Series F at a $9.3B post-money valuation. The round included Accel, GIC, BlackRock, Khosla Ventures and existing investors.</p>
           <p>The valuation is not the interesting part by itself. The interesting part is what investors are buying. Vercel is an abstraction layer over cloud infrastructure, with a global delivery network, build pipeline, serverless functions, AI SDK, AI Gateway and sandboxed execution. The product promise is simple: developers should ship code without becoming part-time capacity planners.</p>
           <p>That promise creates a nasty obligation. Vercel must solve the capacity planning on behalf of every customer, including the customers who send a request to a function and then wait on OpenAI, Anthropic, a database, or a slow third-party API. If Vercel pays for that idle time, developer convenience becomes Vercel's cost of revenue.</p>
           <p>Vercel's public Fluid Compute posts say the platform now powers over 45 billion weekly requests, with over 75 percent of function invocations using Fluid Compute. The company reports savings of up to 95 percent for some workloads. These figures are not universal guarantees. They reveal the direction of the optimization: reuse warm resources, allow concurrency and bill active CPU separately from memory waiting.</p>
@@ -152,7 +152,7 @@
         <section>
           <h2>6. The One Million RPS Cost Test</h2>
           <p>Vercel reports more than 100k RPS for compute-resolver, not one million RPS for the entire platform. So let us normalize the comparison. Assume one million function events per second, 2 KB total request and response metadata per event, three copies for routing and safety and a 30-day month.</p>
-          <p>The logical traffic is <strong>1,000,000 x 2 KB x 2,592,000 seconds = 5.18 PB per month</strong>. That is before payloads, model streams, logs, tracesand retries. Now assume the old one-request-per-instance shape pays $0.0000012 per event for origin compute, instance lifetime, routing and platform overhead. The current-shaped bill is <strong>1,000,000 x 2,592,000 x $0.0000012 = $3.11M per month</strong>.</p>
+          <p>The logical traffic is <strong>1,000,000 x 2 KB x 2,592,000 seconds = 5.18 PB per month</strong>. That is before payloads, model streams, logs, traces and retries. Now assume the old one-request-per-instance shape pays $0.0000012 per event for origin compute, instance lifetime, routing and platform overhead. The current-shaped bill is <strong>1,000,000 x 2,592,000 x $0.0000012 = $3.11M per month</strong>.</p>
           <p>My proposed shape allows concurrency, drops stale retries, reuses warm instances and separates active CPU from provider wait time. Suppose only 30 percent of events require origin execution and the effective origin rate falls to $0.0000008 per event. That is <strong>300,000 x 2,592,000 x $0.0000008 = $622,080 per month</strong>. Add $350,000 for edge routing, memory, observability, failover and the resolver layer. The proposed envelope is approximately <strong>$972,000 per month</strong>.</p>
           <table><thead><tr><th>At 1M events/s</th><th>Current-shaped model</th><th>Proposed Fluid-style model</th></tr></thead><tbody>
             <tr><td>Origin events</td><td>1,000,000/s</td><td>300,000/s after reuse and coalescing</td></tr>
@@ -167,7 +167,7 @@
 
         <section id="cost-plan">
           <h2>7. What I Would Improve Next</h2>
-          <p><strong>Make concurrency a contract.</strong> Not every function is safe to run concurrently. Shared globals, file writes, connection poolsand poorly scoped caches can create cross-request leaks. Fluid needs a clear runtime contract, isolation testsand automatic fallback for functions that fail the contract.</p>
+          <p><strong>Make concurrency a contract.</strong> Not every function is safe to run concurrently. Shared globals, file writes, connection pools and poorly scoped caches can create cross-request leaks. Fluid needs a clear runtime contract, isolation tests and automatic fallback for functions that fail the contract.</p>
           <p><strong>Separate waiting classes.</strong> Waiting on a model provider is different from waiting on a database and both are different from waiting on a customer webhook. Track them separately. A single “duration” metric encourages teams to optimize the wrong part of the request.</p>
           <p><strong>Put a budget on retries.</strong> A platform that scales instantly can also amplify a bad retry policy instantly. Retry budgets should be shared across function, provider and customer boundaries. If the upstream is returning 429, spawning more warm capacity is not resilience. It is enthusiasm with a credit card.</p>
           <p><strong>Move data less.</strong> Vercel's own Fluid material emphasizes placing compute near the data rather than pretending every workload belongs at every edge location. Keep dynamic compute in a small set of deliberate regions. Use the edge for routing and cacheable delivery. Global replication is not free and it does not become free when drawn as a globe.</p>
@@ -179,10 +179,10 @@
         <section>
           <h2>8. The Tradeoff Nobody Puts on the Launch Slide</h2>
           <p>Fluid Compute makes the server more efficient, but it also makes the runtime more interesting. Concurrency means requests share a process. Shared processes mean state leaks become possible. A forgotten global variable, a reused buffer, or a cache key missing a tenant identifier can turn a cost optimization into a security incident.</p>
-          <p>The safe design needs isolation at the data boundary even when it relaxes isolation at the process boundary. Credentials, request context, trace IDsand tenant data must be scoped per invocation. The runtime can share sockets, bytecode and memory pages. It cannot share assumptions about who owns the response.</p>
-          <p>There is also a fairness problem. A function with long model waits can occupy memory for a long time. A function with expensive CPU work can monopolize execution slots. The scheduler needs separate limits for active CPU, concurrent requests, memory, open connectionsand response duration. One number called “timeout” is not a scheduler.</p>
+          <p>The safe design needs isolation at the data boundary even when it relaxes isolation at the process boundary. Credentials, request context, trace IDs and tenant data must be scoped per invocation. The runtime can share sockets, bytecode and memory pages. It cannot share assumptions about who owns the response.</p>
+          <p>There is also a fairness problem. A function with long model waits can occupy memory for a long time. A function with expensive CPU work can monopolize execution slots. The scheduler needs separate limits for active CPU, concurrent requests, memory, open connections and response duration. One number called “timeout” is not a scheduler.</p>
           <p>My rollout plan would start with I/O-heavy functions that already have idempotent handlers. I would canary them by function ID, compare active CPU milliseconds, memory GB-hours, p95 time to first byte, error rate and reuse rate, then expand gradually. A platform should not convert every customer at once just because the dashboard has a cheerful green button.</p>
-          <div class="tip"><strong>Migration tip:</strong> Before enabling concurrency, audit globals, connection pools, temporary files, cached credentialsand response buffers. The first question is not “how much will this save?” It is “what can accidentally cross request boundaries?”</div>
+          <div class="tip"><strong>Migration tip:</strong> Before enabling concurrency, audit globals, connection pools, temporary files, cached credentials and response buffers. The first question is not “how much will this save?” It is “what can accidentally cross request boundaries?”</div>
         </section>
 
         <section>

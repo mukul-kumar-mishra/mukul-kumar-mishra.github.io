@@ -37,7 +37,9 @@
       {"@type":"ListItem","position":9,"url":"https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html","name":"ShareChat: The 10x Cheaper Assignment"},
       {"@type":"ListItem","position":10,"url":"https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html","name":"MoEngage: Rent Nothing, Own the Millisecond"},
       {"@type":"ListItem","position":11,"url":"https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html","name":"GoDaddy: The Lab Applauded. The Field Accused."},
-      {"@type":"ListItem","position":12,"url":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html","name":"Salesforce: The Login Queue That Ate Dreamforce"}
+      {"@type":"ListItem","position":12,"url":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html","name":"Salesforce: The Login Queue That Ate Dreamforce"},
+      {"@type":"ListItem","position":13,"url":"https://buildopsy.com/system-design/figma-system-design.html","name":"Figma System Design: How Multiplayer Collaboration Actually Works"},
+      {"@type":"ListItem","position":14,"url":"https://buildopsy.com/system-design/notion-architecture.html","name":"Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search"}
     ]
   }
   </script>
@@ -79,7 +81,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design &amp; Architecture Case Studies</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluations plus counterfactual redesigns.</p>
-      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse 46 system design postmortems with RPS and cost models plus the AI Slop Watch incident files. Each teardown shows what broke and what should be, with math you can run.</p>
+      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse 48 system design postmortems with RPS and cost models plus the AI Slop Watch incident files. Each teardown shows what broke and what should be, with math you can run.</p>
       <div class="grid4" style="margin-top:26px;">
         <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Telemetry Ingestion</div></div>
         <div class="stat"><div class="num">99.99%</div><div class="lbl">Production Availability</div></div>
@@ -120,6 +122,8 @@
       <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
       <div id="articleList" style="display:grid;gap:16px;">
         <article class="feature-link"><div><span class="fl-tag">Free Course</span> <span class="chip">15 lessons</span></div><h3><a class="feature-link-title" href="course.html">System Design Course: 15 Lessons From Real Outages</a></h3><p class="fl-desc">Start here. Story-driven lessons with diagrams from request paths to interview playbooks, built from production postmortems.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">System Design Guide</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="figma-system-design.html">Figma System Design: How Multiplayer Collaboration Actually Works</a></h3><p class="fl-desc">How Figma multiplayer works: WebSocket fan-out, server-authoritative resolution, Rust rewrite plus cost at scale.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">System Design Guide</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="notion-architecture.html">Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search</a></h3><p class="fl-desc">How Notion scales: 480 Postgres shards, CDC lake, vector tiering plus the bill behind a blank page.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="agent-egress-checklist-postmortem.html">Agent Egress Checklist: Write Blocks, Provenance, Rate Limits</a></h3><p class="fl-desc">Box the kernel, gate the network, watch the writes. A defensive standard from the wiki swarm.</p></article>
         <article class="feature-link"><div><span class="fl-tag">SaaS Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce: The Login Queue That Ate Dreamforce</a></h3><p class="fl-desc">Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Web Performance</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="godaddy-weakest-vital-postmortem.html">GoDaddy: The Lab Applauded. The Field Accused.</a></h3><p class="fl-desc">Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.</p></article>
@@ -190,6 +194,8 @@
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
       var embeddedArticles = [
+        {"title": "Figma System Design: How Multiplayer Collaboration Actually Works", "url": "figma-system-design.html", "tag": "System Design Guide", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "How Figma multiplayer works: WebSocket fan-out, server-authoritative resolution, Rust rewrite plus cost at scale.", "tags": ["Figma", "System Design", "WebSockets", "Rust"]},
+        {"title": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "url": "notion-architecture.html", "tag": "System Design Guide", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "How Notion scales: 480 Postgres shards, CDC lake, vector tiering plus the bill behind a blank page.", "tags": ["Notion", "Postgres", "Kafka", "Costs"]},
         {"title": "Agent Egress Checklist: Write Blocks, Provenance, Rate Limits", "url": "agent-egress-checklist-postmortem.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "Box the kernel, gate the network, watch the writes. A defensive standard from the wiki swarm.", "tags": ["Agents", "Sandbox", "Egress", "gVisor"]},
         {"title": "Salesforce: The Login Queue That Ate Dreamforce", "url": "salesforce-dreamforce-login-queue-postmortem.html", "tag": "SaaS Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.", "tags": ["Salesforce", "Outage", "Dreamforce", "Queueing"]},
         {"title": "GoDaddy: The Lab Applauded. The Field Accused.", "url": "godaddy-weakest-vital-postmortem.html", "tag": "Web Performance", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.", "tags": ["GoDaddy", "Core Web Vitals", "CLS", "Field"]},
