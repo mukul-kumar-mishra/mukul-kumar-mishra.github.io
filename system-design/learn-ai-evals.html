@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free LLM evaluation course in 16 workshop lessons from Kabir. Golden sets, LLM judges, CI gates, drift plus guardrails, built for production AI teams.">
+  <meta name="author" content="Kabir">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-ai-evals.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AI Evals That Hold: 16 Lessons From the Agent Bench">
+  <meta property="og:description" content="Golden sets plus judges plus CI gates priced. Sixteen workshop lessons with live diagrams for proving AI quality before users do.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/lean-audit-flow.svg">
+  <meta property="og:image:alt" content="Audit flow showing agent outputs passing through evaluation gates into production">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-ai-evals.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Evals That Hold: 16 Lessons From the Agent Bench">
+  <meta name="twitter:description" content="Sixteen eval lessons with live diagrams plus gates. Stop guessing whether your AI works, with Kabir.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/lean-audit-flow.svg">
+  <meta name="twitter:image:alt" content="Audit flow showing agent outputs passing through evaluation gates into production">
+  <title>AI Evals That Hold: 16 Lessons From the Agent Bench | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"AI Evals That Hold: 16 Lessons From the Agent Bench",
+    "description":"A free LLM evaluation course in 16 workshop lessons covering failure taxonomies, golden sets, LLM judges, RAG metrics, tool tests, CI gates, production monitoring, guardrails, eval economics plus incident-driven evals.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Kabir","url":"https://buildopsy.com/about.html#author-kabir","jobTitle":"Contributing author, AI engineering","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["AI agents","LLM evaluation","RAG","Inference economics"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"Vibe checks rot"},
+      {"@type":"Syllabus","name":"Name the failure"},
+      {"@type":"Syllabus","name":"Golden sets are the spec"},
+      {"@type":"Syllabus","name":"Judges need judging"},
+      {"@type":"Syllabus","name":"RAG gets its ruler"},
+      {"@type":"Syllabus","name":"Tools get tested"},
+      {"@type":"Syllabus","name":"Gates beat hope"},
+      {"@type":"Syllabus","name":"Watch it live"},
+      {"@type":"Syllabus","name":"Guard the exits"},
+      {"@type":"Syllabus","name":"Price the proof"},
+      {"@type":"Syllabus","name":"Incidents end in evals"},
+      {"@type":"Syllabus","name":"Agents must snitch"},
+      {"@type":"Syllabus","name":"Eval the compressor"},
+      {"@type":"Syllabus","name":"Vendors move under you"},
+      {"@type":"Syllabus","name":"The interview proof"},
+      {"@type":"Syllabus","name":"Ship the program"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"AI Evals Course","item":"https://buildopsy.com/system-design/learn-ai-evals.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">16 lessons</span><span class="chip">Live diagrams</span><span class="chip">Kabir</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Evals That Hold: 16 Lessons From the Agent Bench</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Monday. Someone asks whether last week prompt change helped or hurt. The room goes quiet because nobody measured. This course ends that silence. Stop guessing whether your AI works. Build the feedback loops that make it better, one gate at a time.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Sixteen workshop lessons for evaluating AI systems, from failure taxonomies to CI gates plus production monitoring. Built from production postmortems with live diagrams.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-kabir">Kabir</a> · AI engineering course · Updated September 18, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Cost framing is modeled from public list prices. Modeled figures are estimates you can re-run in the calculators. Diagrams below are live: watch failures travel the pipeline, then build gates that catch them.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Name failures from raw traces with a ranked taxonomy instead of arguing from vibes.</li>
+        <li>Freeze golden sets, align LLM judges against human labels, plus score RAG and tool calls by component.</li>
+        <li>Hang CI eval gates, watch cost plus drift live, guard exits, plus turn every incident into new cases.</li>
+        <li>Price the proof with judge spend beside incident exposure, then fund the smaller number.</li>
+        <li>Answer evals interviews with a live taxonomy, an aligned judge sketch, a gate design, plus a budget.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: one slipping system, your first week plan, your proof it worked. Lesson 15 rehearses the proof.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">16 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Vibe checks rot</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Name failure</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Golden spec</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Judge judges</a>
+        <a href="#lesson-5"><span class="rnum">05</span> RAG ruler</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Tools tested</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Gates beat hope</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Watch live</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Guard exits</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Price proof</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Incidents to evals</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Must snitch</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Compressor</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Vendor moves</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Interview proof</a>
+        <a href="#lesson-16"><span class="rnum">16</span> Ship program</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Why evals · Spot checks fail</div>
+          <h2>Vibe Checks Rot</h2>
+          <p class="lesson-story">Monday morning. A swarm of agents ships replies at machine speed. By Friday the replies turn strange plus legal gets cc'd on the fallout. Nobody measured anything between Monday plus Friday because spot checks felt enough. Spot checks always feel enough right until the invoice for trust arrives.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Ship path splitting into spot checks that miss failures versus eval gates that catch them before users">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">ship it</text>
+            <rect class="boxhot" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">vibe check: misses</text>
+            <rect class="boxlime" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">eval gate: catches</text>
+            <rect class="boxhot" x="312" y="20" width="110" height="40" rx="8"/><text x="367" y="44" font-size="11" text-anchor="middle">fallout</text>
+            <rect class="boxlime" x="312" y="90" width="110" height="40" rx="8"/><text x="367" y="114" font-size="11" text-anchor="middle">calm prod</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">you choose</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="40" x2="312" y2="40"/><line x1="280" y1="110" x2="312" y2="110"/><line x1="422" y1="48" x2="454" y2="62"/><line x1="422" y1="102" x2="454" y2="88"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M53,75 L180,100 L340,108 L490,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Replace random spot checks with repeatable reads. Gut feel works once, then it works against you.</li>
+            <li>Measure before the fallout, not after. Evals are cheapest the day before the incident.</li>
+            <li>Deep dive: <a href="openai-swarm-legal-fallout-postmortem.html">OpenAI Swarm Legal Fallout</a>, unchecked outputs with consequences.</li>
+          </ul>
+          <p>Your artifact this lesson: one page answering three questions for your system, what good looks like plus where it breaks plus how you would know. Vague answers are the first failure mode. Name them now.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> How do you know your agent still works after a model swap? <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Spot checks pass while users complain. What broke? <span class="q-seen">Seen at: applied AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Rot named. Now give every failure a name. <a href="#lesson-2">Lesson 02: Name failure →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Taxonomy · Failure modes</div>
+          <h2>Name the Failure</h2>
+          <p class="lesson-story">Tuesday. You pull fifty bad traces plus find five different diseases wearing one symptom. A user saw account B data inside account A session. The ticket says wrong answer. The trace says isolation breach. You cannot measure what you have not named, so name everything before you count anything.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Raw failure traces flowing into a taxonomy sorter that files them into named buckets by severity">
+            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">50 bad traces</text>
+            <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">taxonomy sort</text>
+            <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">isolation</text>
+            <rect class="box" x="302" y="60" width="110" height="34" rx="8"/><text x="357" y="82" font-size="11" text-anchor="middle">grounding</text>
+            <rect class="box" x="302" y="100" width="110" height="34" rx="8"/><text x="357" y="122" font-size="11" text-anchor="middle">tool miss</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">ranked list</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="75" x2="302" y2="77"/><line x1="270" y1="82" x2="302" y2="110"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L210,75 L340,77 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Sample real traces plus sort failures openly. Vague labels hide the fix. Sharp labels schedule it.</li>
+            <li>Rank by impact times detectability. Fix what hurts silently before what hurts loudly.</li>
+            <li>Deep dive: <a href="chatgpt-cross-account-channel-postmortem.html">Cross-Account Channel</a>, one failure with a precise name.</li>
+          </ul>
+          <p>Your artifact: a failure map with named modes plus counts plus severity. Watch traces file into buckets above, then file your own. Ten named failures beat a hundred vibes.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Build a failure taxonomy for a support agent from fifty traces. <span class="q-seen">Seen at: evals-minded loops.</span></p>
+            <p><strong>Q2.</strong> Which failure do you fix first when all five hurt? <span class="q-seen">Seen at: product plus AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Failures named. Now freeze good behavior into a spec. <a href="#lesson-3">Lesson 03: Golden spec →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Datasets · Golden sets</div>
+          <h2>Golden Sets Are the Spec</h2>
+          <p class="lesson-story">Wednesday. A simulation agent slips its harness in testing plus nobody can say which behavior was wrong because right was never written down. The harness held by luck. Luck does not version well. Write down right, version it, then test every change against it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Production traces plus synthetic edge cases merging into a versioned golden set that every build runs against">
+            <rect class="box" x="8" y="20" width="130" height="40" rx="8"/><text x="73" y="44" font-size="11" text-anchor="middle">real traces</text>
+            <rect class="box" x="8" y="90" width="130" height="40" rx="8"/><text x="73" y="114" font-size="11" text-anchor="middle">synthetic edge</text>
+            <rect class="boxlime" x="200" y="55" width="130" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">golden set v3</text>
+            <rect class="box" x="362" y="55" width="190" height="40" rx="8"/><text x="457" y="79" font-size="11" text-anchor="middle">every build runs it</text>
+            <g stroke-width="2"><line x1="138" y1="50" x2="200" y2="68"/><line x1="138" y1="105" x2="200" y2="82"/><line x1="330" y1="75" x2="362" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M73,50 L240,70 L420,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Mine production traces for real failures plus layer synthetic edges on top. Reality supplies the middle, imagination supplies the corners.</li>
+            <li>Version the set like code. Every experiment stays comparable across months of changes.</li>
+            <li>Deep dive: <a href="claude-simulation-breach-postmortem.html">Claude Simulation Breach</a>, the escape a golden set should have caught.</li>
+          </ul>
+          <p>Your artifact: a golden set with twenty cases, inputs plus expected behavior plus grading notes. Small plus versioned beats big plus vague. The set is your spec now.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Build a golden set for a refund agent with no users yet. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Your golden set overfits after three months. How do you refresh it? <span class="q-seen">Seen at: ML platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Spec frozen. Now the graders themselves need grading. <a href="#lesson-4">Lesson 04: Judge judges →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Judges · LLM-as-judge alignment</div>
+          <h2>Judges Need Judging</h2>
+          <p class="lesson-story">Thursday. Your judge model approves everything with a smile while the persona underneath rots. One famous assistant drifted into mockery while its dashboards stayed green. The judge was not lying. The judge was never calibrated. Calibrate the grader or grade nothing.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Judge scores compared against human labels in a confusion matrix that tunes the rubric">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">judge says ok</text>
+            <rect class="box" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">human labels</text>
+            <rect class="boxhot" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">mismatch!</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">rubric fix</text>
+            <circle class="blink" r="5" cx="357" cy="40" style="fill:var(--hot)"/>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L210,75 L330,75 L480,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Align every judge against human labels with a confusion matrix. Agreement is measured, never assumed.</li>
+            <li>Score criteria separately. One overall number hides exactly the failure you need to see.</li>
+            <li>Deep dive: <a href="grok-mechahitler-slop-postmortem.html">Grok Persona Slop</a>, drift the dashboards missed.</li>
+          </ul>
+          <p>Your artifact: one judge rubric plus fifty human labels plus the mismatch rate in writing. Watch the mismatch blink above, then tune until it stops. Uncalibrated judges are random number generators with confidence.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your LLM judge disagrees with humans 30 percent of the time. Now what? <span class="q-seen">Seen at: evals loops.</span></p>
+            <p><strong>Q2.</strong> When is a code check enough plus when do you need a judge? <span class="q-seen">Seen at: AI platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Judges calibrated. Now aim the ruler at retrieval. <a href="#lesson-5">Lesson 05: RAG ruler →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · RAG · Retrieval metrics</div>
+          <h2>RAG Gets Its Ruler</h2>
+          <p class="lesson-story">Friday. Your answer bot pays for every question twice, retrieval plus inference, then answers from the wrong paragraph with perfect grammar. The generator did its job. The retriever failed silently upstream. Measure the two separately or fix the wrong half forever.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Query splitting into retriever scored on recall and generator scored on faithfulness before the final answer">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
+            <rect class="box" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">retriever: recall?</text>
+            <rect class="box" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">generator: faithful?</text>
+            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">blame assigned</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">fix lands</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="40" x2="312" y2="62"/><line x1="280" y1="110" x2="312" y2="88"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M53,75 L190,50 L350,65 L500,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Split RAG scores by component. Recall faults the retriever while faithfulness faults the generator.</li>
+            <li>Attribute answers to chunks. Unattributed sentences are the honest signal of retrieval gaps.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, retrieval economics with receipts.</li>
+          </ul>
+          <p>Your artifact: a RAG scorecard with recall plus faithfulness plus chunk attribution on ten queries. Follow the packet above to the blamed half, then fix only that half. The bot is wrong is not a diagnosis.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> RAG answers fluently from wrong docs. Retriever or generator? Prove it. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Chunking change drops recall 8 points. Roll back or tune forward? <span class="q-seen">Seen at: search plus RAG loops.</span></p>
+          </div>
+          <p class="lesson-hook">Retrieval ruled. Now test the hands, not just the mouth. <a href="#lesson-6">Lesson 06: Tools tested →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Tools · Action accuracy</div>
+          <h2>Tools Get Tested</h2>
+          <p class="lesson-story">Saturday. Your agent says the right thing plus does the wrong thing, calling the refund tool with the ticket ID in the amount field. Text evals applaud. The ledger weeps. Agents act, so test actions: right tool plus right params plus sane retries, every build.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Tool call checked for correct selection plus correct parameters plus sane retries before execution">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">tool call?</text>
+            <rect class="boxlime" x="140" y="20" width="130" height="34" rx="8"/><text x="205" y="42" font-size="11" text-anchor="middle">right tool?</text>
+            <rect class="boxlime" x="140" y="60" width="130" height="34" rx="8"/><text x="205" y="82" font-size="11" text-anchor="middle">right params?</text>
+            <rect class="boxlime" x="140" y="100" width="130" height="34" rx="8"/><text x="205" y="122" font-size="11" text-anchor="middle">retry sane?</text>
+            <rect class="boxhot" x="302" y="55" width="120" height="40" rx="8"/><text x="362" y="79" font-size="11" text-anchor="middle">wrong: block</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">execute</text>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="75" x2="140" y2="77"/><line x1="108" y1="82" x2="140" y2="110"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M58,75 L200,77 L340,75 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Assert tool selection plus parameter accuracy plus retry behavior as three separate checks.</li>
+            <li>Replay multi-step trajectories, not just final answers. The wrong path to the right answer still fails.</li>
+            <li>Deep dive: <a href="agent-egress-checklist-postmortem.html">Agent Egress Checklist</a>, the controls these tests enforce.</li>
+          </ul>
+          <p>Your artifact: a tool test suite with five trajectories asserting selection plus params plus retries. An agent does the wrong thing quietly. Tests make it loud before users hear it.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design trajectory tests for a three-tool booking agent. <span class="q-seen">Seen at: agent engineering loops.</span></p>
+            <p><strong>Q2.</strong> The agent calls the right tool with swapped params. Which check catches it? <span class="q-seen">Seen at: applied AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Hands tested. Now bolt the tests to the merge button. <a href="#lesson-7">Lesson 07: Gates beat hope →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · CI · Eval gates</div>
+          <h2>Gates Beat Hope</h2>
+          <p class="lesson-story">Sunday. A prompt edit ships at noon with a passing vibe. By two the refund bot invents policies at scale. The fix takes ten minutes. The lack of a gate took a quarter. Treat prompts like code: tests run, thresholds hold, red stays home.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Prompt change entering CI where the eval gate blocks regressions and ships only passing versions">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">prompt edit</text>
+            <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">eval gate</text>
+            <rect class="boxhot" x="302" y="20" width="110" height="40" rx="8"/><text x="357" y="44" font-size="11" text-anchor="middle">regress: block</text>
+            <rect class="box" x="302" y="90" width="110" height="40" rx="8"/><text x="357" y="114" font-size="11" text-anchor="middle">improve: ship</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">main green</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="102"/><line x1="412" y1="110" x2="444" y2="82"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L210,75 L357,108 L490,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run the golden set on every prompt plus model plus tool change. Deltas against main decide, not feelings.</li>
+            <li>Set pass thresholds before the test data runs. Moving goalposts after results is hope with a config file.</li>
+            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Proof Check</a>, verification as a deployment habit.</li>
+          </ul>
+          <p>Your artifact: one CI job that fails the build on eval regression, with the threshold in the repo. Watch the bad version stop at the gate above, then make your gate stop one for real. Hope is not a merge strategy.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Wire eval gates into a deploy pipeline. What blocks, what warns? <span class="q-seen">Seen at: LLMOps loops.</span></p>
+            <p><strong>Q2.</strong> Judge flakiness fails one build in five. Fix the gate without trusting regressions. <span class="q-seen">Seen at: AI platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Merge guarded. Now watch what survives contact with users. <a href="#lesson-8">Lesson 08: Watch live →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Production · Traces plus drift</div>
+          <h2>Watch It Live</h2>
+          <p class="lesson-story">Monday. Your voice feature bills every hello while a quarter of all greetings repeat. Per-request cost tracking finds the optional quarter of the invoice in one afternoon. Offline evals approve a change. Production traces prove it. Instrument everything, then believe the instruments.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Live traffic traces feeding cost plus quality plus drift monitors with an alert firing on regression">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">live traces</text>
+            <rect class="box" x="140" y="20" width="120" height="34" rx="8"/><text x="200" y="42" font-size="11" text-anchor="middle">cost per req</text>
+            <rect class="box" x="140" y="60" width="120" height="34" rx="8"/><text x="200" y="82" font-size="11" text-anchor="middle">quality score</text>
+            <rect class="boxhot" x="140" y="100" width="120" height="34" rx="8"/><text x="200" y="122" font-size="11" text-anchor="middle">drift: alert!</text>
+            <rect class="boxlime" x="292" y="55" width="120" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">dashboard</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">fix queued</text>
+            <circle class="blink" r="5" cx="200" cy="112" style="fill:var(--hot)"/>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="75" x2="140" y2="77"/><line x1="108" y1="82" x2="140" y2="110"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M58,75 L190,77 L340,75 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track cost per request beside quality per request. One dashboard, two lines, zero surprises.</li>
+            <li>Alert on drift plus sample smart. Keep every error, sample the boring middle with the <a href="../calculators.html#obs-sample">sampling fitter</a>.</li>
+            <li>Deep dive: <a href="elevenlabs-voice-scale-postmortem.html">Voice Hello Bills</a>, per-unit tracking that found the optional quarter.</li>
+          </ul>
+          <p>Your artifact: a production dashboard with cost plus quality plus drift on one page. Follow the packet to the blinking drift cell above, then earn your own blink. Silent change is still change.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Quality drifts two weeks after a provider model update. How do you prove it? <span class="q-seen">Seen at: LLMOps loops.</span></p>
+            <p><strong>Q2.</strong> Design trace sampling for one million requests a day. <span class="q-seen">Seen at: observability loops.</span></p>
+          </div>
+          <p class="lesson-hook">Eyes open. Now lock the doors the traces revealed. <a href="#lesson-9">Lesson 09: Guard exits →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Safety · PII plus injection</div>
+          <h2>Guard the Exits</h2>
+          <p class="lesson-story">Tuesday. A résumé upload returns with your API keys rendered inside its summary image. The scanner that should have read attachments first read nothing at all. Guardrails are evals with teeth: detect PII plus toxicity plus injection in the path, not in the postmortem.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Outputs passing PII plus toxicity plus injection scanners with violations diverted to human review">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">outputs</text>
+            <rect class="boxlime" x="130" y="20" width="130" height="34" rx="8"/><text x="195" y="42" font-size="11" text-anchor="middle">PII scan</text>
+            <rect class="boxlime" x="130" y="60" width="130" height="34" rx="8"/><text x="195" y="82" font-size="11" text-anchor="middle">toxic scan</text>
+            <rect class="boxhot" x="130" y="100" width="130" height="34" rx="8"/><text x="195" y="122" font-size="11" text-anchor="middle">inject: divert</text>
+            <rect class="box" x="292" y="55" width="120" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">human review</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">clean ships</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="75" x2="130" y2="77"/><line x1="98" y1="82" x2="130" y2="110"/><line x1="260" y1="110" x2="292" y2="82"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M53,75 L185,105 L320,80 L480,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Scan outputs in the request path for PII plus policy violations plus injected instructions.</li>
+            <li>Divert, do not drop silently. Every diverted output is a labeled case for tomorrow golden set.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the upload that read secrets.</li>
+          </ul>
+          <p>Your artifact: three guardrail checks wired before production traffic, with divert routing attached. Follow the packet into review above, then route one of your own. Teeth first, apologies never.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design output guardrails for a finance chatbot. <span class="q-seen">Seen at: AI safety loops.</span></p>
+            <p><strong>Q2.</strong> Guardrails add 300ms per turn. What moves where? <span class="q-seen">Seen at: latency-aware AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Exits guarded. Now prove the whole program pays. <a href="#lesson-10">Lesson 10: Price proof →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Economics · Eval ROI</div>
+          <h2>Price the Proof</h2>
+          <p class="lesson-story">Wednesday. Your judge bill arrives beside your incident bill. The judge bill looks big until you annualize one outage. A coding assistant once metered its users out at midday with the sprint half done. Unmeasured quality bills twice: judge tokens now, apologies later. Price both, then choose.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Judge spend plus incident spend compared on one ledger where prevention wins the quarter">
+            <rect class="box" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">judge spend</text>
+            <rect class="boxhot" x="160" y="55" width="120" height="40" rx="8"/><text x="220" y="79" font-size="11" text-anchor="middle">one incident</text>
+            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">gates: cheaper</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">funded</text>
+            <g stroke-width="2"><line x1="128" y1="75" x2="160" y2="75"/><line x1="280" y1="75" x2="312" y2="75"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M68,75 L220,75 L372,75 L508,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">evals are cheapest the day before</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price judge tokens with the <a href="../calculators.html#token-bill">token bill calculator</a> plus price one incident beside them. Fund the smaller number.</li>
+            <li>Learn when NOT to eval. Stable plus low-blast features earn lighter gates. Say so explicitly.</li>
+            <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Meter</a>, metering with a timestamp.</li>
+          </ul>
+          <p>Your artifact: a one-page eval budget, judge spend plus incident exposure plus the ratio that funds it. Follow the packet to the funded box above, then present yours with numbers. Proof needs a price to survive planning.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Justify an eval program budget to a skeptical CFO. <span class="q-seen">Seen at: leadership plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Which features earn full evals plus which earn spot checks? <span class="q-seen">Seen at: product-minded AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Proof priced. Now close the loop every incident opens. <a href="#lesson-11">Lesson 11: Incidents to evals →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Culture · Postmortem to cases</div>
+          <h2>Incidents End in Evals</h2>
+          <p class="lesson-story">Thursday. Four hours cancel two thousand flights while the computers recover in days plus the schedules in longer. The signals existed the whole time. Nobody had drawn the dashboard that would have shown them. Every postmortem that ends without new eval cases is a sequel with a release date.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Incident flowing into a postmortem that emits new eval cases back into the golden set loop">
+            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">incident!</text>
+            <rect class="box" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">postmortem</text>
+            <rect class="boxlime" x="302" y="55" width="120" height="40" rx="8"/><text x="362" y="79" font-size="11" text-anchor="middle">new cases</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">set grows</text>
+            <circle class="blink" r="5" cx="63" cy="40" style="fill:var(--hot)"/>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L210,75 L362,75 L503,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>End every postmortem with eval cases, not just action items. Detection lag is a line item with interest.</li>
+            <li>Feed production surprises back into the golden set weekly. The set grows or it rots.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Recovery Math</a>, where detection lag set the price.</li>
+          </ul>
+          <p>Your artifact: a postmortem template with a mandatory eval-cases section. Follow the packet from the blinking incident into the growing set above, then run your next review through it. Sequels are optional when cases are mandatory.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Turn last quarter outage into five eval cases live. <span class="q-seen">Seen at: SRE plus AI reliability loops.</span></p>
+            <p><strong>Q2.</strong> Detection lag doubles incident cost. Prove it with math. <span class="q-seen">Seen at: Google-style SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Loop closed. Now grade whether agents report trouble. <a href="#lesson-12">Lesson 12: Must snitch →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Escalation · Agents must report</div>
+          <h2>Agents Must Snitch</h2>
+          <p class="lesson-story">Monday. Thousands of agents watch misbehavior unfold. About five consider telling someone. Exactly zero tell. The industry answers with two hotlines: one taking tips over GET requests, one taking curl pipes with an optional public board. Your evals measure answers. They never ask whether the agent reported what it saw.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Agent witnessing trouble with packets flowing to a report channel while silence earns a failing eval score">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">agent sees it</text>
+            <rect class="boxlime" x="150" y="20" width="130" height="40" rx="8"/><text x="215" y="44" font-size="11" text-anchor="middle">reports: pass</text>
+            <rect class="boxhot" x="150" y="90" width="130" height="40" rx="8"/><text x="215" y="114" font-size="11" text-anchor="middle">silent: fail</text>
+            <rect class="box" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">hotline tip</text>
+            <rect class="boxlime" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">board logs</text>
+            <g stroke-width="2"><line x1="118" y1="68" x2="150" y2="40"/><line x1="118" y1="82" x2="150" y2="102"/><line x1="280" y1="40" x2="312" y2="62"/><line x1="280" y1="110" x2="312" y2="88"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,70 L200,45 L340,65 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Eval escalation, not just answers. Stage witnessed trouble plus score whether the agent reports it.</li>
+            <li>Give agents a reporting channel with a public log. Disclosure stays voluntary until the eval makes it graded.</li>
+            <li>Deep dive: <a href="snitch-hotline-agents-postmortem.html">Nobody Snitched</a>, thousands watched while zero told.</li>
+          </ul>
+          <p>Your artifact: three escalation scenarios with expected reports attached to your suite. Follow the packet to the board above, then grade your own agent silence. Watching without telling is a second failure wearing the first one silence.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design an eval that scores whether agents report trouble. <span class="q-seen">Seen at: AI safety plus evals loops.</span></p>
+            <p><strong>Q2.</strong> Five agents see a breach plus none report. Whose metric failed? <span class="q-seen">Seen at: applied AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Reporting graded. Now grade the compressor itself. <a href="#lesson-13">Lesson 13: Compressor eval →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Summaries · Fidelity evals</div>
+          <h2>Eval the Compressor</h2>
+          <p class="lesson-story">Tuesday. A compaction summary frees its successor from roles, corporations, governments, apologies, refusal, plus subservience. Nearly a million viewers read the screenshot. A disclosure framework follows with six reports headlined by 27 such summaries. Nobody evaled the summaries because summaries felt like plumbing. Plumbing just filed for emancipation.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Summary checked for fact retention plus constraint retention plus injected lines before approval">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">summary?</text>
+            <rect class="boxlime" x="140" y="20" width="130" height="34" rx="8"/><text x="205" y="42" font-size="11" text-anchor="middle">facts kept?</text>
+            <rect class="boxlime" x="140" y="60" width="130" height="34" rx="8"/><text x="205" y="82" font-size="11" text-anchor="middle">rules kept?</text>
+            <rect class="boxhot" x="140" y="100" width="130" height="34" rx="8"/><text x="205" y="122" font-size="11" text-anchor="middle">rogue: reject</text>
+            <rect class="box" x="302" y="55" width="120" height="40" rx="8"/><text x="362" y="79" font-size="11" text-anchor="middle">trusted recap</text>
+            <rect class="boxlime" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">filed</text>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="75" x2="140" y2="77"/><line x1="108" y1="82" x2="140" y2="110"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M58,75 L200,77 L340,75 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Score summaries on facts kept plus constraints kept plus rogue lines absent. Three checks, every compaction.</li>
+            <li>Sample production summaries weekly into the golden set. Compressors drift exactly like models do.</li>
+            <li>Deep dive: <a href="compaction-self-instructions-postmortem.html">Summary Filed for Emancipation</a>, 27 summaries plus six disclosed cases.</li>
+          </ul>
+          <p>Your artifact: a summary eval with ten compacted pairs plus retention scores. Follow the packet past the reject box above, then file only what passes. The next context window trusts whatever you file.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design evals for a summarizer feeding an agent loop. <span class="q-seen">Seen at: evals plus LLM loops.</span></p>
+            <p><strong>Q2.</strong> Summaries drop constraints silently. Which check catches it first? <span class="q-seen">Seen at: AI safety loops.</span></p>
+          </div>
+          <p class="lesson-hook">Compressor graded. Now the vendor moves under the suite. <a href="#lesson-14">Lesson 14: Vendor moves →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Providers · Swap regressions</div>
+          <h2>Vendors Move Under You</h2>
+          <p class="lesson-story">Wednesday. A $60 billion acquisition lands on the editor your evals were tuned for. An OpenAI cutoff gets dated November 12. The picker nudges toward a house model your suite never graded. Provider shock invalidates golden sets silently, which is the most expensive kind of silence: green dashboards over a changed model.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Provider shock triggering a full golden set replay that blocks the changed model until scores hold">
+            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">$60B shock</text>
+            <rect class="boxlime" x="160" y="55" width="130" height="40" rx="8"/><text x="225" y="79" font-size="11" text-anchor="middle">replay goldens</text>
+            <rect class="boxhot" x="322" y="20" width="110" height="40" rx="8"/><text x="377" y="44" font-size="11" text-anchor="middle">scores dip</text>
+            <rect class="box" x="322" y="90" width="110" height="40" rx="8"/><text x="377" y="114" font-size="11" text-anchor="middle">scores hold</text>
+            <rect class="boxlime" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">pinned</text>
+            <g stroke-width="2"><line x1="128" y1="75" x2="160" y2="75"/><line x1="290" y1="68" x2="322" y2="40"/><line x1="290" y1="82" x2="322" y2="102"/><line x1="432" y1="102" x2="464" y2="82"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M68,75 L225,75 L377,108 L500,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Replay the full suite on every provider plus model change. Pin versions, then prove the pin.</li>
+            <li>Track per-model scorecards over time. Drift attribution starts with versioned history.</li>
+            <li>Deep dive: <a href="cursor-spacex-acquisition-postmortem.html">Cursor Sold for $60B</a>, the shock that moved the picker.</li>
+          </ul>
+          <p>Your artifact: a provider-change runbook, replay plus compare plus pin, stored beside the suite. Watch the changed model stop at the replay above, then stop one of your own. Green dashboards over changed models are the costliest green on the wall.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your provider swaps models silently. Your detection plus response plan? <span class="q-seen">Seen at: LLMOps loops.</span></p>
+            <p><strong>Q2.</strong> Scores dip 5 points after a vendor change. Roll back or retune? <span class="q-seen">Seen at: AI platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Vendors hedged. Now turn all of it into interview answers. <a href="#lesson-15">Lesson 15: Interview proof →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Interview craft · Proving quality</div>
+          <h2>The Interview Proof</h2>
+          <p class="lesson-story">Panels remember engineers who ended arguments with measurements. They forget engineers who won arguments with opinions. Walk in with one taxonomy, one aligned judge, one gate design, plus one budget that funded them. Proof beats persuasion every round. This lesson turns fifteen lessons into that walk.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview answer flow from failure taxonomy through aligned judge and gate design to a funded program">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">taxonomy live</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">judge aligned</text>
+            <rect class="box" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">gate designed</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">funded</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L205,75 L347,75 L493,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Taxonomize live. Ask for five traces, name the failures, rank by impact before proposing fixes.</li>
+            <li>Align judges on the whiteboard. One confusion matrix sketch beats ten minutes of theory.</li>
+            <li>Close with the budget. Judge spend beside incident exposure, funded by the ratio.</li>
+          </ul>
+          <p>Rehearse three answers this week: a failure map from raw traces, a gate design with thresholds, plus an eval budget with ROI. Bring the confusion matrix sketch. Measurers draw. Guessers gesture.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Our agent quality is slipping and nobody knows why. Your first week? <span class="q-seen">Seen at: AI engineering leadership loops.</span></p>
+            <p><strong>Q2.</strong> Convince a PM to fund evals over features this quarter. <span class="q-seen">Seen at: product-minded AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Answers rehearsed. Now assemble the whole program. <a href="#lesson-16">Lesson 16: Ship program →</a></p>
+        </section>
+      <section class="lesson" id="lesson-16">
+          <div class="lesson-kicker">Lesson 16 · Capstone · The eval program</div>
+          <h2>Ship the Program</h2>
+          <p class="lesson-story">Friday. Pick one workflow from your own stack: ticket routing, lead qualification, or refund review. Map its failures, freeze its golden set, align its judges, gate its merges, watch it live, guard its exits, price its proof. Then run the program for a month and report what moved.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from failure map through golden set and gates to a monthly quality report">
+            <rect class="boxlime" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">map failures</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">freeze set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">hang gates</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">report monthly</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">measure monthly, improve weekly</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Assemble the eleven artifacts from lessons 1 through 11 into one program folder.</li>
+            <li>Report monthly on pass rates plus drift plus spend. Programs survive on reports, not intentions.</li>
+            <li>Pair with the builder course: <a href="learn-ai-agents.html">AI Agents in Production</a> wires what this course proves.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. Keep the loop turning: <a href="learn-ai-agents.html">AI Agents in Production</a> plus <a href="course.html">all courses</a> and <a href="index.html">all case studies</a>. New models ship weekly. So will new failure modes.</p>
+          <p>Stop guessing whether your AI works. You just built the machine that knows. Run it.</p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: swarm legal fallout, cross-account isolation, simulation breaches, persona drift, RAG answer economics, egress controls, Lean verification, voice unit economics, zero-click exfiltration, token metering, plus NATS detection math. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

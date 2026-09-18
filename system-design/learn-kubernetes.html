@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free Kubernetes course in 15 forensic lessons from Mukul. Control planes, autoscaling, blast radius plus inference scheduling, priced from production postmortems.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-kubernetes.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kubernetes in Production: 15 Lessons From the On-Call">
+  <meta property="og:description" content="Control planes plus autoscaling plus blast radius priced. Fifteen forensic lessons with live diagrams plus calculators from the on-call.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/cell-raft-meme.svg">
+  <meta property="og:image:alt" content="Diagram showing isolated Raft cells where one dark cell stays contained while two serve traffic">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-kubernetes.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kubernetes in Production: 15 Lessons From the On-Call">
+  <meta name="twitter:description" content="Fifteen Kubernetes lessons with live diagrams plus bills. The bill hides in the boundary, with Mukul.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/cell-raft-meme.svg">
+  <meta name="twitter:image:alt" content="Diagram showing isolated Raft cells where one dark cell stays contained while two serve traffic">
+  <title>Kubernetes in Production: 15 Lessons From the On-Call | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"Kubernetes in Production: 15 Lessons From the On-Call",
+    "description":"A free Kubernetes course in 15 forensic lessons covering control planes, declarative convergence, autoscaling, connection pooling, zones, cells, queues, retries, observability, GPU scheduling, cost discipline plus a capstone service.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"The cluster is a promise"},
+      {"@type":"Syllabus","name":"Declare then converge"},
+      {"@type":"Syllabus","name":"Count requests then replicas"},
+      {"@type":"Syllabus","name":"Pool at the door"},
+      {"@type":"Syllabus","name":"Zones are the unit"},
+      {"@type":"Syllabus","name":"Cells bound the blast"},
+      {"@type":"Syllabus","name":"Queues absorb spikes"},
+      {"@type":"Syllabus","name":"Retries spare the mesh"},
+      {"@type":"Syllabus","name":"Seeing the cluster"},
+      {"@type":"Syllabus","name":"GPUs change the schedule"},
+      {"@type":"Syllabus","name":"The bill is the design"},
+      {"@type":"Syllabus","name":"Secrets ride along"},
+      {"@type":"Syllabus","name":"State lives outside"},
+      {"@type":"Syllabus","name":"The interview cluster"},
+      {"@type":"Syllabus","name":"Run one service"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Kubernetes Course","item":"https://buildopsy.com/system-design/learn-kubernetes.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes in Production: 15 Lessons From the On-Call</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: declare what you want, watch what converges, plus price the gap. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Kubernetes lessons with live diagrams, from control planes to GPU scheduling plus cost discipline. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend plus SRE course · Updated September 18, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch requests travel the cluster, then design so they travel safely.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Run etcd-backed control planes with bounded inputs, staggered deploys, plus convergence windows you measured.</li>
+        <li>Size HPA replicas plus connection pools from RPS math, then right-size fleets instead of feeding them.</li>
+        <li>Design zones plus cells that fail locally, tier queues that absorb spikes, plus retries that spare the mesh.</li>
+        <li>Observe with symptom alerts plus runbooks, schedule GPUs by scarcity, manage secrets plus state, then price the month.</li>
+        <li>Answer platform interviews with clarified scope, out-loud estimates, plus three ways you would break your own design.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: scale before pods, failure domains before features, price before praise. Lesson 14 rehearses the performance.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Cluster promise</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Declare converge</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Requests replicas</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Pool door</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Zones unit</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Cells blast</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Queues spikes</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Retries mesh</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Seeing cluster</a>
+        <a href="#lesson-10"><span class="rnum">10</span> GPU schedule</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Bill design</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Secrets ride</a>
+        <a href="#lesson-13"><span class="rnum">13</span> State outside</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Interview cluster</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Run service</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Control plane · etcd is the brain</div>
+          <h2>The Cluster Is a Promise</h2>
+          <p class="lesson-story">Silent TLS connections arrive carrying nothing, then never leave. Memory climbs while the API answers slower, then stops answering at all. The workloads are healthy. The brain is full. Assumption for this lesson: every component below trusts the control plane to answer, so price what happens when it cannot.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Handshake packets piling into etcd memory while API responses slow and the scheduler starves">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">silent conns</text>
+            <rect class="boxhot" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">etcd: filling</text>
+            <rect class="box" x="302" y="20" width="110" height="40" rx="8"/><text x="357" y="44" font-size="11" text-anchor="middle">API: slowing</text>
+            <rect class="box" x="302" y="90" width="110" height="40" rx="8"/><text x="357" y="114" font-size="11" text-anchor="middle">sched: starved</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">deadline!</text>
+            <circle class="blink" r="5" cx="210" cy="40" style="fill:var(--hot)"/>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="102"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L210,75 L330,60 L480,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>etcd is the cluster brain. Bound its inputs with handshake deadlines plus memory limits before trusting it.</li>
+            <li>Unbounded waits turn connection counters into memory counters. Every wait needs a ceiling.</li>
+            <li>Deep dive: <a href="etcd-tls-handshake-dos-postmortem.html">etcd Handshake That Never Ends</a>, plus the <a href="../calculators.html#pool-size">pool sizer</a> for the same math.</li>
+          </ul>
+          <p>Count your exposure with the pool sizer: peak connections times hold time equals state your servers must carry. The calculator prices the honest case. The attacker prices the missing bound.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Silent connections exhaust etcd memory. Walk through the fix live. <span class="q-seen">Seen at: infra plus security loops.</span></p>
+            <p><strong>Q2.</strong> Where does the control plane keep state plus what happens when it fills? <span class="q-seen">Seen at: platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Brain guarded. Now the workloads it was promised. <a href="#lesson-2">Lesson 02: Declare converge →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · GitOps · Reconciliation storms</div>
+          <h2>Declare Then Converge</h2>
+          <p class="lesson-story">A routine rolling deploy restarts 120 consumers one by one. Each restart rejoins the group. Each rejoin triggers a rebalance across roughly 40,000 partitions. The group never settles for 11 modeled minutes. Assumption: declared state plus converged state differ during every rollout, so measure the convergence window, not just the manifest.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Deploy restarts flowing into a rebalance loop with consumption paused until the group settles">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">deploy push</text>
+            <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">rebalance loop</text>
+            <rect class="box" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">paused 11m</text>
+            <rect class="boxlime" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">settled</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="280" y1="75" x2="312" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="3s" repeatCount="indefinite" path="M63,75 L215,75 L215,95 L150,95 L150,75 L503,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Stagger restarts plus prefer cooperative protocols. Eager rebalancing pauses everything the deploy touches.</li>
+            <li>GitOps makes the desired state visible. Static membership plus canary steps make convergence survivable.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, coordinator math across 40,000 partitions.</li>
+          </ul>
+          <p>The deploy that touches one consumer at a time paused all of them continuously. Three defaults, each reasonable alone, composed into an outage while every broker dashboard stayed green. Convergence is the feature. The pause is the price.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A rolling deploy pauses all consumers. Walk through the fix. <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Eager versus cooperative rebalancing: when does each hurt? <span class="q-seen">Seen at: messaging infra loops.</span></p>
+          </div>
+          <p class="lesson-hook">Convergence priced. Now the replicas it converges toward. <a href="#lesson-3">Lesson 03: Requests replicas →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Autoscaling · HPA math</div>
+          <h2>Count Requests, Then Replicas</h2>
+          <p class="lesson-story">Trillions of messages cross 177 database nodes that a leaner fleet of 72 could carry. Hot partitions plus quorum amplification plus JVM pauses kept the larger fleet busy looking busy. Assumption: desired replicas equal current replicas times utilization over target, so autoscaling without utilization targets is decoration.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="RPS meter feeding an autoscaler that trims an oversized fleet down to a right-sized one">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">RPS in</text>
+            <rect class="boxlime" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">autoscaler</text>
+            <rect class="boxhot" x="272" y="55" width="110" height="40" rx="8"/><text x="327" y="79" font-size="11" text-anchor="middle">177 nodes?</text>
+            <rect class="boxlime" x="414" y="55" width="138" height="40" rx="8"/><text x="483" y="79" font-size="11" text-anchor="middle">72 nodes, calm</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="382" y1="75" x2="414" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M53,75 L185,75 L327,75 L483,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size from utilization, not anxiety. Try the <a href="../calculators.html#hpa-size">HPA sizer</a> with your own live CPU numbers.</li>
+            <li>Right-size before scaling out. Hot partitions need key redesign, not more nodes.</li>
+            <li>Deep dive: <a href="discord-messages-scale-postmortem.html">Discord Trillions of Messages</a>, 177 nodes down to 72.</li>
+          </ul>
+          <p>Junior Kubernetes is a cost generator. Senior Kubernetes is a cost controller. The fleet that looks busy is not the fleet that is needed. Measure, then subtract.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size replicas for tripled evening traffic with HPA math out loud. <span class="q-seen">Seen at: Google-style loops.</span></p>
+            <p><strong>Q2.</strong> When does autoscaling make an outage worse? <span class="q-seen">Seen at: AWS-style plus startup loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fleet trimmed. Now the doorway every request queues at. <a href="#lesson-4">Lesson 04: Pool door →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Data access · Connection pooling</div>
+          <h2>Pool at the Door</h2>
+          <p class="lesson-story">Two million databases hide behind one pooling promise. Each backend forks a process per connection, so ten thousand friends share one door through a pooler holding 675. Assumption: pool size equals peak RPS times p99 seconds times a safety factor. Vibes do not fork processes. Physics does.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Ten thousand app connections funneling through a pooler into a small set of database backends">
+            <rect class="box" x="8" y="30" width="110" height="40" rx="8"/><text x="63" y="54" font-size="11" text-anchor="middle">10k app conns</text>
+            <rect class="boxlime" x="180" y="55" width="110" height="40" rx="8"/><text x="235" y="79" font-size="11" text-anchor="middle">pooler: 675</text>
+            <rect class="boxhot" x="352" y="55" width="200" height="40" rx="8"/><text x="452" y="79" font-size="11" text-anchor="middle">1 process each</text>
+            <g stroke-width="2"><line x1="118" y1="60" x2="180" y2="70"/><line x1="290" y1="75" x2="352" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.2s" repeatCount="indefinite" path="M63,55 L220,70 L400,75"/></circle>
+            <text class="lbl" x="8" y="135" font-size="11">pool equals RPS times p99 times safety</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Pool size is math, not vibes. Try the <a href="../calculators.html#pool-size">pool sizer</a> with your own RPS plus pod counts.</li>
+            <li>Serverless relocates caps into docs nobody reads. Read the cap before traffic does.</li>
+            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Serverless Postgres</a>, the pooling promise with receipts.</li>
+          </ul>
+          <p>Watch for the pooler becoming the bottleneck itself. One proxy in front of the database is a single point with a nice dashboard. Pair it, or shard past it, before traffic proves the point.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size the pool for 50k RPS at 20ms p99 across 40 pods. <span class="q-seen">Seen at: Google-style plus Uber-style loops.</span></p>
+            <p><strong>Q2.</strong> Connections exhaust at 3 AM with flat traffic. What leaked? <span class="q-seen">Seen at: SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Door managed. Now the building the door stands in. <a href="#lesson-5">Lesson 05: Zones unit →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Resilience · Zones plus snapshots</div>
+          <h2>Zones Are the Unit</h2>
+          <p class="lesson-story">Cooling fails first. Power follows. One zone goes dark for hours while snapshots decide how much history survives. Assumption: the blast radius you plan for is the blast radius you get, so multi-AZ is a design input, not a checkbox.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Three zones with traffic live in two while one dark zone recovers from snapshots">
+            <rect class="boxlime" x="8" y="30" width="150" height="90" rx="10"/><text x="83" y="52" font-size="11" text-anchor="middle">zone A: live</text><text x="83" y="72" font-size="10" text-anchor="middle" class="lbl">serving</text><text x="83" y="92" font-size="10" text-anchor="middle" class="lbl">snapshots ok</text>
+            <rect class="boxlime" x="190" y="30" width="150" height="90" rx="10"/><text x="265" y="52" font-size="11" text-anchor="middle">zone B: live</text><text x="265" y="72" font-size="10" text-anchor="middle" class="lbl">serving</text><text x="265" y="92" font-size="10" text-anchor="middle" class="lbl">snapshots ok</text>
+            <rect class="boxhot" x="372" y="30" width="180" height="90" rx="10"/><text x="462" y="52" font-size="11" text-anchor="middle">zone C: dark</text><text x="462" y="72" font-size="10" text-anchor="middle" class="lbl">heat, no power</text><text x="462" y="92" font-size="10" text-anchor="middle" class="lbl">restore clock</text>
+            <circle class="pkt" r="4"><animateMotion dur="3s" repeatCount="indefinite" path="M83,80 L265,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Keep traffic live in all zones. Cold standby rots while warm standby bills honestly.</li>
+            <li>Test restores, not backups. Price recovery with the <a href="../calculators.html#downtime-cost">downtime calculator</a> before the heat arrives.</li>
+            <li>Deep dive: <a href="aws-thermal-outage-postmortem.html">AWS Thermal Outage</a>, cooling failed first.</li>
+          </ul>
+          <p>Game days that kill one zone prove the other two carry load. Untested failover is a rumor with runbooks. Run the rumor until it becomes a drill.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> One zone dies during peak checkout. Now what? <span class="q-seen">Seen at: Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> Price four hours of single-zone impairment out loud. <span class="q-seen">Seen at: FinOps-flavored loops.</span></p>
+          </div>
+          <p class="lesson-hook">Zones survived. Now shrink the blast further. <a href="#lesson-6">Lesson 06: Cells blast →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Isolation · Cell design</div>
+          <h2>Cells Bound the Blast</h2>
+          <p class="lesson-story">One fault cancels two thousand flights across three days. The computers recover Tuesday. The schedules recover Friday. One unmirrored component gated a whole sky. Assumption: global shared fate fails globally, so cells with independent control planes fail locally by construction.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Three isolated cells each with app plus database where one dark cell stays contained">
+            <rect class="boxlime" x="8" y="30" width="160" height="90" rx="10"/><text x="88" y="52" font-size="11" text-anchor="middle">cell A: live</text><text x="88" y="72" font-size="10" text-anchor="middle" class="lbl">app plus DB</text><text x="88" y="92" font-size="10" text-anchor="middle" class="lbl">serving</text>
+            <rect class="boxlime" x="200" y="30" width="160" height="90" rx="10"/><text x="280" y="52" font-size="11" text-anchor="middle">cell B: live</text><text x="280" y="72" font-size="10" text-anchor="middle" class="lbl">app plus DB</text><text x="280" y="92" font-size="10" text-anchor="middle" class="lbl">serving</text>
+            <rect class="boxhot" x="392" y="30" width="160" height="90" rx="10"/><text x="472" y="52" font-size="11" text-anchor="middle">cell C: dark</text><text x="472" y="72" font-size="10" text-anchor="middle" class="lbl">fault contained</text><text x="472" y="92" font-size="10" text-anchor="middle" class="lbl">isolated</text>
+            <circle class="pkt" r="4"><animateMotion dur="3s" repeatCount="indefinite" path="M88,80 L280,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Split the control plane into autonomous Raft-backed cells. One dark cell is an incident. One dark region is a disaster.</li>
+            <li>Route around dark cells automatically. Manual failover at 3 AM is a second outage wearing a pager.</li>
+            <li>Deep dives: <a href="cell-based-control-plane.html">Cell-Based Control Planes</a> plus <a href="nats-outage-postmortem.html">NATS Four Hours</a>.</li>
+          </ul>
+          <p>Cells cost duplication up front plus save multiplication later. The spreadsheet that refuses cells is pricing Tuesday while Friday sends the invoice.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design failover customers never notice across three cells. <span class="q-seen">Seen at: Google-style plus Netflix-style loops.</span></p>
+            <p><strong>Q2.</strong> Cells versus zones: when does each contain what? <span class="q-seen">Seen at: principal-level loops.</span></p>
+          </div>
+          <p class="lesson-hook">Blast bounded. Now the traffic the cells absorb. <a href="#lesson-7">Lesson 07: Queues spikes →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Messaging · Tiers plus partitions</div>
+          <h2>Queues Absorb Spikes</h2>
+          <p class="lesson-story">Eighteen trillion messages a day cross one platform. Half of them could have waited. Ten thousand UPI transactions per second cannot. Assumption: urgent plus patient traffic share nothing but the logo, so tier topics before counting partitions.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producers feeding urgent and patient lanes with separate workers and a dead letter drain">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">producers</text>
+            <rect class="boxlime" x="130" y="20" width="130" height="40" rx="8"/><text x="195" y="44" font-size="11" text-anchor="middle">urgent lane</text>
+            <rect class="box" x="130" y="90" width="130" height="40" rx="8"/><text x="195" y="114" font-size="11" text-anchor="middle">patient lane</text>
+            <rect class="box" x="292" y="20" width="110" height="40" rx="8"/><text x="347" y="44" font-size="11" text-anchor="middle">fast workers</text>
+            <rect class="boxhot" x="292" y="90" width="110" height="40" rx="8"/><text x="347" y="114" font-size="11" text-anchor="middle">dead letter</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="100"/><line x1="260" y1="40" x2="292" y2="40"/><line x1="260" y1="110" x2="292" y2="110"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.2s" repeatCount="indefinite" path="M53,70 L190,42 L330,40"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Separate urgent from patient traffic or one surge starves everything the business promises.</li>
+            <li>Partitions buy concurrency plus sell broker load. Count them like money because brokers do.</li>
+            <li>Deep dives: <a href="roblox-kafka-ingestion-postmortem.html">Roblox 18 Trillion</a> plus <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</li>
+          </ul>
+          <p>Dead letters deserve readers. Every message in the red box is a bug report from production. Teams that review them weekly find failures before customers file them.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design ingestion for one million events per second without losing any. <span class="q-seen">Seen at: Uber-style plus LinkedIn-style loops.</span></p>
+            <p><strong>Q2.</strong> One lane floods. Prove the other lane stays dry. <span class="q-seen">Seen at: messaging infra loops.</span></p>
+          </div>
+          <p class="lesson-hook">Spikes absorbed. Now the retries inside the mesh. <a href="#lesson-8">Lesson 08: Retries mesh →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Failure handling · Backoff plus breakers</div>
+          <h2>Retries Spare the Mesh</h2>
+          <p class="lesson-story">Agents retried failed deploys until retries cost more than features. Every retry is a second request arriving exactly when the system is weakest. Assumption: the same amplifier lives in your service mesh, so bounded retries with backoff are a capacity plan, not a courtesy.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Backoff steps with jitter spreading load before a breaker opens and fails fast">
+            <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">fail</text>
+            <rect class="box" x="120" y="55" width="80" height="40" rx="8"/><text x="160" y="79" font-size="11" text-anchor="middle">wait 1s</text>
+            <rect class="box" x="232" y="55" width="80" height="40" rx="8"/><text x="272" y="79" font-size="11" text-anchor="middle">wait 2s</text>
+            <rect class="boxhot" x="344" y="55" width="90" height="40" rx="8"/><text x="389" y="79" font-size="11" text-anchor="middle">breaker</text>
+            <rect class="boxlime" x="466" y="55" width="86" height="40" rx="8"/><text x="509" y="79" font-size="11" text-anchor="middle">fast fail</text>
+            <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="200" y1="75" x2="232" y2="75"/><line x1="312" y1="75" x2="344" y2="75"/><line x1="434" y1="75" x2="466" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2s" repeatCount="indefinite" path="M48,75 L160,75 L272,75 L389,75 L509,75"/></circle>
+            <text class="lbl" x="8" y="135" font-size="11">backoff times two plus jitter, then stop</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Exponential backoff plus jitter plus a hard stop. Miss any of the three plus retries amplify.</li>
+            <li>Circuit breakers convert repeated failure into fast failure. Fast failure is a feature.</li>
+            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit Retries</a> plus the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
+          </ul>
+          <p>Unbounded retries are a self-inflicted DDoS with a deploy log. Budget the remaining retries like any other load. The mesh forgives planned load. It punishes surprise load with interest.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Convince me your mesh retries cannot cascade. <span class="q-seen">Seen at: Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> Design a breaker with closed plus open plus half-open states. <span class="q-seen">Seen at: Netflix-style loops.</span></p>
+          </div>
+          <p class="lesson-hook">Mesh spared. Now the senses that watch it. <a href="#lesson-9">Lesson 09: Seeing cluster →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Operations · Signals plus budgets</div>
+          <h2>Seeing the Cluster</h2>
+          <p class="lesson-story">The signals existed the whole time. Nobody had drawn the dashboard that would have shown them. Detection lag set the price while the sky stayed grounded. Assumption: alert on symptoms users feel, not causes you guess, so latency plus error rate lead while CPU watches from the back.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Metrics logs and traces streaming into a symptom alert that triggers a runbook">
+            <rect class="box" x="8" y="20" width="110" height="34" rx="8"/><text x="63" y="42" font-size="11" text-anchor="middle">metrics</text>
+            <rect class="box" x="8" y="60" width="110" height="34" rx="8"/><text x="63" y="82" font-size="11" text-anchor="middle">logs</text>
+            <rect class="box" x="8" y="100" width="110" height="34" rx="8"/><text x="63" y="122" font-size="11" text-anchor="middle">traces</text>
+            <rect class="boxlime" x="180" y="55" width="150" height="40" rx="8"/><text x="255" y="79" font-size="11" text-anchor="middle">symptom alert</text>
+            <rect class="boxhot" x="362" y="55" width="190" height="40" rx="8"/><text x="457" y="79" font-size="11" text-anchor="middle">runbook, not heroics</text>
+            <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="68"/><line x1="118" y1="77" x2="180" y2="75"/><line x1="118" y1="110" x2="180" y2="82"/><line x1="330" y1="75" x2="362" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,77 L240,75 L420,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Sample smart. Keep every error, sample the boring middle with the <a href="../calculators.html#obs-sample">sampling fitter</a> plus burn budgets with the <a href="../calculators.html#error-budget">error budget calculator</a>.</li>
+            <li>Attach a runbook to every page. Heroics do not scale. Checklists do.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Recovery Math</a>, where detection lag set the price.</li>
+          </ul>
+          <p>Monitoring is not paperwork. It is the only sense organ production has. Blasts you cannot see, you cannot survive, which is why observability closes the resilience arc.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> p99 triples at 2 AM with no deploy. Walk through it live. <span class="q-seen">Seen at: Google-style plus Meta-style SRE loops.</span></p>
+            <p><strong>Q2.</strong> Design dashboards for a payments API before launch. <span class="q-seen">Seen at: Stripe-style plus fintech loops.</span></p>
+          </div>
+          <p class="lesson-hook">Senses wired. Now the workload that changed the schedule. <a href="#lesson-10">Lesson 10: GPU schedule →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · AI workloads · Inference on clusters</div>
+          <h2>GPUs Change the Schedule</h2>
+          <p class="lesson-story">Every question gets paid for twice, retrieval plus inference, at thirty-one cents of model time against two cents of lookup. The cluster that served web traffic now serves spiky inference with expensive accelerators attached. Assumption: GPU time dominates the envelope, so scheduling plus caching decisions outrank tuning.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Inference requests queueing for scarce GPU slots while cached answers bypass the queue">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">infer req</text>
+            <rect class="boxhot" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">GPU queue</text>
+            <rect class="boxlime" x="292" y="20" width="120" height="40" rx="8"/><text x="352" y="44" font-size="11" text-anchor="middle">cache: skip</text>
+            <rect class="box" x="292" y="90" width="120" height="40" rx="8"/><text x="352" y="114" font-size="11" text-anchor="middle">serve 31c</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">autoscale</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="260" y1="68" x2="292" y2="40"/><line x1="260" y1="82" x2="292" y2="102"/><line x1="412" y1="40" x2="444" y2="62"/><line x1="412" y1="102" x2="444" y2="82"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L200,75 L340,100 L470,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Schedule GPUs as the scarce resource. Bin-pack inference plus autoscale on queue depth, not CPU.</li>
+            <li>Cache repeated inference first. Every repeated answer should be nearly free. Try the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, the twice-paid question.</li>
+          </ul>
+          <p>AI did not reduce the need for operators. It raised the bar on what one is worth. Spiky inference on shared clusters punishes every lesson this course skipped, with GPU pricing attached.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Schedule inference on a shared cluster with spiky load. <span class="q-seen">Seen at: AI infra loops.</span></p>
+            <p><strong>Q2.</strong> GPU queue grows while CPUs idle. What does the scheduler not know? <span class="q-seen">Seen at: platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Schedule set. Now the invoice that grades it. <a href="#lesson-11">Lesson 11: Bill design →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Economics · Platform waste</div>
+          <h2>The Bill Is the Design</h2>
+          <p class="lesson-story">A preview button reinstalls the internet on every click, near a billion tokens a minute that a cache could have spared. Reviews put the waste near $2.6M a month in modeled estimates. Assumption: platform conveniences compound into invoices, so price the golden path before paving it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Preview builds reinstalling dependencies beside a cached golden path that reuses warm layers">
+            <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">fresh install</text>
+            <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">warm cache</text>
+            <rect class="box" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">golden path: cheap</text>
+            <g stroke-width="2"><line x1="158" y1="75" x2="190" y2="75"/><line x1="340" y1="75" x2="372" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M83,75 L265,75 L462,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">convenience compounds into invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cache build layers plus preview environments aggressively. Repeated installs are a subscription to nothing.</li>
+            <li>Make the golden path the cheapest path. Developers follow cost gradients faster than mandates.</li>
+            <li>Deep dive: <a href="lovable-vibe-coding-scale-postmortem.html">Lovable Preview Button</a>, the $2.6M modeled lesson.</li>
+          </ul>
+          <p>Revisit the bill quarterly. Traffic shapes drift, prices change, plus yesterday optimization rots. The platform team that prices its own conveniences earns the right to mandate them.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price a preview environment per developer monthly, out loud. <span class="q-seen">Seen at: platform plus startup loops.</span></p>
+            <p><strong>Q2.</strong> Cut platform spend 30 percent without touching velocity. <span class="q-seen">Seen at: FinOps-flavored loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bill read. Now the secrets riding every pod. <a href="#lesson-12">Lesson 12: Secrets ride →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Secrets · Scoped plus short-lived</div>
+          <h2>Secrets Ride Along</h2>
+          <p class="lesson-story">A candidate uploads a CV. The summary comes back with API keys inside a rendered image. No clicks. No malware. One poisoned document plus every permission the key carried. Assumption: secrets mounted into pods are one exfiltration from exposure, so scope narrows plus TTLs shorten in direct proportion to blast radius.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Vault issuing a short-lived scoped secret to a pod while a leaked god key path stays blocked">
+            <rect class="boxlime" x="8" y="20" width="150" height="40" rx="8"/><text x="83" y="44" font-size="11" text-anchor="middle">scoped key: 1h</text>
+            <rect class="boxlime" x="8" y="90" width="150" height="40" rx="8"/><text x="83" y="114" font-size="11" text-anchor="middle">vault issues it</text>
+            <rect class="box" x="220" y="55" width="110" height="40" rx="8"/><text x="275" y="79" font-size="11" text-anchor="middle">one pod</text>
+            <rect class="boxhot" x="362" y="55" width="190" height="40" rx="8"/><text x="457" y="79" font-size="11" text-anchor="middle">god-key path: blocked</text>
+            <g stroke-width="2"><line x1="158" y1="60" x2="220" y2="70"/><line x1="158" y1="110" x2="220" y2="82"/><line x1="330" y1="75" x2="362" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M83,60 L220,70 L300,75"/></circle>
+            <text class="lbl" x="8" y="145" font-size="11">blast radius equals scope, nothing less</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Issue secrets per pod with one permission set plus short TTLs. Stolen keys should die alone.</li>
+            <li>Keep secrets out of images plus logs plus summaries. Three leak paths, all closed by construction.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the upload that downloaded keys.</li>
+          </ul>
+          <p>Lesson 4 of the foundation course taught this for APIs. Clusters multiply the lesson across every pod. External secret operators plus rotation plus audit complete the pattern. The vault is the only pod allowed to know everything.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design secret management for 200 microservices on one cluster. <span class="q-seen">Seen at: platform plus fintech loops.</span></p>
+            <p><strong>Q2.</strong> A key leaks from a pod log at midnight. Your first hour? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+          </div>
+          <p class="lesson-hook">Secrets scoped. Now the state the pods refuse to hold. <a href="#lesson-13">Lesson 13: State outside →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Stateful · Backups that restore</div>
+          <h2>State Lives Outside</h2>
+          <p class="lesson-story">A database copies every row plus loses customer data anyway. The backup skips encoding metadata, then garbage collection deletes what the backup forgot. The backup succeeds. The restore testifies against it. Assumption: pods are cattle, so state lives in volumes with snapshots plus restore drills, never in container layers.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Stateful pod writing to a persistent volume with snapshots flowing to an isolated restore check">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stateful pod</text>
+            <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">volume plus PVC</text>
+            <rect class="boxhot" x="282" y="55" width="110" height="40" rx="8"/><text x="337" y="79" font-size="11" text-anchor="middle">snapshot?</text>
+            <rect class="boxlime" x="424" y="55" width="128" height="40" rx="8"/><text x="488" y="79" font-size="11" text-anchor="middle">restore proof</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="250" y1="75" x2="282" y2="75"/><line x1="392" y1="75" x2="424" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L195,75 L337,75 L488,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Replicas protect uptime. Only verified restores protect data. Schedule the drill, not just the snapshot.</li>
+            <li>Garbage collection must never delete what it cannot prove dead. Retention policies are data architecture.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Backup That Forgot</a>, metadata missed plus references erased.</li>
+          </ul>
+          <p>Operators encode this discipline: custom resources describe the desired data state, controllers converge toward it, plus backups verify themselves. Stateful on Kubernetes works when the state never trusts the pod lifecycle.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design backup plus restore for 10 TB of stateful data on Kubernetes. <span class="q-seen">Seen at: AWS-style plus fintech loops.</span></p>
+            <p><strong>Q2.</strong> A volume snapshot restores empty. What was never tested? <span class="q-seen">Seen at: SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">State secured. Now turn all of it into interview answers. <a href="#lesson-14">Lesson 14: Interview cluster →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Interview craft · Operating out loud</div>
+          <h2>The Interview Cluster</h2>
+          <p class="lesson-story">Pastebin in 45 minutes hires. A cluster debug in 45 minutes hires faster, because fewer candidates have owned a real blast radius. The panel is not testing kubectl trivia. It tests whether you ask about scale before drawing pods, name failure domains before features, plus price the month before praising the design.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview timeline with clarify plus estimate plus design plus break-it phases across 45 minutes">
+            <rect class="boxlime" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">0-5: clarify</text>
+            <rect class="box" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">5-10: estimate</text>
+            <rect class="box" x="272" y="55" width="120" height="40" rx="8"/><text x="332" y="79" font-size="11" text-anchor="middle">10-30: design</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">30-45: break it</text>
+            <g stroke-width="2"><line x1="128" y1="75" x2="140" y2="75"/><line x1="260" y1="75" x2="272" y2="75"/><line x1="392" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="3s" repeatCount="indefinite" path="M68,75 L200,75 L332,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">spend the last third attacking your design</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Clarify scope first. One service on EKS is a weekend. Ten thousand pods across regions is lessons 1 through 13.</li>
+            <li>Estimate out loud with the <a href="../calculators.html#hpa-size">HPA sizer</a> plus <a href="../calculators.html#downtime-cost">downtime calculator</a>. Panels score the math.</li>
+            <li>Close by breaking it. Name three failures plus their fixes before they ask. That is the hire signal.</li>
+          </ul>
+          <p>Rehearse three answers this week: an HPA sizing with live numbers, a zone failure with recovery math, plus a bill defense with the envelope. Bring one incident story of your own. Borrowed failures teach. Owned failures hire.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design checkout for 100k RPS on Kubernetes, then break it three ways. <span class="q-seen">Seen at: Amazon-style plus Google-style loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about a production incident you owned end to end. <span class="q-seen">Seen at: every senior loop.</span></p>
+          </div>
+          <p class="lesson-hook">Answers rehearsed. Now run one service for real. <a href="#lesson-15">Lesson 15: Run service →</a></p>
+        </section>
+      <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · Declare plus survive</div>
+          <h2>Run One Service</h2>
+          <p class="lesson-story">Take one service from your own work. Declare it in Git, bound its brain inputs, stagger its deploys, size its pool, spread it across zones, tier its queues, cap its retries, alert on its symptoms, plus price its month. Then page yourself on purpose with a game day and watch the drills hold.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from declared manifest through guarded rollout and symptom alerts to a priced month">
+            <rect class="boxlime" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">declare it</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">roll guarded</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">watch symptoms</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">price the month</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">declare, survive, price, repeat</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Assemble the eleven artifacts from lessons 1 through 11 into one service folder.</li>
+            <li>Run one game day before calling it done. Kill a zone, watch the other two carry load, write the postmortem.</li>
+            <li>Continue with the foundation course: <a href="learn-system-design.html">System Design: 15 Lessons From Real Outages</a>.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. Keep the cluster honest: <a href="learn-system-design.html">system design course</a> plus <a href="course.html">all courses</a> and <a href="index.html">all case studies</a>. New failures arrive weekly. So will new lessons.</p>
+          <p>Bring one incident story of your own. Interviewers remember operators who owned the blast radius plus priced it. This course gave you twelve borrowed ones. Earn one.</p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: etcd handshake limits, rebalance cascades, Discord right-sizing, Supabase pooling, AWS thermal recovery, cell design, NATS blast radius, Kafka tiers, UPI payments, retry economics, detection math, inference bills, plus preview environment waste. Incident details follow those accounts. Traffic plus cost figures are modeled estimates with assumptions stated per lesson.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

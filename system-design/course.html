@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering courses from Buildopsy. System design in 15 real-outage lessons, live now. Data pipelines plus web performance courses in production.">
+  <meta name="description" content="Free engineering courses from Buildopsy. System design plus data pipelines plus web performance plus AI agents plus AI evals plus Kubernetes, all live now with diagrams.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/course.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Courses | Buildopsy">
-  <meta property="og:description" content="Free engineering courses: system design live now, data plus performance courses in production.">
+  <meta property="og:description" content="Free engineering courses: six live now with live diagrams plus calculators, from postmortems to production.">
   <meta property="og:url" content="https://buildopsy.com/system-design/course.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Buildopsy courses">
@@ -36,15 +36,19 @@
     "description":"Free engineering courses built from production postmortems.",
     "url":"https://buildopsy.com/system-design/course.html",
     "itemListElement":[
-      {"@type":"ListItem","position":1,"url":"https://buildopsy.com/system-design/learn-system-design.html","name":"System Design: 15 Lessons From Real Outages"}
+      {"@type":"ListItem","position":1,"url":"https://buildopsy.com/system-design/learn-system-design.html","name":"System Design: 15 Lessons From Real Outages"},
+      {"@type":"ListItem","position":2,"url":"https://buildopsy.com/system-design/learn-data-pipelines.html","name":"Data Pipelines That Pay: 15 Lessons From the Data Desk"},
+      {"@type":"ListItem","position":3,"url":"https://buildopsy.com/system-design/learn-web-performance.html","name":"Web Performance Economics: 17 Lessons From the Performance Desk"},
+      {"@type":"ListItem","position":4,"url":"https://buildopsy.com/system-design/learn-ai-agents.html","name":"AI Agents in Production: 18 Lessons From the Agent Bench"},
+      {"@type":"ListItem","position":5,"url":"https://buildopsy.com/system-design/learn-ai-evals.html","name":"AI Evals That Hold: 16 Lessons From the Agent Bench"},
+      {"@type":"ListItem","position":6,"url":"https://buildopsy.com/system-design/learn-kubernetes.html","name":"Kubernetes in Production: 15 Lessons From the On-Call"}
     ]
   }
   </script>
   <style>
     .course-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     @media (max-width: 900px) { .course-grid { grid-template-columns: 1fr; } }
-    .course-card { display: flex; flex-direction: column; }
-    .course-card .btn { margin-top: auto; align-self: flex-start; }
+    .course-card .btn { align-self: flex-start; }
     .course-soon { opacity: 0.92; }
   </style>
 </head>
@@ -53,7 +57,7 @@
     <div class="wrap">
       <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
-        <a href="../index.html">Home</a>
+        
         <a href="index.html">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
         <a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a>
@@ -76,34 +80,54 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Courses</span><span class="chip">Free</span><span class="chip">1 live</span><span class="chip">2 in production</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Courses</span><span class="chip">Free</span><span class="chip">6 live</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Courses</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Full courses from the authors, built from production postmortems with diagrams plus calculators. Free, batch by batch, author by author.</p>
     </header>
 
     <section class="sec">
       <div class="course-grid">
-        <article class="feature-link course-card">
-          <span class="ribbon">FREE</span>
-          <div><span class="fl-tag">Live</span> <span class="chip">15 lessons</span></div>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">15 lessons</span></div>
           <h3><a class="feature-link-title" href="learn-system-design.html">System Design: 15 Lessons From Real Outages</a></h3>
           <p class="fl-desc">Requests, APIs, databases, queues, scaling, resilience, caching, cost, plus the interview playbook. Story-driven lessons with diagrams.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span><span class="chip">Diagrams</span><span class="chip">Calculators</span></div>
-          <p style="margin:16px 0 0;"><a class="btn btn-primary" href="learn-system-design.html">Start the course</a></p>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-system-design.html">Start the course</a></p>
         </article>
-        <article class="feature-link course-card course-soon">
-          <div><span class="fl-tag">Coming soon</span> <span class="chip">Data</span></div>
-          <h3><a class="feature-link-title" href="../about.html#author-ira">Data Pipelines That Pay</a></h3>
-          <p class="fl-desc">Batch versus stream, lakehouse bills, plus pipeline postmortems priced. From the data desk, in production now.</p>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">15 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-data-pipelines.html">Data Pipelines That Pay</a></h3>
+          <p class="fl-desc">Batch versus stream, lakehouse bills, plus pipeline postmortems priced. From the data desk, with diagrams plus calculators.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Ira</span><span class="chip">Data Engineering</span></div>
-          <p style="margin:16px 0 0;"><a class="btn btn-ghost" href="../about.html#author-ira">Meet the author</a></p>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-data-pipelines.html">Start the course</a></p>
         </article>
-        <article class="feature-link course-card course-soon">
-          <div><span class="fl-tag">Coming soon</span> <span class="chip">Performance</span></div>
-          <h3><a class="feature-link-title" href="../about.html#author-marta">Web Performance Economics</a></h3>
-          <p class="fl-desc">Core Web Vitals, edge rendering, plus the revenue math of milliseconds. From the performance desk, in production now.</p>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">17 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-web-performance.html">Web Performance Economics</a></h3>
+          <p class="fl-desc">Core Web Vitals, edge rendering, plus the revenue math of milliseconds. From the performance desk, with diagrams plus calculators.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Marta</span><span class="chip">Web Performance</span></div>
-          <p style="margin:16px 0 0;"><a class="btn btn-ghost" href="../about.html#author-marta">Meet the author</a></p>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-web-performance.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">18 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-ai-agents.html">AI Agents in Production</a></h3>
+          <p class="fl-desc">Sandboxing, egress, retries, token bills plus eval gates. From the agent bench, with live diagrams plus calculators.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Kabir</span><span class="chip">AI Engineering</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-ai-agents.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">16 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-ai-evals.html">AI Evals That Hold</a></h3>
+          <p class="fl-desc">Golden sets, LLM judges, CI gates plus drift monitoring. From the agent bench, with live diagrams.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Kabir</span><span class="chip">AI Engineering</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-ai-evals.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">15 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-kubernetes.html">Kubernetes in Production</a></h3>
+          <p class="fl-desc">Control planes, autoscaling, blast radius plus inference scheduling. From the on-call, with live diagrams plus calculators.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span><span class="chip">Kubernetes</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-kubernetes.html">Start the course</a></p>
         </article>
       </div>
     </section>

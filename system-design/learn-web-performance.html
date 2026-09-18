@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free web performance course in 17 principled lessons from Marta. Core Web Vitals, edge rendering, image discipline plus the revenue math of milliseconds, priced from production.">
+  <meta name="author" content="Marta">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-web-performance.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Web Performance Economics: 17 Lessons From the Performance Desk">
+  <meta property="og:description" content="Core Web Vitals plus edge rendering priced. Seventeen principled lessons with diagrams plus calculators from the performance desk.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/swappie-revenue-meme.svg">
+  <meta property="og:image:alt" content="Bar chart showing mobile conversion rising from twenty-four to thirty-four percent">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-web-performance.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Web Performance Economics: 17 Lessons From the Performance Desk">
+  <meta name="twitter:description" content="Seventeen principled speed lessons with diagrams plus receipts. Milliseconds priced by Marta.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/swappie-revenue-meme.svg">
+  <meta name="twitter:image:alt" content="Bar chart showing mobile conversion rising from twenty-four to thirty-four percent">
+  <title>Web Performance Economics: 17 Lessons From the Performance Desk | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"Web Performance Economics: 17 Lessons From the Performance Desk",
+    "description":"A free web performance course in 17 principled lessons covering Core Web Vitals, lab versus field measurement, paint, stability, interaction, bundles, edge rendering, caching, images, budgets plus revenue math.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Marta","url":"https://buildopsy.com/about.html#author-marta","jobTitle":"Contributing author, web performance","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Web performance","Core Web Vitals","Edge rendering","Measurement"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"Speed is respect"},
+      {"@type":"Syllabus","name":"The field accuses"},
+      {"@type":"Syllabus","name":"Paint is the promise"},
+      {"@type":"Syllabus","name":"Stability is manners"},
+      {"@type":"Syllabus","name":"Interaction is the handshake"},
+      {"@type":"Syllabus","name":"Bundles are the weight"},
+      {"@type":"Syllabus","name":"Edge renders the first byte"},
+      {"@type":"Syllabus","name":"Cache the repeat"},
+      {"@type":"Syllabus","name":"Images carry the pixels"},
+      {"@type":"Syllabus","name":"Measure like revenue"},
+      {"@type":"Syllabus","name":"Price the millisecond"},
+      {"@type":"Syllabus","name":"Realtime answers fast"},
+      {"@type":"Syllabus","name":"Waiting bills too"},
+      {"@type":"Syllabus","name":"Shared fate fails together"},
+      {"@type":"Syllabus","name":"Weight ships in previews"},
+      {"@type":"Syllabus","name":"The interview audit"},
+      {"@type":"Syllabus","name":"Audit your own page"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Web Performance Course","item":"https://buildopsy.com/system-design/learn-web-performance.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">17 lessons</span><span class="chip">Diagrams included</span><span class="chip">Marta</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Web Performance Economics: 17 Lessons From the Performance Desk</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Here is my thesis, stated plainly before the evidence: speed is respect. Respect converts. Each lesson fixes one vital at a time, measures it in the field, plus prices it in revenue. Work top to bottom. Every millisecond here is a promise. This course audits who keeps it.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Seventeen principled web performance lessons with diagrams, from Core Web Vitals to edge rendering plus revenue math. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-marta">Marta</a> · Performance desk course · Updated September 18, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Business figures plus field scores in this course follow published case accounts linked under each lesson. Cost framing is modeled from public list prices. Modeled figures are estimates you can re-run in the calculators.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Correlate conversion against load time, then fix paint plus stability plus interaction strictly weakest-first.</li>
+        <li>Measure in the field beside the lab, enforce budgets in review, plus read CrUX context like a local.</li>
+        <li>Render at the edge, cache repeats, size images with reserved slots, plus design realtime fan-out without fear.</li>
+        <li>Price every millisecond with the downtime plus RPS calculators, then present the receipt beside the diagram.</li>
+        <li>Answer performance interviews with thesis-first audits, field numbers, plus priced fixes.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: one page you made faster, numbers first, weakest vital named. Lesson 16 rehearses the audit.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">17 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Speed is respect</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Field accuses</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Paint promise</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Stability manners</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Handshake</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Bundle weight</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Edge first byte</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Cache repeat</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Pixel carry</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Measure revenue</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Price millisecond</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Realtime fast</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Waiting bills</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Shared fate</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Preview weight</a>
+        <a href="#lesson-16"><span class="rnum">16</span> Interview audit</a>
+        <a href="#lesson-17"><span class="rnum">17</span> Audit yours</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Thesis · Speed converts</div>
+          <h2>Speed Is Respect</h2>
+          <p class="lesson-story">Here is my thesis, stated plainly before the evidence: a slow page tells the visitor their time matters less than your roadmap. A fast page tells the opposite. One European retailer tested the principle with a spreadsheet rather than a slogan. The spreadsheet now opens every review I conduct.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Load time falling from slow to fast while mobile conversion climbs from twenty-four to thirty-four percent">
+            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">slow: 24pc</text>
+            <rect class="box" x="160" y="55" width="120" height="40" rx="8"/><text x="220" y="79" font-size="11" text-anchor="middle">load down 23pc</text>
+            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">fast: 34pc</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">plus 42pc</text>
+            <g stroke-width="2"><line x1="128" y1="75" x2="160" y2="75"/><line x1="280" y1="75" x2="312" y2="75"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">respect rendered fast converts</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Correlate before you optimize. One chart of conversion against load time buys more roadmap than ten audits.</li>
+            <li>State the thesis as a testable price. Ten points of conversion were purchasable with milliseconds in the published case.</li>
+            <li>Deep dive: <a href="swappie-mobile-revenue-postmortem.html">Swappie 23pc Faster</a>, page loads down 23 percent with mobile revenue up 42 percent.</li>
+          </ul>
+          <p>The method matters more than the numbers. The team measured conversion against load before changing anything, which turned speed from an engineering complaint into a revenue line executives could read. Measurement first is not a platitude. It is the permit for everything that follows.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Prove with one chart that speed deserves roadmap time this quarter. <span class="q-seen">Seen at: product-minded frontend loops.</span></p>
+            <p><strong>Q2.</strong> Mobile converts near half the desktop rate. Where do you look first? <span class="q-seen">Seen at: growth plus marketplace loops.</span></p>
+          </div>
+          <p class="lesson-hook">Thesis stated. Now the uncomfortable question of who grades it. <a href="#lesson-2">Lesson 02: Field accuses →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Measurement · Lab versus field</div>
+          <h2>The Field Accuses</h2>
+          <p class="lesson-story">Here is my corollary: respect cannot be measured in a simulator. A lab renders one page once on steady hardware with nobody touching it. Visitors scroll plus rotate plus rage-tap on buses. One platform learned the difference across millions of sites when the lab applauded plus real thumbs suffered.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Lab scores green at seventy-eight plus ninety-eight beside a red field score at forty-seven">
+            <rect class="boxlime" x="8" y="20" width="150" height="40" rx="8"/><text x="83" y="44" font-size="11" text-anchor="middle">lab paint: 78</text>
+            <rect class="boxlime" x="8" y="90" width="150" height="40" rx="8"/><text x="83" y="114" font-size="11" text-anchor="middle">lab delay: 98</text>
+            <rect class="boxhot" x="220" y="55" width="150" height="40" rx="8"/><text x="295" y="79" font-size="11" text-anchor="middle">field: 47</text>
+            <rect class="box" x="402" y="55" width="150" height="40" rx="8"/><text x="477" y="79" font-size="11" text-anchor="middle">overall: 40pc</text>
+            <g stroke-width="2"><line x1="158" y1="60" x2="220" y2="70"/><line x1="158" y1="110" x2="220" y2="85"/><line x1="370" y1="75" x2="402" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Instrument the field before trusting the lab. Ship real-user measurement to live traffic plus let thumbs vote.</li>
+            <li>Optimize the worst visitor number, not the best lab score. Weakest first is a strategy, not a slogan.</li>
+            <li>Deep dive: <a href="godaddy-weakest-vital-postmortem.html">GoDaddy Lab Applauded</a>, where layout shift at 0.17 dragged passing sites to 40 percent.</li>
+          </ul>
+          <p>Lesson 1 taught correlation. This lesson teaches jurisdiction. Field data accuses while lab scores flatter. I demote every lab-only scoreboard to advisory status until visitors confirm it.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Lab is green while field is red. Which do you trust plus why? <span class="q-seen">Seen at: frontend platform loops.</span></p>
+            <p><strong>Q2.</strong> Design real-user measurement for one million page views a day. <span class="q-seen">Seen at: performance plus analytics loops.</span></p>
+          </div>
+          <p class="lesson-hook">Jurisdiction settled. Now the first vital on trial: paint. <a href="#lesson-3">Lesson 03: Paint promise →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Paint · Largest contentful paint</div>
+          <h2>Paint Is the Promise</h2>
+          <p class="lesson-story">The largest element is the page keeping its first promise. When it arrives late, everything below it waits in doubt. One retailer cut largest paint 55 percent by rendering the hero on the server wherever possible instead of the client. Same hero. Kept promise.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Client rendered hero marked slow beside server rendered hero marked fast feeding early paint">
+            <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">client hero: late</text>
+            <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">server hero: early</text>
+            <rect class="box" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">paint down 55pc</text>
+            <g stroke-width="2"><line x1="158" y1="75" x2="190" y2="75"/><line x1="340" y1="75" x2="372" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">render the promise before the scroll</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Render the largest element on the server wherever possible. Client waterfalls delay the one pixel visitors judge.</li>
+            <li>Prioritize the hero resource plus defer the rest. Paint responds to concrete cheap choices, not clever projects.</li>
+            <li>Deep dive: <a href="swappie-mobile-revenue-postmortem.html">Swappie treatment</a>, server heroes plus pruned bundles behind the 55 percent paint cut.</li>
+          </ul>
+          <p>Fix paint plus stability before interaction. Largest paint responds to server rendering plus reserved space plus pruned bundles. Interaction metrics follow a calm page the way applause follows performance.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Largest paint misses its bar on mobile only. Walk through the fix. <span class="q-seen">Seen at: frontend plus mobile web loops.</span></p>
+            <p><strong>Q2.</strong> Server render or client render for the hero? Defend with numbers. <span class="q-seen">Seen at: architecture plus performance loops.</span></p>
+          </div>
+          <p class="lesson-hook">Promise kept. Now the page must hold still while reading. <a href="#lesson-4">Lesson 04: Stability manners →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Stability · Cumulative layout shift</div>
+          <h2>Stability Is Manners</h2>
+          <p class="lesson-story">Layout shift is the rudest vital because it punishes reading itself. Text jumps under eyes. Buttons dodge thumbs. A published platform measured 0.17 against a 0.10 bar, then steadied millions of storefronts with reserved space plus min-height wrappers. Manners, enforced by CSS.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Unreserved image shifting content marked rude beside reserved slots plus min-height wrappers marked steady">
+            <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">late space: 0.17</text>
+            <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">reserved slots</text>
+            <rect class="box" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">passing 40 to 70pc</text>
+            <g stroke-width="2"><line x1="158" y1="75" x2="190" y2="75"/><line x1="340" y1="75" x2="372" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Reserve space as a default, not a fix. Images plus ads plus dynamic blocks all arrive late by nature.</li>
+            <li>Wrap dynamic components in min-height containers sized from observed averages, releasing the constraint after render.</li>
+            <li>Deep dive: <a href="godaddy-weakest-vital-postmortem.html">GoDaddy treatment</a>, one vital fixed first for a 75 percent relative gain.</li>
+          </ul>
+          <p>Notice what the winning team did not do. No replatforming. No framework migration. One metric plus one deadline plus the humility to admit the lab had graded the wrong exam. Instability is space arriving late, so arrive with the space first.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Layout shift spikes only on narrow screens with long translations. Why? <span class="q-seen">Seen at: mobile web plus i18n loops.</span></p>
+            <p><strong>Q2.</strong> Fix a shifting feed without touching the framework. Show the slots. <span class="q-seen">Seen at: frontend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Page steadied. Now the handshake after the hello. <a href="#lesson-5">Lesson 05: Handshake →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Interaction · Next paint</div>
+          <h2>Interaction Is the Handshake</h2>
+          <p class="lesson-story">Paint earns attention. Interaction repays it. The hardest vital in current field data judges the delay between tap plus visible answer, with over four in ten sites missing its 200ms bar. Calm pages pass it. Busy main threads fail it in front of witnesses.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Tap flowing through a busy main thread marked slow beside a yielded thread marked under two hundred milliseconds">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">tap</text>
+            <rect class="boxhot" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">busy thread: late</text>
+            <rect class="boxlime" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">yielded: sub 200ms</text>
+            <rect class="box" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">visible answer</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">thumb kept</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="40" x2="312" y2="62"/><line x1="280" y1="110" x2="312" y2="88"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Yield the main thread around input. Long tasks that block taps read as disrespect with a timestamp.</li>
+            <li>Fix paint plus stability first. A calm page makes interaction cheaper than any handler rewrite.</li>
+            <li>Deep dive: <a href="swappie-mobile-revenue-postmortem.html">Swappie field notes</a>, where interaction trails paint in the 2026 field snapshot.</li>
+          </ul>
+          <p>Lesson 3 taught promises. Lesson 4 taught manners. This lesson teaches the handshake. Mobile still trails desktop by roughly seven points while carrying most traffic, which is where every handshake gets graded.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Interaction misses 200ms on low-end phones only. What yields first? <span class="q-seen">Seen at: mobile web loops.</span></p>
+            <p><strong>Q2.</strong> Rank the three vitals by visitor pain for a news page. Defend the order. <span class="q-seen">Seen at: performance-minded frontend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Handshake firm. Now the luggage it carries. <a href="#lesson-6">Lesson 06: Bundle weight →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Weight · JavaScript plus CSS</div>
+          <h2>Bundles Are the Weight</h2>
+          <p class="lesson-story">Weight arrives as features with deadlines. One builder platform turned prompts into apps by reinstalling the internet per preview, near a billion tokens a minute that a cache could have spared. Different layer, same physics. Every repeated byte is a choice nobody priced.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Bloated bundle marked heavy beside pruned bundle with split imports marked lean feeding fast interaction">
+            <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">bloated: heavy</text>
+            <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">pruned plus split</text>
+            <rect class="box" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">main thread breathes</text>
+            <g stroke-width="2"><line x1="158" y1="75" x2="190" y2="75"/><line x1="340" y1="75" x2="372" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">unused code is latency with a commit history</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Prune unused JavaScript plus CSS before adding loaders. The cheapest byte is the deleted one.</li>
+            <li>Rationalize imports plus split by route. Ship the handshake code first, the settings page later.</li>
+            <li>Deep dives: <a href="swappie-mobile-revenue-postmortem.html">Swappie bundle hygiene</a> plus <a href="lovable-vibe-coding-scale-postmortem.html">Lovable preview weight</a>.</li>
+          </ul>
+          <p>None of these fixes is clever. All of them compound, which is precisely why undisciplined teams skip them for cleverer projects. Process is the product here. The fixes are commodity. The measurement discipline is the moat.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Third-party scripts push interaction past budget. What goes, what stays? <span class="q-seen">Seen at: frontend plus growth loops.</span></p>
+            <p><strong>Q2.</strong> Design a bundle budget enforced in review. Who blocks the merge? <span class="q-seen">Seen at: platform frontend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Weight shed. Now the first byte travels to meet the visitor. <a href="#lesson-7">Lesson 07: Edge first byte →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Edge · Rendering plus waiting</div>
+          <h2>Edge Renders the First Byte</h2>
+          <p class="lesson-story">Distance is latency with geography. Rendering at the edge moves the first byte toward the thumb, while waiting on distant APIs bills the gap. One serverless platform itemized that wait plainly: a million requests per second for a month is trillions of billed events. Geography plus waiting compose into the invoice.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Origin render marked far beside edge render marked near with provider wait billed between function and API">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">origin: far</text>
+            <rect class="boxlime" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">edge: near</text>
+            <rect class="boxhot" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">wait billed</text>
+            <rect class="box" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">first byte fast</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Render close to the visitor for the first byte, then stream the rest. Edge placement shortens doubt, not just distance.</li>
+            <li>Price provider wait time. Serverless bills the pause between your function plus someone else API.</li>
+            <li>Deep dives: <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a> plus <a href="cloudflare-edge-outage-postmortem.html">Cloudflare edge coupling</a>.</li>
+          </ul>
+          <p>Run the shape through the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> to feel the stakes. Edge requests times seconds per month turn every wait millisecond into a budget line. Keep dependencies fast or pay for standing still.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Edge render or origin render for a news homepage? Show the trade. <span class="q-seen">Seen at: edge plus CDN loops.</span></p>
+            <p><strong>Q2.</strong> Serverless wait time doubles the bill with flat traffic. What moved? <span class="q-seen">Seen at: FinOps-flavored platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">First byte placed. Now the repeated answer should cost nothing. <a href="#lesson-8">Lesson 08: Cache repeat →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Caching · Repeat answers</div>
+          <h2>Cache the Repeat</h2>
+          <p class="lesson-story">Somewhere a quarter of all greetings repeat, which means a quarter of one famous voice invoice was optional. The cached hello answered in 5ms while the computed hello billed GPU time at 75ms. Same word. Fifteen times cheaper. The web keeps the same secret at smaller scale.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cache hit answering in milliseconds beside a miss path reaching origin with TTL guard">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">request</text>
+            <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">hit: fast, free</text>
+            <rect class="boxhot" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">miss: origin walk</text>
+            <rect class="box" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">fill on miss</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">TTL guard</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="102" x2="312" y2="82"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cache repeated work first. Heroes, headers, plus hot pages pay for the whole layer.</li>
+            <li>Every entry needs a TTL plus an invalidation story. Stale prices spend like real prices.</li>
+            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">Voice hello cache math</a> plus <a href="cloudflare-edge-outage-postmortem.html">Cloudflare edge coupling</a>.</li>
+          </ul>
+          <p>Caching is margin engineering. The analogy travels intact from voice inference to web pages: repeated work should be nearly free. I price the repeat rate before sizing anything else.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design CDN caching with fast invalidation for a news homepage. <span class="q-seen">Seen at: Meta-style plus Cloudflare-style loops.</span></p>
+            <p><strong>Q2.</strong> Hit rate falls from 95 to 40 percent overnight. Debug it live. <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Repeats freed. Now the heaviest single asset: pixels. <a href="#lesson-9">Lesson 09: Pixel carry →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Media · Images plus slots</div>
+          <h2>Images Carry the Pixels</h2>
+          <p class="lesson-story">Images are the weight visitors can see. Both of my field files indicted them first: heroes arriving late plus slots arriving never. Reserved space plus sized containers plus pruned formats fixed what frameworks could not. Pixels with manners.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Unsized image pushing content down beside sized responsive image holding its slot">
+            <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">unsized: pushes</text>
+            <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">sized plus set</text>
+            <rect class="box" x="372" y="55" width="180" height="40" rx="8"/><text x="462" y="79" font-size="11" text-anchor="middle">paint calm, shift gone</text>
+            <g stroke-width="2"><line x1="158" y1="75" x2="190" y2="75"/><line x1="340" y1="75" x2="372" y2="75"/></g>
+            <text class="lbl" x="8" y="135" font-size="11">design the hole before the content</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size every image plus reserve its slot before it loads. Stability starts in markup, not in scripts.</li>
+            <li>Serve responsive sizes plus modern formats. Phones should never download desktop pixels.</li>
+            <li>Deep dives: <a href="swappie-mobile-revenue-postmortem.html">Swappie heroes</a> plus <a href="godaddy-weakest-vital-postmortem.html">GoDaddy image space</a>.</li>
+          </ul>
+          <p>Two decisions show taste in the published cases. Layout shifts were studied across viewports plus languages rather than one desktop test, catching shifts that only appear on narrow screens with long translations. Field metrics rode alongside lab scores the whole quarter. I copy both habits exactly.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Images cause most of the layout shift on a feed. Fix it in markup. <span class="q-seen">Seen at: frontend loops.</span></p>
+            <p><strong>Q2.</strong> When do images deserve preloading plus when is it waste? <span class="q-seen">Seen at: performance review loops.</span></p>
+          </div>
+          <p class="lesson-hook">Pixels placed. Now the discipline that protects them. <a href="#lesson-10">Lesson 10: Measure revenue →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Culture · Budgets plus field data</div>
+          <h2>Measure Like Revenue</h2>
+          <p class="lesson-story">Regressions arrive as features with deadlines. Both winning teams held the line the same way: field metrics beside lab scores every week plus a budget that could block a merge. Culture is a graph with a gate attached.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Real user data plus lab scores feeding a performance budget gate that guards each deploy">
+            <rect class="box" x="8" y="20" width="130" height="34" rx="8"/><text x="73" y="42" font-size="11" text-anchor="middle">real-user data</text>
+            <rect class="box" x="8" y="60" width="130" height="34" rx="8"/><text x="73" y="82" font-size="11" text-anchor="middle">lab scores</text>
+            <rect class="box" x="8" y="100" width="130" height="34" rx="8"/><text x="73" y="122" font-size="11" text-anchor="middle">CrUX context</text>
+            <rect class="boxlime" x="200" y="55" width="150" height="40" rx="8"/><text x="275" y="79" font-size="11" text-anchor="middle">budget gate</text>
+            <rect class="boxhot" x="382" y="55" width="170" height="40" rx="8"/><text x="467" y="79" font-size="11" text-anchor="middle">blocks the merge</text>
+            <g stroke-width="2"><line x1="138" y1="50" x2="200" y2="68"/><line x1="138" y1="77" x2="200" y2="75"/><line x1="138" y1="110" x2="200" y2="82"/><line x1="350" y1="75" x2="382" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track vitals from real users into analytics plus queryable storage. Trends beat snapshots for every argument.</li>
+            <li>Enforce a budget in review. A gate that never blocks is decor with a dashboard.</li>
+            <li>Deep dive: <a href="godaddy-weakest-vital-postmortem.html">GoDaddy field instrumentation</a>, where shipped measurement preceded every fix.</li>
+          </ul>
+          <p>Lesson 2 taught jurisdiction. This lesson teaches permanence. Chrome UX data through August 2026 puts 55.7 percent of origins in the green across all three vitals, up from barely half two years earlier. Progress is real plus uneven. Budgets keep your origin on the right side of it.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a performance budget for a checkout funnel. Which gates block? <span class="q-seen">Seen at: staff frontend loops.</span></p>
+            <p><strong>Q2.</strong> Vitals regress after a replatform. Who owns the revert call? <span class="q-seen">Seen at: engineering management loops.</span></p>
+          </div>
+          <p class="lesson-hook">Discipline installed. Now the receipt that funds it. <a href="#lesson-11">Lesson 11: Price millisecond →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Economics · Revenue math</div>
+          <h2>Price the Millisecond</h2>
+          <p class="lesson-story">Here is the receipt I keep pinned above my desk. Page load down 23 percent. Largest paint down 55 percent. Relative mobile conversion from 24 to 34 percent. Mobile revenue up 42 percent. The pattern replicates because human impatience replicates: one telecom reported 31 percent better paint with 8 percent more sales while one publisher fixed slots for 15 percent better stability with 10 percent more ad revenue.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Milliseconds saved flowing through conversion gain into revenue with a priced receipt">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">ms saved</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">conv plus 10pt</text>
+            <rect class="boxlime" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">rev plus 42pc</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">receipt kept</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">price everything in conversion</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price slowness as revenue at risk per minute with the <a href="../calculators.html#downtime-cost">downtime cost calculator</a>. A leaking funnel is a slow-motion outage nobody pages for.</li>
+            <li>Report ratios, not just deltas. Roughly two points of conversion per point of load improvement travels across companies.</li>
+            <li>Deep dives: <a href="swappie-mobile-revenue-postmortem.html">Swappie receipt</a> plus <a href="godaddy-weakest-vital-postmortem.html">GoDaddy receipt</a>.</li>
+          </ul>
+          <p>My rule from those files still prices my roadmaps. When a fix cannot be priced in conversion, it cannot be prioritized. A funnel leaking ten conversion points to latency deserves the same urgency as an outage with the same invoice.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price a 500ms checkout slowdown monthly, line by line, out loud. <span class="q-seen">Seen at: startup plus CTO-round loops.</span></p>
+            <p><strong>Q2.</strong> Cut load 30 percent without touching features. Name the three cheapest wins. <span class="q-seen">Seen at: growth plus performance loops.</span></p>
+          </div>
+          <p class="lesson-hook">You can now price any page. Time to watch many cursors share one. <a href="#lesson-12">Lesson 12: Realtime fast →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Realtime · Server authority</div>
+          <h2>Realtime Answers Fast</h2>
+          <p class="lesson-story">Here is a harder promise: ten cursors fighting over one canvas without visible war. The published design refuses pure peer negotiation. One server decides who wins, isolates every document, plus fans out at a modeled 65,000 requests a second. Agreement without a referee is a research project. This team shipped a referee.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Ten cursors sending operations to one server referee that orders and fans them out to all clients">
+            <rect class="box" x="8" y="20" width="110" height="34" rx="8"/><text x="63" y="42" font-size="11" text-anchor="middle">10 cursors</text>
+            <rect class="box" x="8" y="60" width="110" height="34" rx="8"/><text x="63" y="82" font-size="11" text-anchor="middle">ops stream</text>
+            <rect class="box" x="8" y="100" width="110" height="34" rx="8"/><text x="63" y="122" font-size="11" text-anchor="middle">65k RPS</text>
+            <rect class="boxlime" x="180" y="55" width="130" height="40" rx="8"/><text x="245" y="79" font-size="11" text-anchor="middle">server decides</text>
+            <rect class="box" x="342" y="55" width="210" height="40" rx="8"/><text x="447" y="79" font-size="11" text-anchor="middle">one order, all clients</text>
+            <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="68"/><line x1="118" y1="77" x2="180" y2="75"/><line x1="118" y1="110" x2="180" y2="82"/><line x1="310" y1="75" x2="342" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.2s" repeatCount="indefinite" path="M63,70 L240,75 L420,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Order operations at one server. Clients render optimistically, the referee settles truth.</li>
+            <li>Isolate by document. One runaway canvas must never tax its neighbors.</li>
+            <li>Deep dive: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer Editor</a>, the server that decides plus the Rust rewrite behind it.</li>
+          </ul>
+          <p>Model the fan-out with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> before promising realtime. Every cursor multiplies every other cursor. Interaction budgets die in fan-out math, not in handler code.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design multiplayer cursors for one million concurrent editors. <span class="q-seen">Seen at: Figma-style plus Google-style loops.</span></p>
+            <p><strong>Q2.</strong> Two users edit offline for an hour. Who wins plus why? <span class="q-seen">Seen at: realtime plus collaboration loops.</span></p>
+          </div>
+          <p class="lesson-hook">Order settled. Now the wait nobody priced. <a href="#lesson-13">Lesson 13: Waiting bills →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Serverless · Waiting bills</div>
+          <h2>Waiting Bills Too</h2>
+          <p class="lesson-story">Here is the invoice serverless hoped you would not itemize: the wait between your function plus someone else API, billed at a modeled 100,000 requests a second across 45 billion weekly requests. Concurrency without waiting is cheap. Waiting at scale is a second product you never launched.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Function calling a slow API while the wait meter runs beside a fast dependency that bills almost nothing">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">function</text>
+            <rect class="boxhot" x="150" y="20" width="150" height="40" rx="8"/><text x="225" y="44" font-size="11" text-anchor="middle">slow API: billed wait</text>
+            <rect class="boxlime" x="150" y="90" width="150" height="40" rx="8"/><text x="225" y="114" font-size="11" text-anchor="middle">fast dep: cheap</text>
+            <rect class="box" x="332" y="55" width="110" height="40" rx="8"/><text x="387" y="79" font-size="11" text-anchor="middle">45B per week</text>
+            <rect class="box" x="474" y="55" width="78" height="40" rx="8"/><text x="513" y="79" font-size="11" text-anchor="middle">meter</text>
+            <g stroke-width="2"><line x1="118" y1="68" x2="150" y2="40"/><line x1="118" y1="82" x2="150" y2="102"/><line x1="300" y1="40" x2="332" y2="62"/><line x1="300" y1="110" x2="332" y2="88"/><line x1="442" y1="75" x2="474" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,70 L220,45 L360,60 L500,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price provider wait time per request. Keep dependencies fast or pay for standing still.</li>
+            <li>Concurrency plus cold starts multiply the wait. Warm pools plus lean handlers shrink both.</li>
+            <li>Deep dive: <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a>, the bill that waited on providers.</li>
+          </ul>
+          <p>Run the shape through the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> with wait milliseconds included. Serverless bills honesty about dependencies. Monoliths hid the wait inside idle servers. The meter simply moved.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Serverless spend doubles with flat traffic. Diagnose the wait. <span class="q-seen">Seen at: FinOps plus platform loops.</span></p>
+            <p><strong>Q2.</strong> When does serverless beat containers on price? Show the crossover. <span class="q-seen">Seen at: architecture loops.</span></p>
+          </div>
+          <p class="lesson-hook">Wait priced. Now the edge that shares one fate. <a href="#lesson-14">Lesson 14: Shared fate →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Edge · Shared fate</div>
+          <h2>Shared Fate Fails Together</h2>
+          <p class="lesson-story">Here is the edge at its most honest: one wrong internal file loaded on every server at once, in November 2025, plus error pages replaced three giant platforms worldwide. Storage fell with the proxy it never needed. The fix cut storage loose from the proxy. Shared fate is a design choice wearing an accident costume.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One bad file propagating to every edge server with storage coupled to the failing proxy beside a bypassed storage path staying green">
+            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">wrong file</text>
+            <rect class="boxhot" x="150" y="20" width="130" height="40" rx="8"/><text x="215" y="44" font-size="11" text-anchor="middle">every server</text>
+            <rect class="boxhot" x="150" y="90" width="130" height="40" rx="8"/><text x="215" y="114" font-size="11" text-anchor="middle">KV falls too</text>
+            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">bypass: lives</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">decoupled</text>
+            <circle class="blink" r="5" cx="215" cy="75" style="fill:var(--hot)"/>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="70"/><line x1="280" y1="50" x2="312" y2="65"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L215,70 L350,70 L500,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Decouple data paths from control paths. Storage must survive the proxy worst day.</li>
+            <li>Propagate config in stages with automatic halt. Network-wide simultaneity is a choice, not a requirement.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, shared fate with a bypass ending.</li>
+          </ul>
+          <p>The lesson bypasses every edge network built the same way. Speed at the edge means nothing when one file can redden every region. Fast plus fragile is just fast failure with geography.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> One config file threatens every edge region. Design the rollout that survives it. <span class="q-seen">Seen at: edge plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Storage shares the proxy fate. Sketch the bypass. <span class="q-seen">Seen at: infra loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fate decoupled. Now the weight hiding in previews. <a href="#lesson-15">Lesson 15: Preview weight →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Weight · Preview environments</div>
+          <h2>Weight Ships in Previews</h2>
+          <p class="lesson-story">Here is weight at startup speed: a $6.6B builder turning prompts into apps, each preview booting a sandbox plus reinstalling dependencies plus routing near a billion tokens a minute. The demo feels instant. The meter runs a marathon. A cache fix at a modeled million requests a second is the difference between magic plus margin.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Preview button triggering fresh installs and token floods beside a cached path reusing warm layers">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">preview?</text>
+            <rect class="boxhot" x="140" y="20" width="150" height="40" rx="8"/><text x="215" y="44" font-size="11" text-anchor="middle">fresh install</text>
+            <rect class="boxhot" x="140" y="90" width="150" height="40" rx="8"/><text x="215" y="114" font-size="11" text-anchor="middle">1B tokens/min</text>
+            <rect class="boxlime" x="322" y="55" width="110" height="40" rx="8"/><text x="377" y="79" font-size="11" text-anchor="middle">warm cache</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">margin</text>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="82" x2="140" y2="102"/><line x1="290" y1="75" x2="322" y2="75"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M58,75 L240,70 L370,75 L500,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Reuse sandboxes plus dependency layers across previews. Fresh installs are a subscription to waiting.</li>
+            <li>Route tokens through caches at scale. Repeated work should be nearly free at a million requests a second.</li>
+            <li>Deep dive: <a href="lovable-vibe-coding-scale-postmortem.html">Lovable Preview Button</a>, $6.6B of prompts with a weight problem.</li>
+          </ul>
+          <p>Lesson 6 taught bundle hygiene for pages. This lesson teaches it for platforms. The physics match exactly: repeated bytes are choices nobody priced. Price them before the preview becomes the product.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price a preview environment per developer monthly. <span class="q-seen">Seen at: platform plus startup loops.</span></p>
+            <p><strong>Q2.</strong> Token routing costs explode with users. Where does caching land first? <span class="q-seen">Seen at: AI platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Weight priced. Now turn all of it into interview answers. <a href="#lesson-16">Lesson 16: Interview audit →</a></p>
+        </section>
+        <section class="lesson" id="lesson-16">
+          <div class="lesson-kicker">Lesson 16 · Interview craft · Answering with receipts</div>
+          <h2>The Interview Audit</h2>
+          <p class="lesson-story">Here is the audit I run on candidates: show me one page you made faster, with the before number, the after number, plus the receipt connecting them. No receipt, no hire signal. Panels remember engineers who measured thumbs plus moved revenue. This lesson turns sixteen lessons into that engineer.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview answer flow from thesis through weakest vital and priced fix to the receipt">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">thesis first</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">weakest hit</text>
+            <rect class="box" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">fix priced</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">receipt shown</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L205,75 L347,75 L493,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Open with a thesis in one line. Speed is respect, tested on your own funnel with your own chart.</li>
+            <li>Price slowness with the <a href="../calculators.html#downtime-cost">downtime cost calculator</a>. Leaking funnels are slow-motion outages. Say so.</li>
+            <li>Close with the weakest vital you fixed plus its receipt. One vital with numbers beats three theories.</li>
+          </ul>
+          <p>Rehearse three answers this week: a paint fix with server rendering, a stability fix with reserved slots, plus a revenue story with conversion math. State the field number first. The lab number never hired anyone.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Walk me through a page you made faster, numbers first. <span class="q-seen">Seen at: frontend plus growth loops.</span></p>
+            <p><strong>Q2.</strong> Checkout converts poorly on mobile. Your first three moves? <span class="q-seen">Seen at: product-minded performance loops.</span></p>
+          </div>
+          <p class="lesson-hook">Answers rehearsed. Now audit a page of your own. <a href="#lesson-17">Lesson 17: Audit yours →</a></p>
+        </section>
+      <section class="lesson" id="lesson-17">
+          <div class="lesson-kicker">Lesson 17 · Capstone · Thesis plus audit</div>
+          <h2>Audit Your Own Page</h2>
+          <p class="lesson-story">Bring one page from your own work. Mine was a product listing that shifted under every thumb. Yours might be checkout, search, or a marketing hero. We will state the thesis, find the weakest vital, fix only it, plus present the receipt beside the diagram.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from thesis through weakest vital and single fix to priced receipt">
+            <rect class="boxlime" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">thesis set</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">weakest hit</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">one fix</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">receipt shown</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">present the receipt beside the diagram, always</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>State the thesis in one line. Speed is respect, tested on your own funnel with your own chart.</li>
+            <li>Fix the weakest vital only until it is not weakest anymore. Discipline beats breadth in every published case.</li>
+            <li>Close with the invoice. Conversion points gained times revenue per point, labeled as estimates.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. Keep reading the shelf: <a href="index.html">all case studies</a> plus the <a href="learn-data-pipelines.html">data pipelines course</a> and the <a href="learn-system-design.html">system design course</a>. New pages ship weekly. So will new receipts.</p>
+          <p>Bring one audit story of your own. Teams remember engineers who measured thumbs plus moved revenue. This course gave you twelve borrowed receipts. Earn one.</p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Swappie mobile revenue, GoDaddy weakest vital, Vercel Fluid Compute wait billing, Cloudflare edge coupling, Lovable preview weight, plus voice cache math as a caching analogy. Business figures follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../layoff-radar.html">Tech Layoff Radar</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});lucide.createIcons();
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

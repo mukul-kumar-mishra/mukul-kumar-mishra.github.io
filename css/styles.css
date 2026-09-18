@@ -545,9 +545,24 @@ h1, h2, h3, h4, h5, h6 {
 .claimtable td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 /* Author bio body copy: full-size text, not caption treatment. */
 .author-card .bio { font-size: 1rem; line-height: 1.7; color: var(--paper); margin: 0 0 12px; }
-/* Corner ribbon for the live course card. */
+/* Course price badges: theme-aware pills plus a slim card accent, readable on
+   both light and dark cards. FREE is live everywhere today; the .is-premium
+   and .badge-premium rules ship dormant for the future paid cohort. Usage:
+   <article class="feature-link course-card is-free"> with a
+   <span class="badge badge-free">Free</span> pill beside the status tag. */
 .course-card { position: relative; overflow: hidden; }
-.ribbon { position: absolute; top: 20px; right: -42px; transform: rotate(45deg); background: var(--lime); color: #052e16; font-family: var(--font-display); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.12em; padding: 6px 46px; box-shadow: var(--shadow); }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.badge-free { background: color-mix(in srgb, var(--lime) 14%, var(--card)); color: #15803d; border-color: color-mix(in srgb, var(--lime) 32%, transparent); }
+:root.dark .badge-free { color: var(--lime); }
+.badge-premium { background: color-mix(in srgb, var(--gold) 14%, var(--card)); color: var(--gold); border-color: color-mix(in srgb, var(--gold) 35%, transparent); }
+.course-card .badge { margin-left: 8px; }
+.course-card.is-free::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--lime), color-mix(in srgb, var(--lime) 20%, transparent)); }
+.course-card.is-premium::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), color-mix(in srgb, var(--gold) 20%, transparent)); }
+.course-card.is-premium { border-color: color-mix(in srgb, var(--gold) 40%, var(--line)); }
+.course-card { display: flex; flex-direction: column; }
+.course-card .card-cta { margin-top: auto; padding-top: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .calc-grid { grid-template-columns: 1fr; } }
 .load-more { display: none; margin: 18px auto 0; }
 .incident-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 1.4em 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }

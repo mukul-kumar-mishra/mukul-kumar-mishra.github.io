@@ -54,6 +54,20 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured Buildopsy Courses",
+    "description": "Free engineering courses built from production postmortems.",
+    "url": "https://buildopsy.com/system-design/course.html",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "url": "https://buildopsy.com/system-design/learn-system-design.html", "name": "System Design: 15 Lessons From Real Outages"},
+      {"@type": "ListItem", "position": 2, "url": "https://buildopsy.com/system-design/learn-ai-agents.html", "name": "AI Agents in Production: 18 Lessons From the Agent Bench"},
+      {"@type": "ListItem", "position": 3, "url": "https://buildopsy.com/system-design/learn-kubernetes.html", "name": "Kubernetes in Production: 15 Lessons From the On-Call"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Buildopsy",
     "url": "https://buildopsy.com/",
@@ -68,7 +82,7 @@
     <div class="wrap">
       <a class="brand brand-logo" href="index.html"><img src="images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
-        <a href="index.html" class="on">Home</a>
+        
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
         <a href="calculators.html">Calculators</a><a href="system-design/course.html">Courses</a>
@@ -127,19 +141,19 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> Featured System Architecture</h2>
         <a class="sec-link" href="system-design/index.html">View All RFCs <i data-lucide="chevron-right"></i></a>
       </div>
-      <a class="feature-link article-card featured-article" href="system-design/cursor-claude-token-exhaustion-postmortem.html">
-        <img src="images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="AI coding token exhaustion system design postmortem architecture and cost illustration" onerror="this.style.display='none'">
+      <a class="feature-link article-card featured-article" href="system-design/figma-multiplayer-cost-postmortem.html">
+        <img src="images/articles/figma-multiplayer-cost-postmortem.png" alt="Figma multiplayer system design postmortem architecture illustration" onerror="this.style.display='none'">
         <div class="article-card-body">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-tag">Newest Postmortem</span>
-          <span class="chip">Developer Tools</span>
+          <span class="fl-tag">Featured Postmortem</span>
+          <span class="chip">Realtime Systems</span>
         </div>
-        <h3>Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer</h3>
+        <h3>Figma's Multiplayer Editor: The Server That Decides Who Wins</h3>
         <p class="fl-desc">
-          A forensic teardown of token limits, context rot, compaction cliffs, productivity math plus the fixes vendors keep postponing.
+          A practical teardown of WebSocket collaboration, Rust isolation, conflict resolution plus the hidden price of an always-live canvas.
         </p>
         <div style="display:flex;gap:8px;margin-top:14px;">
-          <span class="chip">Cursor</span><span class="chip">Claude Code</span><span class="chip">Tokens</span><span class="chip">Cost</span>
+          <span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">Realtime</span>
         </div>
         <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
         </div>
@@ -223,6 +237,37 @@
         </a>
       </div>
       <button class="btn btn-ghost load-more" id="loadMoreArticles" type="button">Load more articles</button>
+    </section>
+
+    <!-- Free courses -->
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="book-open"></i> Free Courses</h2>
+        <a class="sec-link" href="system-design/course.html">Browse all courses <i data-lucide="chevron-right"></i></a>
+      </div>
+      <div class="grid3">
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">15 lessons</span></div>
+          <h3><a class="feature-link-title" href="system-design/learn-system-design.html">System Design: 15 Lessons From Real Outages</a></h3>
+          <p class="fl-desc">Requests, APIs, databases, queues, scaling, resilience, caching, cost, plus the interview playbook.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="system-design/learn-system-design.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">18 lessons</span></div>
+          <h3><a class="feature-link-title" href="system-design/learn-ai-agents.html">AI Agents in Production</a></h3>
+          <p class="fl-desc">Sandboxing, egress, retries, token bills plus eval gates. From the agent bench, with live diagrams.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Kabir</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="system-design/learn-ai-agents.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">Live</span><span class="badge badge-free">Free</span> <span class="chip">15 lessons</span></div>
+          <h3><a class="feature-link-title" href="system-design/learn-kubernetes.html">Kubernetes in Production</a></h3>
+          <p class="fl-desc">Control planes, autoscaling, blast radius plus inference scheduling. From the on-call, with live diagrams.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="system-design/learn-kubernetes.html">Start the course</a></p>
+        </article>
+      </div>
     </section>
 
     <section class="sec" id="newsletter">
