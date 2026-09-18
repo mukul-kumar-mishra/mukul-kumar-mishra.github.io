@@ -31,7 +31,13 @@
       {"@type":"ListItem","position":3,"url":"https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html","name":"AWS Thermal Postmortem: Cooling Failed First"},
       {"@type":"ListItem","position":4,"url":"https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html","name":"Doltgres: The Backup That Forgot the Data"},
       {"@type":"ListItem","position":5,"url":"https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html","name":"Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer"},
-      {"@type":"ListItem","position":6,"url":"https://buildopsy.com/system-design/roblox-kafka-ingestion-postmortem.html","name":"18 Trillion Messages a Day. Half of Them Could Have Waited."}
+      {"@type":"ListItem","position":6,"url":"https://buildopsy.com/system-design/roblox-kafka-ingestion-postmortem.html","name":"18 Trillion Messages a Day. Half of Them Could Have Waited."},
+      {"@type":"ListItem","position":7,"url":"https://buildopsy.com/system-design/discord-messages-scale-postmortem.html","name":"Discord: Trillions of Messages, 177 Nodes Too Many"},
+      {"@type":"ListItem","position":8,"url":"https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html","name":"Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer"},
+      {"@type":"ListItem","position":9,"url":"https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html","name":"ShareChat: The 10x Cheaper Assignment"},
+      {"@type":"ListItem","position":10,"url":"https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html","name":"MoEngage: Rent Nothing, Own the Millisecond"},
+      {"@type":"ListItem","position":11,"url":"https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html","name":"GoDaddy: The Lab Applauded. The Field Accused."},
+      {"@type":"ListItem","position":12,"url":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html","name":"Salesforce: The Login Queue That Ate Dreamforce"}
     ]
   }
   </script>
@@ -73,7 +79,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design &amp; Architecture Case Studies</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluations plus counterfactual redesigns.</p>
-      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse 13 system design postmortems with RPS and cost models plus 6 AI slop incident files. Each teardown shows what broke and what should be, with math you can run.</p>
+      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse 46 system design postmortems with RPS and cost models plus the AI Slop Watch incident files. Each teardown shows what broke and what should be, with math you can run.</p>
       <div class="grid4" style="margin-top:26px;">
         <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Telemetry Ingestion</div></div>
         <div class="stat"><div class="num">99.99%</div><div class="lbl">Production Availability</div></div>
@@ -85,6 +91,23 @@
         <p class="fl-desc" style="margin:0;flex:1;min-width:200px;">AI Slop Watch: incident files from the frontier. Breakouts, buyouts, plus picker fights. <a href="ai-slop.html">Browse the shelf</a>.</p>
       </div>
     </header>
+
+    <section class="sec" aria-label="Answer desk">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="compass"></i> Answer Desk: Start From the Question</h2>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Each question below opens the teardown that answers it, with RPS math and cost models you can run.</p>
+      <div style="display:grid;gap:10px;">
+        <p class="fl-desc" style="margin:0;">How does Figma multiplayer work? <a href="figma-multiplayer-cost-postmortem.html">Figma multiplayer system design: WebSockets, conflict resolution and cost →</a></p>
+        <p class="fl-desc" style="margin:0;">How does Notion scale its architecture? <a href="notion-data-lake-cost-postmortem.html">Notion system design: PostgreSQL sharding, CDC and data lake cost →</a></p>
+        <p class="fl-desc" style="margin:0;">How does Discord store trillions of chat messages? <a href="discord-messages-scale-postmortem.html">Discord messaging system design: Cassandra hot partitions to ScyllaDB →</a></p>
+        <p class="fl-desc" style="margin:0;">What causes Kafka consumer rebalance storms? <a href="kafka-rebalance-storm-postmortem.html">Kafka rebalance storm explained: coordinator math and retry amplification →</a></p>
+        <p class="fl-desc" style="margin:0;">How does Vercel Fluid Compute billing work? <a href="vercel-fluid-compute-cost-postmortem.html">Vercel serverless architecture: concurrency, cold starts and cost →</a></p>
+        <p class="fl-desc" style="margin:0;">How does Supabase scale Postgres? <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres system design: pooling, RLS tax and cost →</a></p>
+        <p class="fl-desc" style="margin:0;">How does Stripe's ledger scale without double charges? <a href="stripe-ledger-scale-postmortem.html">Stripe ledger system design: idempotency and webhook storms →</a></p>
+        <p class="fl-desc" style="margin:0;">How did Razorpay move UPI payments to Kafka? <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka system design: partitions and connection limits →</a></p>
+      </div>
+    </section>
 
     <section class="sec">
       <div class="sec-head">
@@ -127,6 +150,11 @@
         <button class="btn btn-ghost load-more" id="loadMoreBtn" type="button" style="display:none;">Load more articles</button>
       </div>
     </section>
+
+    <div class="ad-slot" data-ad-slot="hub-below-rfcs" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-hub-below-rfcs"></div>
+    </div>
   </main>
 
   <footer class="footer">

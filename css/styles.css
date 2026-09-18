@@ -858,3 +858,34 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Ad slots: reserved, labeled, dormant until js/ads.js is configured.
+   Slots stay display:none (zero requests, zero CLS) until the owner enables
+   ads in js/ads.js, which adds .ads-live to <html>. Reserved min-heights keep
+   activation at ~zero CLS. Lazy network load only; no interstitials/popups. */
+.ad-slot { display: none; }
+html.ads-live .ad-slot {
+  display: block;
+  min-height: 280px;
+  margin: 0 0 2.2rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 8px 8px 12px;
+  overflow: hidden;
+}
+.ad-slot-label {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin: 2px 0 6px;
+}
+.ad-slot-body { min-height: 250px; display: flex; align-items: center; justify-content: center; }
+@media (max-width: 700px) {
+  html.ads-live .ad-slot { min-height: 300px; }
+  .ad-slot-body { min-height: 270px; }
+}
