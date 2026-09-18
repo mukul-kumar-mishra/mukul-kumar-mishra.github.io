@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How Discord stores trillions of messages: channel-partitioned Cassandra, hot partitions, quorum amplification, Rust request coalescing plus the ScyllaDB migration from 177 nodes to 72.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/discord-messaging-system-design.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB">
+  <meta property="og:description" content="A practical guide to Discord messaging system design: channel partitioning, read fan-in, Rust coalescing plus the engine swap that retired 105 nodes.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/discord-messaging-guide.svg">
+  <meta property="og:image:alt" content="Discord message storage architecture diagram">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/discord-messaging-system-design.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB">
+  <meta name="twitter:description" content="Hot partitions, quorum reads, Rust coalescing, 177 nodes to 72 at 15ms p99.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/discord-messaging-guide.svg">
+  <meta name="twitter:image:alt" content="Discord message storage architecture diagram">
+  <title>Discord System Design: How Trillions of Messages Are Stored | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB",
+    "description":"How Discord stores trillions of messages: channel-partitioned Cassandra, hot partitions, quorum amplification, Rust request coalescing plus the ScyllaDB migration from 177 nodes to 72.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
+    "datePublished":"2026-09-18",
+    "dateModified":"2026-09-18",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/discord-messaging-system-design.html"},
+    "keywords":"Discord system design, Discord architecture, how Discord stores messages, Cassandra hot partitions, ScyllaDB migration, request coalescing"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How does Discord store messages?","acceptedAnswer":{"@type":"Answer","text":"In a wide-column store partitioned by channel plus time bucket. Discord moved from MongoDB to Cassandra in 2017, then migrated trillions of messages to ScyllaDB, cutting 177 nodes to 72."}},
+      {"@type":"Question","name":"Why did Discord leave Cassandra for ScyllaDB?","acceptedAnswer":{"@type":"Answer","text":"Hot partitions plus JVM garbage-collection pauses pushed p99 latency toward 125ms across 177 nodes. ScyllaDB speaks the same protocol without the pause tax. A Rust coalescing layer removed duplicate reads first."}},
+      {"@type":"Question","name":"What is request coalescing?","acceptedAnswer":{"@type":"Answer","text":"Merging overlapping reads into one database query. Discord routes each channel to one service instance by consistent hashing, so thousands of readers opening the same channel cost a single query."}},
+      {"@type":"Question","name":"What database does Discord use now?","acceptedAnswer":{"@type":"Answer","text":"ScyllaDB for message storage at 15ms p99, with Rust data services in front. Postgres-style relational stores were never the message path."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Open a popular channel and thousands of readers hit one database partition within seconds. This guide explains how Discord survived that fan-in: channel partitioning, quorum reads, a Rust coalescing layer plus an engine swap from 177 nodes to 72.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Discord partitions messages by channel plus time bucket. Popular channels overheated partitions while quorum reads spread the pain. Coalescing merged the crowd into one query. ScyllaDB removed the pause tax.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Messages Stored</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Trillions</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Before</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">177 Nodes</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">After</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">72 Nodes</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Read p99</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">15ms</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · System design guide · Published September 18, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the storage works, why reads broke plus what fixed them. For the full forensic teardown with overkill math and operator rules, read <a href="discord-messages-scale-postmortem.html">Discord: Trillions of Messages, 177 Nodes Too Many</a>.</aside>
+
+      <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/discord-messaging-guide.svg" alt="Discord message storage diagram showing clients, coalescing services, ScyllaDB plus hot partitions" width="1200" height="680"><figcaption>Figure 1. Thousands of readers in, one query out. Coalescing sits between the crowd and the cluster.</figcaption></figure>
+
+      <section><h2>1. How Discord Stores Messages in 60 Seconds</h2>
+        <p>Every message lands in one wide table partitioned by channel plus time bucket. Writes are trivially routable: one message, one place. Discord outgrew MongoDB, moved to Cassandra in 2017 on twelve nodes, then grew to 177 nodes holding trillions of messages by 2022. Then it migrated everything to ScyllaDB and landed on 72 nodes at 15ms p99.</p>
+        <p>The drama was never writes. Opening a popular channel fires thousands of reads at the same partition within seconds. Replicas queue, quorum consistency spreads the delay to neighboring queries plus JVM pauses stack on top. The cluster did not run out of disk. It ran out of schema.</p>
+        <div class="callout"><strong>The mental model:</strong> a write-optimized schema serving a read-dominated product. Every popular channel is a flash crowd aimed at one partition key.</div>
+      </section>
+
+      <section><h2>2. The Components of Discord Message Storage</h2>
+        <p><strong>Clients</strong> open channels plus poll history over persistent connections. <strong>Rust data services</strong> sit in front of the database, route each channel to one instance by consistent hashing plus merge overlapping reads into single queries over gRPC. <strong>ScyllaDB</strong> stores the messages with Cassandra-compatible protocol plus no garbage-collection pauses. <strong>Denser hybrid storage</strong> pairs persistent disks with NVMe SSDs. Everything else, presence plus media plus notifications, lives outside the message path.</p>
+        <p>The ordering matters. Coalescing came before the engine swap and bought years of runway alone. Never ask the database the same question twice is a routing decision, not a hardware purchase.</p>
+      </section>
+
+      <section><h2>3. Hot Partitions and Quorum Amplification</h2>
+        <p>Partition by channel plus time and one hot channel concentrates 5,000 reads per second onto a single partition. At replication factor 3 with quorum reads, that becomes 10,000 replica reads against a handful of nodes. Double the hot channels on event night and the saturated set grows faster than the fleet, because every hot read multiplies across replicas while new nodes only dilute cold load.</p>
+        <p>Discord reads plus writes at quorum, so saturated nodes slow down strangers too: cold channels sharing hardware with a hot partition pay the hot partition's latency. Add Cassandra's garbage-collection pauses plus compaction backlogs and three queues stack. Tail latency drifted from 40ms toward 125ms at p99 while medians looked healthy. Medians lie about chat. Everyone notices the stuck message.</p>
+        <div class="tip"><strong>Interview line:</strong> when asked why adding nodes did not help, answer with the hot set. 177 nodes felt small because the saturated handful was the cluster. Capacity follows the hottest partition, never the average.</div>
+      </section>
+
+      <section><h2>4. Request Coalescing: Ask Once</h2>
+        <p>The fix routes one channel to one service instance, then merges every overlapping read for the same message into a single database query. Thousands of readers, one query. Consistent hashing matters here: random load balancing would scatter the crowd past the merger, while hash routing concentrates hot keys exactly where coalescing can reach them.</p>
+        <p>Then the engine swap removed the pause tax. ScyllaDB reimplements Cassandra storage in C++, keeping protocol plus queries while deleting stop-the-world garbage collection. Denser disks cut utilization by a modeled 53 percent. Together: 105 nodes retired, a 59 percent smaller fleet, p99 at 15ms. The migration itself staged recent data first plus backfilled history behind it. When the stock migrator projected three months, engineers rewrote it in Rust in about a day.</p>
+      </section>
+
+      <section><h2>5. What It Costs</h2>
+        <p>Model fleet cost from public cloud list prices for memory-heavy database machines plus attached SSDs and the 105 retired nodes land in the low millions per year, before counting the eliminated firefighting toil. The overkill was compound interest on a schema plus an engine plus an operating model, priced monthly.</p>
+        <p>Price your own read path with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>: a few million chat events per second at a blended price, sustained all month, dwarfs the database line. Every duplicate read eliminated upstream deletes its share of that envelope. The full overkill math lives in the <a href="discord-messages-scale-postmortem.html">deep postmortem</a>.</p>
+      </section>
+
+      <section><h2>6. System Design Interview Takeaways</h2>
+        <p><strong>Partition by the hottest read path.</strong> Write elegance means nothing if reads stampede one key. <strong>Coalesce before you scale.</strong> Merging duplicate reads beats adding nodes that inherit the same hotspot. <strong>Charge consistency per workload.</strong> Uniform quorum multiplies every skew. <strong>Delete pause taxes from latency products.</strong> p99 products cannot afford garbage collection. <strong>Watch the hot set, not the fleet.</strong> Healthy averages hide saturated partitions.</p>
+      </section>
+
+      <section><h2>7. Frequently Asked Questions</h2>
+        <h3>How does Discord store messages?</h3>
+        <p>In a wide-column store partitioned by channel plus time bucket. Discord moved from MongoDB to Cassandra in 2017, then migrated trillions of messages to ScyllaDB, cutting 177 nodes to 72.</p>
+        <h3>Why did Discord leave Cassandra for ScyllaDB?</h3>
+        <p>Hot partitions plus JVM garbage-collection pauses pushed p99 latency toward 125ms across 177 nodes. ScyllaDB speaks the same protocol without the pause tax. A Rust coalescing layer removed duplicate reads first.</p>
+        <h3>What is request coalescing?</h3>
+        <p>Merging overlapping reads into one database query. Discord routes each channel to one service instance by consistent hashing, so thousands of readers opening the same channel cost a single query.</p>
+        <h3>What database does Discord use now?</h3>
+        <p>ScyllaDB for message storage at 15ms p99, with Rust data services in front. Relational stores were never the message path.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Storage facts follow Discord Engineering publications plus ScyllaDB case coverage. Node counts, latencies plus migration steps come from the published accounts. Cost framing is modeled from public cloud list prices. For the complete analysis, see <a href="discord-messages-scale-postmortem.html">the full postmortem</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://discord.com/blog/how-discord-stores-trillions-of-messages" target="_blank" rel="noopener noreferrer">Discord Engineering: How Discord Stores Trillions of Messages</a></li>
+          <li><a href="https://www.scylladb.com/tech-talk/how-discord-migrated-trillions-of-messages-from-cassandra-to-scylladb" target="_blank" rel="noopener noreferrer">ScyllaDB: How Discord Migrated Trillions of Messages (Jun 2026)</a></li>
+          <li><a href="https://www.infoq.com/news/2023/06/discord-cassandra-scylladb" target="_blank" rel="noopener noreferrer">InfoQ: 177 nodes to 72, p99 to 15ms (Jun 2023)</a></li>
+          <li><a href="https://thenewstack.io/how-discord-migrated-trillions-of-messages-to-scylladb" target="_blank" rel="noopener noreferrer">The New Stack: Superdisk plus Rust migrator detail (Feb 2023)</a></li>
+        </ul>
+      </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

@@ -127,7 +127,7 @@
     <!-- Stats -->
     <section class="sec">
       <div class="grid3">
-        <div class="stat"><div class="num">48 Teardowns</div><div class="lbl">Postmortems &amp; RFCs</div></div>
+        <div class="stat"><div class="num">50 Teardowns</div><div class="lbl">Postmortems &amp; RFCs</div></div>
         <div class="stat"><div class="num">9 Tools</div><div class="lbl">Runnable Calculators</div></div>
         <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Cost Models at Scale</div></div>
       </div>
@@ -165,6 +165,30 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/discord-messaging-system-design.html">
+          <img src="images/articles/discord-messaging-guide.svg" alt="Discord message storage architecture diagram" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span>
+          </div>
+          <h3>How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB</h3>
+          <p class="fl-desc">Channel partitioning, quorum read fan-in, Rust coalescing plus the engine swap from 177 nodes to 72.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Discord</span><span class="chip">Cassandra</span><span class="chip">ScyllaDB</span></div>
+          <span class="article-read">Read article <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="feature-link article-card" data-article-card href="system-design/kafka-consumer-rebalance.html">
+          <img src="images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer rebalance storm diagram" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span>
+          </div>
+          <h3>Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h3>
+          <p class="fl-desc">Eager versus cooperative protocols, static membership, fetch storms plus the 6x retry amplifier.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Kafka</span><span class="chip">Rebalancing</span><span class="chip">Retries</span></div>
+          <span class="article-read">Read article <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/figma-system-design.html">
           <img src="images/articles/figma-system-design-guide.svg" alt="Figma multiplayer system design architecture diagram" onerror="this.style.display='none'">
           <div class="article-card-body">

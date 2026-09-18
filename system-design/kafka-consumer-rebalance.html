@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kafka consumer rebalance explained: how JoinGroup plus eager assignment pause every consumer, why rolling deploys cascade across 40,000 partitions plus how static membership and cooperative rebalancing end it.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/kafka-consumer-rebalance.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
+  <meta property="og:description" content="A practical guide to Kafka consumer-group rebalancing: eager versus cooperative protocols, static membership, fetch storms plus retry amplification.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.svg">
+  <meta property="og:image:alt" content="Kafka consumer rebalance storm diagram">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/kafka-consumer-rebalance.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
+  <meta name="twitter:description" content="Eager versus cooperative rebalancing, static membership, fetch storms, 6x retry amplification.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.svg">
+  <meta name="twitter:image:alt" content="Kafka consumer rebalance storm diagram">
+  <title>Kafka Rebalance Explained: Consumer Storms and Fixes | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes",
+    "description":"Kafka consumer rebalance explained: JoinGroup plus eager assignment, rolling-deploy cascades across 40,000 partitions, fetch storms, retry amplification plus the fixes.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
+    "datePublished":"2026-09-18",
+    "dateModified":"2026-09-18",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html"},
+    "keywords":"Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, rebalance storm"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"What triggers a Kafka consumer rebalance?","acceptedAnswer":{"@type":"Answer","text":"Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group."}},
+      {"@type":"Question","name":"What is the difference between eager and cooperative rebalancing?","acceptedAnswer":{"@type":"Answer","text":"Eager revokes all partitions from every member on each rebalance, pausing the whole group. Cooperative revokes only partitions that must move, so unaffected partitions keep consuming through the transition."}},
+      {"@type":"Question","name":"How does static membership prevent rebalance storms?","acceptedAnswer":{"@type":"Answer","text":"Each consumer restarts under a stable instance id and keeps its assignment instead of rejoining as a stranger. Rolling deploys stop triggering full rebalances entirely."}},
+      {"@type":"Question","name":"Why do rolling deploys pause Kafka consumers?","acceptedAnswer":{"@type":"Answer","text":"Each restarted member rejoins the group, and under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">System Design Guide</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A routine deploy restarts consumers one by one. Each restart rejoins the group. Each rejoin reassigns every partition. This guide explains the rebalance protocol, why it cascades at scale plus the three settings that end the loop.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eager rebalancing stops the world on every membership change. Rolling restarts arrive faster than rebalances complete, so the group never settles. Static membership plus cooperative assignment break the cycle.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Consumers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">120</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Partitions</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">40,000</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Pause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">11 Min</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Retry Amplifier</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">6x Load</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · System design guide · Published September 18, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the protocol works plus how to configure it. Numbers below illustrate a labeled modeled scenario, not a claimed company incident. For the full cascade analysis with coordinator math, read <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>.</aside>
+
+      <article class="prose">
+      <figure class="article-figure"><img src="../images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer group rebalance diagram showing rolling deploy, coordinator, eager versus cooperative assignment" width="1200" height="680"><figcaption>Figure 1. One restart in, every partition reassigned. The protocol is correct. The defaults are not.</figcaption></figure>
+
+      <section><h2>1. What a Kafka Rebalance Is in 60 Seconds</h2>
+        <p>A consumer group splits partitions across its members. When membership changes, through a join, a crash, a deploy restart or a subscription edit, the group must reassign partitions. The triggering member sends JoinGroup. The coordinator computes a new assignment. Members revoke, re-fetch positions plus resume. Under the classic eager protocol, every member revokes everything first, so consumption stops group-wide for the window.</p>
+        <p>At small scale the window lasts seconds and nobody notices. At 120 members sharing 40,000 partitions, assignment math plus position refetching stretch the window into minutes. That duration is the entire story. Everything below is what happens when the window outlasts the trigger interval.</p>
+        <div class="callout"><strong>The mental model:</strong> a rebalance is a classroom reshuffle. Eager sends every student into the hallway on each change. Cooperative moves only the students who must switch desks.</div>
+      </section>
+
+      <section><h2>2. Why Rolling Deploys Cascade</h2>
+        <p>Roll one restart at a time across 120 consumers and each restart rejoins the group. Each rejoin triggers a full eager rebalance. Each rebalance takes long enough at 40,000 partitions that the next restart lands mid-rebalance. The timer resets before completion, over and over, for a modeled 11 minutes. The safest rollout in the fleet becomes a continuous stall. Rolling deploys are sold as zero-downtime. Against eager rebalancing they are zero-uptime with extra steps.</p>
+        <p>Defaults conspire. A consumer stuck rebalancing past the poll interval looks dead, gets fenced out plus triggers another rebalance. Session timeouts tuned for crash detection fire during the very storm they should ride out. Then the fetch storm: 120 consumers resume at once from stale offsets, re-request the backlog plus breach poll intervals again. Recovery carries its own trigger.</p>
+      </section>
+
+      <section><h2>3. The Retry Amplifier: 11 Minutes Becomes 6x</h2>
+        <p>Upstream never waits. Eleven paused minutes at 60,000 events per second builds roughly 39.6 million events of backlog while downstream timeouts fire retries into topics consumers cannot yet drain. At 2 extra retries per stalled call with no backoff, recovery load lands near 6x normal before one new event arrives. Retries without jitter plus backoff are a self-inflicted DDoS with a deploy as the trigger.</p>
+        <p>Price your own retry policy with the <a href="../calculators.html#retry-storm">retry-storm calculator</a> before the incident instead of after. The full recovery math plus operator rules live in the <a href="kafka-rebalance-storm-postmortem.html">deep postmortem</a>.</p>
+        <div class="tip"><strong>Interview line:</strong> when asked how deploys cause Kafka outages, answer with generations. The group never reaches a stable generation because triggers outpace completions. Fix the race, not the brokers.</div>
+      </section>
+
+      <section><h2>4. Eager Versus Cooperative Rebalancing</h2>
+        <p>Eager revokes all partitions from all members on every rebalance. Simple to reason about, catastrophic at scale. Cooperative assignment, from KIP-429, revokes only partitions that must move, so unaffected partitions keep consuming through the transition. The pause shrinks from group-wide to partial. The cascade loses the overlap it feeds on.</p>
+        <p>Static membership, from KIP-345, removes the trigger instead of softening the blow. Each consumer restarts under a stable instance id plus keeps its assignment. The rolling deploy becomes 120 uneventful restarts. For new deployments, track the next-generation consumer protocol from KIP-848, which moves coordination off the old broker-centric path.</p>
+        <table><thead><tr><th>Approach</th><th>What changes</th><th>Effect</th></tr></thead><tbody>
+          <tr><td>Static membership</td><td>Stable instance ids</td><td>Restarts skip rebalancing</td></tr>
+          <tr><td>Cooperative protocol</td><td>Incremental revocation</td><td>Pauses turn partial</td></tr>
+          <tr><td>Group-aware deploys</td><td>Settle windows plus caps</td><td>Triggers stop overlapping</td></tr>
+          <tr><td>Budgeted retries</td><td>Backoff plus jitter plus caps</td><td>Recovery stays near 1x</td></tr>
+        </tbody></table>
+      </section>
+
+      <section><h2>5. What to Measure and Set</h2>
+        <p><strong>Alert on rebalance time, not just lag.</strong> Track join-sync duration, generations per hour plus assignment size, with pages that fire before the cascade locks in. Throughput plus broker health look idle or fine during a storm. <strong>Make deploys group-aware.</strong> Pause rollouts while a rebalance flies, stagger restarts with settle windows plus cap concurrent restarts as a fraction of group size. <strong>Budget retries like capacity.</strong> Backoff with jitter, per-dependency caps plus circuit breakers that open while lag is extreme. <strong>Revisit protocol defaults as partitions grow.</strong> Defaults are load-bearing architecture. Review them on the same schedule as capacity.</p>
+      </section>
+
+      <section><h2>6. Frequently Asked Questions</h2>
+        <h3>What triggers a Kafka consumer rebalance?</h3>
+        <p>Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group.</p>
+        <h3>What is the difference between eager and cooperative rebalancing?</h3>
+        <p>Eager revokes all partitions from every member on each rebalance, pausing the whole group. Cooperative revokes only partitions that must move, so unaffected partitions keep consuming through the transition.</p>
+        <h3>How does static membership prevent rebalance storms?</h3>
+        <p>Each consumer restarts under a stable instance id and keeps its assignment instead of rejoining as a stranger. Rolling deploys stop triggering full rebalances entirely.</p>
+        <h3>Why do rolling deploys pause Kafka consumers?</h3>
+        <p>Each restarted member rejoins the group. Under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Protocol facts come from Apache Kafka documentation plus KIPs. Scenario numbers illustrate the labeled model from the companion teardown, not a claimed company incident. For the complete cascade analysis, see <a href="kafka-rebalance-storm-postmortem.html">the full postmortem</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://kafka.apache.org/documentation/#consumerconfigs" target="_blank" rel="noopener noreferrer">Apache Kafka documentation: consumer configuration (session timeouts, poll interval, static membership)</a></li>
+          <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-429%3A+Kafka+Consumer+Incremental+Rebalance+Protocol" target="_blank" rel="noopener noreferrer">KIP-429: Kafka Consumer Incremental Rebalance Protocol</a></li>
+          <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-345%3A+Introduce+static+membership+protocol+to+reduce+consumer+rebalances" target="_blank" rel="noopener noreferrer">KIP-345: Static membership protocol to reduce consumer rebalances</a></li>
+          <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-848%3A+The+Next+Generation+of+the+Consumer+Rebalance+Protocol" target="_blank" rel="noopener noreferrer">KIP-848: The Next Generation of the Consumer Rebalance Protocol</a></li>
+        </ul>
+      </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
