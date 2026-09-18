@@ -97,6 +97,8 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the system works, where the money goes plus what to steal. For the full forensic teardown with workload tables and the 1M RPS test, read <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>.</aside>
 
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Block counts, shard layout plus vector costs come from Notion engineering plus company posts. Workload and bill figures are a labeled scenario model from the companion teardown. Replace my assumptions with your telemetry wherever they differ.</aside>
+
       <article class="prose">
       <figure class="article-figure"><img src="../images/articles/notion-architecture-guide.svg" alt="Notion system design diagram showing clients, API, Postgres shards, Kafka CDC, lake, search plus vector tiers" width="1200" height="680"><figcaption>Figure 1. One block in, six workloads out. The art of Notion architecture is giving each workload its own home.</figcaption></figure>
 
@@ -139,8 +141,10 @@
         </tbody></table>
       </section>
 
-      <section><h2>7. System Design Interview Takeaways</h2>
-        <p><strong>Shard by the natural boundary.</strong> Tenant-shaped units keep unrelated data apart. <strong>Never make one store answer every question.</strong> Latency, replay, search plus inference want different homes. <strong>Respect update-heavy data.</strong> 90 percent updates breaks append-only assumptions, so compact instead of rewriting. <strong>Tier everything by temperature.</strong> Hot, warm plus cold indexes have different prices for a reason. <strong>Make batch interruptible.</strong> Spot fleets plus checkpoints turn replays from hostages into discounts.</p>
+      <section><h2>7. The Verdict: What to Steal</h2>
+        <p>Steal the separation first. Online traffic, offline history, search text, vector retrieval: four questions, four homes, each priced on its own terms. Most cost disasters I price are one store forced to answer every question badly.</p>
+        <p>Steal the temperature discipline next. Hot, warm, cold: measure separately, pay separately. Never let a million sleeping workspaces masquerade as a million hot applications. Steal the interruptibility last. Batch that can wait should never pay on-demand prices.</p>
+        <p>Do not steal the shard count. 480 shards is Notion's answer to Notion's shape. What transfers is the question they kept asking: what did this one innocent block just make the system do? Ask it about every feature before the feature ships. Then the bill stays a budget instead of becoming an incident.</p>
       </section>
 
       <section><h2>8. Frequently Asked Questions</h2>

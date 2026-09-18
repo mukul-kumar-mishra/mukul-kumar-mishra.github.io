@@ -97,6 +97,8 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the storage works, why reads broke plus what fixed them. For the full forensic teardown with overkill math and operator rules, read <a href="discord-messages-scale-postmortem.html">Discord: Trillions of Messages, 177 Nodes Too Many</a>.</aside>
 
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Node counts, latencies plus migration steps follow Discord Engineering publications plus ScyllaDB case coverage. Cost framing is modeled from public cloud list prices. Replace my assumptions with your telemetry wherever they differ.</aside>
+
       <article class="prose">
       <figure class="article-figure"><img src="../images/articles/discord-messaging-guide.svg" alt="Discord message storage diagram showing clients, coalescing services, ScyllaDB plus hot partitions" width="1200" height="680"><figcaption>Figure 1. Thousands of readers in, one query out. Coalescing sits between the crowd and the cluster.</figcaption></figure>
 
@@ -127,8 +129,11 @@
         <p>Price your own read path with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>: a few million chat events per second at a blended price, sustained all month, dwarfs the database line. Every duplicate read eliminated upstream deletes its share of that envelope. The full overkill math lives in the <a href="discord-messages-scale-postmortem.html">deep postmortem</a>.</p>
       </section>
 
-      <section><h2>6. System Design Interview Takeaways</h2>
-        <p><strong>Partition by the hottest read path.</strong> Write elegance means nothing if reads stampede one key. <strong>Coalesce before you scale.</strong> Merging duplicate reads beats adding nodes that inherit the same hotspot. <strong>Charge consistency per workload.</strong> Uniform quorum multiplies every skew. <strong>Delete pause taxes from latency products.</strong> p99 products cannot afford garbage collection. <strong>Watch the hot set, not the fleet.</strong> Healthy averages hide saturated partitions.</p>
+      <section><h2>6. The Verdict: What to Steal</h2>
+        <p>Steal coalescing before hardware. Merging duplicate reads is a routing decision that costs one service layer plus retires whole fleets. Most read-heavy products I look at run a smaller version of this incident: a write-modeled schema, a hot key, a fleet sized for the average.</p>
+        <p>Steal the hot-set dashboards next. Track per-partition heat, per-replica queue depth, coalescing hit rate. The cluster is healthy when its hottest partition is bored. Steal the compatible swap last. Same protocol, no pause tax, evenings preserved.</p>
+        <p>Do not steal 72 nodes. That number belongs to Discord's crowd. What transfers is the order of operations: merge first, measure second, migrate third. Hardware is what you buy after the clever is exhausted, not instead of it.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>177 nodes. 72 nodes. One coalescing layer. The crowd was the capacity all along.</strong></p>
       </section>
 
       <section><h2>7. Frequently Asked Questions</h2>

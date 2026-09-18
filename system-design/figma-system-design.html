@@ -97,6 +97,8 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the system works, what each part costs plus what to steal. For the full forensic teardown with RPS tables and the 1M RPS thought experiment, read <a href="figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a>.</aside>
 
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol plus infrastructure decisions come from its engineering posts and public filings. RPS and cost figures are a labeled scenario model from the companion teardown. Replace my assumptions with your telemetry wherever they differ.</aside>
+
       <article class="prose">
       <figure class="article-figure"><img src="../images/articles/figma-system-design-guide.svg" alt="Figma multiplayer system design diagram showing browsers, WebSocket edge, document owner, product database plus storage" width="1200" height="680"><figcaption>Figure 1. Every edit travels the same road: browser to edge to document owner, then back out to every witness.</figcaption></figure>
 
@@ -139,8 +141,11 @@
         <p>The sharpest number comes from the thought experiment. At one million events per second, an unoptimized fan-out bills about <strong>$3.89M per month</strong>. Coalescing drags, dropping stale presence, loading subscribed subtrees plus caching at the edge cuts origin traffic to a quarter. The proposed envelope lands near <strong>$948k per month</strong>. Protocol design decides how much CPU you need. Language choice only prices it.</p>
       </section>
 
-      <section><h2>7. System Design Interview Takeaways</h2>
-        <p><strong>Give every mutable entity one writer.</strong> Per-document ownership removes distributed consensus from the hot path. <strong>Separate ephemeral from durable.</strong> Presence frames must never touch the journal. <strong>Isolate the expensive path.</strong> Rust per-document processes beat shared workers at any language speed. <strong>Load viewports, not universes.</strong> Incremental frame loading saves client memory plus server serialization at once. <strong>Price fan-out before headcount.</strong> At scale the bill is multiplicative, so coalescing beats hiring.</p>
+      <section><h2>7. The Verdict: What to Steal</h2>
+        <p>Steal the single-writer rule before anything else. Per-document ownership removes consensus from the hot path. Most products have some entity begging for exactly that treatment. Steal the boundary between ephemeral and durable next. Presence frames must never touch the journal. Every system has a cursor equivalent masquerading as a financial record.</p>
+        <p>Steal the isolation discipline last. Move only code with a measured bottleneck, verified by numbers. Let the boring parts run boring infrastructure.</p>
+        <p>Do not steal the exact protocol. Your product is not a design canvas. Last-writer-wins is only correct where users rarely collide on the same property. What transfers is the refusal: refuse to pay for complexity the product does not need, refuse to journal the disposable, refuse to share workers between strangers.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The canvas feels simple because the server does the arguing somewhere else. Yours should feel simple for the same reason.</strong></p>
       </section>
 
       <section><h2>8. Frequently Asked Questions</h2>

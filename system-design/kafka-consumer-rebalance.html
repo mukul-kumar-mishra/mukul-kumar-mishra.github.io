@@ -97,6 +97,8 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Guide or teardown?</strong> This is the evergreen explainer: how the protocol works plus how to configure it. Numbers below illustrate a labeled modeled scenario, not a claimed company incident. For the full cascade analysis with coordinator math, read <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>.</aside>
 
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Protocol behavior follows Apache Kafka documentation plus KIPs. Scenario numbers illustrate a labeled model from the companion teardown, not a claimed company incident. Replace my assumptions with your telemetry wherever they differ.</aside>
+
       <article class="prose">
       <figure class="article-figure"><img src="../images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer group rebalance diagram showing rolling deploy, coordinator, eager versus cooperative assignment" width="1200" height="680"><figcaption>Figure 1. One restart in, every partition reassigned. The protocol is correct. The defaults are not.</figcaption></figure>
 
@@ -132,7 +134,12 @@
         <p><strong>Alert on rebalance time, not just lag.</strong> Track join-sync duration, generations per hour plus assignment size, with pages that fire before the cascade locks in. Throughput plus broker health look idle or fine during a storm. <strong>Make deploys group-aware.</strong> Pause rollouts while a rebalance flies, stagger restarts with settle windows plus cap concurrent restarts as a fraction of group size. <strong>Budget retries like capacity.</strong> Backoff with jitter, per-dependency caps plus circuit breakers that open while lag is extreme. <strong>Revisit protocol defaults as partitions grow.</strong> Defaults are load-bearing architecture. Review them on the same schedule as capacity.</p>
       </section>
 
-      <section><h2>6. Frequently Asked Questions</h2>
+      <section><h2>6. The Verdict: Boring Is the Fix</h2>
+        <p>Nothing here is novel. That is the point. Stable instance ids. Incremental revocation. Settle windows. Backoff with jitter. Protocol-level alerts. Each fix is boring alone. Together they remove the trigger, soften the blow, separate the control planes plus price the recovery. The outage was three reasonable defaults composing at scale. The fix is five boring settings reviewed on the same schedule as capacity.</p>
+        <p>The pattern travels past Kafka. Every system has a coordination cost that grows with membership, a rollout strategy that ignores it plus a retry policy priced at calm-weather load. Find yours before Tuesday does.</p>
+      </section>
+
+      <section><h2>7. Frequently Asked Questions</h2>
         <h3>What triggers a Kafka consumer rebalance?</h3>
         <p>Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group.</p>
         <h3>What is the difference between eager and cooperative rebalancing?</h3>
