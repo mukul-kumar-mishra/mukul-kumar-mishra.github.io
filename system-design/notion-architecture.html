@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://buildopsy.com/system-design/notion-architecture.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search">
-  <meta property="og:description" content="A practical guide to Notion system design: block storage, Postgres sharding, CDC data lake, vector search economics plus cost at scale.">
+  <meta property="og:description" content="A postmortem of Notion system design: block storage, Postgres sharding, CDC data lake, vector search economics plus cost at scale.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/notion-architecture-guide.svg">
   <meta property="og:image:alt" content="Notion data architecture diagram">
   <meta property="og:image:type" content="image/svg+xml">
@@ -84,7 +84,7 @@
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Forensic Architecture</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every block looks free. Behind each one sits a sharded database, a change stream, an index, a permission graph plus a meter that never sleeps. This guide explains how Notion turned notes into a 200-billion-block data platform without letting the warehouse eat the product.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every block looks free. Behind each one sits a sharded database, a change stream, an index, a permission graph plus a meter that never sleeps. This postmortem explains how Notion turned notes into a 200-billion-block data platform without letting the warehouse eat the product.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion stores blocks in 480 Postgres shards. CDC through Kafka feeds a decoupled lake plus search. Vector search runs tiered. One edit fans into six workloads, priced below.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100M+</div></div>

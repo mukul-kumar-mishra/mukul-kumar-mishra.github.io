@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://buildopsy.com/system-design/figma-system-design.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Figma System Design: How Multiplayer Collaboration Actually Works">
-  <meta property="og:description" content="A practical guide to Figma multiplayer architecture: WebSocket collaboration, conflict resolution without pure CRDT, Rust isolation plus cost at scale.">
+  <meta property="og:description" content="A postmortem of Figma multiplayer architecture: WebSocket collaboration, conflict resolution without pure CRDT, Rust isolation plus cost at scale.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/figma-system-design-guide.svg">
   <meta property="og:image:alt" content="Figma multiplayer system design architecture diagram">
   <meta property="og:image:type" content="image/svg+xml">
@@ -84,7 +84,7 @@
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma System Design: How Multiplayer Collaboration Actually Works</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two designers grab the same rectangle. The canvas never tears, nobody refreshes, nobody merges. This guide explains the architecture behind that trick: WebSocket fan-out, a server that settles every fight plus a cost model you can run.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two designers grab the same rectangle. The canvas never tears, nobody refreshes, nobody merges. This postmortem explains the architecture behind that trick: WebSocket fan-out, a server that settles every fight plus a cost model you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Figma multiplayer connects browsers over WebSockets to a per-document owner process. The server orders every change authoritatively. Rust isolates heavy documents. Presence stays ephemeral while mutations stay durable.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Monthly Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">13M+</div></div>

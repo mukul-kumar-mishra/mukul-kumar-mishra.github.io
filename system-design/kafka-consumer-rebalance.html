@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://buildopsy.com/system-design/kafka-consumer-rebalance.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
-  <meta property="og:description" content="A practical guide to Kafka consumer-group rebalancing: eager versus cooperative protocols, static membership, fetch storms plus retry amplification.">
+  <meta property="og:description" content="A postmortem of Kafka consumer-group rebalancing: eager versus cooperative protocols, static membership, fetch storms plus retry amplification.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.svg">
   <meta property="og:image:alt" content="Kafka consumer rebalance storm diagram">
   <meta property="og:image:type" content="image/svg+xml">
@@ -84,7 +84,7 @@
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A routine deploy restarts consumers one by one. Each restart rejoins the group. Each rejoin reassigns every partition. This guide explains the rebalance protocol, why it cascades at scale plus the three settings that end the loop.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A routine deploy restarts consumers one by one. Each restart rejoins the group. Each rejoin reassigns every partition. This postmortem explains the rebalance protocol, why it cascades at scale plus the three settings that end the loop.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eager rebalancing stops the world on every membership change. Rolling restarts arrive faster than rebalances complete, so the group never settles. Static membership plus cooperative assignment break the cycle.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Consumers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">120</div></div>
