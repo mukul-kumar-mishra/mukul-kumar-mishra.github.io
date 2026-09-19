@@ -1008,14 +1008,6 @@
             </button>
           </div>
 
-          <div class="radar-share" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;font-family:Montserrat, sans-serif;font-size:12px;">
-            <span style="font-weight:700;opacity:0.7;">Spread the radar:</span>
-            <a class="radar-refresh" id="share-x" href="#" rel="noopener" target="_blank" style="text-decoration:none;">X</a>
-            <a class="radar-refresh" id="share-wa" href="#" rel="noopener" target="_blank" style="text-decoration:none;">WhatsApp</a>
-            <a class="radar-refresh" id="share-li" href="#" rel="noopener" target="_blank" style="text-decoration:none;">LinkedIn</a>
-            <a class="radar-refresh" id="share-copy" href="#" style="text-decoration:none;">Copy link</a>
-          </div>
-
           <div class="radar-error" id="radar-error"></div>
 
           <div class="radar-trend" id="radar-trend">
@@ -1582,45 +1574,45 @@
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
       ctx.fillText(`${formatDateTime(now)} - buildopsy.com/layoff-radar.html`, 64, 566);
-      const cx = 930, cy = 296, r = 104;
+      const cx = 930, cy = 282, r = 96;
       let ang = -Math.PI / 2;
       rows.forEach(([, count], i) => {
         const frac = total ? count / total : 0;
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 38;
+        ctx.lineWidth = 36;
         ctx.arc(cx, cy, r, ang, ang + frac * Math.PI * 2);
         ctx.stroke();
         ang += frac * Math.PI * 2;
       });
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "800 46px Sora, sans-serif";
+      ctx.font = "800 44px Sora, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(`${topPct.toFixed(1)}%`, cx, cy + 4);
+      ctx.fillText(`${topPct.toFixed(1)}%`, cx, cy + 2);
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "400 22px Montserrat, sans-serif";
-      ctx.fillText(topName, cx, cy + 36);
+      ctx.font = "400 21px Montserrat, sans-serif";
+      ctx.fillText(topName, cx, cy + 34);
       ctx.textAlign = "left";
       if (logo && logo.width > 0) {
-        const lw = 190, lh = Math.round(lw * logo.height / logo.width);
-        ctx.drawImage(logo, W - lw - 56, 40, lw, lh);
+        const lw = 210, lh = Math.round(lw * logo.height / logo.width);
+        ctx.drawImage(logo, W - lw - 56, 36, lw, lh);
       }
-      let ly = 452;
+      let ly = 432;
       rows.forEach(([code, count], i) => {
         const name = code === "Others" ? "Others" : (countryNames[code] || code);
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
         ctx.beginPath();
         ctx.fillStyle = color;
-        ctx.arc(826, ly - 7, 8, 0, Math.PI * 2);
+        ctx.arc(832, ly - 7, 8, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#f8fafc";
-        ctx.font = "400 23px Montserrat, sans-serif";
-        ctx.fillText(name, 846, ly);
+        ctx.font = "400 22px Montserrat, sans-serif";
+        ctx.fillText(name, 852, ly);
         const cs = formatNumber(count);
         ctx.fillStyle = "#94a3b8";
-        ctx.fillText(cs, 1110 - ctx.measureText(cs).width, ly);
-        ly += 27;
+        ctx.fillText(cs, 1100 - ctx.measureText(cs).width, ly);
+        ly += 30;
       });
       return { total };
     }
@@ -1698,34 +1690,6 @@
     }
 
     document.getElementById("snapshot-button").addEventListener("click", shareSnapshot);
-
-    const RADAR_URL = "https://buildopsy.com/layoff-radar.html";
-    function radarShareText() {
-      const src = stats || stats30;
-      const total = (src && src.total) || 0;
-      return `${formatNumber(total)} layoff headlines in 30 days - Tech Layoff Radar (Buildopsy) ${RADAR_URL}`;
-    }
-    function wireIntent(id, openUrl, copyText) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (copyText) {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(RADAR_URL).then(() => {
-              el.textContent = "Copied";
-              setTimeout(() => { el.textContent = "Copy link"; }, 1500);
-            }, () => {});
-          }
-          return;
-        }
-        window.open(openUrl(), "_blank", "noopener");
-      });
-    }
-    wireIntent("share-x", () => `https://twitter.com/intent/tweet?text=${encodeURIComponent(radarShareText())}`);
-    wireIntent("share-wa", () => `https://wa.me/?text=${encodeURIComponent(radarShareText())}`);
-    wireIntent("share-li", () => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(RADAR_URL)}`);
-    wireIntent("share-copy", null, true);
 
     document.querySelector('[data-period="30d"]').classList.add("active");
 
