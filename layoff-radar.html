@@ -1561,15 +1561,21 @@
       ctx.fillStyle = "#f8fafc";
       ctx.font = "800 56px Sora, sans-serif";
       ctx.fillText("TECH LAYOFF RADAR", 64, 110);
+      const periodKick = selectedPeriod === "24h" ? "LAST 24 HOURS"
+        : selectedPeriod === "7d" ? "LAST 7 DAYS"
+        : selectedPeriod === "month" ? "CURRENT MONTH" : "LAST 30 DAYS";
       ctx.fillStyle = "#94a3b8";
       ctx.font = "700 24px Montserrat, sans-serif";
-      ctx.fillText("LAYOFF HEADLINES · LAST 30 DAYS", 64, 158);
+      ctx.fillText(`LAYOFF HEADLINES · ${periodKick}`, 64, 158);
       ctx.fillStyle = "#f8fafc";
       ctx.font = "800 150px Sora, sans-serif";
       ctx.fillText(formatNumber(total), 60, 330);
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "700 28px Montserrat, sans-serif";
+      ctx.fillText(`${topName} leads coverage · ${topPct.toFixed(1)}%`, 64, 380);
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "400 26px Montserrat, sans-serif";
-      ctx.fillText("publicly reported technology layoff news articles", 64, 378);
+      ctx.font = "400 24px Montserrat, sans-serif";
+      ctx.fillText("publicly reported technology layoff news articles", 64, 420);
       const now = new Date();
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
@@ -1665,7 +1671,10 @@
       const { blob, info } = out;
       const stamp = new Date().toISOString().slice(0, 10);
       const fname = `buildopsy-layoff-radar-${stamp}.png`;
-      const shareText = `${formatNumber(info.total)} layoff headlines in 30 days - Tech Layoff Radar (Buildopsy)`;
+      const periodWord = selectedPeriod === "24h" ? "24 hours"
+        : selectedPeriod === "7d" ? "7 days"
+        : selectedPeriod === "month" ? "this month" : "30 days";
+      const shareText = `${formatNumber(info.total)} layoff headlines in ${periodWord} - Tech Layoff Radar (Buildopsy)`;
       try {
         const file = new File([blob], fname, { type: "image/png" });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
