@@ -35,6 +35,17 @@ jobs:
           }
           json.dump(snap, open("data/layoff-count.json", "w"), indent=2)
           print("snapshot total:", snap["total"])
+          try:
+              hist = json.load(open("data/layoff-history.json"))
+              if not isinstance(hist, list):
+                  hist = []
+          except Exception:
+              hist = []
+          today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+          if not hist or hist[-1].get("d") != today:
+              hist.append({"d": today, "total": snap["total"]})
+              json.dump(hist[-120:], open("data/layoff-history.json", "w"), indent=2)
+              print("history appended:", today, snap["total"])
           EOF
       - name: Regenerate radar HTML fallbacks
         run: |
@@ -152,6 +163,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/layoff-count.json layoff-radar.html
+          git add data/layoff-count.json data/layoff-history.json layoff-radar.html
           git diff --staged --quiet || git commit -m "chore: refresh layoff snapshot"
           git push

@@ -51,7 +51,7 @@
     "description":"Live global tracker of publicly reported technology layoff news.",
     "url":"https://buildopsy.com/layoff-radar.html",
     "datePublished":"2026-09-10",
-    "dateModified":"2026-09-18",
+    "dateModified":"2026-09-20",
     "author":{
       "@type":"Person",
       "name":"Mukul Kumar Mishra",
@@ -84,7 +84,7 @@
     "isAccessibleForFree":true,
     "license":"https://creativecommons.org/licenses/by/4.0/",
     "datePublished":"2026-09-10",
-    "dateModified":"2026-09-18",
+    "dateModified":"2026-09-20",
     "keywords":[
       "tech layoffs",
       "technology layoffs",
@@ -953,7 +953,7 @@
               <div class="radar-count" id="layoff-count">2,146</div>
 
               <div class="radar-count-description">
-                publicly reported technology layoff news articles
+                publicly reported technology layoff news articles — article volume, not jobs lost
               </div>
             </div>
 
@@ -1025,6 +1025,26 @@
             </div>
           </div>
 
+          <div class="radar-trend" id="radar-month-compare">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">30-day total today</div>
+              <div class="radar-trend-value" id="mom-now">2,146</div>
+              <div class="radar-trend-sub">matching reports</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">30-day total a month ago</div>
+              <div class="radar-trend-value" id="mom-then">collecting</div>
+              <div class="radar-trend-sub" id="mom-then-sub">baseline builds daily</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Month over month</div>
+              <div class="radar-trend-value" id="mom-delta">soon</div>
+              <div class="radar-trend-sub" id="mom-pct">first honest read after 30 days of history</div>
+            </div>
+          </div>
+
           <noscript><p class="radar-empty">This tracker loads live data with JavaScript. The last verified snapshot counted 2,146 matching reports in 30 days as of 19 Sep 2026.</p></noscript>
 
         </div>
@@ -1040,13 +1060,15 @@
 
           <div class="radar-section-header">
             <div>
-              <h2 class="radar-section-title">The whole planet is typing</h2>
+              <h2 class="radar-section-title">Where the coverage comes from</h2>
             </div>
 
             <div class="radar-section-note">
-              Ranked by publisher country
+              Publisher country, not layoff location
             </div>
           </div>
+
+          <p class="radar-section-note" style="margin:0 0 14px;text-align:left;line-height:1.7;">Counts track where publishers sit, not where jobs were cut. A high share means heavy coverage from that country's press, not heavier layoffs there.</p>
 
           <div class="radar-table-wrap">
             <table class="radar-table">
@@ -1091,6 +1113,25 @@
               Loading daily activity…
             </div>
           </div>
+
+        </div>
+      </section>
+
+      <section class="radar-section radar-card">
+        <div class="radar-main">
+
+          <div class="radar-section-header">
+            <div>
+              <h2 class="radar-section-title">Fresh headlines, live</h2>
+            </div>
+
+            <div class="radar-section-note">
+              External live search
+            </div>
+          </div>
+
+          <p class="radar-section-note" style="margin:0 0 14px;text-align:left;line-height:1.7;">This tracker counts articles but stores no headlines. Read the latest matching coverage live on Google News:</p>
+          <p style="margin:0;font-family:Montserrat, sans-serif;font-size:14px;font-weight:700;"><a href="https://news.google.com/search?q=tech%20layoffs&hl=en-US&gl=US&ceid=US%3Aen" target="_blank" rel="noopener noreferrer">Latest tech-layoff headlines on Google News</a></p>
 
         </div>
       </section>
@@ -1418,12 +1459,49 @@
       }).join("");
     }
 
+    async function renderMonthCompare() {
+      const nowEl = document.getElementById("mom-now");
+      const thenEl = document.getElementById("mom-then");
+      const thenSub = document.getElementById("mom-then-sub");
+      const deltaEl = document.getElementById("mom-delta");
+      const pctEl = document.getElementById("mom-pct");
+      if (!nowEl) return;
+      let hist = null;
+      try {
+        const res = await fetch("data/layoff-history.json", { cache: "no-store" });
+        if (res.ok) hist = await res.json();
+      } catch (ignored) {}
+      if (!Array.isArray(hist) || !hist.length) return;
+      const rows = hist.slice().sort((a, b) => String(a.d).localeCompare(String(b.d)));
+      const latest = rows[rows.length - 1];
+      if (typeof latest.total === "number") nowEl.textContent = formatNumber(latest.total);
+      const cutoff = new Date(latest.d + "T12:00:00Z");
+      cutoff.setUTCDate(cutoff.getUTCDate() - 30);
+      const cut = cutoff.toISOString().slice(0, 10);
+      const base = rows.filter((r) => String(r.d) <= cut).pop();
+      if (!base || typeof base.total !== "number") return;
+      const delta = latest.total - base.total;
+      thenEl.textContent = formatNumber(base.total);
+      if (thenSub) thenSub.textContent = `as of ${base.d}`;
+      if (delta === 0) {
+        deltaEl.textContent = "flat";
+        pctEl.textContent = "no change month over month";
+        return;
+      }
+      const direction = delta > 0 ? "up" : "down";
+      deltaEl.textContent = `${direction} ${formatNumber(Math.abs(delta))}`;
+      pctEl.textContent = base.total
+        ? `about ${Math.abs(Math.round((delta / base.total) * 100))} percent ${delta > 0 ? "higher" : "lower"}`
+        : "first full month of history";
+    }
+
     function render() {
       renderCount();
       renderTrend();
       renderDonut();
       renderCountries();
       renderDaily();
+      renderMonthCompare();
     }
 
     async function fetchWindow(dateParam) {
