@@ -51,7 +51,7 @@
       {"@type":"Question","name":"What triggers a Kafka consumer rebalance?","acceptedAnswer":{"@type":"Answer","text":"Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group."}},
       {"@type":"Question","name":"What is the difference between eager and cooperative rebalancing?","acceptedAnswer":{"@type":"Answer","text":"Eager revokes all partitions from every member on each rebalance, pausing the whole group. Cooperative revokes only partitions that must move, so unaffected partitions keep consuming through the transition."}},
       {"@type":"Question","name":"How does static membership prevent rebalance storms?","acceptedAnswer":{"@type":"Answer","text":"Each consumer restarts under a stable instance id and keeps its assignment instead of rejoining as a stranger. Rolling deploys stop triggering full rebalances entirely."}},
-      {"@type":"Question","name":"Why do rolling deploys pause Kafka consumers?","acceptedAnswer":{"@type":"Answer","text":"Each restarted member rejoins the group, and under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls."}}
+      {"@type":"Question","name":"Why do rolling deploys pause Kafka consumers?","acceptedAnswer":{"@type":"Answer","text":"Each restarted member rejoins the group plus under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls."}}
     ]
   }
   </script>
