@@ -1008,6 +1008,14 @@
             </button>
           </div>
 
+          <div class="radar-share" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;font-family:Montserrat, sans-serif;font-size:12px;">
+            <span style="font-weight:700;opacity:0.7;">Spread the radar:</span>
+            <a class="radar-refresh" id="share-x" href="#" rel="noopener" target="_blank" style="text-decoration:none;">X</a>
+            <a class="radar-refresh" id="share-wa" href="#" rel="noopener" target="_blank" style="text-decoration:none;">WhatsApp</a>
+            <a class="radar-refresh" id="share-li" href="#" rel="noopener" target="_blank" style="text-decoration:none;">LinkedIn</a>
+            <a class="radar-refresh" id="share-copy" href="#" style="text-decoration:none;">Copy link</a>
+          </div>
+
           <div class="radar-error" id="radar-error"></div>
 
           <div class="radar-trend" id="radar-trend">
@@ -1539,26 +1547,20 @@
     function loadImage(src) {
       return new Promise((resolve) => {
         const img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null);
         img.src = src;
       });
     }
 
-    async function shareSnapshot() {
-      const btn = document.getElementById("snapshot-button");
-      const W = 1200, H = 630;
-      const canvas = document.createElement("canvas");
-      canvas.width = W;
-      canvas.height = H;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+    function drawCard(ctx, W, H, logo) {
       const src = stats || stats30;
       const total = (src && src.total) || 0;
       const entries = Object.entries((src && src.countries) || {}).slice(0, 5);
       const topSum = entries.reduce((sum, [, count]) => sum + count, 0);
       const rows = entries.concat([["Others", Math.max(total - topSum, 0)]]);
-      const topName = countryNames[rows[0][0]] || rows[0][0];
+      const topName = rows.length ? (countryNames[rows[0][0]] || rows[0][0]) : "—";
       const topPct = total ? (rows[0][1] / total) * 100 : 0;
       ctx.fillStyle = "#0f172a";
       ctx.fillRect(0, 0, W, H);
@@ -1569,7 +1571,7 @@
       ctx.fillText("TECH LAYOFF RADAR", 64, 110);
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 25px Montserrat, sans-serif";
-      ctx.fillText("publicly reported tech-layoff headlines · last 30 days", 64, 152);
+      ctx.fillText("publicly reported tech-layoff headlines - last 30 days", 64, 152);
       ctx.fillStyle = "#f8fafc";
       ctx.font = "800 120px Sora, sans-serif";
       ctx.fillText(formatNumber(total), 64, 300);
@@ -1578,14 +1580,14 @@
       ctx.fillText("matching reports (article volume, not jobs lost)", 64, 344);
       ctx.fillStyle = "#f8fafc";
       ctx.font = "700 30px Montserrat, sans-serif";
-      ctx.fillText(`${topName} leads coverage · ${topPct.toFixed(1)}%`, 64, 410);
+      ctx.fillText(`${topName} leads coverage - ${topPct.toFixed(1)}%`, 64, 410);
       const now = new Date();
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
-      ctx.fillText(`${formatDateTime(now)} · buildopsy.com/layoff-radar.html`, 64, 566);
+      ctx.fillText(`${formatDateTime(now)} - buildopsy.com/layoff-radar.html`, 64, 566);
       const cx = 920, cy = 330, r = 128;
       let ang = -Math.PI / 2;
-      rows.forEach(([code, count], i) => {
+      rows.forEach(([, count], i) => {
         const frac = total ? count / total : 0;
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
         ctx.beginPath();
@@ -1603,8 +1605,7 @@
       ctx.font = "400 24px Montserrat, sans-serif";
       ctx.fillText(topName, cx, cy + 40);
       ctx.textAlign = "left";
-      const logo = await loadImage("images/logo.png");
-      if (logo) {
+      if (logo && logo.width > 0) {
         const lw = 250, lh = Math.round(lw * logo.height / logo.width);
         ctx.drawImage(logo, W - lw - 56, H - lh - 40, lw, lh);
       } else {
@@ -1612,40 +1613,105 @@
         ctx.font = "800 34px Sora, sans-serif";
         ctx.fillText("Buildopsy", W - 250, H - 56);
       }
-      const stamp = now.toISOString().slice(0, 10);
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        const fname = `buildopsy-layoff-radar-${stamp}.png`;
+      return { total };
+    }
+
+    async function snapshotBlob(withLogo) {
+      const W = 1200, H = 630;
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      let logo = null;
+      if (withLogo) {
         try {
-          const file = new File([blob], fname, { type: "image/png" });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: "Tech Layoff Radar",
-              text: `${formatNumber(total)} layoff headlines · last 30 days via Buildopsy`
-            });
-            return;
+          logo = await loadImage("images/logo.png");
+        } catch (ignored) {}
+      }
+      const info = drawCard(ctx, W, H, logo);
+      try {
+        const blob = await new Promise((resolve) => {
+          try {
+            canvas.toBlob(resolve, "image/png");
+          } catch (err) {
+            resolve(null);
           }
-        } catch (err) {
-          if (err && err.name === "AbortError") return;
+        });
+        if (!blob) return null;
+        return { blob, info };
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function shareSnapshot() {
+      const btn = document.getElementById("snapshot-button");
+      let out = await snapshotBlob(true);
+      if (!out) out = await snapshotBlob(false);
+      if (!out) {
+        if (btn) {
+          btn.innerHTML = "Snapshot blocked";
+          setTimeout(() => { btn.innerHTML = "Share snapshot"; }, 1800);
         }
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fname;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 4000);
-      }, "image/png");
+        return;
+      }
+      const { blob, info } = out;
+      const stamp = new Date().toISOString().slice(0, 10);
+      const fname = `buildopsy-layoff-radar-${stamp}.png`;
+      const shareText = `${formatNumber(info.total)} layoff headlines in 30 days - Tech Layoff Radar (Buildopsy)`;
+      try {
+        const file = new File([blob], fname, { type: "image/png" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: "Tech Layoff Radar", text: shareText });
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fname;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
       if (btn) {
-        const original = btn.innerHTML;
-        btn.innerHTML = "Snapshot ready";
-        setTimeout(() => { btn.innerHTML = original; }, 1800);
+        btn.innerHTML = "Snapshot saved";
+        setTimeout(() => { btn.innerHTML = "Share snapshot"; }, 1800);
       }
     }
 
     document.getElementById("snapshot-button").addEventListener("click", shareSnapshot);
+
+    const RADAR_URL = "https://buildopsy.com/layoff-radar.html";
+    function radarShareText() {
+      const src = stats || stats30;
+      const total = (src && src.total) || 0;
+      return `${formatNumber(total)} layoff headlines in 30 days - Tech Layoff Radar (Buildopsy) ${RADAR_URL}`;
+    }
+    function wireIntent(id, openUrl, copyText) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (copyText) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(RADAR_URL).then(() => {
+              el.textContent = "Copied";
+              setTimeout(() => { el.textContent = "Copy link"; }, 1500);
+            }, () => {});
+          }
+          return;
+        }
+        window.open(openUrl(), "_blank", "noopener");
+      });
+    }
+    wireIntent("share-x", () => `https://twitter.com/intent/tweet?text=${encodeURIComponent(radarShareText())}`);
+    wireIntent("share-wa", () => `https://wa.me/?text=${encodeURIComponent(radarShareText())}`);
+    wireIntent("share-li", () => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(RADAR_URL)}`);
+    wireIntent("share-copy", null, true);
 
     document.querySelector('[data-period="30d"]').classList.add("active");
 
