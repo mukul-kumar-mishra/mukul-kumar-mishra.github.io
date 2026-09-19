@@ -296,7 +296,11 @@
   }
 
   .radar-legend {
-    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0;
+    gap: 6px 14px;
   }
 
   .radar-filters {

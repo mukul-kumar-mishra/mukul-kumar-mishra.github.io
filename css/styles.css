@@ -524,6 +524,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 700px) {
   .calc-side { width: 100%; }
   .calc-result-value { font-size: 28px; }
+  .radar-hero-grid.calc-top .radar-hero-left { text-align: left; }
 }
 /* Live mix donut: conic slices set from JS, hole punched with panel color. */
 .calc-donut { position: relative; width: 180px; height: 180px; border-radius: 50%; background: rgba(127,127,127,0.12); flex: none; }
