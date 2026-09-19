@@ -1,45 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Notion system design diagram">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Notion system design diagram showing clients, API, Postgres shards, Kafka CDC, Hudi lake plus search">
   <defs>
-    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <filter id="grainN" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="44" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/></filter>
+    <marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="#0369a1" stroke-width="1.6"/>
     </marker>
+    <style>.flowN{stroke-dasharray:12 9;animation:antsN 0.9s linear infinite}@keyframes antsN{to{stroke-dashoffset:-21}}@media (prefers-reduced-motion:reduce){.flowN{animation:none}}</style>
   </defs>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
-  <text x="60" y="64" font-family="sans-serif" font-size="30" font-weight="bold" fill="#0f172a">NOTION: ONE BLOCK IN, SIX WORKLOADS OUT</text>
-  <text x="60" y="100" font-family="sans-serif" font-size="20" fill="#475569">Online traffic on shards. Offline history in the lake. Retrieval in search plus vectors.</text>
-  <g font-family="sans-serif" text-anchor="middle">
-    <rect x="60" y="150" width="320" height="150" rx="14" fill="#ffffff" stroke="#0369a1" stroke-width="3"/>
-    <text x="220" y="205" font-size="26" font-weight="bold" fill="#0f172a">BROWSERS</text>
-    <text x="220" y="240" font-size="20" fill="#475569">optimistic edits</text>
-    <text x="220" y="268" font-size="20" fill="#475569">HTTPS plus sockets</text>
-    <rect x="440" y="150" width="320" height="150" rx="14" fill="#ffffff" stroke="#0369a1" stroke-width="3"/>
-    <text x="600" y="205" font-size="26" font-weight="bold" fill="#0f172a">API PLUS AUTH</text>
-    <text x="600" y="240" font-size="20" fill="#475569">permissions first</text>
-    <text x="600" y="268" font-size="20" fill="#475569">then data</text>
-    <rect x="820" y="150" width="320" height="150" rx="14" fill="#ffffff" stroke="#16a34a" stroke-width="4"/>
-    <text x="980" y="205" font-size="26" font-weight="bold" fill="#0f172a">480 SHARDS</text>
-    <text x="980" y="240" font-size="20" fill="#475569">Postgres, 96 hosts</text>
-    <text x="980" y="268" font-size="20" fill="#475569">canonical blocks</text>
-    <rect x="60" y="370" width="320" height="150" rx="14" fill="#ffffff" stroke="#83663e" stroke-width="3"/>
-    <text x="220" y="425" font-size="26" font-weight="bold" fill="#0f172a">KAFKA CDC</text>
-    <text x="220" y="460" font-size="20" fill="#475569">Debezium stream</text>
-    <text x="220" y="488" font-size="20" fill="#475569">fan-out begins</text>
-    <rect x="440" y="370" width="320" height="150" rx="14" fill="#ffffff" stroke="#83663e" stroke-width="3"/>
-    <text x="600" y="425" font-size="26" font-weight="bold" fill="#0f172a">HUDI LAKE ON S3</text>
-    <text x="600" y="460" font-size="20" fill="#475569">raw plus cleaned</text>
-    <text x="600" y="488" font-size="20" fill="#475569">cheap replay</text>
-    <rect x="820" y="370" width="320" height="150" rx="14" fill="#ffffff" stroke="#e11d48" stroke-width="3"/>
-    <text x="980" y="425" font-size="26" font-weight="bold" fill="#0f172a">SEARCH PLUS AI</text>
-    <text x="980" y="460" font-size="20" fill="#475569">text plus vectors</text>
-    <text x="980" y="488" font-size="20" fill="#475569">tiered by heat</text>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grainN)"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">NOTION GUIDE: 200 BILLION BLOCKS</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="122" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">One block in. Six workloads out.</text>
+  <text x="60" y="152" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">online traffic on shards. offline history in the lake. retrieval by heat.</text>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" text-anchor="middle">
+    <rect x="60" y="185" width="340" height="150" rx="14" fill="#ffffff" stroke="#0369a1" stroke-width="3"/>
+    <text x="230" y="238" font-size="24" font-weight="bold" fill="#0f172a">BROWSERS</text>
+    <text x="230" y="272" font-size="19" fill="#475569">optimistic edits</text>
+    <text x="230" y="300" font-size="19" fill="#475569">HTTPS plus sockets</text>
+    <rect x="430" y="185" width="340" height="150" rx="14" fill="#ffffff" stroke="#0369a1" stroke-width="3"/>
+    <text x="600" y="238" font-size="24" font-weight="bold" fill="#0f172a">API PLUS AUTH</text>
+    <text x="600" y="272" font-size="19" fill="#475569">permissions first</text>
+    <text x="600" y="300" font-size="19" fill="#475569">then data</text>
+    <rect x="800" y="185" width="340" height="150" rx="14" fill="#ffffff" stroke="#16a34a" stroke-width="4"/>
+    <text x="970" y="238" font-size="24" font-weight="bold" fill="#0f172a">480 SHARDS</text>
+    <text x="970" y="272" font-size="19" fill="#475569">Postgres, 96 hosts</text>
+    <text x="970" y="300" font-size="19" fill="#475569">canonical blocks</text>
+    <rect x="60" y="360" width="340" height="150" rx="14" fill="#ffffff" stroke="#83663e" stroke-width="3"/>
+    <text x="230" y="413" font-size="24" font-weight="bold" fill="#0f172a">KAFKA CDC</text>
+    <text x="230" y="447" font-size="19" fill="#475569">Debezium stream</text>
+    <text x="230" y="475" font-size="19" fill="#475569">fan-out begins</text>
+    <rect x="430" y="360" width="340" height="150" rx="14" fill="#ffffff" stroke="#83663e" stroke-width="3"/>
+    <text x="600" y="413" font-size="24" font-weight="bold" fill="#0f172a">HUDI LAKE ON S3</text>
+    <text x="600" y="447" font-size="19" fill="#475569">raw plus cleaned</text>
+    <text x="600" y="475" font-size="19" fill="#475569">cheap replay</text>
+    <rect x="800" y="360" width="340" height="150" rx="14" fill="#ffffff" stroke="#e11d48" stroke-width="3"/>
+    <text x="970" y="413" font-size="24" font-weight="bold" fill="#0f172a">SEARCH PLUS AI</text>
+    <text x="970" y="447" font-size="19" fill="#475569">text plus vectors</text>
+    <text x="970" y="475" font-size="19" fill="#475569">tiered by heat</text>
   </g>
-  <g stroke="#0369a1" stroke-width="2.5">
-    <line x1="380" y1="225" x2="432" y2="225" marker-end="url(#arr2)"/>
-    <line x1="760" y1="225" x2="812" y2="225" marker-end="url(#arr2)"/>
-    <line x1="980" y1="300" x2="980" y2="362" marker-end="url(#arr2)"/>
-    <line x1="220" y1="300" x2="220" y2="362" marker-end="url(#arr2)"/>
-    <line x1="600" y1="300" x2="600" y2="362" marker-end="url(#arr2)"/>
+  <g stroke="#0369a1" stroke-width="2.5" fill="none">
+    <line class="flowN" x1="400" y1="260" x2="422" y2="260" marker-end="url(#arrN)"/>
+    <line class="flowN" x1="770" y1="260" x2="792" y2="260" marker-end="url(#arrN)"/>
+    <line class="flowN" x1="970" y1="335" x2="970" y2="352" marker-end="url(#arrN)"/>
+    <line class="flowN" x1="230" y1="335" x2="230" y2="352" marker-end="url(#arrN)"/>
+    <line class="flowN" x1="600" y1="335" x2="600" y2="352" marker-end="url(#arrN)"/>
   </g>
-  <text x="60" y="590" font-family="sans-serif" font-size="22" font-weight="bold" fill="#0f172a">Different questions want different homes. The lake is not a failure of Postgres.</text>
-  <text x="1140" y="640" font-family="sans-serif" font-size="20" fill="#475569" text-anchor="end">buildopsy.com</text>
+  <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">different questions want different homes.</text>
+  <text x="1110" y="591" text-anchor="end" font-family="monospace" font-size="16" fill="#f8fafc">BY MUKUL KUMAR MISHRA</text>
 </svg>
