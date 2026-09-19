@@ -1605,28 +1605,30 @@
       if (logo && logo.width > 0) {
         const lw = 250, lh = Math.round(lw * logo.height / logo.width);
         ctx.drawImage(logo, W - lw - 56, H - lh - 40, lw, lh);
-      } else {
-        ctx.fillStyle = "#f8fafc";
-        ctx.font = "800 34px Sora, sans-serif";
-        ctx.fillText("Buildopsy", W - 250, H - 56);
       }
       return { total };
     }
 
-    async function snapshotBlob(withLogo) {
+    let logoImg = null;
+    loadImage("images/logo.png").then((img) => {
+      if (img && img.width > 0) logoImg = img;
+    });
+
+    async function snapshotBlob() {
       const W = 1200, H = 630;
       const canvas = document.createElement("canvas");
       canvas.width = W;
       canvas.height = H;
       const ctx = canvas.getContext("2d");
       if (!ctx) return null;
-      let logo = null;
-      if (withLogo) {
+      if (!logoImg) {
         try {
-          logo = await loadImage("images/logo.png");
+          const img = await loadImage("images/logo.png");
+          if (img && img.width > 0) logoImg = img;
         } catch (ignored) {}
       }
-      const info = drawCard(ctx, W, H, logo);
+      if (!logoImg) return null;
+      const info = drawCard(ctx, W, H, logoImg);
       try {
         const blob = await new Promise((resolve) => {
           try {
@@ -1644,11 +1646,10 @@
 
     async function shareSnapshot() {
       const btn = document.getElementById("snapshot-button");
-      let out = await snapshotBlob(true);
-      if (!out) out = await snapshotBlob(false);
+      const out = await snapshotBlob();
       if (!out) {
         if (btn) {
-          btn.innerHTML = "Snapshot blocked";
+          btn.innerHTML = "Logo not ready - tap again";
           setTimeout(() => { btn.innerHTML = "Share snapshot"; }, 1800);
         }
         return;
