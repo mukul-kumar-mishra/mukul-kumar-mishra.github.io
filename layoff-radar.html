@@ -1582,30 +1582,46 @@
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
       ctx.fillText(`${formatDateTime(now)} - buildopsy.com/layoff-radar.html`, 64, 566);
-      const cx = 920, cy = 330, r = 128;
+      const cx = 930, cy = 296, r = 104;
       let ang = -Math.PI / 2;
       rows.forEach(([, count], i) => {
         const frac = total ? count / total : 0;
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 46;
+        ctx.lineWidth = 38;
         ctx.arc(cx, cy, r, ang, ang + frac * Math.PI * 2);
         ctx.stroke();
         ang += frac * Math.PI * 2;
       });
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "800 52px Sora, sans-serif";
+      ctx.font = "800 46px Sora, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(`${topPct.toFixed(1)}%`, cx, cy + 6);
+      ctx.fillText(`${topPct.toFixed(1)}%`, cx, cy + 4);
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "400 24px Montserrat, sans-serif";
-      ctx.fillText(topName, cx, cy + 40);
+      ctx.font = "400 22px Montserrat, sans-serif";
+      ctx.fillText(topName, cx, cy + 36);
       ctx.textAlign = "left";
       if (logo && logo.width > 0) {
-        const lw = 250, lh = Math.round(lw * logo.height / logo.width);
-        ctx.drawImage(logo, W - lw - 56, H - lh - 40, lw, lh);
+        const lw = 190, lh = Math.round(lw * logo.height / logo.width);
+        ctx.drawImage(logo, W - lw - 56, 40, lw, lh);
       }
+      let ly = 452;
+      rows.forEach(([code, count], i) => {
+        const name = code === "Others" ? "Others" : (countryNames[code] || code);
+        const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.arc(826, ly - 7, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#f8fafc";
+        ctx.font = "400 23px Montserrat, sans-serif";
+        ctx.fillText(name, 846, ly);
+        const cs = formatNumber(count);
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText(cs, 1110 - ctx.measureText(cs).width, ly);
+        ly += 27;
+      });
       return { total };
     }
 
