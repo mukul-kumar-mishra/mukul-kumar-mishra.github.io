@@ -1035,13 +1035,13 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">30-day total a month ago</div>
               <div class="radar-trend-value" id="mom-then">collecting</div>
-              <div class="radar-trend-sub" id="mom-then-sub">baseline builds daily</div>
+              <div class="radar-trend-sub" id="mom-then-sub">baseline day 1 of 30</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Month over month</div>
-              <div class="radar-trend-value" id="mom-delta">soon</div>
-              <div class="radar-trend-sub" id="mom-pct">first honest read after 30 days of history</div>
+              <div class="radar-trend-value" id="mom-delta">pending</div>
+              <div class="radar-trend-sub" id="mom-pct">first read 2026-10-19</div>
             </div>
           </div>
 
@@ -1460,7 +1460,13 @@
       cutoff.setUTCDate(cutoff.getUTCDate() - 30);
       const cut = cutoff.toISOString().slice(0, 10);
       const base = rows.filter((r) => String(r.d) <= cut).pop();
-      if (!base || typeof base.total !== "number") return;
+      if (!base || typeof base.total !== "number") {
+        if (thenSub) thenSub.textContent = `baseline day ${rows.length} of 30`;
+        const firstRead = new Date(latest.d + "T12:00:00Z");
+        firstRead.setUTCDate(firstRead.getUTCDate() + (31 - rows.length));
+        pctEl.textContent = `first read ${firstRead.toISOString().slice(0, 10)}`;
+        return;
+      }
       const delta = latest.total - base.total;
       thenEl.textContent = formatNumber(base.total);
       if (thenSub) thenSub.textContent = `as of ${base.d}`;
