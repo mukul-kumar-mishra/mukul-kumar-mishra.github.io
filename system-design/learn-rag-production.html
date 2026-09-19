@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free RAG engineering course in 15 workshop lessons from Kabir. Chunking, hybrid search, reranking, caching, grounding plus eval gates, priced from production postmortems.">
+  <meta name="author" content="Kabir">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-rag-production.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="RAG in Production: 15 Lessons From the Retrieval Bench">
+  <meta property="og:description" content="Chunking plus hybrid search plus rerank bills priced. Fifteen workshop lessons with live diagrams plus calculators from the retrieval bench.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/perplexity-bill-meme.svg">
+  <meta property="og:image:alt" content="Diagram showing one question billed twice, once for retrieval plus once for inference">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-rag-production.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RAG in Production: 15 Lessons From the Retrieval Bench">
+  <meta name="twitter:description" content="Fifteen RAG lessons with live diagrams plus bills. Chunk it, ground it, price it, with Kabir.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/perplexity-bill-meme.svg">
+  <meta name="twitter:image:alt" content="Diagram showing one question billed twice, once for retrieval plus once for inference">
+  <title>RAG in Production: 15 Lessons From the Retrieval Bench | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"RAG in Production: 15 Lessons From the Retrieval Bench",
+    "description":"A free RAG engineering course in 15 workshop lessons covering chunking, embeddings, hybrid search, reranking, caching, grounding, tenant isolation, freshness, retrieval evals, context budgets plus a priced pilot.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Kabir","url":"https://buildopsy.com/about.html#author-kabir","jobTitle":"Contributing author, AI engineering","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["AI agents","LLM evaluation","RAG","Inference economics"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"Retrieval is the product"},
+      {"@type":"Syllabus","name":"Chunk like the question asks"},
+      {"@type":"Syllabus","name":"Embeddings drift"},
+      {"@type":"Syllabus","name":"Vector search is not search"},
+      {"@type":"Syllabus","name":"Rerank with a budget"},
+      {"@type":"Syllabus","name":"The index has a bill"},
+      {"@type":"Syllabus","name":"Cache the repeat"},
+      {"@type":"Syllabus","name":"Ground or hallucinate"},
+      {"@type":"Syllabus","name":"Poisoned retrieval"},
+      {"@type":"Syllabus","name":"Tenants share nothing"},
+      {"@type":"Syllabus","name":"Freshness versus rebuild"},
+      {"@type":"Syllabus","name":"Eval the retriever"},
+      {"@type":"Syllabus","name":"Retrieval eats context"},
+      {"@type":"Syllabus","name":"The interview bench"},
+      {"@type":"Syllabus","name":"Ship one pipeline"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"RAG Course","item":"https://buildopsy.com/system-design/learn-rag-production.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Kabir</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">RAG in Production: 15 Lessons From the Retrieval Bench</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Your demo answers from three perfect documents. Production answers from three million messy ones, half stale, one poisoned. This course builds the pipeline between those worlds. Chunk it, ground it, price it. Every lesson ships an artifact you can run.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for shipping retrieval pipelines, from chunking to eval gates plus tenant isolation. Built from production postmortems with live diagrams plus calculators.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-kabir">Kabir</a> · AI engineering course · Updated September 19, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details plus cost figures in this course follow published Buildopsy postmortems linked under each lesson. Cost framing is modeled from public list prices. Modeled figures are estimates you can re-run in the calculators. Diagrams below are live: watch the query travel the pipeline, then design so it travels safely.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Chunk plus index a messy corpus so real questions find whole answers, not confident fragments.</li>
+        <li>Combine vector search with keyword search plus reranking inside a latency budget you measured.</li>
+        <li>Ground every answer in cited passages while treating retrieved text as untrusted input.</li>
+        <li>Isolate tenants in shared indexes, stream freshness without full rebuilds, plus price every query.</li>
+        <li>Answer RAG interviews with a drawn pipeline, priced math, a poisoning story, plus one shipped pilot.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: draw first, price second, confess one retrieval failure third. Lesson 14 rehearses the bench.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Retrieval product</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Chunking</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Drift</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Hybrid search</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Rerank budget</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Index bill</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Cache repeat</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Grounding</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Poisoned docs</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Tenant walls</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Freshness</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Eval retriever</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Context budget</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Interview bench</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Ship pipeline</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · The retrieval pipeline</div>
+          <h2>Retrieval Is the Product</h2>
+          <p class="lesson-story">Friday night. Your demo answers brilliantly from three hand-picked documents. Monday morning it meets three million real ones. An answer engine once paid for every question twice, retrieval plus inference, because the pipeline is the product now. The model is the last step, never the first.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Query flowing through retrieval then inference with cached repeats bypassing both steps">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
+            <rect class="box" x="130" y="20" width="120" height="40" rx="8"/><text x="190" y="44" font-size="11" text-anchor="middle">retrieval $0.02</text>
+            <rect class="boxhot" x="130" y="90" width="120" height="40" rx="8"/><text x="190" y="114" font-size="11" text-anchor="middle">inference $0.31</text>
+            <rect class="boxlime" x="282" y="55" width="120" height="40" rx="8"/><text x="342" y="79" font-size="11" text-anchor="middle">cache: skip</text>
+            <rect class="box" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">cited answer</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="250" y1="40" x2="282" y2="62"/><line x1="250" y1="110" x2="282" y2="88"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M53,70 L180,50 L330,65 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Draw the pipeline before the demo. Query plus retrieval plus rerank plus generation plus citations, with the skip path priced first.</li>
+            <li>Price one query end to end with the <a href="../calculators.html#token-bill">token bill calculator</a>. Retrieval you skip is margin you keep.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, paying twice per question with receipts.</li>
+          </ul>
+          <p>Your artifact this lesson: one pipeline diagram with a price tag on every arrow. No price, no ship. The demo answered. Production is the exam.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Sketch a RAG pipeline for refund policies with citations. <span class="q-seen">Seen at: AI product plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Retrieval returns nothing useful. What does the user see? <span class="q-seen">Seen at: applied AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Pipeline drawn. Now the documents themselves need cutting. <a href="#lesson-2">Lesson 02: Chunking →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Chunking · Cut for questions</div>
+          <h2>Chunk Like the Question Asks</h2>
+          <p class="lesson-story">Tuesday. Your retriever returns half a procedure plus half a warning from the next section. The answer stitches both into confident nonsense. Chunks cut for storage serve the index. Chunks cut for questions serve the user. Only one of them answers correctly.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Long document split into overlapping chunks with one whole answer chunk highlighted against two fragments">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">long doc</text>
+            <rect class="boxhot" x="150" y="20" width="120" height="34" rx="8"/><text x="210" y="42" font-size="11" text-anchor="middle">frag A</text>
+            <rect class="boxhot" x="150" y="60" width="120" height="34" rx="8"/><text x="210" y="82" font-size="11" text-anchor="middle">frag B</text>
+            <rect class="boxlime" x="150" y="100" width="120" height="34" rx="8"/><text x="210" y="122" font-size="11" text-anchor="middle">whole answer</text>
+            <rect class="box" x="302" y="55" width="120" height="40" rx="8"/><text x="362" y="79" font-size="11" text-anchor="middle">overlap 15 pct</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">metadata</text>
+            <g stroke-width="2"><line x1="118" y1="68" x2="150" y2="40"/><line x1="118" y1="75" x2="150" y2="77"/><line x1="118" y1="82" x2="150" y2="110"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Split by meaning, not by length. Headings plus procedures plus tables stay whole or answers fracture.</li>
+            <li>Overlap generously at boundaries. The sentence that matters always sits on the cut line.</li>
+            <li>Tag every chunk with source plus date. Stale chunks answer with fresh confidence otherwise.</li>
+          </ul>
+          <p>Your artifact: a chunking spec, target size plus overlap plus splitter plus metadata fields. Run ten real questions against two chunk shapes. The shape with whole answers wins, whatever the theory says.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Chunk a 200-page policy manual for refund questions. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Answers cite step 4 without steps 1 to 3. What broke? <span class="q-seen">Seen at: applied AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Chunks cut. Now the vectors themselves start to rot. <a href="#lesson-3">Lesson 03: Drift →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Embeddings · Version plus reindex</div>
+          <h2>Embeddings Drift</h2>
+          <p class="lesson-story">Wednesday. The vendor ships a better embedding model overnight. Your index still speaks the old dialect. Queries in the new tongue match nothing, because vectors from two models share a space the way two cities share a street name. Same words, different map.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Old embedding space beside new embedding space with a reindex bridge moving vectors across">
+            <rect class="boxhot" x="8" y="55" width="130" height="40" rx="8"/><text x="73" y="79" font-size="11" text-anchor="middle">model v1 space</text>
+            <rect class="box" x="216" y="55" width="110" height="40" rx="8"/><text x="271" y="79" font-size="11" text-anchor="middle">reindex job</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">model v2 space</text>
+            <g stroke-width="2"><line x1="138" y1="75" x2="216" y2="75"/><line x1="326" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M73,75 L271,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">never mix dialects in one index</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Pin the embedding model version like a dependency. Upgrades reindex everything or serve nothing.</li>
+            <li>Budget the reindex before adopting the model. Millions of chunks re-embed on your invoice, not theirs.</li>
+            <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Exhaustion</a>, what version moves cost in practice.</li>
+          </ul>
+          <p>Your artifact: an embedding manifest, model name plus version plus dimension plus reindex date. Watch the packet cross the bridge above, then schedule your own crossing. Drift you plan is migration. Drift you discover is an outage.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> The embedding vendor deprecates your model. Walk through the migration. <span class="q-seen">Seen at: AI platform loops.</span></p>
+            <p><strong>Q2.</strong> Half the index is v1 plus half is v2. What do users notice? <span class="q-seen">Seen at: backend plus AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Vectors versioned. Now stop trusting vectors alone. <a href="#lesson-4">Lesson 04: Hybrid search →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Retrieval · Keywords meet vectors</div>
+          <h2>Vector Search Is Not Search</h2>
+          <p class="lesson-story">Thursday. A user asks about form 1099-B. Vector search returns a soulful essay about tax anxiety. Keyword search would have found the exact form in milliseconds. Meaning matches intent. Tokens match names, codes, plus error strings. Production questions carry both.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Query splitting into vector lane and keyword lane merging through fusion into one ranked list">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
+            <rect class="box" x="130" y="20" width="140" height="40" rx="8"/><text x="200" y="44" font-size="11" text-anchor="middle">vector: meaning</text>
+            <rect class="box" x="130" y="90" width="140" height="40" rx="8"/><text x="200" y="114" font-size="11" text-anchor="middle">keyword: tokens</text>
+            <rect class="boxlime" x="302" y="55" width="120" height="40" rx="8"/><text x="362" y="79" font-size="11" text-anchor="middle">fusion rank</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">top 20</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="270" y1="40" x2="302" y2="62"/><line x1="270" y1="110" x2="302" y2="88"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run both lanes on every query that carries names, codes, or error strings. Vectors paraphrase. Keywords pinpoint.</li>
+            <li>Fuse with weights you measured, not defaults you inherited. The mix is a dial, not a doctrine.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Warehouse</a>, where vector tiering meets keyword truth.</li>
+          </ul>
+          <p>Your artifact: a hybrid test with twenty queries, ten semantic plus ten exact-token. Score each lane separately, then the fusion. Ship the mix that wins both halves, not the lane with the louder vendor.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Users search by ticket ID plus by symptom description. Design retrieval. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> When does keyword search beat vectors outright? <span class="q-seen">Seen at: search plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Two lanes merged. Now spend wisely on the final ordering. <a href="#lesson-5">Lesson 05: Rerank budget →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Reranking · Precision with a meter</div>
+          <h2>Rerank With a Budget</h2>
+          <p class="lesson-story">Friday. Fusion returns twenty candidates. The cross-encoder reranker reads all twenty slowly plus bills every one. Top-3 accuracy jumps. P99 doubles. Reranking is the most honest trade in retrieval: named precision for metered milliseconds. Spend it where answers matter.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Twenty candidates entering a reranker with only the top five passing to generation while cost accumulates">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">top 20</text>
+            <rect class="boxhot" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">rerank: slow</text>
+            <rect class="boxlime" x="302" y="55" width="100" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">top 5</text>
+            <rect class="box" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">generate</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">rerank depth is a latency dial, not a default</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Rerank depth trades milliseconds for placement. Measure the curve, then pick the knee, not the max.</li>
+            <li>Skip reranking for cached plus navigational queries. Precision you already own needs no second opinion.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, where every stage carries a price.</li>
+          </ul>
+          <p>Your artifact: a rerank curve, depth versus accuracy versus p99, drawn from your own golden set. Follow the packet above: twenty in, five out, the meter running between. Chosen depth is architecture. Default depth is a donation.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Reranking adds 300ms per query. Where do you win it back? <span class="q-seen">Seen at: latency-aware AI loops.</span></p>
+            <p><strong>Q2.</strong> When would you drop the reranker entirely? <span class="q-seen">Seen at: AI engineering loops.</span></p>
+          </div>
+          <p class="lesson-hook">Ordering bought. Now count what the shelves cost. <a href="#lesson-6">Lesson 06: Index bill →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Economics · Storage plus serving</div>
+          <h2>The Index Has a Bill</h2>
+          <p class="lesson-story">Monday. Three million chunks times fifteen hundred dimensions times four bytes lands near eighteen gigabytes before replicas plus overhead. Nobody priced the serving fleet either. The index is a database with a GPU habit. Model it like one.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cost waterfall from chunk count through vector bytes and replicas to queries per second">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">3M chunks</text>
+            <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">18 GB vec</text>
+            <rect class="boxhot" x="282" y="55" width="120" height="40" rx="8"/><text x="342" y="79" font-size="11" text-anchor="middle">replicas x3</text>
+            <rect class="boxlime" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">QPS fleet</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="250" y1="75" x2="282" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">bytes times replicas times queries, every month</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size vectors from chunk math, not vibes. Chunks times dimensions times bytes times replicas is the floor.</li>
+            <li>Quantize deliberately. Smaller vectors cost less plus recall slightly less. Measure the recall you sell.</li>
+            <li>Scale the serving fleet with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> before launch, not after the invoice.</li>
+          </ul>
+          <p>Your artifact: an index price card, storage plus replicas plus serving fleet, then the monthly total beside it. Follow the waterfall above to the red box. That box is your quarter.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size a vector index for ten million chunks with replicas. <span class="q-seen">Seen at: AI infra plus startup loops.</span></p>
+            <p><strong>Q2.</strong> Cut index cost 40 percent without touching recall. <span class="q-seen">Seen at: FinOps-flavored AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Shelves priced. Now stop paying for repeats. <a href="#lesson-7">Lesson 07: Cache repeat →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Caching · Same question twice</div>
+          <h2>Cache the Repeat</h2>
+          <p class="lesson-story">Tuesday. A voice service bills every hello at 75 milliseconds of GPU while the cached hello answers in 5. Retrieval repeats the same way: the same ten questions arrive all day, each one re-searched plus re-ranked plus re-billed. Same question twice should cost once.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Repeat query hitting a semantic cache for an instant answer while novel queries take the full pipeline">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
+            <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">repeat: 5ms</text>
+            <rect class="boxhot" x="130" y="90" width="150" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">novel: full pipe</text>
+            <rect class="box" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">fill on miss</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">TTL guard</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="102" x2="312" y2="82"/><line x1="432" y1="75" x2="464" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cache at three levels: exact query, near-duplicate embedding, plus hot passages. Each level catches a different repeat.</li>
+            <li>Expire by document change, not by clock alone. Stale citations spend like real answers.</li>
+            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a> plus <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>.</li>
+          </ul>
+          <p>Your artifact: a cache dashboard, hit rate per level plus dollars skipped per day. Watch repeats take the green path above, then measure your own skip rate. Uncached loops answer fast. Cached loops answer free.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a semantic cache for support questions with invalidation. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Hit rate falls from 60 to 10 percent overnight. Debug it live. <span class="q-seen">Seen at: SRE plus AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Repeats skipped. Now make the answers trustworthy. <a href="#lesson-8">Lesson 08: Grounding →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Grounding · Citations or fiction</div>
+          <h2>Ground or Hallucinate</h2>
+          <p class="lesson-story">Wednesday. Your pipeline answers a refund question beautifully, citing a policy that never existed. Generation without retrieval is confident fiction. The fix is mechanical, not moral: every claim points at a passage, every passage points at a source, no pointer means no sentence.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Generated claims passing through a citation gate that keeps grounded sentences and blocks ungrounded ones">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">draft claims</text>
+            <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">cite gate</text>
+            <rect class="box" x="302" y="20" width="110" height="40" rx="8"/><text x="357" y="44" font-size="11" text-anchor="middle">cited: ship</text>
+            <rect class="boxhot" x="302" y="90" width="110" height="40" rx="8"/><text x="357" y="114" font-size="11" text-anchor="middle">bare: block</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">answer</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="102"/><line x1="412" y1="40" x2="444" y2="62"/><line x1="412" y1="110" x2="444" y2="88"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Require passage pointers on factual claims. The gate is a verifier, not a vibe check.</li>
+            <li>Show citations to users. Visible sources earn corrections before errors earn churn.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, grounding with receipts attached.</li>
+          </ul>
+          <p>Your artifact: a citation gate with a measured grounded rate on your golden set. Watch bare claims stop at the red box above, then make your gate earn the same halt. Politeness is not accuracy.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your RAG cites sources that contradict the answer. Walk through the fix. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> When should the pipeline refuse to answer at all? <span class="q-seen">Seen at: AI product loops.</span></p>
+          </div>
+          <p class="lesson-hook">Answers grounded. Now assume the documents attack. <a href="#lesson-9">Lesson 09: Poisoned docs →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Adversarial · Retrieval as attack path</div>
+          <h2>Poisoned Retrieval</h2>
+          <p class="lesson-story">Thursday. A candidate uploads a CV. The summary comes back with your API keys inside a rendered image. Retrieved documents are untrusted input wearing a trusted uniform. Your pipeline reads the room. The room reads your secrets.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Poisoned document sneaking toward the model while a scanner gate blinks and blocks it">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">poisoned doc</text>
+            <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">hidden orders</text>
+            <rect class="boxlime" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">scan gate</text>
+            <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">model safe</text>
+            <circle class="blink" r="5" cx="367" cy="40" style="fill:var(--lime)"/>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="280" y1="75" x2="312" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L215,75 L340,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Treat every retrieved passage as untrusted input. Documents, pages, plus uploads can all carry instructions.</li>
+            <li>Scope secrets so theft buys little. Short TTLs plus least privilege turn breaches into footnotes.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the CV that downloaded keys.</li>
+          </ul>
+          <p>Your artifact: three poisoned-document cases, one injection plus one exfil plus one instruction override, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A retrieved page tells the model to ignore policy. Walk through the defense. <span class="q-seen">Seen at: AI safety loops.</span></p>
+            <p><strong>Q2.</strong> Who can write to your index, plus what stops them? <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Attackers welcomed. Now wall off the tenants. <a href="#lesson-10">Lesson 10: Tenant walls →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Isolation · Shared index, separate truths</div>
+          <h2>Tenants Share Nothing</h2>
+          <p class="lesson-story">Friday. Your retriever serves two companies from one index. A query from tenant A returns a passage stamped tenant B, quoted word for word. Memory never says it is unsure. Indexes never say whose. Ground every recall plus isolate every namespace or bill the apology.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Two tenant queries filtered by namespace into separate index partitions with a shared passage rejected at the gate">
+            <rect class="box" x="8" y="20" width="110" height="34" rx="8"/><text x="63" y="42" font-size="11" text-anchor="middle">tenant A</text>
+            <rect class="box" x="8" y="60" width="110" height="34" rx="8"/><text x="63" y="82" font-size="11" text-anchor="middle">tenant B</text>
+            <rect class="boxlime" x="180" y="40" width="120" height="40" rx="8"/><text x="240" y="64" font-size="11" text-anchor="middle">filter gate</text>
+            <rect class="box" x="362" y="20" width="100" height="34" rx="8"/><text x="412" y="42" font-size="11" text-anchor="middle">part A</text>
+            <rect class="boxhot" x="362" y="60" width="100" height="34" rx="8"/><text x="412" y="82" font-size="11" text-anchor="middle">part B</text>
+            <rect class="box" x="362" y="100" width="100" height="34" rx="8"/><text x="412" y="122" font-size="11" text-anchor="middle">none: refuse</text>
+            <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="55"/><line x1="118" y1="77" x2="180" y2="65"/><line x1="300" y1="55" x2="362" y2="40"/><line x1="300" y1="65" x2="362" y2="77"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Filter by tenant before ranking, never after. Post-filtering leaks through scores plus snippets.</li>
+            <li>Test isolation with adversarial queries monthly. One tenant recall must never answer another tenant question.</li>
+            <li>Deep dive: <a href="chatgpt-cross-account-channel-postmortem.html">Cross-Account Channel</a>, the isolation failure with a receipt.</li>
+          </ul>
+          <p>Your artifact: an isolation test suite, ten cross-tenant probes that must all refuse. Follow the packets above: each tenant reaches only its partition, the rest meet refusal. Sharing infrastructure is fine. Sharing answers is a breach.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design multi-tenant RAG with provable isolation. <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+            <p><strong>Q2.</strong> A shared passage is useful to both tenants. Who owns it? <span class="q-seen">Seen at: AI platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Tenants walled. Now keep the index fresh. <a href="#lesson-11">Lesson 11: Freshness →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Freshness · Streams beat rebuilds</div>
+          <h2>Freshness Versus Rebuild</h2>
+          <p class="lesson-story">Monday. Policies change daily. Your weekly full rebuild serves last Tuesday all week. A workspace platform once streamed every block change through a pipeline instead of re-dumping the database nightly. Freshness is a stream, not a schedule.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Document changes streaming through incremental updates into the index beside a slow weekly full rebuild">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">doc edits</text>
+            <rect class="boxlime" x="140" y="20" width="130" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">stream: minutes</text>
+            <rect class="boxhot" x="140" y="90" width="130" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">rebuild: weekly</text>
+            <rect class="box" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">fresh index</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">stale: week</text>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="82" x2="140" y2="102"/><line x1="270" y1="40" x2="302" y2="62"/><line x1="270" y1="110" x2="302" y2="88"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,70 L180,45 L330,65 L480,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Stream document changes into the index in minutes. Rebuilds are backstops, not freshness plans.</li>
+            <li>Delete deliberately. Removed documents must vanish from retrieval, not linger as ghosts with citations.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Warehouse</a>, streaming change capture at block scale.</li>
+          </ul>
+          <p>Your artifact: a freshness SLO, edit-to-searchable latency with a dashboard plus an alert. Follow the green path above, then measure your own lag. Fresh indexes answer today. Rebuilt ones answer last week.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A policy changes at noon. When do answers change? Prove it. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Deleted documents still surface in answers. Diagnose live. <span class="q-seen">Seen at: backend plus AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Index fresh. Now prove it retrieves. <a href="#lesson-12">Lesson 12: Eval retriever →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Evaluation · Golden sets for retrieval</div>
+          <h2>Eval the Retriever</h2>
+          <p class="lesson-story">Tuesday. A prompt change ships at noon. By two the refund pipeline cites with new confidence about policies that do not exist. Nobody changed the tests because there were no tests. Retrieval changes are code changes now, so gate them like code or debug them like folklore.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Index change flowing into a recall gate that blocks regressions and promotes passing versions">
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">index edit</text>
+            <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">recall gate</text>
+            <rect class="boxhot" x="302" y="20" width="110" height="40" rx="8"/><text x="357" y="44" font-size="11" text-anchor="middle">fail: block</text>
+            <rect class="box" x="302" y="90" width="110" height="40" rx="8"/><text x="357" y="114" font-size="11" text-anchor="middle">pass: ship</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">prod calm</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="102"/><line x1="412" y1="110" x2="444" y2="82"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L210,75 L357,108 L480,80"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Gate every chunking plus ranking change on recall at fixed depths. Green suite ships, red suite waits, no exceptions.</li>
+            <li>Judge answers separately from retrieval. A good retriever feeding a loose generator still hallucinates.</li>
+            <li>Bridge course: <a href="learn-ai-evals.html">AI Evals That Hold</a>, where gates become a full program.</li>
+          </ul>
+          <p>Your artifact: one recall gate in CI with twenty golden queries that must pass before merge. Watch the packet take the green path above, then make your gate earn the same calm. Ungated retrieval is folklore with latency.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A chunking change drops answer quality silently. How does CI catch it? <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> Recall is high plus answers are wrong. Where is the fault? <span class="q-seen">Seen at: evals-minded AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Retriever gated. Now count what passages cost the window. <a href="#lesson-13">Lesson 13: Context budget →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Context · Passages crowd the window</div>
+          <h2>Retrieval Eats Context</h2>
+          <p class="lesson-story">Wednesday. Your pipeline stuffs twelve passages into the window, then the model forgets the question. A coding agent once hit a paywall at 11:47 AM because compaction plus re-reading billed the same tokens twice. Retrieved tokens crowd out reasoning the same way. Budget the window like money.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Context window split between question, five passages and reasoning space with overflow spilling past the edge">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">question</text>
+            <rect class="box" x="130" y="55" width="140" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">5 passages</text>
+            <rect class="boxlime" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">reasoning</text>
+            <rect class="boxhot" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">overflow</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">five passages in, reasoning squeezed out</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cap passages per query plus compress the rest. Five cited passages beat twelve skimmed ones.</li>
+            <li>Price the window with the <a href="../calculators.html#compaction">compaction calculator</a> plus the <a href="../calculators.html#token-bill">token bill calculator</a>. Long prompts bill twice.</li>
+            <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Exhaustion</a>, the paywall with a timestamp.</li>
+          </ul>
+          <p>Your artifact: a per-query token budget, passages plus reasoning plus headroom, written down before tuning. Watch reasoning squeeze at the red box above, then set your cap where answers stay sharp. Chosen caps are architecture. Surprise caps are incidents.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> More passages help recall but hurt answers. Find the sweet spot live. <span class="q-seen">Seen at: applied AI loops.</span></p>
+            <p><strong>Q2.</strong> When does a bigger window beat fewer passages? <span class="q-seen">Seen at: LLM platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Window budgeted. Now rehearse the interview. <a href="#lesson-14">Lesson 14: Interview bench →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Interviews · Draw plus price plus confess</div>
+          <h2>The Interview Bench</h2>
+          <p class="lesson-story">Thursday. The panel asks for a support copilot over two million tickets. The candidate who draws the pipeline, prices one query out loud, plus confesses a poisoning incident passes. The candidate who names three vector databases does not. Builders draw. Tourists describe.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview answer flow from drawn pipeline through priced math and a failure story to an offer">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">draw pipe</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">price query</text>
+            <rect class="box" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">failure told</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">offer</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L205,75 L347,75 L493,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Draw first, talk second. The pipeline with a price tag opens every strong answer.</li>
+            <li>Price one million queries out loud with the <a href="../calculators.html#token-bill">token bill calculator</a>. Panels score math over adjectives.</li>
+            <li>Close with your poisoning story. Attacks you survived beat features you shipped.</li>
+          </ul>
+          <p>Rehearse three answers this week: a chunking design, a hybrid retrieval plan with rerank math, plus a tenant-isolation proof with adversarial tests. Bring diagrams. Builders draw. Tourists describe.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design RAG over two million tickets end to end in 45 minutes. <span class="q-seen">Seen at: AI product plus startup loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about a retrieval failure you caused plus fixed. <span class="q-seen">Seen at: behavioral plus AI loops.</span></p>
+          </div>
+          <p class="lesson-hook">Answers rehearsed. Now assemble everything into one ship. <a href="#lesson-15">Lesson 15: Ship pipeline →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · Chunk plus ground plus price</div>
+          <h2>Ship One Pipeline</h2>
+          <p class="lesson-story">Sunday. Pick one corpus from your own work: support tickets, runbooks, or policy docs. Chunk it, index it, fuse the lanes, hang the rerank budget, cache the repeats, gate the citations, scan the poisons, wall the tenants, stream the freshness, eval the recall, budget the window. Then ship it to five users, not five thousand.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from chunked corpus through gates and caches to a priced five-user pilot">
+            <rect class="boxlime" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">corpus cut</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">gates hung</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">cache warm</text>
+            <rect class="boxhot" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">5 users, priced</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">five users first, five thousand later</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Ship the artifacts from lessons 1 through 13 in one folder. Gaps are visible at a glance.</li>
+            <li>Pilot with five users plus a kill switch. Small blast radius, full telemetry, honest notes.</li>
+            <li>Close with the invoice. Queries per month times modeled unit price, labeled as estimates.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. Price the meter next: <a href="learn-inference-economics.html">LLM Inference Economics</a>, then browse <a href="course.html">all courses</a> plus <a href="index.html">all case studies</a>. New corpora ship weekly. So will new questions.</p>
+          <p>The demo answered. Production is the exam. You just built the study guide. Earn the grade.</p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Perplexity inference bills, Cursor token economics, Notion warehouse plus vector tiering, AgentFlayer exfiltration, cross-account isolation, plus the agent eval program. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

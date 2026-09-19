@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free event streaming course in 15 forensic lessons from Mukul. Partitions, consumer groups, rebalance storms, ordering plus exactly-once math, priced from production postmortems.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-event-streaming.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Event Streaming in Production: 15 Lessons From the Kafka Bench">
+  <meta property="og:description" content="Partitions plus consumer groups plus rebalance storms priced. Fifteen forensic lessons with live diagrams plus calculators from the Kafka bench.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-meme.svg">
+  <meta property="og:image:alt" content="Diagram showing a rolling deploy pausing every consumer while the coordinator rebalances forty thousand partitions">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-event-streaming.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Event Streaming in Production: 15 Lessons From the Kafka Bench">
+  <meta name="twitter:description" content="Fifteen streaming lessons with live diagrams plus bills. The bill hides in the boundary, with Mukul.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-meme.svg">
+  <meta name="twitter:image:alt" content="Diagram showing a rolling deploy pausing every consumer while the coordinator rebalances forty thousand partitions">
+  <title>Event Streaming in Production: 15 Lessons From the Kafka Bench | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"Event Streaming in Production: 15 Lessons From the Kafka Bench",
+    "description":"A free event streaming course in 15 forensic lessons covering append-only logs, partitions, consumer groups, rebalance storms, static membership, key ordering, dead letters, schemas, retention, exactly-once budgets, retry storms, backpressure, envelope math plus a capstone pipeline.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"The log is the truth"},
+      {"@type":"Syllabus","name":"Partitions buy concurrency"},
+      {"@type":"Syllabus","name":"Groups share the load"},
+      {"@type":"Syllabus","name":"Rebalances stop the world"},
+      {"@type":"Syllabus","name":"Static ids end storms"},
+      {"@type":"Syllabus","name":"Order lives in the key"},
+      {"@type":"Syllabus","name":"Dead letters deserve readers"},
+      {"@type":"Syllabus","name":"Schemas are contracts"},
+      {"@type":"Syllabus","name":"Retention is money"},
+      {"@type":"Syllabus","name":"Exactly-once is a budget"},
+      {"@type":"Syllabus","name":"Retries without jitter are DDoS"},
+      {"@type":"Syllabus","name":"Backpressure beats buffering"},
+      {"@type":"Syllabus","name":"The envelope math"},
+      {"@type":"Syllabus","name":"The interview bench"},
+      {"@type":"Syllabus","name":"Run one pipeline"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Streaming Course","item":"https://buildopsy.com/system-design/learn-event-streaming.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Event Streaming in Production: 15 Lessons From the Kafka Bench</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: append everything, assume nothing arrives once, plus price the backlog. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic streaming lessons with live diagrams, from partitions to exactly-once math plus rebalance drills. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> Â· Backend plus SRE course Â· Updated September 19, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch events travel the pipeline, then design so they travel safely.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Size partitions plus consumer groups from throughput math, then survive the rebalances your deploys trigger.</li>
+        <li>Hold per-key ordering under hot keys, route dead letters to readers, plus evolve schemas without breaking consumers.</li>
+        <li>Price retention plus exactly-once guarantees as budgets, then defend them with modeled numbers.</li>
+        <li>Cap retries with jitter plus breakers, separate urgent from patient traffic, plus envelope the monthly backlog.</li>
+        <li>Answer streaming interviews with clarified scope, out-loud estimates, plus three ways you would break your own design.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: clarify scope first, estimate out loud second, break your own design third. Lesson 14 rehearses the bench.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Log truth</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Partitions</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Groups</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Rebalance</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Static ids</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Key order</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Dead letters</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Schemas</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Retention</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Exactly-once</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Retry storm</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Backpressure</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Envelope</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Interview bench</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Run pipeline</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 Â· Foundations Â· Append-only truth</div>
+          <h2>The Log Is the Truth</h2>
+          <p class="lesson-story">Assumption first: every downstream system disagrees about what happened. The log settles it. One gaming platform routes 18 trillion messages a day through one append-only backbone, then replays any of them on demand. Databases forget. Logs remember. Design the memory first.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producers appending to an immutable log that fans out to three independent consumers plus a replay reader">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">producers</text>
+            <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">append-only log</text>
+            <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">consumer A</text>
+            <rect class="box" x="302" y="60" width="110" height="34" rx="8"/><text x="357" y="82" font-size="11" text-anchor="middle">consumer B</text>
+            <rect class="box" x="302" y="100" width="110" height="34" rx="8"/><text x="357" y="122" font-size="11" text-anchor="middle">replay: any</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">truth kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="75" x2="302" y2="77"/><line x1="270" y1="82" x2="302" y2="110"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Append, never overwrite. Immutable history makes every downstream rebuild a replay, not a rescue.</li>
+            <li>One backbone, many readers. Matchmaking plus analytics read the same events at their own pace.</li>
+            <li>Deep dive: <a href="roblox-kafka-ingestion-postmortem.html">18 Trillion Messages a Day</a>, one platform for urgent plus patient traffic.</li>
+          </ul>
+          <p>Draw this shape for every pipeline you inherit this year. Interviews reward candidates who start from the log. Production rewards engineers who can replay the Tuesday nobody understood.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design event ingestion for a game with 18 trillion daily messages. <span class="q-seen">Seen at: gaming plus high-scale loops.</span></p>
+            <p><strong>Q2.</strong> A downstream team corrupts its state. How does the log save them? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Truth stored. Now split it for speed. <a href="#lesson-2">Lesson 02: Partitions â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 Â· Scale Â· Count partitions like money</div>
+          <h2>Partitions Buy Concurrency</h2>
+          <p class="lesson-story">Assumption: one partition serves one consumer at a time. A payments team aimed at 10,000 transactions per second, then met a partition ceiling plus a 3,000-connection cap nobody had read. Partitions are concurrency you buy with coordination. Count them before traffic does.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One topic split into six partitions feeding six consumers in parallel with throughput multiplying">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">1 topic</text>
+            <rect class="boxlime" x="130" y="20" width="110" height="34" rx="8"/><text x="185" y="42" font-size="11" text-anchor="middle">part 1-2</text>
+            <rect class="boxlime" x="130" y="60" width="110" height="34" rx="8"/><text x="185" y="82" font-size="11" text-anchor="middle">part 3-4</text>
+            <rect class="boxlime" x="130" y="100" width="110" height="34" rx="8"/><text x="185" y="122" font-size="11" text-anchor="middle">part 5-6</text>
+            <rect class="box" x="272" y="20" width="110" height="34" rx="8"/><text x="327" y="42" font-size="11" text-anchor="middle">cons 1-2</text>
+            <rect class="box" x="272" y="60" width="110" height="34" rx="8"/><text x="327" y="82" font-size="11" text-anchor="middle">cons 3-4</text>
+            <rect class="box" x="272" y="100" width="110" height="34" rx="8"/><text x="327" y="122" font-size="11" text-anchor="middle">cons 5-6</text>
+            <rect class="boxhot" x="414" y="55" width="138" height="40" rx="8"/><text x="483" y="79" font-size="11" text-anchor="middle">6x, capped</text>
+            <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="42"/><line x1="98" y1="75" x2="130" y2="77"/><line x1="98" y1="82" x2="130" y2="112"/><line x1="240" y1="42" x2="272" y2="37"/><line x1="240" y1="77" x2="272" y2="77"/><line x1="240" y1="112" x2="272" y2="117"/><line x1="382" y1="75" x2="414" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Partitions set the concurrency ceiling. More consumers than partitions means paid idleness.</li>
+            <li>Every partition taxes the broker. Assignment math plus metadata grow with the count, not with the data.</li>
+            <li>Deep dives: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> plus <a href="roblox-kafka-ingestion-postmortem.html">Roblox tiers</a>.</li>
+          </ul>
+          <p>Size partitions from peak throughput divided by per-partition headroom, with a stated growth factor. Lesson 4 shows what happens when the count meets a rolling deploy. The ceiling is load-bearing. Read it twice.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size partitions for 60,000 events per second with 3x headroom. <span class="q-seen">Seen at: Uber-style plus fintech loops.</span></p>
+            <p><strong>Q2.</strong> Consumers idle while lag grows. What do you check first? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Concurrency bought. Now share it across a group. <a href="#lesson-3">Lesson 03: Groups â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 Â· Coordination Â· One group, many mouths</div>
+          <h2>Groups Share the Load</h2>
+          <p class="lesson-story">Assumption: 120 consumers split 40,000 partitions evenly until one restarts. A consumer group is a contract: the coordinator assigns, members consume, generations mark agreement. The contract holds beautifully at rest. Every lesson after this one is about motion.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Coordinator assigning forty thousand partitions across one hundred twenty group members at one generation">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">coordinator</text>
+            <rect class="box" x="150" y="20" width="120" height="34" rx="8"/><text x="210" y="42" font-size="11" text-anchor="middle">member 1-40</text>
+            <rect class="box" x="150" y="60" width="120" height="34" rx="8"/><text x="210" y="82" font-size="11" text-anchor="middle">member 41-80</text>
+            <rect class="box" x="150" y="100" width="120" height="34" rx="8"/><text x="210" y="122" font-size="11" text-anchor="middle">member 81-120</text>
+            <rect class="box" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">40k parts</text>
+            <rect class="boxhot" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">gen 12</text>
+            <g stroke-width="2"><line x1="118" y1="68" x2="150" y2="42"/><line x1="118" y1="75" x2="150" y2="77"/><line x1="118" y1="82" x2="150" y2="112"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>One group id means shared fate. Every member rebalances together, which is the feature plus the hazard.</li>
+            <li>Generations are the agreement record. A group that never reaches a stable generation never consumes.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, the group that never settled.</li>
+          </ul>
+          <p>Sketch your groups with member counts plus partition counts plus generation dashboards before the next deploy. The map from Lesson 1 now has owners. Owners restart. Restarts rejoin. Rejoins are Lesson 4.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Explain consumer groups plus generations to a smart intern. <span class="q-seen">Seen at: every infrastructure loop.</span></p>
+            <p><strong>Q2.</strong> Two teams share one group id by accident. What breaks? <span class="q-seen">Seen at: backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Load shared. Now watch a deploy pause it all. <a href="#lesson-4">Lesson 04: Rebalance â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 Â· Failure Â· The world stops, eagerly</div>
+          <h2>Rebalances Stop the World</h2>
+          <p class="lesson-story">Assumption: rolling deploys are zero-downtime. Roll one restart at a time across 120 consumers and each restart rejoins the group. Each rejoin triggers a full eager rebalance. Each rebalance takes long enough at 40,000 partitions that the next restart lands mid-rebalance. Modeled pause: 11 minutes. The safest rollout becomes a continuous stall.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Rolling restarts arriving faster than rebalances complete so the group never settles">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">restart 1</text>
+            <rect class="box" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">rebalance...</text>
+            <rect class="boxhot" x="272" y="55" width="110" height="40" rx="8"/><text x="327" y="79" font-size="11" text-anchor="middle">restart 2!</text>
+            <rect class="boxhot" x="414" y="55" width="138" height="40" rx="8"/><text x="483" y="79" font-size="11" text-anchor="middle">never settles</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="382" y1="75" x2="414" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2s" repeatCount="indefinite" path="M53,75 L185,75 L327,75 L483,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">triggers outpace completions, consumption stalls</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Eager revokes everything on every change. Simple to reason about, catastrophic at scale.</li>
+            <li>Session timeouts tuned for crash detection fire during the storm they should ride out. Recovery carries its own trigger.</li>
+            <li>Deep dives: <a href="kafka-consumer-rebalance.html">Kafka Consumer Rebalance Explained</a> plus <a href="kafka-rebalance-storm-postmortem.html">the full storm postmortem</a>.</li>
+          </ul>
+          <p>When asked how deploys cause streaming outages, answer with generations. The group never reaches a stable one because triggers outpace completions. Fix the race, not the brokers.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A rolling deploy pauses all consumers for 11 minutes. Explain the cascade. <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Brokers look healthy while consumption stalls. Where do you look? <span class="q-seen">Seen at: SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Storm modeled. Now remove the trigger. <a href="#lesson-5">Lesson 05: Static ids â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 Â· Protocol Â· Boring fixes compose</div>
+          <h2>Static Ids End Storms</h2>
+          <p class="lesson-story">Assumption: a restart is a stranger. Static membership rejects that premise. Each consumer restarts under a stable instance id plus keeps its assignment, so the rolling deploy becomes 120 uneventful restarts. Cooperative assignment softens the remaining blow: only partitions that must move, move. Nothing here is novel. That is the point.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Restarted consumer keeping its assignment under a stable id while only moved partitions rebalance">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">stable id</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">restart</text>
+            <rect class="boxlime" x="292" y="55" width="120" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">keeps parts</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">no storm</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L205,75 L352,75 L498,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">stable ids remove the trigger, cooperation softens the rest</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Stable instance ids turn restarts into returns. The group stops meeting strangers every deploy.</li>
+            <li>Cooperative protocol turns pauses partial. Unaffected partitions keep consuming through transitions.</li>
+            <li>Deep dive: <a href="kafka-consumer-rebalance.html">Kafka Consumer Rebalance Explained</a>, the three settings that end the loop.</li>
+          </ul>
+          <p>Audit your protocol defaults on the same schedule as capacity. Defaults are load-bearing architecture. The outage was three reasonable defaults composing at scale. The fix is five boring settings reviewed quarterly.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Compare eager versus cooperative rebalancing at 40,000 partitions. <span class="q-seen">Seen at: backend plus infra loops.</span></p>
+            <p><strong>Q2.</strong> What breaks when two members share one static id? <span class="q-seen">Seen at: Kafka-flavored loops.</span></p>
+          </div>
+          <p class="lesson-hook">Storms ended. Now keep events in order. <a href="#lesson-6">Lesson 06: Key order â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 Â· Ordering Â· One key, one queue</div>
+          <h2>Order Lives in the Key</h2>
+          <p class="lesson-story">Assumption: global order is purchasable. It is not. Ordering holds within a partition, so the key decides the queue. Hash by order id and one order never overtakes itself. Hash randomly and refunds precede charges. A chat platform learned the hot-key corollary: one popular channel concentrates 5,000 reads per second onto a single partition.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Order events hashed by key into one partition in sequence while a hot key saturates its partition">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">order events</text>
+            <rect class="boxlime" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">hash by key</text>
+            <rect class="box" x="282" y="20" width="110" height="40" rx="8"/><text x="337" y="44" font-size="11" text-anchor="middle">part 7: ordered</text>
+            <rect class="boxhot" x="282" y="90" width="110" height="40" rx="8"/><text x="337" y="114" font-size="11" text-anchor="middle">hot key: full</text>
+            <rect class="box" x="424" y="55" width="128" height="40" rx="8"/><text x="488" y="79" font-size="11" text-anchor="middle">split plan</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="250" y1="68" x2="282" y2="40"/><line x1="250" y1="82" x2="282" y2="102"/><line x1="392" y1="40" x2="424" y2="62"/><line x1="392" y1="110" x2="424" y2="88"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Key by what must stay ordered. Payments by order id, messages by channel, sessions by user.</li>
+            <li>Plan the hot-key split before the fire. Celebrity keys break naive hashing on event night.</li>
+            <li>Deep dive: <a href="discord-messages-scale-postmortem.html">Discord: 177 Nodes Too Many</a>, hot partitions with receipts.</li>
+          </ul>
+          <p>List your top ten keys by volume before launch, with a split plan for each. Capacity follows the hottest partition, never the average. The average is a rumor the hot key never heard.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Keep per-user order for a chat app at 5,000 reads per second per channel. <span class="q-seen">Seen at: Discord-style plus Meta-style loops.</span></p>
+            <p><strong>Q2.</strong> One key takes 80 percent of traffic. Now what? <span class="q-seen">Seen at: X-style plus high-scale loops.</span></p>
+          </div>
+          <p class="lesson-hook">Order kept. Now read the mail nobody wants. <a href="#lesson-7">Lesson 07: Dead letters â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 Â· Failure Â· The queue for failures</div>
+          <h2>Dead Letters Deserve Readers</h2>
+          <p class="lesson-story">Assumption: poison events are rare enough to ignore. They are not. Every message your consumer cannot process retries, fails, plus retries again, consuming the workers healthy events need. A dead-letter topic quarantines the poison after a bounded number of attempts. Every entry is a bug report from production. Teams that review them weekly find failures before customers do.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Failing events moving through bounded retries into a dead-letter topic with a weekly review reader">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">poison in</text>
+            <rect class="boxhot" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">retry x3 max</text>
+            <rect class="box" x="272" y="55" width="110" height="40" rx="8"/><text x="327" y="79" font-size="11" text-anchor="middle">dead letter</text>
+            <rect class="boxlime" x="414" y="55" width="138" height="40" rx="8"/><text x="483" y="79" font-size="11" text-anchor="middle">weekly review</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="382" y1="75" x2="414" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">bounded retries, then quarantine, then readers</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Bound attempts before routing to dead letters. Unbounded poison retries are a self-inflicted stall.</li>
+            <li>Alert on dead-letter growth rate, not just depth. A rising slope is an incident writing its first draft.</li>
+            <li>Deep dive: <a href="roblox-kafka-ingestion-postmortem.html">18 Trillion Messages a Day</a>, patient lanes for patient problems.</li>
+          </ul>
+          <p>Staff the dead-letter review like on-call, because it is one. Quarantine without readers is a morgue with extra steps. Readers turn poison into patches.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design poison-message handling for a payments pipeline. <span class="q-seen">Seen at: fintech plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Dead letters grow 10x overnight. What happened? <span class="q-seen">Seen at: SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Poison quarantined. Now sign contracts with producers. <a href="#lesson-8">Lesson 08: Schemas â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 Â· Evolution Â· Contracts, not hopes</div>
+          <h2>Schemas Are Contracts</h2>
+          <p class="lesson-story">Assumption: producers plus consumers upgrade together. They never do. A field renamed on Friday breaks Saturday consumers that nobody owns anymore. A schema registry makes evolution a reviewed contract: backward plus forward compatibility checked at publish time, breaking changes rejected before they reach the log.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producer schema passing a registry compatibility check before reaching the log while a breaking change is rejected">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">producer</text>
+            <rect class="boxlime" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">registry gate</text>
+            <rect class="box" x="292" y="20" width="110" height="40" rx="8"/><text x="347" y="44" font-size="11" text-anchor="middle">compat: log</text>
+            <rect class="boxhot" x="292" y="90" width="110" height="40" rx="8"/><text x="347" y="114" font-size="11" text-anchor="middle">break: reject</text>
+            <rect class="box" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">consumers safe</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="260" y1="68" x2="292" y2="40"/><line x1="260" y1="82" x2="292" y2="102"/><line x1="402" y1="40" x2="434" y2="62"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Gate publishes on compatibility. Add optional fields freely. Renames plus type changes ride a migration, not a Friday.</li>
+            <li>Version every event. Consumers read the version first, the payload second.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>, change capture across 480 shards.</li>
+          </ul>
+          <p>Register your three highest-volume event types this week with compatibility rules written down. Ungated schemas are handshake deals with teams you have never met. The log remembers what the meeting forgot.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Rename a field consumed by forty services without downtime. <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q2.</strong> A producer ships a breaking change at midnight. Who stops it? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Contracts signed. Now price keeping history. <a href="#lesson-9">Lesson 09: Retention â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 Â· Storage Â· Hot plus warm plus cold</div>
+          <h2>Retention Is Money</h2>
+          <p class="lesson-story">Assumption: retention is free because disks are cheap. Modeled reality: hot NVMe per gigabyte-month dwarfs object storage by an order of magnitude, plus every retained byte is served, replicated, plus rebalanced. One ingestion platform treats urgent matchmaking like patient analytics, then pays urgent prices for patient bytes. Tier by age. Serve hot, park cold.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Fresh events on hot NVMe tiering by age into warm then cold object storage with costs falling at each step">
+            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">hot: NVMe</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">warm: 7 days</text>
+            <rect class="boxlime" x="292" y="55" width="120" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">cold: object</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">save 10x</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M63,75 L205,75 L352,75 L498,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">age decides the tier, the tier decides the bill</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Tier by access age, not by sentiment. Yesterday serves from NVMe. Last quarter serves from object storage.</li>
+            <li>Price retention per topic per tier monthly. Unpriced history grows until the invoice explains it.</li>
+            <li>Deep dive: <a href="roblox-kafka-ingestion-postmortem.html">18 Trillion Messages a Day</a>, urgent versus patient by design.</li>
+          </ul>
+          <p>Follow the packet above from hot to cold, then tier your own oldest topic. Retention without tiers is a subscription to urgency. The bill hides in the boundary between hot and cold.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Keep a year of events queryable without paying hot prices all year. <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Replay demand spikes on six-month-old data. What breaks? <span class="q-seen">Seen at: backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">History tiered. Now promise exactly-once honestly. <a href="#lesson-10">Lesson 10: Exactly-once â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 Â· Correctness Â· A budget, not a feature</div>
+          <h2>Exactly-Once Is a Budget</h2>
+          <p class="lesson-story">Assumption: the network delivers once. It delivers at least once, then apologizes with duplicates. One ledger moves $1.4 trillion without double-charging anyone. The trick is not a faster network. It is a key the client sends with every request, stored beside the result, so retries become safe by construction.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producer sending an idempotency key with each event while the consumer dedupes repeats against a stored ledger">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">producer</text>
+            <rect class="boxlime" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">key per event</text>
+            <rect class="box" x="292" y="20" width="120" height="40" rx="8"/><text x="352" y="44" font-size="11" text-anchor="middle">seen: skip</text>
+            <rect class="boxhot" x="292" y="90" width="120" height="40" rx="8"/><text x="352" y="114" font-size="11" text-anchor="middle">new: apply</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">once, kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="260" y1="68" x2="292" y2="40"/><line x1="260" y1="82" x2="292" y2="102"/><line x1="412" y1="40" x2="444" y2="62"/><line x1="412" y1="110" x2="444" y2="88"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Key every effect that money touches. Idempotency keys turn at-least-once networks into exactly-once effects.</li>
+            <li>Store the key beside the result atomically, or the check lies under concurrency.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, double-entry plus keys at $1.4 trillion.</li>
+          </ul>
+          <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates plus reordering, then designing so none of them matter. Exactly-once is not a protocol setting. It is a budget line with a key attached.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Guarantee exactly-once charging over an at-least-once queue. <span class="q-seen">Seen at: Stripe-style plus fintech loops.</span></p>
+            <p><strong>Q2.</strong> Dedup storage grows forever. When do keys expire? <span class="q-seen">Seen at: backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Duplicates tamed. Now cap the retry wave itself. <a href="#lesson-11">Lesson 11: Retry storm â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 Â· Amplification Â· The 6x invoice</div>
+          <h2>Retries Without Jitter Are DDoS</h2>
+          <p class="lesson-story">Assumption: retries help. Modeled: eleven paused minutes at 60,000 events per second build roughly 39.6 million events of backlog while downstream timeouts fire retries into topics consumers cannot yet drain. At two extra retries per stalled call with no backoff, recovery load lands near six times normal before one new event arrives. Retries without jitter plus backoff are a self-inflicted DDoS with a deploy as the trigger.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One stalled call fanning into retry copies that multiply recovery load sixfold before a capped breaker restores order">
+            <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">stall 11m</text>
+            <rect class="boxhot" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">retry x2</text>
+            <rect class="boxhot" x="272" y="55" width="110" height="40" rx="8"/><text x="327" y="79" font-size="11" text-anchor="middle">6x load</text>
+            <rect class="boxlime" x="414" y="55" width="70" height="40" rx="8"/><text x="449" y="79" font-size="11" text-anchor="middle">cap</text>
+            <rect class="box" x="496" y="55" width="56" height="40" rx="8"/><text x="524" y="79" font-size="11" text-anchor="middle">1x</text>
+            <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="382" y1="75" x2="414" y2="75"/><line x1="484" y1="75" x2="496" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">backoff plus jitter plus caps, all three</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Backoff plus jitter plus a hard stop. Miss any of the three and retries amplify instead of healing.</li>
+            <li>Price your policy with the <a href="../calculators.html#retry-storm">retry storm calculator</a> before the incident instead of after.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, the full recovery math.</li>
+          </ul>
+          <p>Idempotency from Lesson 10 is what makes retries safe to attempt. Without it, backoff only spaces out the damage. The two lessons compose. Design them together, review them together.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Convince me your retries cannot DDoS your own brokers. <span class="q-seen">Seen at: Amazon-style loops.</span></p>
+            <p><strong>Q2.</strong> Lag is extreme plus breakers open. What consumes first on recovery? <span class="q-seen">Seen at: SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Amplifier capped. Now slow the producer instead. <a href="#lesson-12">Lesson 12: Backpressure â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 Â· Flow Â· Slow down to speed up</div>
+          <h2>Backpressure Beats Buffering</h2>
+          <p class="lesson-story">Assumption: bigger buffers absorb bigger spikes. Buffers only postpone the reckoning while hiding the signal. A payments migration aimed at 10,000 transactions per second survived by separating urgent payments from patient analytics into lanes with independent workers. Backpressure tells producers to slow down. Buffering tells operators everything is fine until it is not.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producer flood split into urgent and patient lanes with a backpressure signal slowing the producer">
+            <rect class="boxhot" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">flood in</text>
+            <rect class="boxlime" x="140" y="20" width="130" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">urgent lane</text>
+            <rect class="box" x="140" y="90" width="130" height="40" rx="8"/><text x="205" y="114" font-size="11" text-anchor="middle">patient lane</text>
+            <rect class="box" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">slow signal</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">steady out</text>
+            <g stroke-width="2"><line x1="108" y1="68" x2="140" y2="40"/><line x1="108" y1="82" x2="140" y2="102"/><line x1="270" y1="40" x2="302" y2="62"/><line x1="270" y1="110" x2="302" y2="88"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Lane traffic by urgency before it shares workers. One surge must never starve everything.</li>
+            <li>Signal slowness upstream explicitly. Dropped plus delayed with notice beats silent plus lost.</li>
+            <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, lanes that cut latency 25x.</li>
+          </ul>
+          <p>Separate your own urgent from patient traffic this quarter, then load-test the urgent lane alone. Queues that absorb spikes are designed. Queues that merely buffer are postponed incidents with dashboards.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Traffic triples at 6 PM with mixed urgency. Walk through the flow. <span class="q-seen">Seen at: Google-style loops.</span></p>
+            <p><strong>Q2.</strong> When does backpressure hurt more than buffering? <span class="q-seen">Seen at: backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Flow steadied. Now envelope the month. <a href="#lesson-13">Lesson 13: Envelope â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 Â· Economics Â· Backlog plus invoice</div>
+          <h2>The Envelope Math</h2>
+          <p class="lesson-story">Assumption: throughput is a technical metric. It is a financial one wearing a dashboard. Sixty thousand events per second sustained for a month is 155 billion events. At eleven paused minutes the backlog alone is 39.6 million. Run your shape through the envelope calculator before launch. Envelopes surprise only the unpriced.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Events per second multiplied by seconds per month into a backlog plus cost envelope">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">60k eps</text>
+            <rect class="box" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">2.6M sec</text>
+            <rect class="boxhot" x="292" y="55" width="120" height="40" rx="8"/><text x="352" y="79" font-size="11" text-anchor="middle">155B events</text>
+            <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">priced</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <text class="lbl" x="8" y="130" font-size="11">modeled envelope, labeled as estimates</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Multiply before you build. Events per second times seconds per month is the invoice in waiting.</li>
+            <li>Run your shape through the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> plus the <a href="../calculators.html#pool-size">pool sizer</a>. Two calculators, one honest design.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, backlog math with receipts.</li>
+          </ul>
+          <p>Present envelopes as ranges with stated assumptions, never as single confident numbers. Precision without assumptions is theater. The bill hides in the boundary between the model and the month.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size a pipeline for 155 billion monthly events, out loud. <span class="q-seen">Seen at: Uber-style plus data loops.</span></p>
+            <p><strong>Q2.</strong> Retention doubles plus budget does not. What moves tiers? <span class="q-seen">Seen at: FinOps-flavored loops.</span></p>
+          </div>
+          <p class="lesson-hook">Month priced. Now rehearse the interview. <a href="#lesson-14">Lesson 14: Interview bench â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 Â· Interviews Â· Clarify plus estimate plus break</div>
+          <h2>The Interview Bench</h2>
+          <p class="lesson-story">The panel asks for notifications for 100 million users. The candidate who clarifies scope, estimates out loud, plus names three ways the design breaks passes. The candidate who recites broker trivia does not. Clarify first. Estimate second. Break your own design third, before they do.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview answer flow from clarified scope through out-loud estimates and self-breaking to an offer">
+            <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">clarify</text>
+            <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">estimate</text>
+            <rect class="box" x="292" y="55" width="110" height="40" rx="8"/><text x="347" y="79" font-size="11" text-anchor="middle">break it</text>
+            <rect class="boxhot" x="434" y="55" width="118" height="40" rx="8"/><text x="493" y="79" font-size="11" text-anchor="middle">offer</text>
+            <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="260" y1="75" x2="292" y2="75"/><line x1="402" y1="75" x2="434" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L205,75 L347,75 L493,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Clarify scope before drawing. Urgent versus patient, ordered versus not, retained for how long.</li>
+            <li>Estimate partitions plus consumers plus backlog out loud with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. Panels score math over adjectives.</li>
+            <li>Break your own design unprompted. Hot keys, rolling storms, plus poison events, with fixes attached.</li>
+          </ul>
+          <p>Rehearse three answers this week: a partition sizing with headroom math, a rebalance story with protocol fixes, plus an exactly-once design with key expiry. Bring diagrams. Engineers draw. Tourists describe.</p>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design notifications for 100 million users end to end in 45 minutes. <span class="q-seen">Seen at: Meta-style plus WhatsApp-style loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about a pipeline failure you caused plus fixed. <span class="q-seen">Seen at: behavioral plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Answers rehearsed. Now run one pipeline for real. <a href="#lesson-15">Lesson 15: Run pipeline â†’</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 Â· Capstone Â· One topic, three consumers</div>
+          <h2>Run One Pipeline</h2>
+          <p class="lesson-story">Start small on purpose. One topic, three consumers, one dashboard. Produce a million events, kill a consumer mid-run, watch the rebalance, read the dead letters, replay the log, price the month. A pipeline you have broken on purpose is the only kind you understand.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from one topic through three consumers and a kill drill to a priced dashboard">
+            <rect class="boxlime" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">1 topic</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">3 consumers</text>
+            <rect class="boxhot" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">kill drill</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">priced, replayed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+            <text class="lbl" x="8" y="130" font-size="11">break it on purpose, then price the month</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run the fourteen drills from lessons 1 through 13 against one real topic. Gaps are visible at a glance.</li>
+            <li>Kill one consumer mid-run plus measure the rebalance. Untested failover is a rumor with runbooks.</li>
+            <li>Close with the invoice. Events per month times modeled unit price, labeled as estimates.</li>
+          </ul>
+          <p class="lesson-hook">Course complete. Interview the whole system next: <a href="learn-system-design.html">System Design Course</a>, then browse <a href="course.html">all courses</a> plus <a href="index.html">all case studies</a>. New events arrive constantly. So will new backlogs.</p>
+          <p>The log remembers. The invoice explains. You just built the study guide. Earn the grade.</p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Kafka rebalance cascades, Razorpay partition limits, Roblox tiering, Discord hot partitions, Stripe idempotency, Notion change capture, plus the retry storm model. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> Â· <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
