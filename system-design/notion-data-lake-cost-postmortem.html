@@ -44,7 +44,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -99,7 +99,7 @@
 
       <article class="prose">
         <figure class="article-figure">
-          <img src="../images/articles/notion-data-lake-cost-postmortem.png" alt="Illustration of Notion data lake architecture with ingest, process, store, serve, monitoring and cost layers">
+          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-data-lake-cost-postmortem.png" alt="Illustration of Notion data lake architecture with ingest, process, store, serve, monitoring and cost layers">
           <figcaption>Figure 1. The quiet workspace on the left becomes a high-throughput data platform on the right.</figcaption>
         </figure>
         <section>
@@ -164,7 +164,7 @@
           <h2>5. The Bill: What Could This Cost?</h2>
 
           <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/notion-flood-meme.svg" alt="Pen sketched cartoon of a grinning cat drowning in a flood of document blocks" width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one cartoon, drawn for this postmortem. Every block is cheap. The flood is not.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/notion-flood-meme.svg" alt="Pen sketched cartoon of a grinning cat drowning in a flood of document blocks" width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one cartoon, drawn for this postmortem. Every block is cheap. The flood is not.</figcaption></figure>
           <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failover and operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transfer and monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply. A larger high-memory mix could exceed it.</p>
           <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissions and replication overhead. Assume 300 TB of compressed lake data across raw, processed and historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storage and scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>
           <p><strong>Search and vector infrastructure.</strong> Notion's own vector-search post says the old architecture reached a cost run rate of millions per year and that the first storage-compute decoupling cut peak cost by 50 percent. Before the later 90 percent reduction, a reasonable modeled range is <strong>$150,000-$350,000 per month</strong> for vector storage, indexing, embeddings, EMR and serving. This is exactly where idle capacity becomes a villain: a rarely queried workspace can still occupy index capacity if storage and compute are welded together.</p>

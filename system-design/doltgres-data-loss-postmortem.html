@@ -36,7 +36,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -65,7 +65,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows DoltHub's public postmortem. The affected customer and data volume are not identified. The failure path and remediation are drawn from the published account.</aside>
     <article class="prose">
-      <figure class="article-figure"><img src="../images/articles/doltgres-loss-meme.svg" alt="Doltgres backup losing metadata during garbage collection" width="1200" height="680"><figcaption>Figure 1. The Doltgres loss in one cartoon. The backup copied the row. The missing metadata copied the disaster.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/doltgres-loss-meme.svg" alt="Doltgres backup losing metadata during garbage collection" width="1200" height="680"><figcaption>Figure 1. The Doltgres loss in one cartoon. The backup copied the row. The missing metadata copied the disaster.</figcaption></figure>
       <section><h2>1. The Backup Completed. That Was the Problem.</h2>
         <p>In August a Doltgres customer upgraded from 0.57.3 to 1.2.0. Before the upgrade they used the hosted web interface to create a backup. The upgrade finished. SELECT queries then failed on some tables. Engineers repaired the database structure enough for queries to run, but missing values had already been replaced with NULL. Some smaller tables lost every affected value in at least one column.</p>
         <p>The customer tried a downgrade. It did not restore the data. They restored the backup. It reproduced the same damage. That second result is the one database teams fear. A bad live copy is painful. A bad backup means the recovery path is decorative.</p>
@@ -94,7 +94,7 @@
         <p><strong>Upgrade logic allowed destructive work too early.</strong> The new release ran automatic GC before an integrity scan established that old data had migrated correctly. Upgrade should be boring. It should also be allowed to refuse service until the data passes inspection.</p>
         <p><strong>Representation changes lacked historical fixtures.</strong> Tests covered current writes. They did not cover values created by every older encoder followed by backup, clone, GC and restore. Storage formats remember your shortcuts longer than your team does.</p>
       </section>
-      <figure class="article-figure pm-meme"><img src="../images/articles/doltgres-quarantine-meme.svg" alt="Pen sketched cartoon of a skeptical cat penning unknown database objects in quarantine" width="1200" height="680"><figcaption>Figure 2. The quarantine in one cartoon, drawn for this postmortem. Unknown reachability waits in a pen. Nothing deletes on suspicion.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/doltgres-quarantine-meme.svg" alt="Pen sketched cartoon of a skeptical cat penning unknown database objects in quarantine" width="1200" height="680"><figcaption>Figure 2. The quarantine in one cartoon, drawn for this postmortem. Unknown reachability waits in a pen. Nothing deletes on suspicion.</figcaption></figure>
       <section><h2>5. What Should Happen Instead</h2>
         <p>First, make backup verification logical. After every backup, restore it into an isolated instance and run a table and column inventory. Compare row counts, null counts, checksums and sampled value hashes against the source. For adaptive encoding, explicitly scan side stores and verify every pointer resolves.</p>
         <p>Second, turn uncertainty into a safe failure. If GC encounters an object whose reachability cannot be established because metadata is malformed or missing, quarantine it. Do not delete it. Storage is cheaper than an apology written after NULL has replaced a customer value.</p>

@@ -46,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -84,7 +84,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Funding, ARR and model notes below come from ElevenLabs posts and press linked at the end. Token and GPU costs are a labeled scenario model. Nothing here is ElevenLabs billing.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><img src="../images/articles/elevenlabs-voice-meme.svg" alt="ElevenLabs per character voice billing illustration" width="1200" height="680"><figcaption>Figure 1. Voice billing in one cartoon, drawn for this postmortem. One hello in. One GPU bills. Repeat a billion times and pretend you are surprised.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/elevenlabs-voice-meme.svg" alt="ElevenLabs per character voice billing illustration" width="1200" height="680"><figcaption>Figure 1. Voice billing in one cartoon, drawn for this postmortem. One hello in. One GPU bills. Repeat a billion times and pretend you are surprised.</figcaption></figure>
 
       <section><h2>1. The Hello That Costs a Data Center</h2>
         <p>Hello is five characters. At ElevenLabs standard pricing that is five credits. The API accepts the text, runs it through a transformer that maps characters to audio and streams the result. The hello sounds human. It also sounds exactly like the hello you generated ten seconds ago for a different user, except you paid for it again.</p>
@@ -137,7 +137,7 @@
           <tr><td><strong>Total scenario</strong></td><td><strong>$16.5M</strong></td><td></td></tr>
           <tr><td>Wasted repeats at 40%</td><td>$5.4M</td><td>repeat rate</td></tr>
         </tbody></table>
-        <figure class="article-figure pm-meme"><img src="../images/articles/elevenlabs-cache-meme.svg" alt="Pen sketched cartoon of a skeptical cat comparing a cached hello versus a fresh GPU render" width="1200" height="680"><figcaption>Figure 2. Cache vs render in one cartoon, drawn for this postmortem. Cached hello hits in 5ms. Fresh hello bills a GPU for 75ms. Guess which one you shipped by default.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/elevenlabs-cache-meme.svg" alt="Pen sketched cartoon of a skeptical cat comparing a cached hello versus a fresh GPU render" width="1200" height="680"><figcaption>Figure 2. Cache vs render in one cartoon, drawn for this postmortem. Cached hello hits in 5ms. Fresh hello bills a GPU for 75ms. Guess which one you shipped by default.</figcaption></figure>
         <div class="tip"><strong>What went wrong vs what should be:</strong> Wrong was treating every hello as a new render with no hash. Right is a phoneme cache keyed by text plus voice plus prosody that serves 60% from edge and only wakes Flash for truly novel sentences.</div>
       </section>
 

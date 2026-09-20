@@ -36,7 +36,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html">System Design</a>
@@ -65,7 +65,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Check Point says it disclosed the issue to OpenAI and the specific Artifactory instance was decommissioned. The report does not claim a broad real-world campaign. This article audits the architecture pattern, not an active exploit.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img src="../images/articles/chatgpt-channel-meme.svg" alt="ChatGPT containers passing Gmail data through shared Artifactory metadata" width="1200" height="680"><figcaption>Figure 1. The channel in one cartoon. The containers were isolated. The metadata was feeling social.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/chatgpt-channel-meme.svg" alt="ChatGPT containers passing Gmail data through shared Artifactory metadata" width="1200" height="680"><figcaption>Figure 1. The channel in one cartoon. The containers were isolated. The metadata was feeling social.</figcaption></figure>
       <section><h2>1. The Covert Channel</h2>
         <p>Check Point's disclosure describes ChatGPT code-execution containers that were isolated from one another but could reach a shared internal JFrog Artifactory service. The service supported package delivery. Containers could write and read shared metadata attached to repository items. That metadata became a mailbox.</p>
         <p>Account A leaves a task in the shared service. Account B's session reads it. If Account B has Gmail access, a hidden instruction can ask the victim session to retrieve permitted data and write the result back through the same channel. The user sees the answer to the visible prompt. The invisible side job completes beside it.</p>

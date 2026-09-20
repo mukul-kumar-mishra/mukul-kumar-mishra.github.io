@@ -46,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -84,7 +84,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Stripe volume, API and webhook behavior below come from Stripe docs and disclosures linked at the end. The 1M RPS cost model is a labeled scenario. Nothing here is Stripe billing.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><img src="../images/articles/stripe-ledger-meme.svg" alt="Stripe ledger and idempotency retry illustration" width="1200" height="680"><figcaption>Figure 1. Idempotency in one cartoon, drawn for this postmortem. One  charge in. Three retries bounce off the cache. Zero double entries land on the ledger.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/stripe-ledger-meme.svg" alt="Stripe ledger and idempotency retry illustration" width="1200" height="680"><figcaption>Figure 1. Idempotency in one cartoon, drawn for this postmortem. One  charge in. Three retries bounce off the cache. Zero double entries land on the ledger.</figcaption></figure>
 
       <section><h2>1. The Double Charge You Cannot Explain</h2>
         <p>A customer taps pay. The browser sends POST /v1/charges. The network stalls for four seconds. The client does the responsible thing and retries with the same intent. Somewhere two identical requests approach your system. If your code inserts a row twice then one tap becomes two charges, one refund path and a support ticket that never ends.</p>
@@ -169,7 +169,7 @@
         </div>
       </section>
 
-      <figure class="article-figure pm-meme"><img src="../images/articles/stripe-webhook-meme.svg" alt="Pen sketched cartoon of a grinning cat draining a webhook storm through a ledger" width="1200" height="680"><figcaption>Figure 2. The webhook storm in one cartoon, drawn for this postmortem. Events queue. Workers drain. Duplicates bounce off the ledger.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/stripe-webhook-meme.svg" alt="Pen sketched cartoon of a grinning cat draining a webhook storm through a ledger" width="1200" height="680"><figcaption>Figure 2. The webhook storm in one cartoon, drawn for this postmortem. Events queue. Workers drain. Duplicates bounce off the ledger.</figcaption></figure>
       <section><h2>8. How I Would Cut the Bill Without Cutting Correctness</h2>
         <p><strong>Serve idempotency at the edge.</strong> Cache idempotency responses in a globally replicated store close to the client with a strongly consistent origin fallback. A duplicate that gets answered at the edge costs a lookup, not a ledger lock. At payments scale the edge is a financial control.</p>
         <p><strong>Make ledger entries compact.</strong> Represent fees, transfers and settlement as separate streams derived from the canonical payment event rather than writing every derived balance inline on the payment transaction. Keep per transaction ledger work minimal and fan out downstream</p>

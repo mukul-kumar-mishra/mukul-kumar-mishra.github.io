@@ -59,7 +59,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html">System Design</a>
@@ -97,7 +97,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Evidence status:</strong> OpenAI published a paper and Lean repository. The claim is not a Clay Prize award. Independent mathematicians still need to check the statement, novelty, proof and significance. Those are four separate jobs. A green compiler is only one of them.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><img src="../images/articles/navier-stokes-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching Astra agents solve a Navier Stokes vortex problem" width="1200" height="680"><figcaption>Figure 1. The claim in one cartoon, drawn for this postmortem. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/navier-stokes-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching Astra agents solve a Navier Stokes vortex problem" width="1200" height="680"><figcaption>Figure 1. The claim in one cartoon, drawn for this postmortem. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.</figcaption></figure>
 
       <section><h2>1. What OpenAI Actually Claimed</h2>
         <p>The September 8 announcement says an internal system produced a solution to the Navier-Stokes existence and smoothness problem. More precisely, it claims a construction where initially smooth three-dimensional incompressible flow develops a singularity in finite time. OpenAI says the fluid begins at rest, receives a smooth external force and keeps finite total energy while velocity becomes unbounded in a shrinking vortex.</p>
@@ -113,7 +113,7 @@
         <p>The terms have physical jobs. The first term is time change. The nonlinear term transports velocity through itself. Pressure enforces incompressibility. Viscosity ν smooths gradients through the Laplacian. The divergence condition says fluid does not compress or expand.</p>
         <p>The problem is not solving a nice numerical simulation. Numerical simulations already work extremely well for bounded times and practical flows. The problem asks whether every smooth initial condition remains smooth forever in three dimensions. Or whether some perfectly smooth start creates a finite-time singularity where velocity or a derivative becomes unbounded.</p>
         <p>Energy estimates make the trap obvious. Multiply the equation by u and integrate over space. The nonlinear transport term largely cancels under incompressibility. Viscosity dissipates energy. One gets a useful bound on total kinetic energy. But total energy can stay finite while velocity concentrates into a smaller region. A fast narrow vortex can hide unbounded pointwise behavior inside a finite global budget. The accountant is happy. The fluid is not.</p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/navier-stokes-pipeline-meme.svg" alt="Pen sketched cartoon of a grinning cat running thousands of math agents into Lean proof checking" width="1200" height="680"><figcaption>Figure 2. The production line in one cartoon, drawn for this postmortem. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/navier-stokes-pipeline-meme.svg" alt="Pen sketched cartoon of a grinning cat running thousands of math agents into Lean proof checking" width="1200" height="680"><figcaption>Figure 2. The production line in one cartoon, drawn for this postmortem. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens.</figcaption></figure>
       </section>
 
       <section><h2>3. Why This Stayed Unsolved for 90 Years</h2>

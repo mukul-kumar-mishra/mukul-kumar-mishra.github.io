@@ -46,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -84,7 +84,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Lovable funding, product and routing notes below come from company posts and press linked at the end. Token rates and infra costs are a labeled scenario model. Nothing here claims to be Lovable billing.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><img src="../images/articles/lovable-preview-meme.svg" alt="Lovable prompt to preview loop with sandbox and token routing illustration" width="1200" height="680"><figcaption>Figure 1. The preview tax in one cartoon, drawn for this postmortem. One prompt in. One sandbox boots. npm installs the internet while the meter spins.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/lovable-preview-meme.svg" alt="Lovable prompt to preview loop with sandbox and token routing illustration" width="1200" height="680"><figcaption>Figure 1. The preview tax in one cartoon, drawn for this postmortem. One prompt in. One sandbox boots. npm installs the internet while the meter spins.</figcaption></figure>
 
       <section><h2>1. The Preview Button Is a Data Center</h2>
         <p>Type add a pricing table and watch the preview. One sentence becomes a plan, a patch set, a file rewrite, a Vite rebuild and a deployed URL. The sandbox spins up an isolated filesystem, clones a template, applies the diff, runs package install, starts a dev server and streams logs back through the agent. It feels instant. It costs a boot plus a build plus the model call that wrote the code.</p>
@@ -170,7 +170,7 @@
         </div>
       </section>
 
-      <figure class="article-figure pm-meme"><img src="../images/articles/lovable-cache-meme.svg" alt="Pen sketched cartoon of a skeptical cat caching a sandbox layer instead of reinstalling" width="1200" height="680"><figcaption>Figure 2. The layer cache in one cartoon, drawn for this postmortem. Install once. Reuse everywhere. The preview button stops reinstalling the internet.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/lovable-cache-meme.svg" alt="Pen sketched cartoon of a skeptical cat caching a sandbox layer instead of reinstalling" width="1200" height="680"><figcaption>Figure 2. The layer cache in one cartoon, drawn for this postmortem. Install once. Reuse everywhere. The preview button stops reinstalling the internet.</figcaption></figure>
       <section><h2>8. How I Would Cut the Bill Without Cutting the Demo</h2>
         <p><strong>Hash the lockfile and never reinstall for free.</strong> Cache node_modules layers by package lock hash plus Node version plus registry mirror. Keep a content addressed store for tarballs. A prompt that tweaks a button should not reinstall 900 packages through the same registry ten times.</p>
         <p><strong>Snapshot the filesystem between turns.</strong> Preserve the sandbox filesystem as a snapshot after a successful Vite build. Next prompt restores the snapshot in milliseconds, applies a diff and rebuilds only changed routes. Warm pool for five minutes per project turns a cold boot into a warm patch.</p>

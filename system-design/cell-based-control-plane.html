@@ -54,7 +54,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html">System Design</a>
@@ -130,13 +130,13 @@
         </section>
 
         <section>
-      <figure class="article-figure pm-meme"><img src="../images/articles/cell-raft-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching a Raft election inside one cell" width="1200" height="680"><figcaption>Figure 2. The Raft round in one cartoon, drawn for this postmortem. Leader falls. Followers vote. The cell never blinks.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/cell-raft-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching a Raft election inside one cell" width="1200" height="680"><figcaption>Figure 2. The Raft round in one cartoon, drawn for this postmortem. Leader falls. Followers vote. The cell never blinks.</figcaption></figure>
           <h2>2. Proposed Target Architecture</h2>
 
           <p>
             By restructuring the control plane into isolated, self-contained Cells, where each cell operates its own independent state machine, we decouple failures entirely.
           </p>
-        <figure class="article-figure pm-meme"><img src="../images/articles/cellbased-architect-meme.svg" alt="Pen sketched cartoon of a grinning cat beside isolated region cells" width="1200" height="680"><figcaption>Figure 1. Blast radius in one cartoon, drawn for this postmortem. One cell quarantined. The rest stay fine.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cellbased-architect-meme.svg" alt="Pen sketched cartoon of a grinning cat beside isolated region cells" width="1200" height="680"><figcaption>Figure 1. Blast radius in one cartoon, drawn for this postmortem. One cell quarantined. The rest stay fine.</figcaption></figure>
           <div style="border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--card);margin:1.2em 0;">
             <div class="mermaid">
               graph TD

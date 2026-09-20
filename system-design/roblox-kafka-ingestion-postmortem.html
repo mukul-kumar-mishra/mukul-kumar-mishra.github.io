@@ -46,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>
@@ -96,7 +96,7 @@
       <section><h2>3. Reconstructing the Machine</h2>
         <p>Producers sit everywhere. Game servers emit state changes. Clients emit telemetry. Chat, presence, purchases, plus moderation signals join the stream. Brokers durably order this firehose. Consumers split into live systems plus batch analytics. Failover rides on a standby cluster with spare capacity. Chaos drills plus game days rehearse host, rack, plus network failures.</p>
         <p>The hardware story reads like triage notes. Disk I/O choked first on RAID10 spinning disks, so brokers moved to SSDs for a tenfold throughput jump, trading disk space for speed. Remaining disks flipped from RAID10 to RAID0, doubling write capacity by dropping the mirror. Page cache tuning keeps hot reads in memory. Broker throttles cap runaway tenants. Each fix bought headroom. None of them asked which traffic actually needed it.</p>
-        <figure class="article-figure"><img src="../images/articles/roblox-tier-flow.svg" alt="Flow diagram of Roblox event traffic split into hot warm and cold latency tiers feeding separate Kafka paths" width="1200" height="600"><figcaption>Figure 1. The proposed shape in one diagram. Route by urgency first. Hot matchmaking gets SSD speed. Patient analytics gets shared throughput. Cold history gets cheap disks.</figcaption></figure>
+        <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/roblox-tier-flow.svg" alt="Flow diagram of Roblox event traffic split into hot warm and cold latency tiers feeding separate Kafka paths" width="1200" height="600"><figcaption>Figure 1. The proposed shape in one diagram. Route by urgency first. Hot matchmaking gets SSD speed. Patient analytics gets shared throughput. Cold history gets cheap disks.</figcaption></figure>
       </section>
 
       <section><h2>4. The Cache War Next Door</h2>
@@ -121,7 +121,7 @@
           <tr><td><strong>Difference</strong></td><td colspan="2"><strong>$7.95M/month, about 78 percent lower</strong></td></tr>
         </tbody></table>
         <div class="callout"><strong>The uncomfortable math:</strong> Every percentage point of patient traffic treated as urgent traffic buys matchmaking-grade redundancy for data that would wait a week. Urgency is the most expensive tag in the system. Stop handing it out by default.</div>
-        <figure class="article-figure"><img src="../images/articles/roblox-cost-waterfall.svg" alt="Bar chart comparing current shaped monthly cost against proposed design across event work storage failover and edge layers" width="1200" height="600"><figcaption>Figure 2. The envelopes side by side. Classification does the winning, not cheaper servers. Refuse the urgent path to patient work.</figcaption></figure>
+        <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/roblox-cost-waterfall.svg" alt="Bar chart comparing current shaped monthly cost against proposed design across event work storage failover and edge layers" width="1200" height="600"><figcaption>Figure 2. The envelopes side by side. Classification does the winning, not cheaper servers. Refuse the urgent path to patient work.</figcaption></figure>
       </section>
 
       <section><h2>7. What I Would Change Before the Next Trillion</h2>
