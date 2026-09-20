@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discord voice lost 17 percent of sessions for three hours when a safety check outran Kubernetes grace plus a thundering herd hit 14 of 15 instances. A forensic teardown with RPS plus cost math.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Discord Voice Postmortem: The Herd Heard Itself">
+  <meta property="og:description" content="A safety check that ignored grace plus a reconnect surge that ignored limits. Three hours, 17 percent of sessions, 14 of 15 voice nodes down. RPS math inside.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/discord-voice-thundering-meme.svg">
+  <meta property="og:image:alt" content="Three stat panels showing pods dead, simultaneous reconnects and voice instances lost">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Discord Voice Postmortem: The Herd Heard Itself">
+  <meta name="twitter:description" content="Grace period killed the cluster. Rate limits saved it. Three hours of RPS math.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/discord-voice-thundering-meme.svg">
+  <meta name="twitter:image:alt" content="Discord voice thundering herd stat panels">
+  <title>Discord Voice Postmortem: The Herd Heard Itself | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Discord Voice Postmortem: The Herd Heard Itself","description":"Discord voice lost 17 percent of sessions when a safety check outran Kubernetes grace plus a reconnect herd hit the cluster. Forensic teardown with RPS plus cost math.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-20","dateModified":"2026-09-20","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html"},"keywords":"Discord, voice, thundering herd, Kubernetes, postmortem, rate limiting, Mukul Kumar Mishra"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Discord Voice Postmortem: The Herd Heard Itself</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Vertical scaling asked for a stronger session service. A safety check ran long. Kubernetes stopped waiting. Pods marked dead triggered millions of reconnects at once. The herd that health checks were meant to prevent became the outage itself. Three hours later the fix was not more capacity first. It was less admission first.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Safety check exceeded grace. Pods died together. Reconnect surge exhausted US East memory plus dropped 14 of 15 voice instances. Recovery required aggressive rate limits plus doubled cluster size. Herd control beats herd capacity.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Impact</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">17 pct sessions</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~3 hours</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Voice Fleet</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">14/15 down</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Fix</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Limit plus 2x</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 20, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Session loss, duration plus recovery steps come from public incident summary. RPS, connection burst plus cost numbers are a labeled scenario model. The incident is factual. The spreadsheet is illustrative.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/discord-voice-thundering-meme.svg" alt="Three stat panels showing pods dead, simultaneous reconnects and voice instances lost" width="1200" height="680"><figcaption>Figure 1. The herd in one cartoon. Safety check ran past termination grace. Millions reconnected at once. Fourteen of fifteen voice instances dropped.</figcaption></figure>
+      <section><h2>1. The Scaling That Scaled the Wrong Thing</h2>
+        <p>Discord voice is a long-lived session service on Erlang, fronted by Kubernetes. The intent was vertical scaling for headroom. The tool was a safety check before terminating old pods. The check read state that grew with history. The duration grew with state. At some width the check outlived <code>terminationGracePeriodSeconds</code>.</p>
+        <p>Kubernetes then stops waiting. SIGKILL arrives. The pod is dead regardless of whether the check promised to finish. When many pods share the same rollout, the same overdue check fires together. Many pods die together. That is the thunder. The herd is the clients that notice.</p>
+        <p>Clients reconnect fast because voice is latency sensitive. Millions of sessions retry at once, not spread over minutes. The control plane that scheduled the scaling now schedules the recovery, under the exact load the scaling tried to avoid.</p>
+      </section>
+      <section><h2>2. Why The Cluster Cascaded</h2>
+        <p>Voice session state is memory heavy plus connection heavy. Each reconnect allocates buffers, replays presence plus revalidates routes. At thunder scale the memory allocator becomes the scheduler. US East exhausted first. The region that held the most sessions held the most risk.</p>
+        <p>Fourteen of fifteen voice instances dropped after the flood. Targeted restarts failed because the target re-flooded. Full cluster restarts failed for the same reason. Restart is a capacity action. The incident needed an admission action.</p>
+        <p>Erlang's preemptive scheduling saved the remaining beam but not the storm. The service that prides itself on soft real-time hit a hard real-time edge. The deadline was not in code. The deadline lived in the deployment manifest.</p>
+      </section>
+      <section><h2>3. The RPS Model</h2>
+        <p>Assume 200 million monthly voice participants with 8 million concurrent voice sessions at peak. Each session holds one WebSocket plus one media path. Reconnect is one auth plus one session resume plus one presence fan-out, roughly 3 operations per client. A thunder that touches 17 percent, about 1.36 million sessions, generates about 4.1 million operations in the reconnect window.</p>
+        <p>If the window is 45 seconds before rate limits engage, the burst is about 91,000 RPS of reconnect plus 45,000 RPS of presence replays. The steady voice control plane at that hour might be 12,000 RPS. The herd multiplies baseline by nearly ten times for a full minute.</p>
+        <p>Targeted restarts added another multiplier. Each restart re-triggered the same safety check plus the same grace overflow plus the same death plus the same reconnect. Two restarts in 20 minutes double the incident cost without doubling the learning.</p>
+        <table><thead><tr><th>Workload</th><th>Scenario</th><th>Modeled RPS</th></tr></thead><tbody>
+          <tr><td>Steady voice control</td><td>8M concurrent sessions</td><td>12k avg</td></tr>
+          <tr><td>Reconnect burst 17 pct</td><td>1.36M sessions, 3 ops each, 45 sec</td><td>91k peak</td></tr>
+          <tr><td>Presence replay</td><td>fan-out per reconnect</td><td>45k peak</td></tr>
+          <tr><td>Total with retries</td><td>no limits for first 45 sec</td><td>~148k</td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Load test tip:</strong> Test grace overflow before you test scale. A pod that cannot drain within its grace never scales safely. It fails equally on the way up plus on the way down.</div>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/discord-voice-rate-limit-flow.svg" alt="Flow diagram from rate limit to back pressure to cluster survival" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Aggressive rate limits plus doubled cluster plus health check inside grace. Herd thinned before memory burned.</figcaption></figure>
+      <section><h2>4. The Fix That Actually Fixed It</h2>
+        <p>The recovery that worked applied back pressure before capacity. Aggressive rate limits at the edge thinned the herd. Only then did doubling the cluster help, because the doubled cluster no longer met the full thunder at once. Order mattered. Scale without limits replays the incident faster. Limits without scale prolongs degraded service. Together they converge.</p>
+        <p>The durable fix moves the safety check inside the grace or outside the critical path. Split the check into a pre-check that is bounded by time plus a post-check that can run after drain. Set the grace to exceed the p99 of the bounded check by at least two times. Alert when any check exceeds 70 percent of grace for three consecutive rolls.</p>
+        <p>Admission is now a budget. Voice resumes should be token bucket gated per instance plus per region. Presence replays should be coalesced per channel. Reconnect storms become a managed queue, not a flood.</p>
+      </section>
+      <section id="cost-model"><h2>5. The Cost Model</h2>
+        <p>Assume the doubled cluster is 40 extra c6g.xlarge equivalents at $0.136 per hour, about $5.44 per hour plus 3 hours is $16.32 direct compute plus 12 hours of held headroom is $65. That is trivial. The incident cost lives elsewhere. Support, incident bridges plus customer impact dominate.</p>
+        <p>At 1M RPS thought experiment, the herd lesson saves more than vertical scale ever could. Limiting reconnects from 148k to 35k per region via token buckets cuts origin work by 76 percent. If each voice operation costs $0.0000015, the uncontrolled burst for one hour is $795. Controlled is $189. Over a month of recurring rolls without the fix the delta exceeds $18k in origin alone, before support plus churn.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
+          <tr><td>Held headroom</td><td>$1,950</td><td>2x size held 12h per week</td></tr>
+          <tr><td>Uncontrolled burst</td><td>$19k at 1M scale</td><td>148k RPS, 1 hour per week</td></tr>
+          <tr><td>Controlled burst</td><td>$4.5k at 1M scale</td><td>35k gated RPS</td></tr>
+          <tr><td><strong>Delta</strong></td><td><strong>~$14.5k saved</strong></td><td><strong>Limits before scale</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The lesson that bills:</strong> Grace is a deadline. Limits are capacity. The incident paid because the team scaled capacity without honoring deadlines plus without throttling admission.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Grace periods feel like safety nets until they act as kill timers. Health checks that outlive grace do not keep pods alive. They schedule pods to die together. The herd that follows is not a mystery. It is the clients doing exactly what they were designed to do when their server disappears.</p>
+        <p>The fix is boring in the right way. Bound every check to less than half the grace. Gate every reconnect with a bucket. Scale only after the bucket holds. That order turns a thundering herd into a queue that a cluster can absorb.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The herd was not misbehavior. The herd was the design on its worst day.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident shape from public daily.dev summary of Discord voice global incident video (May 2026) plus Kubernetes graceful termination docs. RPS plus cost numbers are a labeled scenario model. Architecture advice is at system level, not a reproduction guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://www.youtube.com/watch?v=uWG4r55PmBc" target="_blank" rel="noopener noreferrer">Daily.dev: Discord Global Incident Report summary (May 31 2026)</a></li>
+          <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination" target="_blank" rel="noopener noreferrer">Kubernetes: Pod termination and grace period</a></li>
+          <li><a href="https://buildopsy.com/system-design/discord-messages-scale-postmortem.html" target="_blank" rel="noopener noreferrer">Buildopsy: Discord Trillions of Messages companion</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

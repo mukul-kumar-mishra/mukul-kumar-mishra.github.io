@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="One in five AI suggested packages never existed. Attackers squat the hallucinated names plus developers install them. Rook audits the slopsquatting supply chain that turns a model guess into a breach.">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Slopsquatting: When AI Invents the Package You Install">
+  <meta property="og:description" content="One in five AI suggested packages never existed. Attackers squat the name plus the install becomes the intrusion. Rook audits the hallucination supply chain.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/slopsquatting-hallucination-meme.svg">
+  <meta property="og:image:alt" content="Bar chart showing one in five AI suggested packages is hallucinated">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Slopsquatting: When AI Invents the Package You Install">
+  <meta name="twitter:description" content="AI hallucinates the name. Attacker registers it. The registry has no memory of intent.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/slopsquatting-hallucination-meme.svg">
+  <meta name="twitter:image:alt" content="Bar chart showing hallucinated package rate">
+  <title>Slopsquatting: When AI Invents the Package You Install | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Slopsquatting: When AI Invents the Package You Install","description":"One in five AI suggested packages never existed. Attackers squat the hallucinated names plus the install becomes the intrusion. A Rook audit of the slopsquatting supply chain.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-20","dateModified":"2026-09-20","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html"},"keywords":"slopsquatting, AI hallucination, supply chain, npm, package registry, TechTarget"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Slop Audit</span><span class="chip">September 2026</span><span class="chip">12 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Slopsquatting: When AI Invents the Package You Install</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The model guessed a package name. The name did not exist. The attacker registered it anyway. Then the developer followed instructions that felt authoritative. No exploit was needed. The install was the exploit. Rook audits the loop that turns a guess into a foothold.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Nearly one in five AI suggested packages is hallucinated plus repeatable across prompts. Attackers squat the fake names. Registries accept first claim. The fix is verification before install plus provenance on every suggest.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 20, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Reported September 2026 by TechTarget from Aikido Security research plus industry interviews, with hallucination rate near one in five plus recurrence across identical prompts. This audit marks disclosed numbers plus denies vendor forbearance.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/slopsquatting-hallucination-meme.svg" alt="Bar chart showing one in five AI suggested packages is hallucinated" width="1200" height="680"><figcaption>Figure 1. The hallucination in one cartoon. One in five AI suggested packages never existed. One prompt repeat makes the fake predictable.</figcaption></figure>
+      <section><h2>1. The Hallucination</h2>
+        <p>AI coding assistants suggest packages as helpfully as any teammate. The suggestion looks plausible. It matches naming conventions. It fits the stack. Sometimes the package is real. Roughly one in five times it is not. Research traced by TechTarget puts the hallucination rate near twenty percent, with the same fake name reappearing across identical prompts. Repeatability turns a random failure into an address defenders can predict plus attackers can claim.</p>
+        <p>The recurrence is the hinge. Non-existent names that recur can be harvested in bulk. Probe a model with common prompts. Collect the ghosts it invents. Register those ghosts before anyone notices they are ghosts. The model does the naming. The attacker does the filing.</p>
+        <div class="callout"><strong>The number that matters:</strong> Twenty percent invented sounds abstract. At Gartner projected ninety percent assistant adoption by 2028, twenty percent invention is industrial-scale supply-chain surface written by a system that cannot verify existence before suggestion.</div>
+      </section>
+      <section><h2>2. The Squat</h2>
+        <p>Slopsquatting is typosquatting with a better informant. Typosquatting bets a human will misspell. Slopsquatting asks a model to invent. The attacker then registers the invented name on the public registry. No typos required. No targeting required. Wait for the next developer who trusts the next suggestion.</p>
+        <p>One documented case traced by Aikido Security involved a hallucinated package name variant `react-code-shift`. The timeline is blunt. The model suggests. The attacker registers. The payload waits. The developer who runs the suggested install promotes the payload to production dependency. The privileged step in the supply chain was delegated to a system that invents names that do not exist.</p>
+        <p>Registries are built for speed, not for skepticism. First claim wins. There is no check that a package was hallucinated. There is no flag that a name appeared in model output before it appeared in the registry. The registry sees a normal publish. The context is elsewhere.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/slopsquatting-supply-chain-flow.svg" alt="Flow diagram from AI suggestion to registry squat to silent install" width="1200" height="680"><figcaption>Figure 2. The supply chain in one cartoon. AI suggests, attacker squats, developer installs. The registry has no memory of intent.</figcaption></figure>
+      <section><h2>3. Why Verification Fails</h2>
+        <p><strong>Trust is mispriced.</strong> Developers treat assistant output as review. Assistants generate output that looks reviewed. The mismatch is felt only after the install.</p>
+        <p><strong>Scanners look backward.</strong> Traditional supply chain tools flag known malicious packages or known typos. Slopsquatting registers new names that have no reputation. The novelty that makes the tactic reliable is the same novelty that makes retrospective scanners blind.</p>
+        <p><strong>Registries lack provenance.</strong> No current registry records whether a name first appeared as a hallucination. Without provenance, squatted ghosts are indistinguishable from legitimate new packages. First appearance plus first publish look identical.</p>
+        <p><strong>Regulation now demands receipts.</strong> The EU Cyber Resilience Act requires incident reporting by September 11 2026. A slopsquat that becomes a breach must be reported. A suggest-then-install workflow that leaves no audit trail cannot produce the receipts a regulator will soon ask for.</p>
+      </section>
+      <section><h2>4. What Should Happen Instead</h2>
+        <p>First, verify existence before suggestion surfaces. Assistants should check suggested dependencies against live registry state. Non-existent suggestions should be marked hallucinated, never rendered as installable commands.</p>
+        <p>Second, verify before install. Developers should treat any AI suggested dependency as unverified until existence plus reputation are checked outside the suggestion context. Install is a security boundary. It should behave like one.</p>
+        <p>Third, registries should rate-limit first claims on recently hallucinated names. A short cooling window plus a provenance check on names that appear in known hallucination sets would blunt bulk squatting without blocking legitimate publishing.</p>
+        <p>Fourth, keep SBOM plus attestation. An SBOM that records who suggested a dependency plus whether it was verified answers the question an incident will later ask. OMB M-26-05 already pushes federal attestation toward risk-based models. Suggestion provenance belongs there.</p>
+        <p>Fifth, enumerate hallucinated sets proactively. Continuous probing of assistant outputs can produce deny lists for registry defenders. The hallucination is predictable. The defense should be too.</p>
+        <div class="tip"><strong>Rook's rule:</strong> If the install step can be driven by a guess, the supply chain is guessing too. Verification belongs before the command, not in the postmortem.</div>
+      </section>
+      <section><h2>5. The Verdict</h2>
+        <p>Slop becomes squat when scale meets predictability. Scale arrives with near universal assistant adoption. Predictability arrives because hallucinations recur. The attacker need not breach a model. The attacker needs to register what the model already promised.</p>
+        <p>Registries fixed typosquatting with fuzzy detection. They have no fix for hallucination squatting that detects intent that does not exist in the registry. That fix lives earlier. Reject non-existent suggestions at the assistant. Verify every install at the terminal. Record suggestion provenance for the audit that now has a deadline.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The model invents the name. The registry files it. The install completes the delivery.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit follows September 2026 TechTarget reporting on Aikido Security research plus EU Cyber Resilience Act timelines. Hallucination rates are as reported. No exploit steps are reproduced. This is analysis, not a reproduction guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.techtarget.com/it-strategy/feature/Slopsquatting-explained-When-AI-code-turns-malicious" target="_blank" rel="noopener noreferrer">TechTarget: Slopsquatting explained - When AI code turns malicious (Sep 4 2026)</a></li><li><a href="https://www.theregister.com/2024/10/15/ai_code_hallucination_attack/" target="_blank" rel="noopener noreferrer">The Register: Hallucinated package squatting background (2024)</a></li><li><a href="https://www.cisa.gov/sbom" target="_blank" rel="noopener noreferrer">CISA: Software Bill of Materials guidance</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
