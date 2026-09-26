@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free API design course in 15 forensic lessons from Mukul. Contracts, versioning, idempotency, rate limits, OpenAPI, gateways, webhooks plus deprecation math, priced from production postmortems.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-api-design.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="API Design in Production: 15 Lessons From the Gateway">
+  <meta property="og:description" content="Contracts plus idempotency plus rate limits priced. Fifteen forensic API lessons with live diagrams plus calculators from the gateway.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-api-gateway-meme.svg">
+  <meta property="og:image:alt" content="Three panels showing idempotency key plus rate limit error plus replay window">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-api-design.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="API Design in Production: 15 Lessons From the Gateway">
+  <meta name="twitter:description" content="Fifteen API lessons with live diagrams plus bills. The bill hides in the boundary, with Mukul.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-api-gateway-meme.svg">
+  <title>API Design in Production: 15 Lessons From the Gateway | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"API Design in Production: 15 Lessons From the Gateway",
+    "description":"A free API design course in 15 forensic lessons covering contracts, versioning, idempotency keys, rate limits, OpenAPI, gateway versus mesh, auth, webhooks, pagination, errors, deprecation, gateway bills, pact drills plus a capstone API.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"The Contract Is the Product"},
+      {"@type":"Syllabus","name":"Version Without Breakage"},
+      {"@type":"Syllabus","name":"Idempotency Keys End Double Charges"},
+      {"@type":"Syllabus","name":"Rate Limits Are Capacity"},
+      {"@type":"Syllabus","name":"OpenAPI Turns Promises Into Artifacts"},
+      {"@type":"Syllabus","name":"Gateway Versus Mesh"},
+      {"@type":"Syllabus","name":"Auth at the Edge"},
+      {"@type":"Syllabus","name":"Webhooks at Scale"},
+      {"@type":"Syllabus","name":"Pagination Discipline"},
+      {"@type":"Syllabus","name":"Errors Clients Can Handle"},
+      {"@type":"Syllabus","name":"Deprecation Economics"},
+      {"@type":"Syllabus","name":"The Gateway Bill"},
+      {"@type":"Syllabus","name":"Breaking-Change Drills"},
+      {"@type":"Syllabus","name":"The Interview Bench"},
+      {"@type":"Syllabus","name":"Ship One API"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"API Course","item":"https://buildopsy.com/system-design/learn-api-design.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">API Design in Production: 15 Lessons From the Gateway</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: name the promise, price the boundary, plus retire versions before they retire you. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic API lessons with live diagrams, from contracts to idempotency plus rate limits plus deprecation math. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend plus SRE course · Updated September 26, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch requests travel the gateway, then design so they travel safely.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Write contracts clients can code against, version them without casualties, plus retire old versions on published dates.</li>
+        <li>Make retries safe with idempotency keys, cap floods with token buckets, plus fail with errors clients can act on.</li>
+        <li>Place policy correctly across gateway plus mesh, prove identity at the edge, plus deliver webhooks that survive the night.</li>
+        <li>Page through millions at constant cost, run pact drills per commit, plus price the gateway month as a modeled invoice.</li>
+        <li>Answer API interviews with clarified scope, out-loud bucket math, plus three ways you would break your own contract.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: clarify scope first, estimate out loud second, break your own design third. Lesson 14 rehearses the bench.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> Contract</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Versioning</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Idempotency</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Limits</a>
+        <a href="#lesson-5"><span class="rnum">05</span> OpenAPI</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Topology</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Auth</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Webhooks</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Paging</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Errors</a>
+        <a href="#lesson-11"><span class="rnum">11</span> Sunsets</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Billing</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Contracts</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Interviews</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Capstone</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · The contract ships first</div>
+          <h2>The Contract Is the Product</h2>
+          <p class="lesson-story">Assumption first: clients outlive every implementation behind them. Stripe processed $1.4 trillion without double charging anything because the API promise held while ledgers plus regions plus vendors moved underneath. Design the promise before the handler. Version the promise like money depends on it, because it does.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="name the promise before the handler">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">clients</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">contract</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">handlers</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">promise kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Name resources as nouns plus actions as verbs. Verbs in URLs age into lies the moment a second client arrives.</li>
+            <li>One contract, many handlers. Stripe plus Razorpay both kept promises while swapping queues plus regions underneath.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, idempotency keys plus double-entry discipline at $1.4 trillion.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design checkout for a store doing 40,000 RPS. What is your first endpoint? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> A partner stored your v1 response shape in their warehouse. How do you ship v2? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Promise named. Now keep it across versions. <a href="#lesson-2">Lesson 02: Versioning →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Evolution · Change without casualties</div>
+          <h2>Version Without Breakage</h2>
+          <p class="lesson-story">Every breaking change is a migration you force on strangers. Salesforce once queued logins behind one shared path on conference day two, which is what a forced migration feels like at scale. Ship v2 beside v1. Measure adoption. Sunset with dates plus headers, never with surprises.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="two versions live beats one flag day">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">v1 live</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">v2 beside</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">adopt up</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">sunset dated</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Prefer URL versions for public APIs plus header versions for partners who negotiate. Either works when the sunset date is contractual.</li>
+            <li>Emit Sunset plus Deprecation headers on every old response. Clients that can see the deadline meet the deadline.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue That Ate Dreamforce</a>, shared paths plus forced marches.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your mobile app has a 6-week review lag. How do you version? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> When is header versioning better than URL versioning? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Versions live side by side. Now make retries safe. <a href="#lesson-3">Lesson 03: Idempotency →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Safety · Retries that cannot double charge</div>
+          <h2>Idempotency Keys End Double Charges</h2>
+          <p class="lesson-story">Networks retry. That is not a bug, that is physics. The bug is charging twice for one intent. Stripe solved it with idempotency keys plus a double-entry ledger, so a retried request replays the stored result instead of repeating the side effect. Every mutating endpoint needs the same discipline.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="same key twice bills once">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">intent</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">keyed request</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">ledger check</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">one charge</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Keys ride in headers, never in bodies. The key identifies intent while the body carries details.</li>
+            <li>Store key plus response for at least 24 hours. A retry inside the window replays. Outside it starts fresh.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, exactly the machinery, priced.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design fund transfer with at-least-once delivery. Where does the key live? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> A client reuses one key for two different payments. What breaks? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Retries made safe. Now cap the flood. <a href="#lesson-4">Lesson 04: Limits →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Capacity · Admission is a budget</div>
+          <h2>Rate Limits Are Capacity</h2>
+          <p class="lesson-story">Azure West US taught the industry that retries multiply a 75 percent capacity loss into a 6 times overload at the surviving edge. Limits at the gateway turn that flood into a queue with fast errors instead of slow timeouts. Scale without limits replays the incident faster. Limits without scale prolongs the pain. Together they converge.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="shed early with fast errors">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">flood in</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">token bucket</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queue waits</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">edge holds</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Gate per key plus per route plus per region. One bucket per dimension, each with its own refill math.</li>
+            <li>Return 429 with Retry-After plus a limit-policy header. Clients that can compute backoff will back off.</li>
+            <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure West US Route Withdrawal</a>, admission math at 1.4M offered RPS.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size a token bucket for 90k burst RPS against 12k steady. Show the refill. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> When do you shed with 429 versus queue with 202? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Flood gated. Now write the contract down. <a href="#lesson-5">Lesson 05: OpenAPI →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Contracts · Specs that generate trust</div>
+          <h2>OpenAPI Turns Promises Into Artifacts</h2>
+          <p class="lesson-story">Thirteen thousand postings in ninety days ask for REST API skill, plus five thousand ask for OpenAPI by name. The spec is the contract clients code against, mocks run from, plus gateways enforce. A spec reviewed like code prevents the drift that becomes the midnight page.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="spec first, drift never">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">spec review</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">codegen out</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">mocks run</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">gateway enforces</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Lint specs in CI: no verb URLs, no unpaged lists, no undocumented errors. Red spec blocks the merge.</li>
+            <li>Generate server stubs plus client SDKs plus mocks from one source. Three artifacts, zero drift.</li>
+            <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, what happens when client contracts meet partition limits.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your spec has 200 endpoints. How do you review it without drowning? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> Codegen versus hand-written SDKs. When does each win? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Contract written. Now place the enforcement. <a href="#lesson-6">Lesson 06: Topology →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Topology · Where the policy lives</div>
+          <h2>Gateway Versus Mesh</h2>
+          <p class="lesson-story">A gateway enforces at the border. A mesh enforces between every pair of services. Use the gateway for client-facing policy such as auth plus limits plus versioning. Use the mesh for service-to-service policy such as mTLS plus per-route budgets. One border, many interiors. Confusing the two buys two bills plus one gap.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="border policy plus interior policy">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">edge in</text>
+            <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">gateway</text>
+            <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">mesh inside</text>
+            <rect class="box" x="302" y="100" width="110" height="34" rx="8"/><text x="357" y="122" font-size="11" text-anchor="middle">policy both</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">held</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="110"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Terminate TLS plus validate auth plus apply limits at the gateway. Fail fast before interior spend.</li>
+            <li>Run mTLS plus retries plus timeouts in the mesh. Interior policy travels with the call, not the docs.</li>
+            <li>Deep dive: <a href="cell-based-control-plane.html">Cell-Based Control Planes</a>, bulkheads that hold when maps fail.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Draw request path for a checkout call through gateway plus mesh. Label every policy point. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> When does a mesh add more risk than it removes? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Policy placed. Now prove identity. <a href="#lesson-7">Lesson 07: Auth →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Identity · Every call proves itself</div>
+          <h2>Auth at the Edge</h2>
+          <p class="lesson-story">None of your handlers should parse credentials. The edge validates tokens, checks scopes, plus forwards identity downstream as headers services can trust. OAuth scopes carry permission. mTLS carries workload identity. IAM carries cloud permission. Mix them deliberately or attackers will mix them for you.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="handlers trust, edge verifies">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">call arrives</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">token checked</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">scope mapped</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">identity set</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Validate plus cache JWKS with short TTLs. A slow validator becomes the outage, as us-west1 proved for IAM.</li>
+            <li>Scope per action, not per service. Broad scopes turn one leaked token into a skeleton key.</li>
+            <li>Deep dive: <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>, when IAM validation queues behind disk.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design scope model for marketplace with buyers plus sellers plus admins. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> Your JWKS endpoint slows to 4 seconds. What breaks first? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Identity settled. Now survive the callback. <a href="#lesson-8">Lesson 08: Webhooks →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Async · Callbacks that survive the night</div>
+          <h2>Webhooks at Scale</h2>
+          <p class="lesson-story">Stripe-scale webhooks mean millions of outbound callbacks into customer endpoints of unknown quality. Sign every payload. Retry with backoff plus jitter across hours. Keep per-destination queues so one slow customer cannot stall the rest. The callback is your API in reverse, with all the same discipline owed.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="one slow customer stalls nobody">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">event fires</text>
+            <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">per-dest queue</text>
+            <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">signed retry</text>
+            <rect class="box" x="302" y="100" width="110" height="34" rx="8"/><text x="357" y="122" font-size="11" text-anchor="middle">acked done</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">held</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="110"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>HMAC-sign payloads with rotating secrets plus versioned signatures. Unsigned callbacks are rumors.</li>
+            <li>Retry 8 times over 3 days with jitter. Dead-letter the rest to a dashboard someone actually reads.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, webhook storms at 1M RPS.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design webhook delivery for 1M events with 5 percent failing endpoints. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> How do you rotate signing secrets without dropping trust? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Callbacks tamed. Now page through millions. <a href="#lesson-9">Lesson 09: Paging →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Scale · Lists that do not fall over</div>
+          <h2>Pagination Discipline</h2>
+          <p class="lesson-story">Offset pagination scans deeper with every page, which means page 10,000 costs a full table walk. Cursor pagination walks an index forward at constant cost. At Discord trillions-of-messages scale the difference is the cluster. Default to cursors. Reserve offsets for admin UIs with small result sets.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="constant cost per page, forever">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">list asked</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">cursor set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">index walk</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">page flat</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Encode cursor as opaque token with sort key plus tiebreaker. Clients iterate, never compute.</li>
+            <li>Cap page size plus enforce max window. A client asking for a million rows is asking for your outage.</li>
+            <li>Deep dive: <a href="discord-messages-scale-postmortem.html">Discord Trillions of Messages</a>, hot partitions plus quorum fan-in.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price offset page 50,000 against cursor page 50,000 at 1M rows. Show the gap. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> When is offset pagination still the right call? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Lists flattened. Now fail usefully. <a href="#lesson-10">Lesson 10: Errors →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Clients · Failures they can act on</div>
+          <h2>Errors Clients Can Handle</h2>
+          <p class="lesson-story">Every error must answer three questions: what happened, whether retry helps, plus what to do next. Machine-readable codes plus retryable flags plus request IDs turn a 3 AM mystery into a 3 PM ticket. Salesforce darkness taught that support goes dark with the product unless errors carry their own flashlight.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="errors that teach beat errors that hide">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">fail fast</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">code set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">retry flagged</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">traced id</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Mark every error retryable or terminal. Ambiguous errors breed the retry storms of Lesson 04.</li>
+            <li>Echo a request ID in every response plus every log line. Correlation without IDs is archaeology.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue</a>, darkness with no flashlight.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design an error catalog for payments with 12 failure modes. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> Your 500s spike. How does a client tell retryable from fatal? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Failures legible. Now retire the old. <a href="#lesson-11">Lesson 11: Sunsets →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Economics · Retiring versions for profit</div>
+          <h2>Deprecation Economics</h2>
+          <p class="lesson-story">Every live version bills forever: test matrices plus docs plus support plus incident surface. Deprecation converts that annuity into a project with a date. Announce early, header every response, offer a migration sandbox, then delete. Versions are inventory. Inventory rots.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="old versions are inventory">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">announce date</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">headers warn</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">sandbox helps</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">delete ships</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price each live version per quarter: CI minutes plus support tickets plus incident share. Publish the number internally.</li>
+            <li>Give migration sandboxes with diff tooling. The version that is easy to leave is the version clients actually leave.</li>
+            <li>Deep dive: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer</a>, per-document isolation as versioning discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Two versions cost how much per quarter? Model it for your fleet. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> A top customer refuses migration. What is your playbook? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Old retired. Now price the whole gateway. <a href="#lesson-12">Lesson 12: Billing →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Money · The gateway invoice</div>
+          <h2>The Gateway Bill</h2>
+          <p class="lesson-story">Assume 1M RPS through gateway plus auth plus limits at a modeled $0.0000012 per origin request. That is about $3,100 per day before data plus support. Token buckets that shed 65 percent of storm load save $70,000 per five-hour storm at that scale. Run the RPS Envelope calculator with your own numbers. The bill hides in the boundary. Here the boundary has a rate limit.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits cut the invoice by three quarters">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">steady 12k</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">burst 148k</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">gated 35k</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Model per-request cost as gateway plus auth plus origin. Three lines, no mysteries.</li>
+            <li>Hold headroom as insurance with a published price. Unpriced headroom gets cut the quarter before the storm.</li>
+            <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure West US</a>, the full invoice model.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price your gateway at current RPS with modeled unit cost. What dominates? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> A storm triples offered load. What does the gated invoice read? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Invoice priced. Now rehearse breakage. <a href="#lesson-13">Lesson 13: Contracts →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Practice · Prove compatibility continuously</div>
+          <h2>Breaking-Change Drills</h2>
+          <p class="lesson-story">Consumer-driven contracts flip testing: consumers publish what they need, providers verify every build against those pacts. A pact suite that runs per commit catches the renamed field before it ships. Pact tests are cheaper than apologies by roughly three orders of magnitude. Run them like billing depends on it.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="consumers define done">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">pacts published</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">build verifies</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">break caught</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">ship safe</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Collect pacts from top consumers first. Ten pacts catch more breakage than ten thousand unit tests of shape.</li>
+            <li>Verify pacts in CI plus canary. A pact that only runs nightly is a history book.</li>
+            <li>Deep dive: <a href="kafka-consumer-rebalance.html">Kafka Rebalance Explained</a>, contract discipline under protocol change.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a pact suite for 3 consumers sharing one checkout API. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> A pact breaks at 2 AM. Roll forward or roll back? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Breakage rehearsed. Now face the panel. <a href="#lesson-14">Lesson 14: Interviews →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Careers · The API interview bench</div>
+          <h2>The Interview Bench</h2>
+          <p class="lesson-story">API interviews test three moves: clarify scope first, estimate out loud second, break your own design third. Rate-limiting questions want bucket math. Webhook questions want retry horizons. Versioning questions want sunset plans. Answer with numbers plus tradeoffs plus one story from these lessons. Panels hire engineers who price their own designs.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="numbers plus stories hire">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">clarify scope</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">estimate aloud</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">break it</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">price it</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Open with throughput plus latency plus consistency asks. Five minutes of questions saves forty of redesign.</li>
+            <li>Close every answer with failure modes plus cost. Designs without prices are sketches.</li>
+            <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, Lesson 01 starts from outages.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design rate limiting for 100M users in 45 minutes. Talk while you draw. <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about an API breakage you caused plus fixed. <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bench warmed. Now ship for real. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · One contract, three clients</div>
+          <h2>Ship One API</h2>
+          <p class="lesson-story">Start small on purpose. One resource, three clients, one gateway. Write the OpenAPI spec, generate mocks, gate with buckets, sign webhooks, publish pacts, run a breaking-change drill, price the month. An API you have broken on purpose is the only kind you understand.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="break it on purpose, then price it">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">spec written</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">drills passed</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">month priced</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run the fourteen drills from lessons 1 through 13 against one real contract. Gaps show at a glance.</li>
+            <li>Kill a version mid-week plus measure migration. Untested sunsets are rumors with headers.</li>
+            <li>Close with the invoice. Requests per month times modeled unit price, labeled as estimates.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Ship the spec plus the gateway config to one reviewer. What do they flag? <span class="q-seen">Seen at: backend plus API loops.</span></p>
+            <p><strong>Q2.</strong> Your webhook endpoint goes dark Friday night. Walk the runbook. <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Course complete. Interview the whole system next: <a href="learn-system-design.html">System Design: 15 Lessons From Real Outages</a></p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Stripe idempotency, Razorpay client contracts, Salesforce queues, Azure admission math, Discord pagination, Figma isolation, Kafka protocol discipline, plus the gateway invoice model. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GCP us-west1 degraded for 2h22m on Aug 20 2026. Persistent Disk plus GKE plus Compute plus IAM failed together. Postmortem of disk control-plane coupling plus snapshot recovery math.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/gcp-us-west1-persistent-disk-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="GCP us-west1 Outage System Design: How Persistent Disk Stalled GKE Compute and Storage">
+  <meta property="og:description" content="One slow storage backend in Oregon. Thirty plus services degraded for two hours twenty two minutes. GKE plus Compute plus IAM queued behind disk.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/gcp-uswest1-disk-meme.svg">
+  <meta property="og:image:alt" content="Three stat panels showing outage start plus recovery plus total duration">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/gcp-us-west1-persistent-disk-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GCP us-west1 Outage System Design: How Persistent Disk Stalled GKE Compute and Storage">
+  <meta name="twitter:description" content="Disk control plane slowed. GKE scheduling stalled. IAM validation queued. Two hours of coupling math.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/gcp-uswest1-disk-meme.svg">
+  <meta name="twitter:image:alt" content="GCP us-west1 outage timeline stat panels">
+  <title>GCP us-west1 Outage System Design: How Persistent Disk Stalled GKE Compute and Storage | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"GCP us-west1 Outage System Design: How Persistent Disk Stalled GKE Compute and Storage","description":"GCP us-west1 degraded for 2h22m on Aug 20 2026. Persistent Disk plus GKE plus Compute plus IAM failed together. Postmortem of disk control-plane coupling plus snapshot recovery math.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-26","dateModified":"2026-09-26","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/gcp-us-west1-persistent-disk-postmortem.html"},"keywords":"GCP, us-west1, outage, Persistent Disk, GKE, postmortem, control plane, Mukul Kumar Mishra"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-west1 Outage System Design: How Persistent Disk Stalled GKE Compute and Storage</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Errors started near 08:00 Pacific on August 20 2026 in Oregon. Provisioning failed. Latency climbed. Error rates rose across thirty plus services. Recovery landed near 10:22. The trigger sat in regional storage backends. The blast covered Compute plus Kubernetes plus Cloud Run plus Bigtable plus Cloud Storage plus IAM.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Regional storage backends slowed in us-west1 at 08:00 Pacific. GKE plus Compute plus IAM queued behind disk for 2h22m. Control plus data plane shared fate. The fix is disaggregated control storage plus bulkheads plus snapshot discipline.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Start</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">08:00 PT</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Recovery</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10:22 PT</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2h22m</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Services</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">30 plus</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 26, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Timeline plus service list plus storage root cause come from the Google incident report. RPS plus cost numbers are a labeled scenario model. The incident is factual. The spreadsheet is illustrative.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-uswest1-disk-meme.svg" alt="Three stat panels showing outage start plus recovery plus total duration" width="1200" height="680"><figcaption>Figure 1. The morning in one cartoon. Errors near 08:00 plus recovery near 10:22 plus two hours of queued control.</figcaption></figure>
+      <section><h2>1. The Morning Storage Slowed Down</h2>
+        <p>Oregon woke to timeouts. Compute Engine VM provisioning in zone us-west1-c failed or crawled. Filestore control calls for instance allocation plus validation checks took longer to normalize. Those two sentences from the incident report carry the whole diagnosis. Provisioning is a control plane act. Filestore allocation is a control plane act. Both waited on regional storage backends that had stopped answering quickly.</p>
+        <p>The affected list reads like a cloud catalog. AlloyDB plus Apigee plus Artifact Registry plus BigQuery plus Build plus Dataflow plus Filestore plus Key Management plus Monitoring plus Run plus PubSub plus SQL plus Storage plus Compute plus GKE plus IAM plus Managed Kafka plus Persistent Disk. Thirty plus names with one shared sentence. Timeouts plus degradations plus elevated latencies across control operations plus data requests.</p>
+        <p>Two hours twenty two minutes later the same backends recovered plus the fleet followed. Compute provisioning normalized. Filestore locks cleared. Validation checks passed. The incident never needed a second root cause. One slow storage substrate queued every control decision that depended on durable state.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> The disk is the control plane. Every schedule plus provision plus attach plus authenticate step writes or reads durable state. Slow that state plus the whole region holds its breath.</div>
+      </section>
+      <section><h2>2. Why GKE Stalled With It</h2>
+        <p>Kubernetes scheduling looks stateless from far away. Up close it is a storage workload. The API server persists every object to etcd. The scheduler watches that store. The kubelet attaches PersistentVolumes through the CSI driver before a pod can start. Each step waits on disk with a timeout measured in seconds.</p>
+        <p>When regional storage backends slow by orders of magnitude, attach calls pile up. Pods sit in Pending. The scheduler retries. The API server writes retry state back to the same slow store. That loop is a feedback amplifier. Control traffic that normally sips from storage starts chugging. The store slows further. Pending grows. Operators who try to reschedule away from trouble add more writes to the queue they want to drain.</p>
+        <p>IAM completes the coupling. Token validation plus policy checks read from replicated state that itself depends on storage health. New connections cannot authenticate quickly. Old connections keep serving until they need revalidation. The fleet looks half alive. New work starves while old work coasts. That half-alive shape matches the report exactly. Elevated latencies plus provisioning failures plus increased error rates, all at once.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/gcp-pd-coupling-flow.svg" alt="Flow diagram from slow persistent disk to stalled provisioning to queued fleet" width="1200" height="680"><figcaption>Figure 2. The coupling in one cartoon. Slow disk plus stalled provision plus queued fleet across zones.</figcaption></figure>
+      <section><h2>3. The RPS Model</h2>
+        <p>Assume us-west1 normally handles 400,000 control operations per minute across Compute plus GKE plus Run plus Dataflow at the affected hour. That is about 6,700 control RPS plus roughly 850,000 data RPS on storage plus pubsub plus Bigtable paths. Model the storage slowdown as p99 latency rising from 8 milliseconds to 4 seconds, a 500 times cliff on the tail.</p>
+        <p>Little's Law converts latency into queue. At 6,700 control RPS with 4 second service time, the system needs about 26,800 concurrent slots to avoid queueing. Control planes provision for hundreds of concurrent operations, not tens of thousands. The excess queues instantly. Timeouts fire at 30 seconds. Clients retry with backoff. Retries add offered load without adding goodput. The storm peaks near 8 times baseline offered load before admission control engages.</p>
+        <p>Gating changes the shape. Assume regional admission control sheds 65 percent of non-critical control calls within 5 minutes plus serves critical attach plus auth calls from reserved headroom. Offered load falls from 8 times to under 3 times baseline. Queues drain as storage recovers. Provisioning normalizes first. Data plane follows. The report order matches this model. Control normalized across backends before dependent services fully recovered.</p>
+        <table><thead><tr><th>Workload</th><th>Scenario</th><th>Modeled RPS</th></tr></thead><tbody>
+          <tr><td>Control baseline</td><td>steady hour before 08:00</td><td>6.7k avg</td></tr>
+          <tr><td>Storm offered</td><td>timeouts plus retries, no gating</td><td>54k peak</td></tr>
+          <tr><td>Gated offered</td><td>65 pct non-critical shed</td><td>19k peak</td></tr>
+          <tr><td>Data plane</td><td>storage plus pubsub plus tables</td><td>850k degraded</td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Load test tip:</strong> Test storage tail latency before you test node failure. Inject 2 second disk p99 in staging plus watch GKE Pending count. The scheduler tells the truth about coupling.</div>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/gcp-latency-cascade-chart.svg" alt="Bar chart comparing steady control traffic against storm retry traffic" width="1200" height="680"><figcaption>Figure 3. The storm in one cartoon. Steady control low plus storm retries near eight times plus queue long.</figcaption></figure>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Control decisions shared fate with regional storage.</strong> Provisioning plus allocation plus validation all blocked on the same backends that served customer data. Control state needs its own disaggregated store with independent latency budgets. Sharing the substrate shares the outage by construction.</p>
+        <p><strong>No bulkhead separated critical attach calls from background sync.</strong> Volume attach plus token validation queued behind analytics plus build plus monitoring writes. Critical path calls need reserved lanes with strict priority. Background sync should shed first under backpressure, automatically.</p>
+        <p><strong>Zone failure became region failure.</strong> Provisioning pain concentrated in us-west1-c, yet the incident covered the region. Cross-zone control dependencies carried the blast outward. Cells should contain zone faults at the zone line. The companion on cell architectures shows the pattern.</p>
+        <p><strong>Recovery had no precomputed playbook.</strong> Normalization took 2h22m with locks plus validation checks trailing. Precomputed drain plus reprovision sequences with standby capacity would have shortened the tail. Recovery speed is a design output, not a morale output.</p>
+      </section>
+      <div class="course-promo">
+        <strong class="course-promo-title">This outage opens Lesson 06</strong>
+        <p>Storage coupling plus control plane bulkheads plus blast radius cells is where the system design course gets serious. <a href="learn-system-design.html#lesson-6">Take Lesson 06 →</a></p>
+      </div>
+      <section id="cost-model"><h2>5. The Cost Model</h2>
+        <p>Assume a fleet of 2,000 VMs plus 400 GKE nodes in us-west1 with 60 TB of regional PD plus 20 TB of snapshots. Regional PD at a modeled $0.08 per GB per month puts steady storage near $4,800 per month. Snapshots add about $1,000. Compute dominates at roughly $210,000 per month. The storage that caused the outage costs about 2 percent of the bill it can stall.</p>
+        <p>Price the protection. Synchronous cross-region replication for the critical 10 TB at a modeled $0.16 per GB plus egress puts the replica near $1,600 per month plus transfer. Standby control headroom of 5 percent compute adds about $10,500 per month. Total modeled protection lands near $12,000 per month, about 5 percent of compute, against a 2h22m full-region degradation.</p>
+        <p>Price the outage. At 850,000 data RPS degraded with 1 percent mapping to billable events worth a modeled $0.02 of margin each, the exposure runs about $170 per second. Over 8,520 seconds the modeled exposure crosses $1.4 million before credits plus support plus churn. Even at one tenth conversion the outage bills near $145,000. Protection at $12,000 per month pays back against one morning.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
+          <tr><td>Regional PD plus snapshots</td><td>$5.8k</td><td>80 TB at modeled rates</td></tr>
+          <tr><td>Replica plus headroom</td><td>$12k</td><td>10 TB sync plus 5 pct compute</td></tr>
+          <tr><td>Storm exposure</td><td>$145k plus per morning</td><td>conversion plus duration</td></tr>
+          <tr><td><strong>Protection payback</strong></td><td><strong>under one incident</strong></td><td><strong>replica before fire</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The lesson that bills:</strong> The cheapest line on the invoice gated the most expensive hours of the quarter. The bill hides in the boundary. Here the boundary is a disk queue.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Google disclosed the window plus the service list plus the storage cause plainly. Credit belongs there. The architecture still let one slow substrate queue thirty plus services for over two hours. That is the actual postmortem. Shared control storage plus missing bulkheads plus zone-to-region carry plus improvised recovery turned a backend slowdown into a regional morning.</p>
+        <p>The fix travels with the Azure companion published alongside this piece. Both incidents share one moral through different organs. Azure lost the map. GCP lost the disk. In both cases the control plane shared fate with the failure. Disaggregate control state. Bulkhead critical calls. Cell the blast. Drill the drain. Or schedule the same morning under a different region name. The storage will wait. Customers will not.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Two hours twenty two minutes of queue. One slow backend. Thirty services holding one breath.</strong></p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/gcp-snapshot-cost-chart.svg" alt="Bar chart comparing snapshot restore exposure against synchronous replication cost" width="1200" height="680"><figcaption>Figure 4. The tradeoff in one cartoon. Snapshot cheap plus replica near triple plus outage modeled largest.</figcaption></figure>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline plus service list plus storage cause follow the Google incident report for us-west1 on Aug 20 2026. RPS plus cost numbers are a labeled scenario model. Architecture advice is at system level, not a reproduction guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://status.cloud.google.com/incidents/utF3FMFdQfwBzJcGG6vf" target="_blank" rel="noopener noreferrer">Google Cloud Status: us-west1 multi-service incident plus full report (Aug 20 2026)</a></li>
+          <li><a href="https://cloud.google.com/compute/docs/disks/persistent-disks" target="_blank" rel="noopener noreferrer">Google Cloud Docs: Persistent Disk design plus performance</a></li>
+          <li><a href="https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html" target="_blank" rel="noopener noreferrer">Buildopsy: Azure West US route withdrawal companion</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

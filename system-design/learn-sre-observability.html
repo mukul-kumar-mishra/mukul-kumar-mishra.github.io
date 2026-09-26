@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free SRE plus observability course in 15 forensic lessons from Mukul. SLOs, burn-rate alerts, tracing economics, incident command, game days plus paging math, priced from production outages.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-sre-observability.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SRE and Observability in Production: 15 Lessons From the On-Call">
+  <meta property="og:description" content="SLOs plus burn rates plus tracing bills priced. Fifteen forensic SRE lessons with live diagrams plus calculators from the on-call.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-sre-oncall-meme.svg">
+  <meta property="og:image:alt" content="Three panels showing SLO target plus error budget minutes plus burn windows">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-sre-observability.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SRE and Observability in Production: 15 Lessons From the On-Call">
+  <meta name="twitter:description" content="Fifteen SRE lessons with live diagrams plus bills. The bill hides in the boundary, with Mukul.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-sre-oncall-meme.svg">
+  <title>SRE and Observability in Production: 15 Lessons From the On-Call | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"SRE and Observability in Production: 15 Lessons From the On-Call",
+    "description":"A free SRE plus observability course in 15 forensic lessons covering SLOs, burn-rate alerting, tracing economics, telemetry tiers, on-call design, incident command, blameless postmortems, capacity, game days, status honesty, paging math, safe deploys plus a capstone review.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[
+      {"@type":"Syllabus","name":"SLOs Are the Contract"},
+      {"@type":"Syllabus","name":"Burn-Rate Alerting"},
+      {"@type":"Syllabus","name":"Tracing Economics"},
+      {"@type":"Syllabus","name":"Logs Versus Metrics Versus Traces"},
+      {"@type":"Syllabus","name":"On-Call That Holds"},
+      {"@type":"Syllabus","name":"Incident Command"},
+      {"@type":"Syllabus","name":"Blameless Postmortems"},
+      {"@type":"Syllabus","name":"Capacity Planning"},
+      {"@type":"Syllabus","name":"Game Days"},
+      {"@type":"Syllabus","name":"Status-Page Honesty"},
+      {"@type":"Syllabus","name":"The Observability Bill"},
+      {"@type":"Syllabus","name":"Paging Economics"},
+      {"@type":"Syllabus","name":"Deploys Without Fear"},
+      {"@type":"Syllabus","name":"The Interview Bench"},
+      {"@type":"Syllabus","name":"Run One Review"}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"SRE Course","item":"https://buildopsy.com/system-design/learn-sre-observability.html"}
+    ]
+  }
+  </script>
+  <style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail a.active { background: color-mix(in srgb, var(--lime) 14%, var(--panel)); color: var(--heading); font-weight: 700; }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson:first-of-type { padding-top: 6px; }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-hook a { font-weight: 700; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram path.arr { fill: none; stroke-width: 2; }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
+    @media (max-width: 900px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; }
+      .course-rail-title { display: none; }
+      .course-rail a { white-space: nowrap; flex: none; }
+    }
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">SRE and Observability in Production: 15 Lessons From the On-Call</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: measure recovery in user-minutes, budget every signal, plus drill the fire before it schedules itself. Each lesson starts from a real production outage, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic SRE lessons with live diagrams, from SLOs to burn rates plus tracing bills plus game days. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend plus SRE course · Updated September 26, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch signals travel the pipeline, then design so they arrive affordably.</aside>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Set SLOs the business signs, alert on burn rate instead of symptoms, plus keep the phone quiet with two windows.</li>
+        <li>Budget tracing plus logs plus metrics as three tiers, staff on-call that holds humans, plus command incidents with calm protocol.</li>
+        <li>Write blameless postmortems that change topology, plan capacity with Little Law, plus rehearse fires as quarterly game days.</li>
+        <li>Publish honest status, price paging as payroll, ship canaries with auto-rollback, plus total the telemetry month.</li>
+        <li>Answer SRE interviews with SLO math out loud, timelines with owners, plus one debugging war story with logs.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: SLO math out loud first, incident stories with timelines second, tradeoff pricing third. Lesson 14 rehearses the bench.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+        <div class="course-rail-title">15 lessons</div>
+        <a href="#lesson-1"><span class="rnum">01</span> SLOs</a>
+        <a href="#lesson-2"><span class="rnum">02</span> Burn</a>
+        <a href="#lesson-3"><span class="rnum">03</span> Tracing</a>
+        <a href="#lesson-4"><span class="rnum">04</span> Signals</a>
+        <a href="#lesson-5"><span class="rnum">05</span> Oncall</a>
+        <a href="#lesson-6"><span class="rnum">06</span> Command</a>
+        <a href="#lesson-7"><span class="rnum">07</span> Postmortems</a>
+        <a href="#lesson-8"><span class="rnum">08</span> Capacity</a>
+        <a href="#lesson-9"><span class="rnum">09</span> Gamedays</a>
+        <a href="#lesson-10"><span class="rnum">10</span> Status</a>
+        <a href="#lesson-11"><span class="rnum">11</span> TeleBill</a>
+        <a href="#lesson-12"><span class="rnum">12</span> Paging</a>
+        <a href="#lesson-13"><span class="rnum">13</span> Deploys</a>
+        <a href="#lesson-14"><span class="rnum">14</span> Interviews</a>
+        <a href="#lesson-15"><span class="rnum">15</span> Capstone</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · Promises with numbers</div>
+          <h2>SLOs Are the Contract</h2>
+          <p class="lesson-story">Assumption first: 100 percent uptime is a rumor with a dashboard. A 99.9 percent SLO over thirty days allows 43.2 minutes of downtime. That allowance is a budget to spend on velocity. Define SLIs users feel, set SLOs the business signs, plus hold error budgets that freeze deploys when exhausted. Reliability without numbers is negotiation without prices.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="budgets spend velocity wisely">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">SLI felt</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">SLO signed</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">budget held</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">deploys gated</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure what users feel: success rate plus latency tails. Server CPU never felt anything.</li>
+            <li>Freeze feature deploys when the budget burns out. The freeze is the feature.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, schedule-hours versus system-minutes.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> What SLO fits a checkout API versus an internal dashboard? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Your budget hits zero Thursday. What ships Friday? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Contract numbered. Now alert on burn. <a href="#lesson-2">Lesson 02: Burn →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Alerting · Pages that mean it</div>
+          <h2>Burn-Rate Alerting</h2>
+          <p class="lesson-story">Threshold alerts page on symptoms. Burn-rate alerts page on budget consumption speed. A fast-burn alert fires when 2 percent of budget vanishes in an hour. A slow-burn alert tickets when the 30-day trend drifts. Two windows, two severities, one quiet phone. Alert fatigue ends where burn math begins.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="two windows, one quiet phone">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">budget tracked</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">burn windowed</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">fast pages</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">slow tickets</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Page on 14.4 times burn over 1 hour plus 6 times over 6 hours. Textbook windows, tuned per service.</li>
+            <li>Ticket slow burns to the backlog with a date. Slow pages train teams to ignore fast ones.</li>
+            <li>Deep dive: <a href="aws-thermal-outage-postmortem.html">AWS Thermal Postmortem</a>, cooling failed first plus pages followed.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size burn windows for a 99.95 percent SLO. Show the math. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Your fast-burn fires during a deploy. Page or ticket? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Burn windowed. Now price the telemetry. <a href="#lesson-3">Lesson 03: Tracing →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Economics · Seeing without going broke</div>
+          <h2>Tracing Economics</h2>
+          <p class="lesson-story">Full-fidelity tracing at 1M RPS is a second infrastructure bill wearing a trench coat. Head-based sampling decides at request start with constant cost. Tail-based sampling keeps errors plus slow traces after the fact. Sample the boring 99 percent at 1 percent, keep 100 percent of errors, plus watch the Sampling Fit calculator prove the invoice.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="keep errors, sample boredom">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">full price</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">head cheap</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">tail kept</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run head sampling at 1 percent for steady traffic. Flat cost, honest aggregates.</li>
+            <li>Add tail rules for errors plus p99 latencies. Rare events deserve full fidelity.</li>
+            <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, write-heavy economics, priced.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price full tracing at your RPS with modeled per-span cost. What dominates? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> When does tail sampling lie to you? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Traces budgeted. Now split the signals. <a href="#lesson-4">Lesson 04: Signals →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Telemetry · Three signals, one bill</div>
+          <h2>Logs Versus Metrics Versus Traces</h2>
+          <p class="lesson-story">Logs explain single events at high per-GB cost. Metrics aggregate behavior at low per-series cost. Traces connect hops at sampling-dependent cost. Log errors with context, metric everything with cardinality caps, trace across boundaries. The team that logs request bodies at 1M RPS funds its vendor second yacht.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="right signal per question">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">event logged</text>
+            <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">behavior metriced</text>
+            <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">hops traced</text>
+            <rect class="box" x="302" y="100" width="110" height="34" rx="8"/><text x="357" y="122" font-size="11" text-anchor="middle">held</text>
+            <rect class="box" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">held</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="68" x2="302" y2="40"/><line x1="270" y1="82" x2="302" y2="110"/><line x1="412" y1="75" x2="444" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Cap metric cardinality: no user IDs, no request IDs in labels. Cardinality is the silent invoice.</li>
+            <li>Log structured JSON with request IDs plus error codes. Grep-friendly logs are incident-friendly logs.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, when telemetry must explain a wrong file.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your logging bill triples. What do you cut first? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> A debug needs one request path. Which signal answers? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Signals split. Now staff the night. <a href="#lesson-5">Lesson 05: Oncall →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · People · Nights that do not burn people</div>
+          <h2>On-Call That Holds</h2>
+          <p class="lesson-story">On-call fails through fatigue, not through incidents. Follow-the-sun rotations with 6-person minimums keep any human under 25 percent night load. Compensation per page plus post-incident rest days price the burden honestly. The rota that never pages is designed. The hero that never sleeps quits.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="sustainable nights beat heroic ones">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">rota staffed</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">pages priced</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rest given</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">heroes kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Require 6 humans per rotation with handoff notes. Five means holidays break the math.</li>
+            <li>Pay per page plus grant rest after nights. Unpriced burden compounds into resignations.</li>
+            <li>Deep dive: <a href="simultaneous-ai-outage-postmortem.html">Simultaneous AI Outage</a>, shared fate plus shared nights.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Staff a rota for a 4-person team covering 24/7. What breaks? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> A teammate burns out mid-quarter. What changes first? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Nights staffed. Now command the incident. <a href="#lesson-6">Lesson 06: Command →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Response · Calm has a protocol</div>
+          <h2>Incident Command</h2>
+          <p class="lesson-story">Incidents need three roles filled in five minutes: commander who decides, scribe who records, plus comms who speaks. The commander never debugs. The scribe timestamps every decision. Comms updates the status page every 20 minutes whether or not anything changed. Structure scales. Heroics do not.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="commander decides, never debugs">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">roles filled</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">decisions logged</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">updates shipped</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">calm kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Declare severity by user impact within 10 minutes. Severity by vibes pages the wrong people.</li>
+            <li>Update status every 20 minutes with known plus unknown plus next check. Silence breeds tickets.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue</a>, support dark with the product.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your sev-1 has no commander after 15 minutes. What do you do? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Write the first status update for a login outage with unknown cause. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Command set. Now learn without blame. <a href="#lesson-7">Lesson 07: Postmortems →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Learning · Blame the system, fix the topology</div>
+          <h2>Blameless Postmortems</h2>
+          <p class="lesson-story">NATS repeated its 2023 shape in 2026 because the first postmortem changed paperwork, not architecture. Blameless means no names in the causal chain, every action linked to the topology that allowed it, plus owners plus dates on every fix. Postmortems that do not change topology are memoirs.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="memoirs do not prevent repeats">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">facts gathered</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">topology blamed</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">fixes owned</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">drills dated</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Write timelines from logs, never from memory. Memory edits itself to look competent.</li>
+            <li>Assign every action an owner plus a date. Actions without dates are wishes.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, the repeat that indicted follow-through.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your postmortem names an engineer. Rewrite that paragraph. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Which fix ships first from your last incident? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Blame removed. Now plan the capacity. <a href="#lesson-8">Lesson 08: Capacity →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Planning · Math before machines</div>
+          <h2>Capacity Planning</h2>
+          <p class="lesson-story">Azure plus GCP both proved that recovery speed is designed, not improvised. Little Law converts RPS plus latency into concurrent slots. Headroom math converts growth forecasts into purchase dates. Plan quarterly with modeled growth plus buffers, then verify with game days. Hope is not a capacity strategy.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="buy dates beat panic buys">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">demand modeled</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">slots computed</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">headroom held</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Compute slots as peak RPS times p99 seconds times safety factor. The Pool Sizer calculator runs it.</li>
+            <li>Hold 30 percent headroom on stateful tiers plus 50 on control planes. Control starvation cascades fastest.</li>
+            <li>Deep dive: <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>, queue math at 8 times baseline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size connection pools for 40k peak RPS at 120ms p99 across 20 pods. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Growth runs 10 percent monthly. When do you buy? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Capacity planned. Now rehearse the fire. <a href="#lesson-9">Lesson 09: Gamedays →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Practice · Fires on schedule</div>
+          <h2>Game Days</h2>
+          <p class="lesson-story">Game days inject failure on purpose: kill a zone, slow DNS, expire certs, withdraw routes in staging. Score detection time plus mitigation time plus comms quality. The team that drills route withdrawal in staging never meets it first in production. Schedule quarterly. Grade honestly. Fix before the real fire.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="drills grade, fires do not">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">fault injected</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">clock started</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">response graded</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">fixes filed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Start with zone kills plus disk stalls. Graduate to route withdrawal plus IAM slowness.</li>
+            <li>Freeze drills that find sev-1 gaps until fixed. Drills without follow-through are theater.</li>
+            <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure West US</a>, the drill that would have caught it.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design a 2-hour game day for route withdrawal in staging. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Your drill finds a 40-minute detection gap. What ships Monday? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fire rehearsed. Now speak through it. <a href="#lesson-10">Lesson 10: Status →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Comms · Honesty as a feature</div>
+          <h2>Status-Page Honesty</h2>
+          <p class="lesson-story">Status pages fail in two directions: green during fires, or red with no detail. Publish components with real probes, post within 15 minutes of sev-1 declare, plus update on a clock even when nothing changed. Customers forgive outages faster than they forgive surprise. The page is the product during the fire.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="green lies cost more than red truth">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">probe fails</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">page flips</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">updates clocked</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">trust kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Bind each component to an independent probe. Manual page flips lag reality by definition.</li>
+            <li>Template updates as known plus unknown plus next check. Fill it in 5 minutes, not 50.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Wrong File</a>, error pages replacing X plus OpenAI.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your probe is green but users fail. What changed? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Draft the 15-minute update for a regional degradation. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Comms honest. Now total the telemetry bill. <a href="#lesson-11">Lesson 11: TeleBill →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Money · The observability invoice</div>
+          <h2>The Observability Bill</h2>
+          <p class="lesson-story">Assume 1M RPS with 2 KB structured logs per request retained 30 days. That is about 5 PB per month before compression, near $115,000 at modeled $0.023 per GB. Sampling plus aggregation plus short retention cut it by 90 percent. Price yours with the sampling calculator. Vendors bill curiosity by the gigabyte.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="curiosity bills by gigabyte">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">log all</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">sampled</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">aggregated</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Retain raw logs 3 days plus sampled 30 plus aggregates 13 months. Three tiers, one sane invoice.</li>
+            <li>Charge telemetry per team with showback. Free telemetry grows until the invoice lands.</li>
+            <li>Deep dive: <a href="roblox-kafka-ingestion-postmortem.html">18 Trillion Messages</a>, tiers plus cheaper shapes.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Price your log pipeline at current volume. What dominates? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Cut the bill 50 percent without losing error fidelity. How? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Telemetry priced. Now price the page. <a href="#lesson-12">Lesson 12: Paging →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Economics · The price of a page</div>
+          <h2>Paging Economics</h2>
+          <p class="lesson-story">Assume 200 pages monthly at 30 minutes each across engineers costing a modeled $150 per hour fully loaded. That is $15,000 monthly in interrupt time before context-switch tax, which research prices near 25 percent of productive hours around pages. Every alert that never needed a human is friendly fire with payroll attached. Tune or delete.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pages are payroll">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">page fires</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">minutes burn</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">tax compounds</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">tune wins</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Review every paging alert quarterly: did it need a human at 3 AM? Demote the rest to tickets.</li>
+            <li>Measure pages per engineer per week with a cap of 2. Caps force tuning conversations.</li>
+            <li>Deep dive: <a href="etcd-tls-handshake-dos-postmortem.html">etcd Handshake</a>, silent connections billing memory plus attention.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Your team takes 40 pages weekly. What is the monthly cost? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Which three alerts do you demote first? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Pages priced. Now deploy without fear. <a href="#lesson-13">Lesson 13: Deploys →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Safety · Ship on Fridays without fear</div>
+          <h2>Deploys Without Fear</h2>
+          <p class="lesson-story">Cloudflare shipped a wrong internal file network-wide because generation lacked guardrails. Canary 1 percent plus watch burn plus auto-roll back on SLO breach. Progressive delivery turns deploys into experiments with kill switches. Teams that cannot roll back in minutes do not deploy, they gamble.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="experiments beat gambles">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">canary 1 pct</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">burn watched</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">auto rollback</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">fridays safe</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Gate canaries on burn rate, not vibes. Breach means automatic rollback, no meeting required.</li>
+            <li>Cap deploy blast with cells plus traffic shifting. Small blast, fast learning.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Wrong File</a>, generation without guardrails.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design canary stages for a gateway handling 900k RPS. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Your canary burns budget in 20 minutes. Who decides? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Deploys safe. Now face the panel. <a href="#lesson-14">Lesson 14: Interviews →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Careers · The SRE interview bench</div>
+          <h2>The Interview Bench</h2>
+          <p class="lesson-story">SRE interviews test four moves: SLO math out loud, incident stories with timelines, tradeoff pricing, plus one debugging war story with logs. Burn-rate questions want window math. Capacity questions want Little Law. Postmortem questions want topology fixes, never heroics. Panels hire engineers who measure recovery in user-minutes.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="user-minutes hire">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">clarify scope</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">math aloud</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">story told</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">priced close</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Open with user impact plus budget math. Five minutes of scoping saves forty of redesign.</li>
+            <li>Close with what you would monitor first on day one. New hires who ask for dashboards get dashboards.</li>
+            <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, Lesson 01 starts from outages.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Debug a 5x latency spike with only dashboards in 45 minutes. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about an outage you owned plus the topology fix. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bench warmed. Now run the review. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · One service, full reliability</div>
+          <h2>Run One Review</h2>
+          <p class="lesson-story">Start small on purpose. One service, one SLO review, one game day, one priced telemetry tier. Define SLIs, set burn alerts, run a zone-kill drill, write the blameless postmortem, price the observability month. A service you have broken on purpose is the only kind you can promise.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="promise only drilled services">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">SLO set</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">drill passed</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">month priced</text>
+            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Run the fourteen drills from lessons 1 through 13 against one real service. Gaps show at a glance.</li>
+            <li>Hold the SLO review monthly with budget spend on the agenda. Reviews without budgets are book clubs.</li>
+            <li>Close with the invoice. Telemetry plus headroom plus pages per month, labeled as estimates.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Present your SLO review to one skeptic. What do they challenge? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Your drill pages at 2 AM. Was the rota fair? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Course complete. Price the gateway next: <a href="learn-api-design.html">API Design in Production: 15 Lessons From the Gateway</a></p>
+        </section>
+      </div>
+    </div>
+    <section class="sec" style="margin-top:28px;">
+      <h2 class="sec-title">Sources plus method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: NATS recovery math, AWS thermal paging, Azure route drills, GCP queue math, Cloudflare guardrails, MoEngage telemetry bills, Roblox tiers, etcd attention costs, plus the observability invoice model. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  (function(){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('svg.cdiagram').forEach(function (s) { try { s.pauseAnimations(); } catch (e) {} });
+    }
+    var links = Array.prototype.slice.call(document.querySelectorAll('.course-rail a'));
+    if (!('IntersectionObserver' in window) || !links.length) return;
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.lesson[id]').forEach(function(s){ obs.observe(s); });
+  })();
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

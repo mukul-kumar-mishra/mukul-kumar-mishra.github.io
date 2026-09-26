@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Azure West US lost routes from 14:44 to 19:41 UTC on July 23 2026. AKS plus Cosmos DB plus Postgres stalled while in-region traffic lived. Postmortem of WAN churn plus multi-region math.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB">
+  <meta property="og:description" content="One maintenance job deleted routes in a West US data center. WAN churn followed. AKS plus Cosmos DB plus Postgres stalled for almost five hours.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/azure-wan-route-meme.svg">
+  <meta property="og:image:alt" content="Three stat panels showing maintenance start plus outage end plus total duration">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB">
+  <meta name="twitter:description" content="Routes deleted in one DC. Ingress stalled across West US. In-region traffic lived. Almost five hours of WAN math.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/azure-wan-route-meme.svg">
+  <meta name="twitter:image:alt" content="Azure West US outage timeline stat panels">
+  <title>Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB","description":"Azure West US lost network routes from 14:44 to 19:41 UTC on July 23 2026. AKS plus Cosmos DB plus Postgres stalled while in-region traffic lived. Postmortem of WAN churn plus multi-region math.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-26","dateModified":"2026-09-26","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html"},"keywords":"Azure, West US, outage, WAN, route withdrawal, AKS, Cosmos DB, postmortem, Mukul Kumar Mishra"}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Device maintenance started at 14:44 UTC on July 23 2026 in a West US data center. A faulty automation removed critical network routes. Traffic into the region plus out of the region stalled for almost five hours. Workloads that never left the region kept running. Everything that crossed the border queued or timed out.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Faulty maintenance deleted routes in one West US DC at 14:44 UTC. WAN churn stalled ingress plus egress until 19:41 UTC. AKS plus Cosmos DB plus Postgres degraded together. In-region traffic lived. The fix is route canaries plus paired regions plus admission budgets.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Start</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">14:44 UTC</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Recovery</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">19:41 UTC</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h57m</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">In-Region</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Unaffected</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 26, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Timeline plus affected services plus route cause come from the Azure preliminary review plus press reporting. RPS plus cost numbers are a labeled scenario model. The incident is factual. The spreadsheet is illustrative.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/azure-wan-route-meme.svg" alt="Three stat panels showing maintenance start plus outage end plus total duration" width="1200" height="680"><figcaption>Figure 1. The evening in one cartoon. Maintenance at 14:44 plus recovery near 19:41 plus almost five hours of churn.</figcaption></figure>
+      <section><h2>1. The Maintenance That Deleted the Map</h2>
+        <p>Every large cloud runs a wide area network that carries customer traffic between regions plus between the cloud plus the public internet. Routers in each data center advertise which address ranges live behind them. Neighbors trust those advertisements. Packets follow the map.</p>
+        <p>On July 23 the map lost pages. Device maintenance in one West US data center triggered a faulty automation that removed critical routes instead of draining them gracefully. Neighboring routers saw withdrawals. They recomputed paths. Some paths flapped as withdrawals propagated in waves. Microsoft described the early signal as large scale route churn in the WAN. That phrase matters. It means the control plane kept changing its mind while the data plane kept dropping packets.</p>
+        <p>Traffic that stayed inside West US never needed the missing routes. It kept flowing. Traffic that entered or left the region needed exactly those routes. It stalled. That split explains the blast list. Outlook plus Teams plus SharePoint plus OneDrive plus Copilot plus Xbox Live plus Microsoft Store all cross region boundaries on nearly every request. Azure App Service plus Application Gateway plus AKS plus Cosmos DB plus Postgres plus Monitor plus Graph plus Sentinel plus VPN Gateway all depend on the same WAN paths for control calls plus replication plus telemetry.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> One route table in one building gated a continent of services. The WAN is a single logical map with regional pages. Tearing one page stalls everyone reading across it.</div>
+      </section>
+      <section><h2>2. Why Everything Failed Together</h2>
+        <p>Correlated failure needs a shared dependency. Here the shared dependency was the route set that carried ingress plus egress for West US. Application Gateway terminates TLS at the edge then forwards into the region. With routes gone the forward path has no next hop. Requests queue at the edge. Timeouts climb. Retries multiply.</p>
+        <p>AKS adds a second coupling. The Kubernetes control plane talks to nodes over the same network fabric. Image pulls stall. Admission webhooks time out. Pod scheduling slows exactly when operators want to reschedule away from trouble. Cosmos DB replication between West US plus paired regions stalls for the same reason. Postgres flexible servers lose monitor heartbeats so the control plane marks healthy instances as unknown.</p>
+        <p>Monitor failing at the same time removes the flashlight during the fire. Telemetry that must leave the region to reach central collectors never arrives. Dashboards show gaps instead of errors. Operators debug blind until in-region collectors buffer plus forward after recovery. The outage degraded the observer plus the observed through one shared path.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-wan-churn-flow.svg" alt="Flow diagram from route delete to WAN churn to dark edge" width="1200" height="680"><figcaption>Figure 2. The mechanism in one cartoon. One route table withdrawn plus WAN churn plus edge dark for ingress.</figcaption></figure>
+      <section><h2>3. The RPS Model</h2>
+        <p>Assume West US normally serves 900,000 ingress RPS across edge plus API plus app tiers at the affected hour. Model the failure as a capacity cliff. Usable ingress falls to 25 percent within 10 minutes as routes flap. Offered load stays constant because clients retry. Effective goodput falls to roughly 225,000 RPS while offered load climbs toward 1.4 million RPS with retries.</p>
+        <p>Retry amplification does the rest. Take a baseline retry rate of 5 percent. Under timeout storms clients escalate to 3 attempts per logical request. Offered load multiplies by nearly 2.9 times. Edge queues that drain in milliseconds now drain in seconds. Latency p99 crosses client timeouts. More requests qualify as failed. More retries spawn. The WAN fault starts the fire. The retry policy pours fuel.</p>
+        <p>In-region traffic tells the control story. Assume 300,000 RPS of east-west traffic inside West US kept serving at normal latency. That number proves the compute plus storage layers were healthy. The bottleneck sat strictly at the border. Any design that treats region health as a single boolean would have called West US down. The truth was finer. The border was down. The interior lived.</p>
+        <table><thead><tr><th>Workload</th><th>Scenario</th><th>Modeled RPS</th></tr></thead><tbody>
+          <tr><td>Normal ingress</td><td>steady hour before maintenance</td><td>900k avg</td></tr>
+          <tr><td>Usable ingress</td><td>routes flapping, 25 pct usable</td><td>225k goodput</td></tr>
+          <tr><td>Offered with retries</td><td>3 attempts per logical request</td><td>1.4M offered</td></tr>
+          <tr><td>In-region east-west</td><td>never crossed the border</td><td>300k healthy</td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Load test tip:</strong> Test route withdrawal before you test instance failure. Kill one availability zone in staging plus watch ingress goodput. The border fails differently from the building.</div>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-blast-donut.svg" alt="Donut chart splitting Azure West US traffic into stalled ingress plus degraded control plus healthy in-region" width="1200" height="680"><figcaption>Figure 3. The radius in one cartoon. Ingress stalled plus control degraded plus in-region traffic healthy.</figcaption></figure>
+      <section><h2>4. What Went Wrong in the Design</h2>
+        <p><strong>Maintenance automation could delete production routes without a canary.</strong> A job that removes routes should first withdraw one prefix plus watch churn rate plus error budget for a fixed window. The incident timeline shows disruption starting within a minute of maintenance begin. That speed fits an unguarded global push, not a staged rollout.</p>
+        <p><strong>One logical map carried all services with no bulkhead.</strong> Edge plus control plus replication plus telemetry shared fate through the same advertisements. Bulkheads that isolate compute mean little when the network map is shared. The map needs cells too, with per-service route sets that fail independently.</p>
+        <p><strong>Clients retried across the outage instead of shedding.</strong> Outlook plus Teams plus Store clients treated timeouts as transient plus retried aggressively. Aggressive retries turn a 75 percent capacity loss into a 6 times overload at the surviving edge. Admission budgets at the edge should have shed load early plus returned fast errors instead of slow timeouts.</p>
+        <p><strong>Recovery depended on the same WAN that failed.</strong> Pushing corrected routes requires a working control channel to the affected routers. If the channel shares fate with customer traffic, the fix queues behind the fire. Out-of-band management paths must exist before the incident, not after.</p>
+      </section>
+      <div class="course-promo">
+        <strong class="course-promo-title">This outage opens Lesson 11</strong>
+        <p>Route churn plus cell isolation plus paired-region failover is where the Kubernetes production course turns hard. <a href="learn-kubernetes.html#lesson-11">Take Lesson 11 →</a></p>
+      </div>
+      <section id="cost-model"><h2>5. The Cost Model</h2>
+        <p>Assume a mid-size SaaS serving 40,000 RPS from West US with a paired region in West US 2 held warm. Single-region compute plus data plus edge costs a modeled $48,000 per month. Holding the pair warm with replicated Cosmos DB plus standby AKS node pools plus cross-region egress raises the modeled bill to about $101,000 per month. The delta is roughly $53,000 per month for the pair.</p>
+        <p>Price the outage against that delta. Four hours fifty seven minutes of degraded ingress at 75 percent goodput loss touches roughly 10.6 billion request opportunities at 900,000 RPS. If 2 percent of affected requests map to revenue events worth a modeled $0.40 of margin each, the exposure crosses $60 million in a single evening before SLA credits plus support plus churn. Even at one tenth of that conversion the modeled exposure exceeds $6 million. The pair pays for itself against one evening.</p>
+        <p>At 1M RPS thought experiment the math hardens further. Shedding 65 percent of offered load at the edge via admission budgets cuts origin work from 1.4 million to under 500,000 RPS during the storm. If each origin request costs a modeled $0.0000012, the uncontrolled storm burns about $6.05 per second. The gated storm burns about $2.16 per second. Over five hours the delta exceeds $70,000 in origin compute alone, before revenue impact.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
+          <tr><td>Single region</td><td>$48k</td><td>compute plus data plus edge</td></tr>
+          <tr><td>Paired region warm</td><td>$101k</td><td>replica plus standby plus egress</td></tr>
+          <tr><td>Storm origin delta</td><td>$70k per 5h at 1M scale</td><td>admission gating on or off</td></tr>
+          <tr><td><strong>Outage exposure</strong></td><td><strong>$6M plus per evening</strong></td><td><strong>revenue mix plus duration</strong></td></tr>
+        </tbody></table>
+        <div class="callout"><strong>The lesson that bills:</strong> The pair looks expensive every month until one evening prices the single. The bill hides in the boundary. Here the boundary is a route table.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Microsoft found the cause fast plus communicated the window honestly. Credit belongs there. The architecture still let one maintenance job in one building remove the map for a region. That is the actual postmortem. Route automation without canaries plus shared fate across all services plus retry storms plus in-band recovery turned a device task into a continental evening.</p>
+        <p>The fix travels beyond Azure. Every cloud has a WAN map with the same power. Canary every route change. Cell the map per service. Shed load at the edge early. Keep an out-of-band path to push the fix. Or schedule the same evening under a different region name. The packets will wait. Customers will not.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Four hours fifty seven minutes of churn. One deleted map. The interior lived while the border died.</strong></p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-failover-cost-chart.svg" alt="Bar chart comparing single region cost against paired region cost" width="1200" height="680"><figcaption>Figure 4. The invoice in one cartoon. Single region cheap plus paired region near double plus backlog modeled larger.</figcaption></figure>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline plus affected services plus route churn cause follow the Azure preliminary review as reported in press plus the Azure reliability docs. RPS plus cost numbers are a labeled scenario model. Architecture advice is at system level, not a reproduction guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://w.media/microsoft-azure-outage-cloud-services-disrupted-after-west-us-network-failure-now-resolved" target="_blank" rel="noopener noreferrer">W.Media: Microsoft Azure outage after West US network failure plus PIR timeline (Jul 23 2026)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/azure/reliability/" target="_blank" rel="noopener noreferrer">Microsoft Learn: Azure reliability guidance plus multi-region design</a></li>
+          <li><a href="https://buildopsy.com/system-design/cell-based-control-plane.html" target="_blank" rel="noopener noreferrer">Buildopsy: Cell-based control planes for zero blast radius</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
