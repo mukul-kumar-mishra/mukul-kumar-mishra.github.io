@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680">
+  <rect width="1200" height="680" fill="#0e182c"/>
+  <text x="60" y="80" font-family="Sora, sans-serif" font-size="40" font-weight="800" fill="#ffffff">ONE TASK, PRICED TO THE TOKEN</text>
+  <text x="60" y="118" font-family="monospace" font-size="20" fill="#93a4ba">8,000 IN PLUS 600 OUT, MODELED ESTIMATES</text>
+  <g font-family="Sora, sans-serif">
+    <rect x="60" y="160" width="200" height="120" rx="14" fill="#12203a" stroke="#22304a" stroke-width="2"/>
+    <text x="160" y="205" text-anchor="middle" font-size="22" font-weight="700" fill="#38bdf8">PREFILL</text>
+    <text x="160" y="240" text-anchor="middle" font-size="18" fill="#93a4ba">8,000 in</text>
+    <rect x="290" y="160" width="200" height="120" rx="14" fill="#12203a" stroke="#22304a" stroke-width="2"/>
+    <text x="390" y="205" text-anchor="middle" font-size="22" font-weight="700" fill="#38bdf8">DECODE</text>
+    <text x="390" y="240" text-anchor="middle" font-size="18" fill="#93a4ba">600 out</text>
+    <rect x="520" y="160" width="200" height="120" rx="14" fill="#12203a" stroke="#a3e635" stroke-width="3"/>
+    <text x="620" y="205" text-anchor="middle" font-size="22" font-weight="700" fill="#a3e635">CACHE</text>
+    <text x="620" y="240" text-anchor="middle" font-size="18" fill="#93a4ba">55% hit</text>
+    <rect x="750" y="160" width="200" height="120" rx="14" fill="#12203a" stroke="#22304a" stroke-width="2"/>
+    <text x="850" y="205" text-anchor="middle" font-size="22" font-weight="700" fill="#fb7185">RETRY</text>
+    <text x="850" y="240" text-anchor="middle" font-size="18" fill="#93a4ba">6x loan</text>
+  </g>
+  <g font-family="monospace" font-size="26" fill="#22304a">
+    <text x="262" y="232">+</text>
+    <text x="492" y="232">+</text>
+    <text x="722" y="232">=</text>
+  </g>
+  <rect x="60" y="330" width="890" height="110" rx="14" fill="#a3e635"/>
+  <text x="505" y="375" text-anchor="middle" font-family="Sora, sans-serif" font-size="30" font-weight="800" fill="#0e182c">~$0.0218 PER TASK AT 1M TASKS</text>
+  <text x="505" y="410" text-anchor="middle" font-family="monospace" font-size="20" fill="#0e182c">OUTPUT FIRST, CACHE SECOND, RETRIES LAST</text>
+  <text x="60" y="500" font-family="monospace" font-size="20" fill="#93a4ba">BASE $0.02112, BATCHED $0.0169, RETRIED $0.0189, GATED $0.0218</text>
+  <text x="60" y="540" font-family="monospace" font-size="20" fill="#93a4ba">ASSUMPTIONS IN THE OPEN. SWAP IN LIVE RATES.</text>
+  <text x="60" y="610" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="#ffffff">BUILDOPSY</text>
+  <text x="60" y="640" font-family="monospace" font-size="16" fill="#93a4ba">THE BILL HIDES IN THE BOUNDARY</text>
+</svg>
