@@ -9,7 +9,7 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="ElevenLabs Postmortem: The $11B Voice That Bills Per Hello">
   <meta property="og:description" content="ElevenLabs hit $11B and $330M ARR by selling hello at 75ms. Teardown of per character billing, no phoneme cache and the 1M RPS voice bill.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png\">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
   <meta property="og:image:alt" content="ElevenLabs voice synthesis cost and caching illustration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ElevenLabs Postmortem: The $11B Voice That Bills Per Hello">
   <meta name="twitter:description" content="Per character TTS, 75ms Flash models and why hello costs a GPU every time.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png\">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
   <meta name="twitter:image:alt" content="ElevenLabs voice synthesis cost and caching illustration">
   <title>ElevenLabs: The $11B Voice That Bills Per Hello | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -29,24 +29,12 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"TechArticle",
-    "headline":"ElevenLabs: The $11B Voice That Bills Per Hello",
-    "description":"A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/"},
-    "datePublished":"2026-09-10",
-    "dateModified":"2026-09-10",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"},
-    "keywords":"ElevenLabs, TTS, voice AI, latency, cost"
-  }
-  </script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ElevenLabs: The $11B Voice That Bills Per Hello", "description": "A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"}, "keywords": "ElevenLabs, TTS, voice AI, latency, cost", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/elevenlabs-voice-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
       <nav class="topnav" id="topnav">
         
         <a href="index.html" class="on">System Design</a>

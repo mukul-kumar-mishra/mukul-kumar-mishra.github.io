@@ -9,7 +9,7 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Figma System Design: How Multiplayer Collaboration Actually Works">
   <meta property="og:description" content="A postmortem of Figma multiplayer architecture: WebSocket collaboration, conflict resolution without pure CRDT, Rust isolation plus cost at scale.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/figma-system-design-guide.png\">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/figma-system-design-guide.png">
   <meta property="og:image:alt" content="Figma multiplayer system design architecture diagram">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Figma System Design: How Multiplayer Collaboration Actually Works">
   <meta name="twitter:description" content="WebSocket fan-out, server-authoritative resolution, Rust workers, 65k RPS math plus cost controls.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/figma-system-design-guide.png\">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/figma-system-design-guide.png">
   <meta name="twitter:image:alt" content="Figma multiplayer system design architecture diagram">
   <title>Figma System Design: Multiplayer Architecture Explained | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -29,20 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"TechArticle",
-    "headline":"Figma System Design: How Multiplayer Collaboration Actually Works",
-    "description":"Figma system design explained: WebSocket fan-out, server-authoritative conflict resolution, Rust rewrite, 65k RPS scale math plus cost controls.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
-    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
-    "datePublished":"2026-09-18",
-    "dateModified":"2026-09-18",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/figma-system-design.html"},
-    "keywords":"Figma system design, Figma architecture, Figma multiplayer, WebSocket architecture, CRDT versus OT, Rust rewrite"
-  }
-  </script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Figma System Design: How Multiplayer Collaboration Actually Works", "description": "Figma system design explained: WebSocket fan-out, server-authoritative conflict resolution, Rust rewrite, 65k RPS scale math plus cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/figma-system-design.html"}, "keywords": "Figma system design, Figma architecture, Figma multiplayer, WebSocket architecture, CRDT versus OT, Rust rewrite", "image": "https://buildopsy.com/images/articles/figma-system-design-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -59,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
       <nav class="topnav" id="topnav">
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>

@@ -130,8 +130,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 .brand:hover { color: var(--heading); }
 .brand .acc { color: var(--lime); }
-/* Image wordmark: dark pill keeps the white "Build" legible in both themes.
-   Fixed 45px height preserves the 60px topbar in all viewports. */
+/* Image wordmark: theme-aware pill. Dark pill + logo.png in dark mode,
+   white pill + logo-white.png in light mode. Fixed 45px height preserves
+   the 60px topbar in all viewports. */
 .brand-logo {
   display: inline-flex;
   align-items: center;
@@ -141,11 +142,24 @@ h1, h2, h3, h4, h5, h6 {
   padding: 5px 10px;
   line-height: 0;
 }
+:root:not(.dark) .brand-logo {
+  background: #ffffff;
+  border: 1px solid var(--line);
+}
 .brand-logo img {
   height: 45px;
   width: auto;
   max-width: 160px;
   display: block;
+}
+.brand-logo .logo-light {
+  display: none;
+}
+:root:not(.dark) .brand-logo .logo-light {
+  display: block;
+}
+:root:not(.dark) .brand-logo .logo-dark {
+  display: none;
 }
 
 .topnav { display: flex; align-items: center; gap: 6px; margin-left: auto; }

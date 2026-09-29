@@ -9,7 +9,7 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
   <meta property="og:description" content="A postmortem of Kafka consumer-group rebalancing: eager versus cooperative protocols, static membership, fetch storms plus retry amplification.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png\">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
   <meta property="og:image:alt" content="Kafka consumer rebalance storm diagram">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
   <meta name="twitter:description" content="Eager versus cooperative rebalancing, static membership, fetch storms, 6x retry amplification.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png\">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
   <meta name="twitter:image:alt" content="Kafka consumer rebalance storm diagram">
   <title>Kafka Rebalance Explained: Consumer Storms and Fixes | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -29,20 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"TechArticle",
-    "headline":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes",
-    "description":"Kafka consumer rebalance explained: JoinGroup plus eager assignment, rolling-deploy cascades across 40,000 partitions, fetch storms, retry amplification plus the fixes.",
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
-    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
-    "datePublished":"2026-09-18",
-    "dateModified":"2026-09-18",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html"},
-    "keywords":"Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, rebalance storm"
-  }
-  </script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "description": "Kafka consumer rebalance explained: JoinGroup plus eager assignment, rolling-deploy cascades across 40,000 partitions, fetch storms, retry amplification plus the fixes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/kafka-consumer-rebalance.html"}, "keywords": "Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, rebalance storm", "image": "https://buildopsy.com/images/articles/kafka-rebalance-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -59,7 +46,7 @@
 <body class="site">
   <header class="topbar">
     <div class="wrap">
-      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"></a>
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
       <nav class="topnav" id="topnav">
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
