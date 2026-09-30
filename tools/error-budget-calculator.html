@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free error budget calculator. Convert an SLO into minutes per month, subtract what is burned and see how many days the budget lasts.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/error-budget-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Error Budget Calculator: SLO Burn Rate and Runway | Buildopsy">
+  <meta property="og:description" content="Free error budget calculator. Convert an SLO into minutes per month, subtract what is burned and see how many days the budget lasts.">
+  <meta property="og:url" content="https://buildopsy.com/tools/error-budget-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Error Budget Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Error Budget Calculator: SLO Burn Rate and Runway | Buildopsy">
+  <meta name="twitter:description" content="Free error budget calculator. Convert an SLO into minutes per month, subtract what is burned and see how many days the budget lasts.">
+  <meta name="twitter:image:alt" content="Error Budget Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Error Budget Calculator: SLO Burn Rate and Runway | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How many minutes of downtime does a 99.9 percent SLO allow?","acceptedAnswer":{"@type":"Answer","text":"A 99.9 percent objective over a 30-day month allows 43.2 minutes. A 99.95 percent objective allows 21.6 minutes and a 99.99 percent objective allows 4.32 minutes."}},
+      {"@type":"Question","name":"What does a burn multiple of 2 mean?","acceptedAnswer":{"@type":"Answer","text":"You are consuming error budget twice as fast as the SLO allows. At 43.2 minutes a month that is 2.88 minutes a day, so the 31.2 minutes left here last about 10.8 days."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Error Budget Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Turn an SLO into minutes, subtract what is already burned, then divide by the current burn rate to get runway. The defaults model a 99.9 percent objective with 12 minutes spent.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="error-budget">
+      <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Error budget runway</span>
+              <span class="radar-count-description"> · Days until the budget runs dry at this burn rate.</span>
+            <div class="radar-filters" aria-label="SLO presets">
+              <button class="radar-filter active" data-set="eb-slo:99.9">99.9 SLO</button>
+              <button class="radar-filter" data-set="eb-slo:99.95">99.95 SLO</button>
+              <button class="radar-filter" data-set="eb-slo:99.99">99.99 SLO</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-slo">SLO (percent)</label><input type="number" id="eb-slo" value="99.9" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-used">Budget already burned (minutes)</label><input type="number" id="eb-used" value="12" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="eb-burn">Current burn multiple</label><input type="number" id="eb-burn" value="2" step="0.1" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Runway</div>
+                <div class="calc-result-value" id="eb-days">10.8</div>
+                <div class="radar-count-description">days remaining</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Budget mix</div>
+                  <div class="calc-donut" id="eb-donut" role="img" aria-label="Share of error budget across minutes left and minutes burned" style="background:conic-gradient(#a3e635 0.0% 72.2%,#fb7185 72.2% 100.0%)"><div class="calc-donut-center"><span id="eb-mix-top">72.2%</span><small>left</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Budget left</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Burned</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="error-budget" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Monthly budget</div>
+              <div class="radar-trend-value" id="eb-budget">43.2 min / month</div>
+              <div class="radar-trend-sub">minutes per month</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Budget left</div>
+              <div class="radar-trend-value" id="eb-left">31.2 min left</div>
+              <div class="radar-trend-sub">minutes remaining</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/simultaneous-ai-outage-postmortem.html">Simultaneous AI Model Outage: The Single Point We All Ignored</a></h3><p class="fl-desc">Four frontier providers dark in one window. The shared layer beneath them.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="llm-token-cost-calculator.html">LLM Token Cost Calculator</a> · <a href="edge-request-cost-calculator.html">Edge Request Cost Calculator</a> · <a href="context-compaction-calculator.html">Context Compaction Calculator</a> · <a href="agent-retry-cost-calculator.html">Agent Retry Cost Calculator</a> · <a href="error-budget-calculator.html">Error Budget Calculator</a> · <a href="kubernetes-hpa-calculator.html">Kubernetes HPA Replica Calculator</a> · <a href="trace-sampling-rate-calculator.html">Trace Sampling Rate Calculator</a> · <a href="connection-pool-calculator.html">Connection Pool Size Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="error-budget-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-error-budget-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

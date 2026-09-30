@@ -14,10 +14,11 @@
 
   function money(x, digits) {
     if (!isFinite(x)) return '—';
-    return '$' + x.toLocaleString('en-US', {
-      minimumFractionDigits: digits == null ? 2 : digits,
-      maximumFractionDigits: digits == null ? 2 : digits
+    var d = digits == null ? 2 : digits;
+    var s = Math.abs(x).toLocaleString('en-US', {
+      minimumFractionDigits: d, maximumFractionDigits: d
     });
+    return (x < 0 ? '-$' : '$') + s;
   }
 
   function big(x, digits) {
@@ -28,68 +29,92 @@
     });
   }
 
+  /* Input guards. Type="number" accepts anything, so percentages are clamped
+     to their legal range and counts/rates to non-negative before arithmetic. */
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
+
+  function nonneg(v) {
+    return (isFinite(v) && v > 0) ? v : 0;
+  }
+
   var Calcs = {
     /* One agent turn priced from context mix. Matches the Cursor teardown:
        80k in (87.5% cached at $0.30/M, rest fresh at $3/M) + 1.5k out at
        $15/M lands at $0.0735, shown as ~$0.074. */
     tokenTurn: function (o) {
-      var cached = o.inTokens * (o.cachePct / 100) / 1e6 * o.cachePrice;
-      var fresh = o.inTokens * (1 - o.cachePct / 100) / 1e6 * o.freshPrice;
+      var hit = clamp(o.cachePct, 0, 100) / 100;
+      var cached = o.inTokens * hit / 1e6 * o.cachePrice;
+      var fresh = o.inTokens * (1 - hit) / 1e6 * o.freshPrice;
       var out = o.outTokens / 1e6 * o.outPrice;
-      return { perTurn: cached + fresh + out, monthly: (cached + fresh + out) * o.turns };
+      var perTurn = cached + fresh + out;
+      return {
+        cached: cached, fresh: fresh, out: out, perTurn: perTurn,
+        monthly: perTurn * nonneg(o.turns)
+      };
     },
     /* Monthly envelope from edge rate. Simplified from the Replit/Vercel
        1M-event models: events per second x seconds per month x blended
        price per event, plus fixed platform spend. */
     rpsBill: function (o) {
-      var monthly = o.rps * 2592000 * (o.pricePerM / 1e6) + o.fixedK * 1000;
-      return { monthly: monthly, daily: monthly / 30, perRequest: o.rps > 0 ? monthly / (o.rps * 2592000) : 0 };
+      var rps = nonneg(o.rps);
+      var variable = rps * 2592000 * (nonneg(o.pricePerM) / 1e6);
+      var fixed = nonneg(o.fixedK) * 1000;
+      var monthly = variable + fixed;
+      return {
+        monthly: monthly, daily: monthly / 30,
+        variable: variable, fixed: fixed,
+        perRequest: rps > 0 ? monthly / (rps * 2592000) : 0
+      };
     },
     /* Compaction survival. Defaults mirror the measured median: a 575k
        window compacted to ~4.3k (0.75%), followed by ~28 re-read steps. */
     compaction: function (o) {
-      var summary = o.windowTk * (o.survPct / 100);
-      return { summary: summary, lostPct: 100 - o.survPct, rereadBill: o.steps * o.stepCost };
+      var surv = clamp(o.survPct, 0, 100) / 100;
+      var summary = nonneg(o.windowTk) * surv;
+      return { summary: summary, lostPct: 100 - surv * 100, rereadBill: nonneg(o.steps) * nonneg(o.stepCost) };
     },
-    /* Prompt-cache value. Savings versus serving every input token fresh. */
     /* Retry-storm waste. Failed attempts rebilled per task, per day. */
     retryStorm: function (o) {
-      var daily = o.tasksDay * o.retries * o.attemptCost;
+      var daily = nonneg(o.tasksDay) * nonneg(o.retries) * nonneg(o.attemptCost);
       return { daily: daily, monthly: daily * 30 };
     },
     /* Error budget from SLO. A 30-day month has 43200 minutes; the budget
        is the unavailability fraction of that. Burn multiple expresses the
        current error rate as a multiple of the budgeted rate. */
     errorBudget: function (o) {
-      var budget = (100 - o.slo) / 100 * 43200;
-      var left = budget - o.consumed;
-      var dailyBurn = o.burn > 0 ? o.burn * (budget / 30) : 0;
-      var daysLeft = (left > 0 && dailyBurn > 0) ? left / dailyBurn : 0;
-      return { budget: budget, left: left, daysLeft: daysLeft };
+      var budget = (100 - clamp(o.slo, 0, 100)) / 100 * 43200;
+      var left = budget - nonneg(o.consumed);
+      var dailyBurn = nonneg(o.burn) * (budget / 30);
+      var daysLeft = left <= 0 ? 0 : (dailyBurn > 0 ? left / dailyBurn : Infinity);
+      return { budget: budget, left: left, daysLeft: daysLeft, exhausted: left <= 0 };
     },
     /* Kubernetes HPA formula. Desired replicas equal current replicas
        times current utilization over target utilization, rounded up,
        then clamped to the configured maximum. */
     hpa: function (o) {
-      var raw = (o.target > 0 && o.rep > 0) ? Math.ceil(o.rep * (o.util / o.target)) : 0;
-      var desired = Math.min(raw, o.max);
-      return { desired: desired, delta: desired - o.rep, capped: raw > o.max };
+      var rep = nonneg(o.rep), target = nonneg(o.target), max = nonneg(o.max);
+      var raw = (target > 0 && rep > 0) ? Math.ceil(rep * (nonneg(o.util) / target)) : rep;
+      var desired = Math.min(raw, max);
+      return { desired: desired, delta: desired - rep, capped: raw > max };
     },
     /* Observability sampling fit. Daily ingest equals spans per second
        times bytes per span times 86400 seconds, converted to gigabytes.
        Keep rate is the budget share of the unsampled monthly cost. */
     obsSample: function (o) {
-      var gbDay = o.rps * o.bytes * 86400 / 1e9;
-      var monthly = gbDay * 30 * o.priceGB;
-      var keepPct = monthly > 0 ? Math.min(100, (o.budget / monthly) * 100) : 100;
+      var gbDay = nonneg(o.rps) * nonneg(o.bytes) * 86400 / 1e9;
+      var monthly = gbDay * 30 * nonneg(o.priceGB);
+      var budget = nonneg(o.budget);
+      var keepPct = monthly > 0 ? Math.min(100, (budget / monthly) * 100) : 100;
       return { gbDay: gbDay, monthly: monthly, keepPct: keepPct };
     },
     /* Connection pool from Little's law. Concurrent connections equal
        peak RPS times p99 latency in seconds; the pool adds a safety
        factor and spreads across pods. */
     poolSize: function (o) {
-      var conc = o.rps * (o.p99ms / 1000);
-      var pool = Math.ceil(conc * o.safety);
+      var conc = nonneg(o.rps) * (nonneg(o.p99ms) / 1000);
+      var pool = Math.ceil(conc * nonneg(o.safety));
       var perPod = o.pods > 0 ? Math.ceil(pool / o.pods) : pool;
       return { conc: conc, pool: pool, perPod: perPod };
     },
@@ -97,8 +122,8 @@
        43800-minute month times minutes down; SLA credit is a percent
        of the monthly cloud bill. */
     downtimeCost: function (o) {
-      var loss = (o.rev / 43800) * o.mins;
-      var credit = o.bill * (o.creditPct / 100);
+      var loss = (nonneg(o.rev) / 43800) * nonneg(o.mins);
+      var credit = nonneg(o.bill) * (nonneg(o.creditPct) / 100);
       return { loss: loss, credit: credit, total: loss + credit };
     }
   };
@@ -147,13 +172,10 @@
       turns: num('tk-turns', 1000000)
     };
     var r = Calcs.tokenTurn(o);
-    var cached = o.inTokens * (o.cachePct / 100) / 1e6 * o.cachePrice;
-    var fresh = o.inTokens * (1 - o.cachePct / 100) / 1e6 * o.freshPrice;
-    var out = o.outTokens / 1e6 * o.outPrice;
     set('tk-perturn', money(r.perTurn, 4) + ' / turn');
     set('tk-monthly', money(r.monthly, 0));
-    donut('tk-donut', [[cached, LIME], [fresh, CYAN], [out, ROSE]],
-      isFinite(o.cachePct) ? o.cachePct.toFixed(1) + '%' : '—');
+    donut('tk-donut', [[r.cached, LIME], [r.fresh, CYAN], [r.out, ROSE]],
+      pct(r.cached, r.perTurn));
   }
 
   function renderRps() {
@@ -162,12 +184,10 @@
       fixedK: num('rps-fixed', 2600)
     };
     var r = Calcs.rpsBill(o);
-    var variable = o.rps * 2592000 * (o.pricePerM / 1e6);
-    var fixed = o.fixedK * 1000;
     set('rps-monthly', money(r.monthly, 0));
     set('rps-daily', money(r.daily, 0) + ' / day');
-    set('rps-perreq', '$' + (r.perRequest * 100).toFixed(4) + '¢ / request');
-    donut('rps-donut', [[variable, CYAN], [fixed, LIME]], pct(variable, r.monthly));
+    set('rps-perreq', money(r.perRequest, 8) + ' / request');
+    donut('rps-donut', [[r.variable, CYAN], [r.fixed, LIME]], pct(r.variable, r.monthly));
   }
 
   function renderCompaction() {
@@ -179,8 +199,8 @@
     set('cx-summary', big(r.summary, 0) + ' tokens survive');
     set('cx-lost', r.lostPct.toFixed(2) + '% of context lost');
     set('cx-reread', money(r.rereadBill));
-    var surv = isFinite(o.survPct) ? Math.max(0, Math.min(100, o.survPct)) : 0;
-    donut('cx-donut', [[r.summary, LIME], [Math.max(0, o.windowTk - r.summary), ROSE]],
+    var surv = clamp(o.survPct, 0, 100);
+    donut('cx-donut', [[r.summary, LIME], [Math.max(0, nonneg(o.windowTk) - r.summary), ROSE]],
       surv.toFixed(1) + '%');
   }
 
@@ -192,7 +212,7 @@
     var r = Calcs.retryStorm(o);
     set('rt-daily', money(r.daily, 0) + ' / day');
     set('rt-monthly', money(r.monthly, 0));
-    var waste = Math.max(0, o.retries);
+    var waste = nonneg(o.retries);
     donut('rt-donut', [[1, CYAN], [waste, ROSE]], pct(waste, 1 + waste));
   }
 
@@ -204,8 +224,10 @@
     var r = Calcs.errorBudget(o);
     set('eb-budget', big(r.budget, 1) + ' min / month');
     set('eb-left', big(r.left, 1) + ' min left');
-    set('eb-days', r.daysLeft.toFixed(1));
-    donut('eb-donut', [[r.left, LIME], [o.consumed, ROSE]], pct(r.left, r.budget));
+    set('eb-days', r.exhausted ? 'EXHAUSTED' :
+      (isFinite(r.daysLeft) ? r.daysLeft.toFixed(1) : '∞'));
+    donut('eb-donut', [[Math.max(0, r.left), LIME], [Math.min(nonneg(o.consumed), r.budget), ROSE]],
+      pct(Math.max(0, r.left), r.budget));
   }
 
   function renderHpa() {
@@ -215,11 +237,12 @@
     };
     var r = Calcs.hpa(o);
     set('hpa-desired', big(r.desired, 0));
-    set('hpa-delta', (r.delta >= 0 ? '+' : '') + r.delta + ' to add');
+    set('hpa-delta', r.delta > 0 ? '+' + r.delta + ' to add' :
+      (r.delta < 0 ? r.delta + ' to remove' : 'no change'));
     set('hpa-cap', r.capped ? 'CAPPED, raise max' : 'within max ' + o.max);
     var swing = Math.abs(r.delta);
     donut('hpa-donut', [[o.rep, CYAN], [swing, r.delta >= 0 ? LIME : ROSE]],
-      (r.delta >= 0 ? '+' : '') + r.delta);
+      big(o.rep, 0));
   }
 
   function renderObs() {
@@ -273,7 +296,12 @@
 
   if (typeof window !== 'undefined') {
     window.Calcs = Calcs;
-    if (document.getElementById('tk-perturn')) {
+    /* Boot on whichever tool the page carries: the hub hosts all nine, each
+       /tools/ page hosts exactly one. Missing ids are skipped by bind/set. */
+    var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly',
+      'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total'];
+    var onToolPage = RESULT_IDS.some(function (id) { return !!document.getElementById(id); });
+    if (onToolPage) {
       bind(['tk-in', 'tk-cache', 'tk-cachep', 'tk-freshp', 'tk-out', 'tk-outp', 'tk-turns'], renderToken);
       bind(['rps-rps', 'rps-price', 'rps-fixed'], renderRps);
       bind(['cx-win', 'cx-surv', 'cx-steps', 'cx-stepc'], renderCompaction);

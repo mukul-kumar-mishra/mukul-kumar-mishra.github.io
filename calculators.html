@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering calculators: AI token cost, error budget burn, Kubernetes HPA replicas, sampling fit, pool sizing plus downtime cost. Nine tools that run in your browser. No signup.">
+  <meta name="description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/calculators.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta property="og:description" content="Free engineering calculators: AI token cost, error budget burn, Kubernetes HPA replicas, sampling fit, pool sizing plus downtime cost. Nine tools, no signup.">
+  <meta property="og:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
   <meta property="og:url" content="https://buildopsy.com/calculators.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Free engineering calculators for cost, SLO and scaling">
@@ -16,8 +16,8 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling">
-  <meta name="twitter:description" content="Price tokens, burn error budgets, size HPA and pools in your browser. Free, no signup.">
+  <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
+  <meta name="twitter:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
   <meta name="twitter:image:alt" content="Free engineering calculators for cost, SLO and scaling">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy</title>
@@ -93,6 +93,7 @@
     <section class="sec" id="token-bill">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="coins"></i> Token Bill Calculator</h2>
+        <a class="sec-link" href="tools/llm-token-cost-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits plus 1.5k output tokens.</p>
       <section class="radar-card">
@@ -119,13 +120,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly spend</div>
-                <div class="calc-result-value" id="tk-monthly">-</div>
+                <div class="calc-result-value" id="tk-monthly">$73,500</div>
                 <div class="radar-count-description">per month · turns × cost per turn</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Cost mix per turn</div>
-                  <div class="calc-donut" id="tk-donut" role="img" aria-label="Share of per-turn cost across cached input, fresh input and output"><div class="calc-donut-center"><span id="tk-mix-top">-</span><small>cached</small></div></div>
+                  <div class="calc-donut" id="tk-donut" role="img" aria-label="Share of per-turn cost across cached input, fresh input and output" style="background:conic-gradient(#a3e635 0.0% 28.6%,#38bdf8 28.6% 69.4%,#fb7185 69.4% 100.0%)"><div class="calc-donut-center"><span id="tk-mix-top">28.6%</span><small>cached</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#a3e635"></span><span class="lname">Cached input</span></li>
@@ -142,7 +143,7 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cost per turn</div>
-              <div class="radar-trend-value" id="tk-perturn">-</div>
+              <div class="radar-trend-value" id="tk-perturn">$0.0735 / turn</div>
               <div class="radar-trend-sub">cached plus fresh plus output</div>
             </div>
           </div>
@@ -154,6 +155,7 @@
     <section class="sec" id="rps-bill">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="activity"></i> RPS Envelope Estimator</h2>
+        <a class="sec-link" href="tools/edge-request-cost-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, plus fixed platform spend.</p>
       <section class="radar-card">
@@ -176,13 +178,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly envelope</div>
-                <div class="calc-result-value" id="rps-monthly">-</div>
+                <div class="calc-result-value" id="rps-monthly">$7,265,600</div>
                 <div class="radar-count-description">per month · rate × seconds × price</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Monthly mix</div>
-                  <div class="calc-donut" id="rps-donut" role="img" aria-label="Share of monthly envelope across usage variable cost and fixed platform spend"><div class="calc-donut-center"><span id="rps-mix-top">-</span><small>variable</small></div></div>
+                  <div class="calc-donut" id="rps-donut" role="img" aria-label="Share of monthly envelope across usage variable cost and fixed platform spend" style="background:conic-gradient(#38bdf8 0.0% 64.2%,#a3e635 64.2% 100.0%)"><div class="calc-donut-center"><span id="rps-mix-top">64.2%</span><small>variable</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Usage variable</span></li>
@@ -198,13 +200,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Daily burn</div>
-              <div class="radar-trend-value" id="rps-daily">-</div>
+              <div class="radar-trend-value" id="rps-daily">$242,187 / day</div>
               <div class="radar-trend-sub">envelope per day</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cost per request</div>
-              <div class="radar-trend-value" id="rps-perreq">-</div>
+              <div class="radar-trend-value" id="rps-perreq">$0.00000280 / request</div>
               <div class="radar-trend-sub">blended unit cost</div>
             </div>
           </div>
@@ -216,6 +218,7 @@
     <section class="sec" id="compaction">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="scissors"></i> Compaction Survival Calculator</h2>
+        <a class="sec-link" href="tools/context-compaction-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. Defaults mirror the measured median: 575k crushed to about 4.3k, then roughly 28 steps of re-reading.</p>
       <section class="radar-card">
@@ -239,13 +242,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Re-read bill</div>
-                <div class="calc-result-value" id="cx-reread">-</div>
+                <div class="calc-result-value" id="cx-reread">$2.07</div>
                 <div class="radar-count-description">steps × cost per step</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Window fate</div>
-                  <div class="calc-donut" id="cx-donut" role="img" aria-label="Share of context window across survived summary and lost context"><div class="calc-donut-center"><span id="cx-mix-top">-</span><small>survived</small></div></div>
+                  <div class="calc-donut" id="cx-donut" role="img" aria-label="Share of context window across survived summary and lost context" style="background:conic-gradient(#a3e635 0.0% 0.8%,#fb7185 0.8% 100.0%)"><div class="calc-donut-center"><span id="cx-mix-top">0.8%</span><small>survived</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#a3e635"></span><span class="lname">Survived</span></li>
@@ -261,13 +264,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Summary size</div>
-              <div class="radar-trend-value" id="cx-summary">-</div>
+              <div class="radar-trend-value" id="cx-summary">4,313 tokens survive</div>
               <div class="radar-trend-sub">tokens that survive</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Context lost</div>
-              <div class="radar-trend-value" id="cx-lost">-</div>
+              <div class="radar-trend-value" id="cx-lost">99.25% of context lost</div>
               <div class="radar-trend-sub">share of the window</div>
             </div>
           </div>
@@ -279,6 +282,7 @@
     <section class="sec" id="retry-storm">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="refresh-cw"></i> Retry-Storm Cost Calculator</h2>
+        <a class="sec-link" href="tools/agent-retry-cost-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Failed agent attempts rebill every retry. Multiply tasks by retries by attempt cost and watch the storm's share of the budget.</p>
       <section class="radar-card">
@@ -301,13 +305,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly waste</div>
-                <div class="calc-result-value" id="rt-monthly">-</div>
+                <div class="calc-result-value" id="rt-monthly">$30,000</div>
                 <div class="radar-count-description">per month · tasks × retries × cost</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Attempt mix</div>
-                  <div class="calc-donut" id="rt-donut" role="img" aria-label="Share of attempts across first tries and wasted retries"><div class="calc-donut-center"><span id="rt-mix-top">-</span><small>wasted</small></div></div>
+                  <div class="calc-donut" id="rt-donut" role="img" aria-label="Share of attempts across first tries and wasted retries" style="background:conic-gradient(#38bdf8 0.0% 33.3%,#fb7185 33.3% 100.0%)"><div class="calc-donut-center"><span id="rt-mix-top">66.7%</span><small>wasted</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">First attempts</span></li>
@@ -323,7 +327,7 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Daily waste</div>
-              <div class="radar-trend-value" id="rt-daily">-</div>
+              <div class="radar-trend-value" id="rt-daily">$1,000 / day</div>
               <div class="radar-trend-sub">rebilled every day</div>
             </div>
           </div>
@@ -335,6 +339,7 @@
     <section class="sec" id="error-budget">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="shield-alert"></i> Error Budget Burn Calculator</h2>
+        <a class="sec-link" href="tools/error-budget-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
       <section class="radar-card">
@@ -357,13 +362,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Runway</div>
-                <div class="calc-result-value" id="eb-days">-</div>
+                <div class="calc-result-value" id="eb-days">10.8</div>
                 <div class="radar-count-description">days remaining</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Budget mix</div>
-                  <div class="calc-donut" id="eb-donut" role="img" aria-label="Share of error budget across minutes left and minutes burned"><div class="calc-donut-center"><span id="eb-mix-top">-</span><small>left</small></div></div>
+                  <div class="calc-donut" id="eb-donut" role="img" aria-label="Share of error budget across minutes left and minutes burned" style="background:conic-gradient(#a3e635 0.0% 72.2%,#fb7185 72.2% 100.0%)"><div class="calc-donut-center"><span id="eb-mix-top">72.2%</span><small>left</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#a3e635"></span><span class="lname">Budget left</span></li>
@@ -379,13 +384,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Monthly budget</div>
-              <div class="radar-trend-value" id="eb-budget">-</div>
+              <div class="radar-trend-value" id="eb-budget">43.2 min / month</div>
               <div class="radar-trend-sub">minutes per month</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Budget left</div>
-              <div class="radar-trend-value" id="eb-left">-</div>
+              <div class="radar-trend-value" id="eb-left">31.2 min left</div>
               <div class="radar-trend-sub">minutes remaining</div>
             </div>
           </div>
@@ -397,6 +402,7 @@
     <section class="sec" id="hpa-size">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="layers"></i> HPA Replica Estimator</h2>
+        <a class="sec-link" href="tools/kubernetes-hpa-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">The real Kubernetes autoscaler formula. Desired replicas equal current replicas times current utilization over target utilization, rounded up. Defaults scale 8 replicas at 72 percent toward a 60 percent target.</p>
       <section class="radar-card">
@@ -420,13 +426,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Desired</div>
-                <div class="calc-result-value" id="hpa-desired">-</div>
+                <div class="calc-result-value" id="hpa-desired">10</div>
                 <div class="radar-count-description">replicas · current × util ÷ target</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Replica mix</div>
-                  <div class="calc-donut" id="hpa-donut" role="img" aria-label="Share of desired replicas across current replicas and replicas to add or remove"><div class="calc-donut-center"><span id="hpa-mix-top">-</span><small>current</small></div></div>
+                  <div class="calc-donut" id="hpa-donut" role="img" aria-label="Share of desired replicas across current replicas and replicas to add or remove" style="background:conic-gradient(#38bdf8 0.0% 80.0%,#a3e635 80.0% 100.0%)"><div class="calc-donut-center"><span id="hpa-mix-top">8</span><small>current</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Current replicas</span></li>
@@ -442,13 +448,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Scale action</div>
-              <div class="radar-trend-value" id="hpa-delta">-</div>
+              <div class="radar-trend-value" id="hpa-delta">+2 to add</div>
               <div class="radar-trend-sub">replicas to add</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cap status</div>
-              <div class="radar-trend-value" id="hpa-cap">-</div>
+              <div class="radar-trend-value" id="hpa-cap">within max 20</div>
               <div class="radar-trend-sub">against max replicas</div>
             </div>
           </div>
@@ -460,6 +466,7 @@
     <section class="sec" id="obs-sample">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="activity"></i> Observability Sampling Fitter</h2>
+        <a class="sec-link" href="tools/trace-sampling-rate-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Spans per second times bytes per span is your daily ingest. Price it, then compute the keep rate that fits the budget. Defaults ingest 50k spans a second at 2 KB against a $20k monthly budget.</p>
       <section class="radar-card">
@@ -483,13 +490,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly cost</div>
-                <div class="calc-result-value" id="obs-cost">-</div>
+                <div class="calc-result-value" id="obs-cost">$79,626</div>
                 <div class="radar-count-description">per month · spans × bytes × price</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Ingest mix</div>
-                  <div class="calc-donut" id="obs-donut" role="img" aria-label="Share of ingest cost across kept spans and discarded spans"><div class="calc-donut-center"><span id="obs-mix-top">-</span><small>kept</small></div></div>
+                  <div class="calc-donut" id="obs-donut" role="img" aria-label="Share of ingest cost across kept spans and discarded spans" style="background:conic-gradient(#a3e635 0.0% 25.1%,#fb7185 25.1% 100.0%)"><div class="calc-donut-center"><span id="obs-mix-top">25.1%</span><small>kept</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#a3e635"></span><span class="lname">Kept</span></li>
@@ -505,13 +512,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Daily ingest</div>
-              <div class="radar-trend-value" id="obs-gb">-</div>
+              <div class="radar-trend-value" id="obs-gb">8,847 GB / day</div>
               <div class="radar-trend-sub">gigabytes per day</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Keep rate to fit budget</div>
-              <div class="radar-trend-value" id="obs-keep">-</div>
+              <div class="radar-trend-value" id="obs-keep">25.1% keep rate</div>
               <div class="radar-trend-sub">share worth keeping</div>
             </div>
           </div>
@@ -523,6 +530,7 @@
     <section class="sec" id="pool-size">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="database"></i> Connection Pool Sizer</h2>
+        <a class="sec-link" href="tools/connection-pool-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Little's law for pools. Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor, spread across pods. Defaults mirror a 10k TPS payments switch at 45ms p99.</p>
       <section class="radar-card">
@@ -546,13 +554,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Pool size</div>
-                <div class="calc-result-value" id="pool-total">-</div>
+                <div class="calc-result-value" id="pool-total">675</div>
                 <div class="radar-count-description">connections · RPS × p99 × safety</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Pool mix</div>
-                  <div class="calc-donut" id="pool-donut" role="img" aria-label="Share of pool across connections in flight and spare headroom"><div class="calc-donut-center"><span id="pool-mix-top">-</span><small>in flight</small></div></div>
+                  <div class="calc-donut" id="pool-donut" role="img" aria-label="Share of pool across connections in flight and spare headroom" style="background:conic-gradient(#38bdf8 0.0% 66.7%,#a3e635 66.7% 100.0%)"><div class="calc-donut-center"><span id="pool-mix-top">66.7%</span><small>in flight</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">In flight</span></li>
@@ -568,13 +576,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Concurrent in flight</div>
-              <div class="radar-trend-value" id="pool-conc">-</div>
+              <div class="radar-trend-value" id="pool-conc">450 concurrent</div>
               <div class="radar-trend-sub">Little's law output</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Connections / pod</div>
-              <div class="radar-trend-value" id="pool-perpod">-</div>
+              <div class="radar-trend-value" id="pool-perpod">17 / pod</div>
               <div class="radar-trend-sub">spread across pods</div>
             </div>
           </div>
@@ -586,6 +594,7 @@
     <section class="sec" id="downtime-cost">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="coins"></i> Downtime Cost Calculator</h2>
+        <a class="sec-link" href="tools/downtime-cost-calculator.html">Open standalone →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
       <section class="radar-card">
@@ -609,13 +618,13 @@
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Exposure</div>
-                <div class="calc-result-value" id="dt-total">-</div>
+                <div class="calc-result-value" id="dt-total">$101,918</div>
                 <div class="radar-count-description">revenue lost + SLA credit</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Exposure mix</div>
-                  <div class="calc-donut" id="dt-donut" role="img" aria-label="Share of total exposure across revenue lost and SLA credit owed"><div class="calc-donut-center"><span id="dt-mix-top">-</span><small>lost</small></div></div>
+                  <div class="calc-donut" id="dt-donut" role="img" aria-label="Share of total exposure across revenue lost and SLA credit owed" style="background:conic-gradient(#fb7185 0.0% 21.5%,#38bdf8 21.5% 100.0%)"><div class="calc-donut-center"><span id="dt-mix-top">21.5%</span><small>lost</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#fb7185"></span><span class="lname">Revenue lost</span></li>
@@ -631,13 +640,13 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Revenue lost</div>
-              <div class="radar-trend-value" id="dt-loss">-</div>
+              <div class="radar-trend-value" id="dt-loss">$21,918 lost</div>
               <div class="radar-trend-sub">minutes times revenue rate</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">SLA credit owed</div>
-              <div class="radar-trend-value" id="dt-sla">-</div>
+              <div class="radar-trend-value" id="dt-sla">$80,000 credit</div>
               <div class="radar-trend-sub">share of cloud bill</div>
             </div>
           </div>
