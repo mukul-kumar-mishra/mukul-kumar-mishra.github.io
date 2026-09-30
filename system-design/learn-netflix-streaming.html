@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free Netflix architecture course in 25 forensic lessons from Mukul. Open Connect, encoding ladders, Zuul, Eureka, Hystrix, chaos, EVCache, Cassandra, Keystone, recommendations, Titus plus stream economics, priced from production practice.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-netflix-streaming.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Netflix in Production: 25 Lessons From the Stream">
+  <meta property="og:description" content="Play pressed plus world served. Twenty-five Netflix lessons with live diagrams plus stream math from edge to encode.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-netflix-stream-meme.png">
+  <meta property="og:image:alt" content="Three panels showing play request plus cached delivery plus encoded ladder">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-netflix-streaming.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Netflix in Production: 25 Lessons From the Stream">
+  <meta name="twitter:description" content="Play pressed plus world served. Twenty-five Netflix lessons with live diagrams plus stream math from edge to encode.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-netflix-stream-meme.png">
+  <meta name="twitter:image:alt" content="Three panels showing play request plus cached delivery plus encoded ladder">
+  <title>Netflix in Production: 25 Lessons From the Stream | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Course","name":"Netflix in Production: 25 Lessons From the Stream",
+    "description":"A free Netflix architecture course in 25 forensic lessons covering playback, Open Connect CDN, proactive fill, steering, per-title encoding, Zuul gateway, Eureka discovery, Hystrix resilience, retry budgets, chaos engineering, EVCache, Cassandra, Keystone pipeline, Flink, data lake, recommendations, experimentation, Atlas telemetry, Titus containers, Spinnaker deploys, predictive capacity, stream economics, studio supply chain plus a capstone stream.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P15H"},
+    "syllabusSections":[{"@type":"Syllabus","name":"Play Promise"},{"@type":"Syllabus","name":"Open Connect"},{"@type":"Syllabus","name":"Fill Windows"},{"@type":"Syllabus","name":"Steering"},{"@type":"Syllabus","name":"Per-Title Encode"},{"@type":"Syllabus","name":"Zuul Gateway"},{"@type":"Syllabus","name":"Eureka Discovery"},{"@type":"Syllabus","name":"Hystrix Breakers"},{"@type":"Syllabus","name":"Retry Budgets"},{"@type":"Syllabus","name":"Chaos Discipline"},{"@type":"Syllabus","name":"EVCache"},{"@type":"Syllabus","name":"Cassandra Scale"},{"@type":"Syllabus","name":"Keystone Pipeline"},{"@type":"Syllabus","name":"Flink Nearline"},{"@type":"Syllabus","name":"Data Lake"},{"@type":"Syllabus","name":"Recommendations"},{"@type":"Syllabus","name":"Experimentation"},{"@type":"Syllabus","name":"Atlas Telemetry"},{"@type":"Syllabus","name":"Titus Containers"},{"@type":"Syllabus","name":"Spinnaker Deploys"},{"@type":"Syllabus","name":"Predictive Capacity"},{"@type":"Syllabus","name":"Stream Economics"},{"@type":"Syllabus","name":"Studio Supply Chain"},{"@type":"Syllabus","name":"Design Netflix Round"},{"@type":"Syllabus","name":"Ship One Stream"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Netflix Course","item":"https://buildopsy.com/system-design/learn-netflix-streaming.html"}]}
+  </script>
+<style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    @media (max-width: 900px) { .course-layout { grid-template-columns: 1fr; } .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; } .course-rail-title { display: none; } .course-rail a { white-space: nowrap; flex: none; } }
+  </style>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" >System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">25 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Netflix in Production: 25 Lessons From the Stream</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of streaming-shaped systems taught me one discipline: play is a promise, edge serves it, plus every layer carries a price. Twenty-five lessons from button to bill, each grounded in published engineering practice with math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Twenty-five Netflix lessons with live diagrams, from Open Connect to encodes plus breakers plus recommendations plus stream economics. The complete stream in one place.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Streaming course · Updated September 30, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Architecture facts in this course follow the Netflix Technology Blog series linked in Sources plus further viewing. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch a play travel from button to edge to encode, then design so it costs less.</aside>
+    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-netflix-stream-meme.svg" alt="Three panels showing play request plus cached delivery plus encoded ladder" width="1200" height="680"><figcaption>Course cover. Play pressed plus edge served plus ladders encoded per title.</figcaption></figure>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Trace a play from button through steering to edge cache to encoded ladder, pricing each hop in bandwidth plus latency.</li>
+        <li>Run gateway plus discovery plus breakers plus chaos drills that keep hundreds of services alive through zone failures.</li>
+        <li>Serve taste from EVCache plus Cassandra, pipe trillions of events through Keystone plus Flink, plus lake history by the petabyte.</li>
+        <li>Rank rows with recommendations, price every experiment, watch telemetry separately, schedule millions of containers, plus ship without fear.</li>
+        <li>Total cost per streaming hour monthly, ace the design-Netflix interview round, plus ship a miniature streamer with proof.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: play-flow narration first, steering plus encode math second, resilience stories third. Lesson 24 rehearses the round.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+<div class="course-rail-title">25 lessons</div>
+<a href="#lesson-1"><span class="rnum">01</span> Play</a>
+<a href="#lesson-2"><span class="rnum">02</span> Edge</a>
+<a href="#lesson-3"><span class="rnum">03</span> Fill</a>
+<a href="#lesson-4"><span class="rnum">04</span> Steer</a>
+<a href="#lesson-5"><span class="rnum">05</span> Encode</a>
+<a href="#lesson-6"><span class="rnum">06</span> Zuul</a>
+<a href="#lesson-7"><span class="rnum">07</span> Eureka</a>
+<a href="#lesson-8"><span class="rnum">08</span> Hystrix</a>
+<a href="#lesson-9"><span class="rnum">09</span> Retry</a>
+<a href="#lesson-10"><span class="rnum">10</span> Chaos</a>
+<a href="#lesson-11"><span class="rnum">11</span> EVCache</a>
+<a href="#lesson-12"><span class="rnum">12</span> C*</a>
+<a href="#lesson-13"><span class="rnum">13</span> Keystone</a>
+<a href="#lesson-14"><span class="rnum">14</span> Flink</a>
+<a href="#lesson-15"><span class="rnum">15</span> Lake</a>
+<a href="#lesson-16"><span class="rnum">16</span> Taste</a>
+<a href="#lesson-17"><span class="rnum">17</span> Tests</a>
+<a href="#lesson-18"><span class="rnum">18</span> Atlas</a>
+<a href="#lesson-19"><span class="rnum">19</span> Titus</a>
+<a href="#lesson-20"><span class="rnum">20</span> Ship</a>
+<a href="#lesson-21"><span class="rnum">21</span> Capacity</a>
+<a href="#lesson-22"><span class="rnum">22</span> Bills</a>
+<a href="#lesson-23"><span class="rnum">23</span> Studio</a>
+<a href="#lesson-24"><span class="rnum">24</span> Round</a>
+<a href="#lesson-25"><span class="rnum">25</span> Capstone</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Playback · The promise under the button</div>
+          <h2>Play Is a Promise</h2>
+          <p class="lesson-story">Assumption first: pressing play starts a contract measured in rebuffers, not requests. The client fetches manifests plus picks bitrates plus refills buffers ahead of stalls. Startup under two seconds keeps the promise. Every rebuffer spends trust the catalog earned. Design playback for the worst network the member owns, not the demo wifi.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="playback arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">manifest fetched</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">bitrate picked</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">buffer filled</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">stalls zero</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Budget startup as DNS plus manifest plus first segment. Seconds here decide churn.</li>
+            <li>Adapt bitrate down before the buffer empties. Late adaptation rebuffers loudly.</li>
+            <li>Deep dive: <a href="elevenlabs-voice-scale-postmortem.html">ElevenLabs Voice</a>, 75ms audio budgets with the same math.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Startup must stay under 2 seconds on 3G. What loads first? <span class="q-seen">Seen at: backend plus mobile loops.</span></p>
+            <p><strong>Q2.</strong> Rebuffers spike on one ISP nightly. What steering changes? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
+          </div>
+          <p class="lesson-hook">Promise priced. Now own the last mile. <a href="#lesson-2">Lesson 02: Open Connect →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · CDN · Caches inside the ISP</div>
+          <h2>Open Connect Owns the Last Mile</h2>
+          <p class="lesson-story">Netflix serves most bytes from appliances embedded inside ISP plus IXP networks, not from distant clouds. Short paths cut transit bills plus latency plus peak-hour congestion together. Thousands of appliances form a private CDN tuned for video. The last mile is rented space run like owned infrastructure.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="edge arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">ISP embedded</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">IXP peered</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">bytes local</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">transit dodged</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure offload ratio: bytes from appliances over total bytes. High nineties is the target.</li>
+            <li>Place appliances where evening peaks concentrate. Geography decides cache hit reality.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Edge</a>, one wrong file network-wide.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Peak traffic triples at 8 PM in one metro. Where do bytes come from? <span class="q-seen">Seen at: backend plus network loops.</span></p>
+            <p><strong>Q2.</strong> ISP link saturates during finals. What absorbs the spike? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
+          </div>
+          <p class="lesson-hook">Mile owned. Now fill before demand. <a href="#lesson-3">Lesson 03: Fill →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Distribution · Cache before the crowd</div>
+          <h2>Fill Windows Fill Before Demand</h2>
+          <p class="lesson-story">New titles deploy to appliances during configured fill windows before release, not after the crowd arrives. Popularity prediction decides which titles land where plus how many copies each earns. Faulty encodes get replaced through the same rails. Proactive caching turns launch night from stampede into routine.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="fill arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">titles flagged</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">windows filled</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">crowd served</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">stampede none</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size fill bandwidth from title bytes times appliance count over window hours. Missed windows mean launch pain.</li>
+            <li>Prioritize by predicted popularity per region. Global hits fill everywhere, niches fill near fans.</li>
+            <li>Deep dive: <a href="sharechat-feature-store-cost-postmortem.html">ShareChat Assignment</a>, predicted placement with receipts.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> A global launch lands Friday 8 PM. When does the title reach edge? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Faulty encode needs global replacement in hours. What rails carry it? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Filled early. Now steer each play. <a href="#lesson-4">Lesson 04: Steering →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Routing · Shortest path per play</div>
+          <h2>Steering Picks the Path</h2>
+          <p class="lesson-story">Each play session gets steered to the best source for its network moment: embedded appliance first, peers next, origin last. Health plus load plus congestion feed the choice continuously. Static DNS assignments cannot react to evening peaks. Steering turns topology into a live decision.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="steering arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">health read</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">load weighed</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">path picked</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">play smooth</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track served-from-edge percentage per metro per hour. Dips reveal congestion before complaints.</li>
+            <li>Fail over mid-session without rebuffer. Sticky assignments die with sick servers.</li>
+            <li>Deep dive: <a href="gcp-us-central1-outage-postmortem.html">GCP us-central1</a>, pinned control drains queues.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Appliance sickens mid-evening. Where do its sessions go? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
+            <p><strong>Q2.</strong> Two paths tie on latency. What breaks the tie? <span class="q-seen">Seen at: backend plus network loops.</span></p>
+          </div>
+          <p class="lesson-hook">Path picked. Now encode smarter. <a href="#lesson-5">Lesson 05: Encode →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Encoding · Bits shaped per title</div>
+          <h2>Per-Title Encode Ladders</h2>
+          <p class="lesson-story">Fixed bitrate ladders waste bits on cartoons plus starve action scenes. Per-title encoding shapes each ladder to content complexity, saving roughly a fifth of bandwidth at equal quality. Per-shot goes finer still. Codecs march forward with AV1 cutting further. Encoding is the cheapest bandwidth Netflix buys.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="encode arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">complexity read</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ladder shaped</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">bits saved</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">quality held</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Compare bits per quality point across titles. Flat ladders overspend simple scenes.</li>
+            <li>Re-encode the head catalog on codec jumps. Back catalog pays the march forward.</li>
+            <li>Deep dive: <a href="llm-inference-cost-per-task-postmortem.html">LLM Inference Cost</a>, per-task shaping with the same math.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Animation plus action share one ladder. What changes per title? <span class="q-seen">Seen at: backend plus media loops.</span></p>
+            <p><strong>Q2.</strong> AV1 promises 30 percent savings. What migrates first? <span class="q-seen">Seen at: platform plus media loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bits shaped. Now guard the door. <a href="#lesson-6">Lesson 06: Zuul →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Edge · The front door at 1M RPS</div>
+          <h2>Zuul Guards the Door</h2>
+          <p class="lesson-story">Zuul fronts every request into the cloud with routing plus filters plus throttling plus brownouts. Dozens of clusters pass more than a million requests per second to a hundred backend clusters. Filters shed CPU-heavy features under overload instead of dying. The door decides what the house survives.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="gateway arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">requests fronted</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">filters run</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">throttles hold</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">backends calm</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size gateway capacity from peak RPS times filter cost. Brownouts trade features for survival.</li>
+            <li>Throttle device retries at the edge. Client storms die at the door, not inside.</li>
+            <li>Deep dive: <a href="coinbase-msk-kafka-failover-postmortem.html">Coinbase MSK</a>, edge math that held plus core that stuck.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Retry storm triples inbound RPS. What sheds first? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> CPU-heavy personalization strains the door. What degrades gracefully? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Door held. Now find services. <a href="#lesson-7">Lesson 07: Eureka →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Discovery · Names that survive churn</div>
+          <h2>Eureka Names the Fleet</h2>
+          <p class="lesson-story">Hundreds of services with thousands of instances churn hourly through deploys plus autoscaling. Eureka keeps the registry so callers find live instances without frozen configs. Heartbeats plus evictions prune the dead within seconds. Discovery without health is a phone book of ghosts.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="discovery arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">heartbeats sent</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">dead evicted</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">live listed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">calls routed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size heartbeat intervals against eviction lag. Slow pruning routes to corpses.</li>
+            <li>Cache registry reads client-side with refresh. Registry outages must not halt calls.</li>
+            <li>Deep dive: <a href="etcd-tls-handshake-dos-postmortem.html">etcd Handshake</a>, silent sockets billed per connection.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Deploy replaces 500 instances in minutes. How do callers track them? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Registry blips for 30 seconds. What keeps traffic flowing? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fleet named. Now isolate failure. <a href="#lesson-8">Lesson 08: Hystrix →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Resilience · Breakers before cascades</div>
+          <h2>Hystrix Breaks Cascades</h2>
+          <p class="lesson-story">Tens of billions of calls daily run wrapped in breakers that isolate latency plus stop cascades plus serve fallbacks. Thread pools bulkhead slow dependencies. Open breakers fail fast instead of queueing doom. Dashboards stream metrics in seconds for recovery. Resilience is a library plus a habit.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="breaker arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">calls wrapped</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">slow isolated</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">fast failed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">fallback served</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Tune timeouts from p99 plus headroom. Generous timeouts queue, tight ones flap.</li>
+            <li>Serve degraded fallbacks per dependency. Static rows beat blank screens.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Queue</a>, stuck logins with no breaker.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Dependency p99 triples at peak. What contains the blast? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Breaker flaps all afternoon. Timeout or threshold moves? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Cascades broken. Now budget retries. <a href="#lesson-9">Lesson 09: Retries →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Retries · Loans with budgets</div>
+          <h2>Retry Budgets Cap Storms</h2>
+          <p class="lesson-story">Retries multiply calm traffic into storms when every client retries blindly. Budgets cap retry share near a fifth of traffic with backoff plus jitter. Device retries get throttled at the edge before entering. Unbudgeted retries turn one slow dependency into a fleet-wide queue. The incident collects every loan.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="retry arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">budgets set</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">backoff jittered</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">edge throttled</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">storms capped</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price every policy at 6x calm load before approving. Numbers veto hopeful configs.</li>
+            <li>Run the retry-storm calculator with your RPS. Storms modeled beat storms survived.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, 6x amplification modeled.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Three services retry one slow API. What caps the product? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Budget exhausts nightly at 8 PM. What moves: budget or dependency? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Storms capped. Now rehearse fire. <a href="#lesson-10">Lesson 10: Chaos →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Chaos · Rehearsed failure</div>
+          <h2>Chaos as a Discipline</h2>
+          <p class="lesson-story">Chaos Monkey kills instances in production so weaknesses surface on schedule, not launch night. Chaos Kong evacuates whole regions to prove multi-region claims. Game days extend the drill to people plus process. Systems never killed in practice die in public. Failure rehearsed is failure discounted.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="chaos arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">instances killed</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">regions evacuated</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">teams drilled</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">claims proved</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure detection plus recovery minutes per drill. Shrinking means the drills work.</li>
+            <li>Start with staging, then prod off-peak, then peak with blast limits. Courage needs guardrails.</li>
+            <li>Deep dive: <a href="aws-thermal-outage-postmortem.html">AWS Thermal</a>, cooling failed without rehearsal.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Leadership fears prod chaos. What drill runs first? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Region evacuation stalls halfway. What proved missing? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fire rehearsed. Now cache hot. <a href="#lesson-11">Lesson 11: EVCache →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Caching · Memory at 1ms</div>
+          <h2>EVCache Serves at 1ms</h2>
+          <p class="lesson-story">EVCache holds tier-0 working sets with millisecond SLAs at hundreds of thousands of requests per second. Trillions of daily operations ride memcached plus sidecars plus global replication. SSD tiers cut personalization storage cost with microsecond penalties. Hot paths without EVCache-equivalents pay database prices per read.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="cache arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">hot cached</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ms served</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">global copied</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">SSDs tiered</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size working sets from hot keys, not totals. Ten percent of keys earn the RAM.</li>
+            <li>Replicate personalization cross-region async. Stale taste beats unavailable taste.</li>
+            <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, owned NVMe at 1ms.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Personalization reads spike 10x at 8 PM. What serves them? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> RAM bill doubles yearly. What tier absorbs cold taste? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Hot cached. Now persist globals. <a href="#lesson-12">Lesson 12: Cassandra →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Storage · AP at planetary scale</div>
+          <h2>Cassandra Holds the Catalog</h2>
+          <p class="lesson-story">Catalog plus viewing state ride Cassandra across regions with AP semantics: available under partitions, reconciled after. Chaos runs against production clusters to prove node loss is routine. Monitoring plus auto-remediation keep thousands of nodes honest. Shared-nothing scales where shared-everything stalls.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="cassandra arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">nodes many</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">loss routine</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">partitions survived</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">state reconciled</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size replication factor against quorum latency. Factor 3 with local quorum balances well.</li>
+            <li>Repair plus compaction schedules are production work, not chores. Skipped maintenance compounds.</li>
+            <li>Deep dive: <a href="discord-messages-scale-postmortem.html">Discord Messages Scale</a>, 177 nodes humbled.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Region partitions for an hour. Reads or writes bend? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> Node loss during peak goes unnoticed. What architecture earns that? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Catalog held. Now stream events. <a href="#lesson-13">Lesson 13: Keystone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Pipelines · Trillions of events daily</div>
+          <h2>Keystone Pipes Trillions</h2>
+          <p class="lesson-story">Viewing plus diagnostic plus playback events flow through a Kafka-fronted pipeline into S3 plus search plus secondary streams. Routing services fan each event to the sinks that need it. Backpressure plus QoS keep floods orderly. Pipelines without routing become swamps with retention.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pipeline arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">events fronted</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">routed fanned</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">sinks fed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">floods queued</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size brokers from peak events per second times retention days. Peaks decide, averages lie.</li>
+            <li>Separate operational metrics into Atlas-style telemetry. Mixed pipes drown signals.</li>
+            <li>Deep dive: <a href="roblox-kafka-ingestion-postmortem.html">Roblox Kafka</a>, 18 trillion daily with tiers.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Launch night triples events. What absorbs the burst? <span class="q-seen">Seen at: data plus backend loops.</span></p>
+            <p><strong>Q2.</strong> One sink lags hours. What isolates the slow reader? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Events piped. Now compute nearline. <a href="#lesson-14">Lesson 14: Flink →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Stream Compute · Minutes, not days</div>
+          <h2>Flink Computes Nearline</h2>
+          <p class="lesson-story">Stream processors turn raw events into trending rows plus quality signals within minutes. Chaos-tested jobs survive instance kills mid-window. Exactly-once semantics protect counts that pay. Batch stays for history, streams decide tonight. Freshness without correctness misleads faster.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="stream arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">windows computed</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">kills survived</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">counts exact</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">tonight decided</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size state backends from window bytes times key cardinality. State decides cost.</li>
+            <li>Checkpoint to durable stores on short intervals. Long gaps replay expensively.</li>
+            <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, queue math across systems.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Trending needs five-minute freshness. Batch or stream? <span class="q-seen">Seen at: data plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Job dies mid-window at peak. What restores exact counts? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Nearline fresh. Now lake the history. <a href="#lesson-15">Lesson 15: Lake →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Batch · History by the petabyte</div>
+          <h2>The Lake Keeps History</h2>
+          <p class="lesson-story">S3 plus Spark plus open table formats hold viewing history by the petabyte for training plus finance plus content bets. Nightly jobs load terabytes per dataset into serving stores. Partitioning plus file sizing decide query bills. Lakes without lifecycle rules store every experiment at full price.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="lake arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">history laked</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">nightly loaded</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queries partitioned</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">bills lifecycled</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price scans per query from bytes read. Partition pruning cuts most bills tenfold.</li>
+            <li>Compact small files weekly. File count taxes every query like rows do.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Lake Cost</a>, lake bills with the same math.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Analyst scans cost 10x this quarter. What prunes them? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Nightly load misses its window. What parallelizes safely? <span class="q-seen">Seen at: data plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">History kept. Now taste by math. <a href="#lesson-16">Lesson 16: Taste →</a></p>
+        </section>
+        <section class="lesson" id="lesson-16">
+          <div class="lesson-kicker">Lesson 16 · ML · Recommendations that pay</div>
+          <h2>Recommendations Earn the Play</h2>
+          <p class="lesson-story">Personalization ranks rows plus artwork per member from viewing history plus context. Offline training feeds nearline serving through cached feature stores. SSD tiers cut the storage bill for taste data. Rows without relevance waste the most expensive pixels on screen.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="taste arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">history featurized</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">models trained</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rows ranked</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">pixels earned</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure take-rate per row position. Top rows carry multiples of lower ones.</li>
+            <li>Precompute nightly plus adjust nearline. Stale models bore, live models cost.</li>
+            <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Engine</a>, retrieval bills per question.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Row take-rate halves this month. Model or presentation fault? <span class="q-seen">Seen at: data plus product loops.</span></p>
+            <p><strong>Q2.</strong> Feature store bill doubles. What tier absorbs cold taste? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Taste ranked. Now test everything. <a href="#lesson-17">Lesson 17: Tests →</a></p>
+        </section>
+        <section class="lesson" id="lesson-17">
+          <div class="lesson-kicker">Lesson 17 · Experimentation · Every change is a bet</div>
+          <h2>Experimentation Prices Bets</h2>
+          <p class="lesson-story">Hundreds of concurrent experiments test artwork plus algorithms plus flows with statistical guardrails. Canary analysis promotes winners plus rolls back regressions automatically. Untested launches are opinions with deploy rights. Bets without measurements are expenses.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="experiment arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">bets randomized</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">guards watched</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">winners promoted</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">losers rolled</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size samples from minimum detectable effect. Small wins need big crowds.</li>
+            <li>Gate launches on north-star plus guardrail metrics together. Single-metric wins lie.</li>
+            <li>Deep dive: <a href="swappie-mobile-revenue-postmortem.html">Swappie Revenue</a>, ten points bought with milliseconds.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Artwork test lifts clicks but cuts plays. Ship or kill? <span class="q-seen">Seen at: product plus data loops.</span></p>
+            <p><strong>Q2.</strong> Canary regresses latencies 5 percent. What decides rollback? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bets priced. Now watch everything. <a href="#lesson-18">Lesson 18: Atlas →</a></p>
+        </section>
+        <section class="lesson" id="lesson-18">
+          <div class="lesson-kicker">Lesson 18 · Telemetry · Signals separate from floods</div>
+          <h2>Atlas Watches Everything</h2>
+          <p class="lesson-story">Operational metrics flow through dedicated telemetry, never the event pipeline. Dimensional time series with fast queries catch incidents in seconds. Dashboards plus alerts share one signal source. Mixed pipes drown the signals that page. Telemetry is the nervous system, budgeted like one.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="telemetry arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">metrics streamed</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">seconds queried</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">pages fired</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">floods separated</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Budget series cardinality per service. Unbounded labels bankrupt stores.</li>
+            <li>Alert on symptoms plus burn rates, not raw CPU. Paged humans need meaning.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, signals versus noise.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Cardinality explodes after a deploy. What caps it? <span class="q-seen">Seen at: SRE plus observability loops.</span></p>
+            <p><strong>Q2.</strong> Alerts fire on CPU while users hurt elsewhere. What re-aims them? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Signals separate. Now schedule work. <a href="#lesson-19">Lesson 19: Titus →</a></p>
+        </section>
+        <section class="lesson" id="lesson-19">
+          <div class="lesson-kicker">Lesson 19 · Containers · Millions per week</div>
+          <h2>Titus Schedules Millions</h2>
+          <p class="lesson-story">Millions of containers weekly ride Titus across EC2 fleets with bin-packing plus autoscaling. Batch plus service plus GPU workloads share one scheduler with different promises. Autoscaling releases idle capacity back to encoding jobs. Schedulers without defrag strand cores while capacity idles.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="titus arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">packed dense</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">scaled auto</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">shared fairly</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">idle reused</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure bin-pack efficiency weekly. Stranded cores are rent without work.</li>
+            <li>Separate latency-sensitive from batch-tolerant queues. Mixed promises break both.</li>
+            <li>Deep dive: <a href="learn-kubernetes.html">Kubernetes Course</a>, fifteen on-call lessons.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> GPU jobs starve behind batch queues. What separates them? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Evening peak needs 30 percent more cores. What frees them? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Work scheduled. Now ship safely. <a href="#lesson-20">Lesson 20: Spinnaker →</a></p>
+        </section>
+        <section class="lesson" id="lesson-20">
+          <div class="lesson-kicker">Lesson 20 · Delivery · Deploys without fear</div>
+          <h2>Spinnaker Ships Safely</h2>
+          <p class="lesson-story">Continuous delivery pipelines bake plus canary plus promote across regions with automatic rollback. Hundreds of deploys daily stay boring through gates. Canary analysis compares metrics before full rollout. Deploys without canaries are leaps with changelogs.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="delivery arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">baked imaged</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">canaried measured</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">promoted staged</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rolled auto</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size canary traffic plus duration from error budget burn. Thin canaries miss regressions.</li>
+            <li>Halt pipelines on canary regression automatically. Human gates sleep at 3 AM.</li>
+            <li>Deep dive: <a href="discord-voice-thundering-herd-postmortem.html">Discord Voice Herd</a>, safety checks plus grace.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Canary passes but full rollout burns. What stage missed it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Deploy velocity stalls on manual gates. What automates safely? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Deploys boring. Now predict capacity. <a href="#lesson-21">Lesson 21: Capacity →</a></p>
+        </section>
+        <section class="lesson" id="lesson-21">
+          <div class="lesson-kicker">Lesson 21 · Capacity · Prophecy over panic</div>
+          <h2>Predictive Capacity Beats Panic</h2>
+          <p class="lesson-story">Evening peaks arrive on schedule, so capacity gets predicted, not panicked. Forecasts from history plus launches plus marketing set fleets before demand. Predictive scaling buys steady state cheap plus bursts on time. Reactive scaling buys the peak at premium plus misses the start.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capacity arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">peaks forecast</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">fleets preset</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">bursts caught</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">premiums dodged</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Forecast peak cores from last four same-weekday evenings plus launch calendar. History predicts most peaks.</li>
+            <li>Pre-warm caches plus fleets before tentpoles. Cold starts during premieres rebuffer loudly.</li>
+            <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure WAN</a>, five hours unprepared.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Tentpole launches Friday. When does capacity land? <span class="q-seen">Seen at: SRE plus capacity loops.</span></p>
+            <p><strong>Q2.</strong> Forecast misses by 20 percent upward. What absorbs it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Capacity preset. Now total the month. <a href="#lesson-22">Lesson 22: Economics →</a></p>
+        </section>
+        <section class="lesson" id="lesson-22">
+          <div class="lesson-kicker">Lesson 22 · Economics · Bits per dollar</div>
+          <h2>Stream Economics Totaled</h2>
+          <p class="lesson-story">Streaming bills in transit plus compute plus storage plus licensing per viewing hour. Owned edge plus shaped encodes cut the dearest line first. Regional clouds price the same play differently. Cost per streaming hour, tracked monthly, is the north-star efficiency metric. Bills without per-hour math hide in averages.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="economics arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">transit priced</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">encodes shaped</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">hours metered</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">per-hour tracked</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Attribute cost per streaming hour per region. Averages hide the dearest metro.</li>
+            <li>Negotiate transit with offload ratios as leverage. Edge share is bargaining power.</li>
+            <li>Deep dive: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer Cost</a>, per-unit bills that close.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> One metro costs 3x per hour. What lever moves first? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Codec migration promises 25 percent savings. What proves it? <span class="q-seen">Seen at: backend plus media loops.</span></p>
+          </div>
+          <p class="lesson-hook">Month totaled. Now feed the machine. <a href="#lesson-23">Lesson 23: Studio →</a></p>
+        </section>
+        <section class="lesson" id="lesson-23">
+          <div class="lesson-kicker">Lesson 23 · Content · The supply chain before play</div>
+          <h2>Studio Supply Chain Feeds Play</h2>
+          <p class="lesson-story">Titles travel from cameras through ingest plus QC plus mezzanine masters plus encodes plus metadata before any play. Faulty masters get caught by automated checks plus human eyes. Supply delays become launch delays with marketing attached. Content ops is the factory upstream of every lesson above.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="supply arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">ingested checked</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">masters kept</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">encodes fanned</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">metadata shipped</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track hours from ingest to playable per title. Bottlenecks live in QC queues.</li>
+            <li>Version masters immutably. Re-encodes from lost masters cost quarters.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, masters matter everywhere.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Launch slips a week on QC backlog. What parallelizes safely? <span class="q-seen">Seen at: platform plus media loops.</span></p>
+            <p><strong>Q2.</strong> Master corrupts after encodes ship. What restores the chain? <span class="q-seen">Seen at: SRE plus media loops.</span></p>
+          </div>
+          <p class="lesson-hook">Factory fed. Now ace the round. <a href="#lesson-24">Lesson 24: Interview →</a></p>
+        </section>
+        <section class="lesson" id="lesson-24">
+          <div class="lesson-kicker">Lesson 24 · Interview · Design Netflix aloud</div>
+          <h2>Design Netflix Interview Round</h2>
+          <p class="lesson-story">The iconic round compresses this course into forty-five minutes: clarify scale, sketch play flow, price bandwidth, pick stores, cache hot, queue async, break boxes, close with bills. Examiners probe steering plus encodes plus breakers hardest. Candidates with per-hour math stand apart. Speak the stream aloud.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="round arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">scale clarified</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">flow sketched</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">bills closed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">verdict earned</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Rehearse the full flow in forty minutes with five reserved for questions. Pacing is scored.</li>
+            <li>Open with numbers, close with cost. Middles vary, bookends decide.</li>
+            <li>Deep dive: <a href="learn-interview-bootcamp.html">Interview Bootcamp</a>, fifteen rounds rehearsed.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Design video sharing for 50M daily viewers. Sketch plus price it. <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Steering plus encodes draw the hardest probes. What numbers answer them? <span class="q-seen">Seen at: backend plus media loops.</span></p>
+          </div>
+          <p class="lesson-hook">Round rehearsed. Now ship proof. <a href="#lesson-25">Lesson 25: Capstone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-25">
+          <div class="lesson-kicker">Lesson 25 · Capstone · Ship one stream</div>
+          <h2>Ship One Stream</h2>
+          <p class="lesson-story">Capstone: build a miniature streamer in six weeks. Weeks one plus two serve static ladders with adaptive switching. Weeks three plus four add edge caching plus steering plus breakers. Weeks five plus six load-test plus chaos-drill plus price per streaming hour. Graduates carry plays, not slides.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">ladders served</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">edge cached</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">chaos survived</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">per-hour shown</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Exit criteria: sub-2s startup plus zero rebuffers at 5x load plus bill per hour shown.</li>
+            <li>Present the design as the interview round from lesson 24. Proof doubles as prep.</li>
+            <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, the fifteen-lesson companion.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Demo your streamer under injected zone failure. What stays smooth? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Price your streamer per thousand hours. What dominates? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Course complete. Start the companion. <a href="learn-system-design.html">System Design Course →</a></p>
+        </section>
+      </div>
+    </div>
+
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">Sources plus further viewing</h2>
+      <p class="fl-desc" style="margin:0 0 10px;">Architecture facts above follow the Netflix Technology Blog series linked here. Modeled numbers in lessons are labeled estimates, not Netflix financials.</p>
+      <ul class="lesson-ideas">
+        <li><a href="https://netflixtechblog.com/content-popularity-for-open-connect-b86d56f613b" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Content Popularity for Open Connect</a></li>
+        <li><a href="https://netflixtechblog.com/netflix-and-fill-c43a32b490c0" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Netflix plus Fill on proactive caching</a></li>
+        <li><a href="https://netflixtechblog.com/open-sourcing-zuul-2-82ea476cb2b3" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Open Sourcing Zuul 2 at 1M RPS</a></li>
+        <li><a href="https://netflixtechblog.com/introducing-hystrix-for-resilience-engineering-13531c1ab362" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Introducing Hystrix for resilience</a></li>
+        <li><a href="https://netflixtechblog.com/caching-for-a-global-netflix-7bcc457012f1" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Caching for a Global Netflix</a></li>
+        <li><a href="https://netflixtechblog.com/evolution-of-application-data-caching-from-ram-to-ssd-a33d6fa7a690" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Caching from RAM to SSD</a></li>
+        <li><a href="https://netflixtechblog.com/evolution-of-the-netflix-data-pipeline-da246ca36905" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Evolution of the Data Pipeline to Keystone</a></li>
+        <li><a href="https://netflixtechblog.com/can-spark-streaming-survive-chaos-monkey-b66482c4924a" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Can Spark Streaming survive Chaos Monkey</a></li>
+        <li><a href="https://netflixtechblog.com/titus-the-netflix-container-management-platform-is-now-open-source-f868c9fb5436" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Titus containers at 3M per week</a></li>
+        <li><a href="https://netflixtechblog.com/auto-scaling-production-services-on-titus-1f3cd49f5cd7" target="_blank" rel="noopener noreferrer">Netflix TechBlog: Auto Scaling Production Services on Titus</a></li>
+      </ul>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script><script src="../js/nav.js"></script>
+</body>
+</html>

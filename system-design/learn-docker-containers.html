@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free Docker course in 15 forensic lessons from Mukul. Layers, Dockerfiles, multi-stage builds, registries, tags, CVE scans, secrets, volumes, networks plus Kubernetes handoff, priced from production postmortems.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-docker-containers.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
+  <meta property="og:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
+  <meta property="og:image:alt" content="Three panels showing image layers plus registry push plus scan verdict">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-docker-containers.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
+  <meta name="twitter:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
+  <meta name="twitter:image:alt" content="Three panels showing image layers plus registry push plus scan verdict">
+  <title>Docker Containers in Production: 15 Lessons From the Layer Ledger | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Course","name":"Docker Containers in Production: 15 Lessons From the Layer Ledger",
+    "description":"A free Docker course in 15 forensic lessons covering image layers, Dockerfile ordering, multi-stage builds, registry economics, tag pinning, CVE scanning, secrets, volumes, networks, logging, healthchecks, resource limits, Compose parity, Kubernetes handoff plus a capstone ship.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[{"@type":"Syllabus","name":"Image Layers"},{"@type":"Syllabus","name":"Dockerfile Order"},{"@type":"Syllabus","name":"Multi-Stage Builds"},{"@type":"Syllabus","name":"Registry Bills"},{"@type":"Syllabus","name":"Tags Versus Pins"},{"@type":"Syllabus","name":"CVE Scans"},{"@type":"Syllabus","name":"Secrets Discipline"},{"@type":"Syllabus","name":"Volumes"},{"@type":"Syllabus","name":"Networks"},{"@type":"Syllabus","name":"Log Discipline"},{"@type":"Syllabus","name":"Healthchecks"},{"@type":"Syllabus","name":"Resource Limits"},{"@type":"Syllabus","name":"Compose Parity"},{"@type":"Syllabus","name":"Kubernetes Handoff"},{"@type":"Syllabus","name":"Ship One Container"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Docker Course","item":"https://buildopsy.com/system-design/learn-docker-containers.html"}]}
+  </script>
+<style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    @media (max-width: 900px) { .course-layout { grid-template-columns: 1fr; } .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; } .course-rail-title { display: none; } .course-rail a { white-space: nowrap; flex: none; } }
+  </style>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" >System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Docker Containers in Production: 15 Lessons From the Layer Ledger</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of containers under deploy pressure taught me one discipline: layers cached, bytes billed, plus verdicts per push. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen Docker lessons with live diagrams, from layers to registries plus scans plus the Kubernetes handoff. Built from production postmortems with registry math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated September 30, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch bytes travel the layer ledger, then design so they cost less.</aside>
+    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Three panels showing image layers plus registry push plus scan verdict" width="1200" height="680"><figcaption>Course cover. Layers cached plus registry billed plus scans priced per push.</figcaption></figure>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Read image ledgers, order Dockerfiles for cache hits, plus ship multi-stage builds a tenth of the size.</li>
+        <li>Price registry pushes per node, pin digests for repeatability, scan every push with owners plus dates, plus keep secrets out of layers.</li>
+        <li>Persist state in volumes, name networks before addresses, stream logs with trace IDs, plus gate rollouts with probes plus limits.</li>
+        <li>Mirror prod in Compose, hand off cleanly to Kubernetes, plus ship one container with dashboards plus runbooks.</li>
+        <li>Answer container interviews with layer math out loud, pull budgets second, plus rollback timings third.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: layer math out loud first, security discipline second, handoff planning third. Lesson 15 ships the proof.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+<div class="course-rail-title">15 lessons</div>
+<a href="#lesson-1"><span class="rnum">01</span> Layers</a>
+<a href="#lesson-2"><span class="rnum">02</span> Order</a>
+<a href="#lesson-3"><span class="rnum">03</span> Slim</a>
+<a href="#lesson-4"><span class="rnum">04</span> Bills</a>
+<a href="#lesson-5"><span class="rnum">05</span> Pins</a>
+<a href="#lesson-6"><span class="rnum">06</span> Scans</a>
+<a href="#lesson-7"><span class="rnum">07</span> Secrets</a>
+<a href="#lesson-8"><span class="rnum">08</span> Volumes</a>
+<a href="#lesson-9"><span class="rnum">09</span> Nets</a>
+<a href="#lesson-10"><span class="rnum">10</span> Logs</a>
+<a href="#lesson-11"><span class="rnum">11</span> Probes</a>
+<a href="#lesson-12"><span class="rnum">12</span> Limits</a>
+<a href="#lesson-13"><span class="rnum">13</span> Compose</a>
+<a href="#lesson-14"><span class="rnum">14</span> K8s</a>
+<a href="#lesson-15"><span class="rnum">15</span> Ship</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · Images are ledgers</div>
+          <h2>Image Layers</h2>
+          <p class="lesson-story">Assumption first: an image is a stack of immutable layers, not a box. Each instruction adds a layer. Identical layers share storage plus download once. Bloated layers download on every node forever. Read layer history before trusting any image. Bytes without ledgers compound silently.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="layer arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">base set</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">layers added</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">shared cached</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">bytes billed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Inspect history plus sizes per layer. Mystery gigabytes usually hide in one RUN step.</li>
+            <li>Prefer slim bases plus explicit versions. Latest plus full toolchains tax every pull.</li>
+            <li>Deep dive: <a href="replit-agent-runtime-postmortem.html">Replit Agent Runtime</a>, sandbox images with install bills.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Image pulls take 4 minutes per node. Which layer dominates? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Two services share 80 percent of layers. What does the registry charge? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Ledger read. Now order the file. <a href="#lesson-2">Lesson 02: Dockerfile →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Caching · Order prints money</div>
+          <h2>Dockerfile Order</h2>
+          <p class="lesson-story">Layer cache reuses every unchanged step plus rebuilds everything below the first change. Stable steps belong early. Churning source belongs last. Dependency manifests before code cuts rebuilds tenfold. Order without cache math rebuilds the world per commit.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="dockerfile arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stable first</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">deps early</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">code last</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rebuilds rare</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Count invalidated layers per typical commit. One early COPY can void a gigabyte of cache.</li>
+            <li>Split dependency install from source copy. Manifests change monthly, code changes hourly.</li>
+            <li>Deep dive: <a href="lovable-vibe-coding-scale-postmortem.html">Lovable Preview</a>, repeated installs without caches.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Builds rerun npm install on every commit. What two lines move? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Cache hit ratio sits at 20 percent. What reorder lifts it past 80? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Order set. Now shrink the ship. <a href="#lesson-3">Lesson 03: Multi-Stage →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Size · Ship runtime, not toolchain</div>
+          <h2>Multi-Stage Builds</h2>
+          <p class="lesson-story">Build stages compile with full toolchains. Final stages carry binaries plus runtime only. A Go service drops from 900MB to 25MB when the compiler stays behind. Smaller images pull faster plus scan faster plus patch faster. Toolchains in production are freight, not features.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="multistage arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">build stage</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">binary kept</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">runtime slim</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">pulls fast</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Compare final size against binary size. Gaps above 5x mean toolchain rode along.</li>
+            <li>Use distroless or slim final stages for static binaries. Shells in prod widen exploits.</li>
+            <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Postmortem</a>, payloads priced per byte moved.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Node image ships at 1.2GB with a 60MB app. What stages fix it? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Distroless breaks debugging at 3 AM. What compromise holds? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Ship shrunk. Now price the push. <a href="#lesson-4">Lesson 04: Registry →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Economics · Pushes bill twice</div>
+          <h2>Registry Bills</h2>
+          <p class="lesson-story">Registries charge storage plus data transfer per pull. Every node pulls every image on deploy plus scale plus restart. A 1GB image across 200 nodes moves 200GB per rollout. Retention without lifecycle rules stores every experiment forever. Pull math decides image budgets.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="registry arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stored bytes</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">pulled bytes</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">nodes counted</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rules set</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Multiply image size by node count by deploys per month. That product is the invoice.</li>
+            <li>Set lifecycle rules for dev tags plus keep release tags pinned. Infinite retention is slow debt.</li>
+            <li>Deep dive: <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Bill</a>, waiting billed by the same math.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Two hundred nodes pull 800MB ten times daily. What is the monthly transfer? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Registry stores 4,000 untagged dev images. What policy clears them? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Pushes priced. Now pin the tag. <a href="#lesson-5">Lesson 05: Tags →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Releases · Tags lie, digests hold</div>
+          <h2>Tags Versus Pins</h2>
+          <p class="lesson-story">Mutable tags move under deploys while digests freeze bytes forever. Latest in production means unrepeatable incidents plus undebuggable rollbacks. Pin digests in manifests plus promote tags through environments. Repeatability without pins is luck with YAML.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pinning arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">tag moved</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">digest froze</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">promote staged</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rollback exact</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Count deploys that cannot name their bytes. Each is an incident without a suspect.</li>
+            <li>Resolve tags to digests at deploy time plus record them. Promotion carries hashes, not hopes.</li>
+            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Proof Check</a>, pin versions plus recheck outside.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Latest redeploys a broken build at midnight. What pinning prevents repeat? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Rollback must restore exact bytes. What artifact names them? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Bytes frozen. Now scan them. <a href="#lesson-6">Lesson 06: Scans →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Security · Verdicts per push</div>
+          <h2>CVE Scans</h2>
+          <p class="lesson-story">Scanners grade every layer against vulnerability feeds on each push. Critical CVEs block promotion while high ones ticket with dates. Unscanned bases accumulate forbidden packages silently. Scan gates without owners become ornamental red. Verdicts need humans with dates.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="scan arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">push scanned</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">critical blocked</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">high ticketed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">owner named</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track mean time from CVE publish to patched deploy. Weeks of lag are exposure with dashboards.</li>
+            <li>Rebuild bases monthly plus fail closed on scanner outage. Silent skips ship holes.</li>
+            <li>Deep dive: <a href="chatgpt-cross-account-channel-postmortem.html">ChatGPT Channel</a>, boundaries priced per leak.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Base carries 12 critical CVEs. What rebuilds first? <span class="q-seen">Seen at: platform plus security loops.</span></p>
+            <p><strong>Q2.</strong> Scanner goes dark Friday. Do pushes proceed? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+          </div>
+          <p class="lesson-hook">Verdicts filed. Now guard secrets. <a href="#lesson-7">Lesson 07: Secrets →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Secrets · Never bake the key</div>
+          <h2>Secrets Discipline</h2>
+          <p class="lesson-story">Baked secrets live in layers forever, readable by anyone with pull access. Build args plus env files leak through history plus inspect. Inject secrets at runtime from vaults plus mount short-lived tokens. Rotation without rebuilds proves the design.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="secrets arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">vault holds</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">runtime mounts</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">tokens expire</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">layers clean</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Audit history plus inspect output for key shapes. One match means rebuild plus rotate.</li>
+            <li>Scope tokens per service plus expire hourly. Broad forever-keys are breach multipliers.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">Agentflayer Heist</a>, one document out plus keys with it.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Key appears in layer history. What are the first three moves? <span class="q-seen">Seen at: security plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Service needs DB passwords at boot. What delivers them? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Keys safe. Now persist data. <a href="#lesson-8">Lesson 08: Volumes →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · State · Boxes forget by design</div>
+          <h2>Volumes</h2>
+          <p class="lesson-story">Containers lose writable layers on restart by design. Volumes persist databases plus uploads plus caches outside the box lifecycle. Binds suit dev files. Named volumes suit prod data. Backups cover volumes, not containers. State without volumes is amnesia with uptime.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="volume arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">box forgets</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">volume keeps</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">backup covers</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">restore timed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size volumes from growth rate times retention. Full disks halt writes before alerts wake you.</li>
+            <li>Separate data volumes from log volumes. Shared fate fills both together.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, backups must hold data.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Database container restarts nightly plus loses rows. What persists them? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Volume fills at 2 AM. What alerts before writes halt? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Data kept. Now wire the network. <a href="#lesson-9">Lesson 09: Networks →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Networks · Names before addresses</div>
+          <h2>Networks Are DNS</h2>
+          <p class="lesson-story">Compose plus overlay networks give each service a DNS name. Hardcoded IPs rot on every reschedule. Publish only edge ports plus keep east-west traffic on internal networks. Exposed databases invite the internet to dinner. Names scale, addresses expire.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="network arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">names set</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ports edged</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">east internal</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">internet out</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Count published ports per host. Each is an attack surface with a number.</li>
+            <li>Isolate tiers on separate networks. Flat networks let breaches wander.</li>
+            <li>Deep dive: <a href="etcd-tls-handshake-dos-postmortem.html">etcd Handshake</a>, silent connections billed per socket.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Service reaches DB by container IP. What breaks on reschedule? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q2.</strong> Which ports stay published on a three-tier app? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+          </div>
+          <p class="lesson-hook">Names wired. Now free the logs. <a href="#lesson-10">Lesson 10: Logs →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Observability · Logs leave the box</div>
+          <h2>Log Discipline</h2>
+          <p class="lesson-story">Stdout plus stderr stream to collectors while files inside boxes die with restarts. JSON lines with trace IDs join logs to requests. Unbounded logs fill disks plus drown signals. Rotation plus sampling keep the stream affordable. Debugging without centralized logs is archaeology.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="log arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stdout streams</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">IDs joined</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rotated capped</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">signals kept</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Budget log bytes per request times RPS. Verbose debug at peak is a second bill.</li>
+            <li>Sample health plus debug logs at 1 percent. Keep 100 percent of errors.</li>
+            <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, write-heavy discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Logs fill the node disk weekly. What three knobs stop it? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Trace a failed checkout across six services. What joins the lines? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Stream flowing. Now gate rollouts. <a href="#lesson-11">Lesson 11: Health →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Rollouts · Probes decide truth</div>
+          <h2>Healthchecks Gate Rollouts</h2>
+          <p class="lesson-story">Health endpoints tell orchestrators when to send traffic plus when to restart. Liveness restarts the stuck. Readiness gates the unready. Startup guards slow boots. Missing probes promote broken boxes with full traffic. Truth needs endpoints, not hopes.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="probe arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">live restarts</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ready gates</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">startup guards</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">traffic earned</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Time p99 startup plus add headroom for thresholds. Hair triggers flap healthy boxes.</li>
+            <li>Separate liveness from readiness strictly. Shared probes restart the merely busy.</li>
+            <li>Deep dive: <a href="discord-voice-thundering-herd-postmortem.html">Discord Voice Herd</a>, checks outran grace.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Deploys send traffic before warmup ends. Which probe fixes it? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Liveness kills busy workers mid-request. What separates the signals? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Truth gated. Now sign contracts. <a href="#lesson-12">Lesson 12: Limits →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Contracts · Requests plus limits</div>
+          <h2>Resource Limits Are Contracts</h2>
+          <p class="lesson-story">CPU shares plus memory limits turn noisy neighbors into budgeted tenants. Requests reserve scheduling. Limits cap bursts. OOM kills punish the limitless first. Unbounded boxes tax every neighbor at 3 AM. Contracts keep the host honest.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">requests reserved</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">limits capped</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">OOM avoided</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">neighbors calm</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size requests from p50 plus limits from p99 with headroom. Guesses become evictions.</li>
+            <li>Set JVM plus runtime heaps below container limits. Unaware runtimes invite the killer.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, capacity with human cost.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> One box starves twelve neighbors at peak. What contract fixes it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q2.</strong> OOM kills the payment worker nightly. Requests or limits move? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Contracts signed. Now match environments. <a href="#lesson-13">Lesson 13: Compose →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Parity · Dev mirrors prod</div>
+          <h2>Compose for Dev Parity</h2>
+          <p class="lesson-story">Compose files declare the same services plus networks plus volumes developers run locally. Parity kills works-on-my-machine before review. Override files carry dev-only ports plus volumes. Drift without linting returns within a quarter. Mirrors need wiping schedules.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="parity arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">services declared</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">overrides dev-only</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">parity linted</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">drift wiped</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Diff dev versus prod configs monthly. Each unexplained delta is a future incident.</li>
+            <li>Pin dev image digests weekly. Floating dev tags hide integration breaks.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe Ledger Scale</a>, exactness as discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Bug reproduces in prod but never locally. What differs first? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Dev compose drifts quarterly. What automation pins it? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Mirrors clean. Now hand off. <a href="#lesson-14">Lesson 14: Handoff →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Orchestration · Docker packs, Kubernetes runs</div>
+          <h2>Kubernetes Handoff</h2>
+          <p class="lesson-story">Docker packages plus Kubernetes schedules: registries feed clusters, probes become pod checks, limits become requests, Compose services become Deployments. Handoff checklists carry digests plus secrets paths plus health endpoints. Rework without a list repeats every lesson expensively.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="handoff arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">images pinned</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">probes mapped</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">limits carried</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">deploys green</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Verify every Compose service has a Deployment plus Service plus limit before migration week.</li>
+            <li>Migrate stateless first plus stateful last. Data moves slower than boxes.</li>
+            <li>Deep dive: <a href="learn-kubernetes.html">Kubernetes Course</a>, fifteen on-call lessons.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Move twelve Compose services to a cluster. What migrates first? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Probes differ between Compose plus pods. What maps to what? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Handoff mapped. Now ship it. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · Ship one container</div>
+          <h2>Ship One Container</h2>
+          <p class="lesson-story">Capstone: containerize one service in four weeks. Week one shrinks the image plus pins digests. Week two wires probes plus limits plus logs. Week three scans plus rotates secrets plus rehearses rollback. Week four ships with dashboards plus runbooks. Graduates carry pulls, not slides.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">image slim</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">gates wired</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">scans clean</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">ship live</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Exit criteria: pulls under 30 seconds plus zero critical CVEs plus rollback timed plus bill shown.</li>
+            <li>Present registry cost before plus after. Savings fund the next migration.</li>
+            <li>Deep dive: <a href="learn-kubernetes.html">Kubernetes Course</a>, the orchestration companion.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Cut our image pulls from 4 minutes to 30 seconds. Show the plan. <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Rollback drill missed its window. What ships Monday? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Course complete. Start the companion. <a href="learn-kubernetes.html">Kubernetes Course →</a></p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script><script src="../js/nav.js"></script>
+</body>
+</html>
