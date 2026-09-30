@@ -77,6 +77,14 @@
     .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
     .cdiagram .lbl { fill: var(--mist); }
     .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
     @media (max-width: 900px) { .course-layout { grid-template-columns: 1fr; } .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; } .course-rail-title { display: none; } .course-rail a { white-space: nowrap; flex: none; } }
   </style>
 </head><body class="site">
@@ -159,12 +167,14 @@
           <h2>WAL Is the Database</h2>
           <p class="lesson-story">Assumption first: the heap is a cache with confidence. The write-ahead log is the database. Every commit lands in WAL before touching heap pages. Crash recovery replays WAL, not wishes. Size WAL for peak write bursts plus archive it before recycling. Durability without WAL math is optimism with a port number.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="wal arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">commit in</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">WAL first</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">replay wins</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">heap cached</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">commit in</text>
+<g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
+<rect class="box" x="130" y="42" width="300" height="22" rx="8"/><text x="280" y="57" font-size="11" text-anchor="middle">WAL first</text>
+<g stroke-width="2"><line x1="280" y1="64" x2="280" y2="74"/></g>
+<rect class="box" x="130" y="74" width="300" height="22" rx="8"/><text x="280" y="89" font-size="11" text-anchor="middle">replay wins</text>
+<g stroke-width="2"><line x1="280" y1="96" x2="280" y2="106"/></g>
+<rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">heap cached</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Measure p99 commit latency at peak writes. WAL-bound means disks, not queries.</li>
             <li>Size WAL segments for two burst windows. Recycle stalls write. Archive lag deletes durability.</li>
@@ -182,11 +192,11 @@
           <h2>Checkpoints Are Priced Flushes</h2>
           <p class="lesson-story">Checkpoints push dirty pages to disk plus bound recovery time. Frequent checkpoints shorten recovery while spiking write IO. Rare checkpoints smooth IO while stretching replay past SLO. Tune checkpoint timeout plus max WAL size together. The flush schedule is a recovery budget.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="checkpoint arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">dirty pages</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">checkpoint</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">IO spike</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">replay bound</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">dirty pages</text>
+            <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">checkpoint</text>
+            <rect class="box" x="350" y="94" width="150" height="36" rx="8"/><text x="425" y="117" font-size="11" text-anchor="middle">IO spike</text>
+            <rect class="boxlime" x="60" y="94" width="150" height="36" rx="8"/><text x="135" y="117" font-size="11" text-anchor="middle">replay bound</text>
+            <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Spread checkpoints with completion targets near 0.9. Clumped flushes stall p99.</li>
@@ -210,6 +220,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">xid frozen</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">scans fast</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Track oldest transaction age per table. Past 200M demands attention before the 2B ceiling.</li>
@@ -228,12 +239,18 @@
           <h2>Bloat Is Slow Storage Rent</h2>
           <p class="lesson-story">Bloat is dead space between live rows. Bloated tables waste cache plus inflate IO plus slow index scans. Measure bloat per table monthly. Rebuild with concurrent methods during low windows. Storage without bloat math rents the same page twice.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="bloat arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">live rows</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">dead space</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">cache wasted</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rebuild timed</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
+<text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
+<text x="130" y="136" font-size="11" text-anchor="middle">live rows</text>
+<rect class="box" x="230" y="69.6" width="80" height="48.4" rx="6"/>
+<text x="270" y="63.6" font-size="11" text-anchor="middle">62</text>
+<text x="270" y="136" font-size="11" text-anchor="middle">dead space</text>
+<rect class="box" x="370" y="91.5" width="80" height="26.5" rx="6"/>
+<text x="410" y="85.5" font-size="11" text-anchor="middle">34</text>
+<text x="410" y="136" font-size="11" text-anchor="middle">cache wasted</text>
+<g stroke-width="2"><line x1="60" y1="118" x2="500" y2="118"/></g>
+<text class="lbl" x="280" y="144" font-size="10" text-anchor="middle">rebuild timed · modeled, not invoices</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Compare live tuple size against relation size. Gaps above 20 percent earn a rebuild plan.</li>
             <li>Prefer concurrent rebuilds on hot tables. Exclusive locks during peak trade bloat for outage.</li>
@@ -251,11 +268,13 @@
           <h2>Indexes Bill Per Write</h2>
           <p class="lesson-story">Every index speeds reads plus taxes writes. Five indexes on a hot table multiply write amplification plus WAL volume plus vacuum load. Index the queried path, drop the hopeful one, plus measure hit ratios per index. Unused indexes are payroll for no staff.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="index arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">hot writes</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">index taxed</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">WAL grown</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">reads fast</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <text class="lbl" x="10" y="52" font-size="10">before</text>
+            <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">hot writes</text>
+            <rect class="boxhot" x="310" y="28" width="200" height="36" rx="8"/><text x="410" y="51" font-size="11" text-anchor="middle">index taxed</text>
+            <text class="lbl" x="10" y="116" font-size="10">after</text>
+            <rect class="boxlime" x="90" y="92" width="200" height="36" rx="8"/><text x="190" y="115" font-size="11" text-anchor="middle">WAL grown</text>
+            <rect class="boxlime" x="310" y="92" width="200" height="36" rx="8"/><text x="410" y="115" font-size="11" text-anchor="middle">reads fast</text>
+            <g stroke-width="2"><line x1="290" y1="46" x2="310" y2="46"/><line x1="290" y1="110" x2="310" y2="110"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Audit index scans monthly. Zero-scan indexes on write tables are pure cost.</li>
@@ -274,12 +293,15 @@
           <h2>Connections Are Finite</h2>
           <p class="lesson-story">Each Postgres connection forks a backend with dedicated memory. Thousands of direct connections exhaust RAM plus context-switch the host into stillness. Cap connections near a few hundred per primary. Queue plus pool above that line. Connections scale with pooling, not hope.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="connection arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">app fleet</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">cap set</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queue formed</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">primary calm</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
+<text x="280" y="26" font-size="11" text-anchor="middle">app fleet</text>
+<polygon class="box" points="120.0,42 440.0,42 420.0,66 140.0,66"/>
+<text x="280" y="58" font-size="11" text-anchor="middle">cap set</text>
+<polygon class="box" points="160.0,74 400.0,74 380.0,98 180.0,98"/>
+<text x="280" y="90" font-size="11" text-anchor="middle">queue formed</text>
+<polygon class="box" points="200.0,106 360.0,106 340.0,130 220.0,130"/>
+<text x="280" y="122" font-size="11" text-anchor="middle">primary calm</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Size max connections from RAM per backend. Past the line, latency climbs faster than throughput.</li>
             <li>Set statement timeouts plus idle timeouts. Leaked idle connections are slow eviction.</li>
@@ -302,6 +324,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">40 backends</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">p99 held</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Little Law prices the pool: backends equal arrival rate times hold time plus headroom.</li>
@@ -320,11 +343,11 @@
           <h2>Replication Lag Is a Queue</h2>
           <p class="lesson-story">Streaming replication ships WAL to standbys plus replays in order. Lag equals queued bytes divided by replay rate. Long transactions plus heavy DDL stretch the queue. Monitor lag in bytes plus seconds together. Promotion without lag math promotes yesterday.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="replication arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">WAL shipped</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">replay pace</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">lag metered</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">promote safe</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
+            <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">WAL shipped</text>
+            <circle class="dot" cx="200" cy="78" r="5"/><text x="200" y="108" font-size="11" text-anchor="middle">replay pace</text>
+            <circle class="dot" cx="340" cy="78" r="5"/><text x="340" y="52" font-size="11" text-anchor="middle">lag metered</text>
+            <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">promote safe</text>
           </svg>
           <ul class="lesson-ideas">
             <li>Alert on lag bytes first, seconds second. Bytes measure work. Seconds measure pain.</li>
@@ -343,11 +366,13 @@
           <h2>Partitioning Splits the Hot Path</h2>
           <p class="lesson-story">Range plus list partitioning prune cold data from hot queries. Time partitions age out cleanly with detach instead of delete. Hash partitions spread writes across files. Partition for pruning plus retention, not fashion. Unpruned partitions are decoration with DDL.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="partition arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">hot range</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">prune set</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">cold detached</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">scans lean</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <text class="lbl" x="10" y="52" font-size="10">before</text>
+            <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">hot range</text>
+            <rect class="boxhot" x="310" y="28" width="200" height="36" rx="8"/><text x="410" y="51" font-size="11" text-anchor="middle">prune set</text>
+            <text class="lbl" x="10" y="116" font-size="10">after</text>
+            <rect class="boxlime" x="90" y="92" width="200" height="36" rx="8"/><text x="190" y="115" font-size="11" text-anchor="middle">cold detached</text>
+            <rect class="boxlime" x="310" y="92" width="200" height="36" rx="8"/><text x="410" y="115" font-size="11" text-anchor="middle">scans lean</text>
+            <g stroke-width="2"><line x1="290" y1="46" x2="310" y2="46"/><line x1="290" y1="110" x2="310" y2="110"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Verify partition pruning with explain plans. Missing constraint exclusion means full scans in costume.</li>
@@ -371,6 +396,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rows honest</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">p99 calm</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Compare estimated rows against actual rows in slow plans. Ratios past 10x mean stale stats.</li>
@@ -389,12 +415,14 @@
           <h2>Locks Queue Behind Each Other</h2>
           <p class="lesson-story">Row locks serialize writers. Table locks serialize deploys. Long transactions hold both while the queue grows. Keep transactions short plus move DDL to concurrent forms plus timeout lock waits. Lock graphs without timeouts are outage schedules.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="locking arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">short xacts</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">locks brief</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queue thin</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">deploys live</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">short xacts</text>
+<g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
+<rect class="box" x="130" y="42" width="300" height="22" rx="8"/><text x="280" y="57" font-size="11" text-anchor="middle">locks brief</text>
+<g stroke-width="2"><line x1="280" y1="64" x2="280" y2="74"/></g>
+<rect class="box" x="130" y="74" width="300" height="22" rx="8"/><text x="280" y="89" font-size="11" text-anchor="middle">queue thin</text>
+<g stroke-width="2"><line x1="280" y1="96" x2="280" y2="106"/></g>
+<rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">deploys live</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Log lock waits past 1 second. One holder with 500 waiters is the incident before the incident.</li>
             <li>Use concurrent index builds plus short migrations. Single giant migration locks the quarter.</li>
@@ -412,11 +440,11 @@
           <h2>Backups Plus PITR Are the Contract</h2>
           <p class="lesson-story">Base backups plus WAL archives define point-in-time recovery. Untested restores are fiction with retention labels. Restore quarterly to staging plus time the replay plus verify checksums. Recovery objectives without restore drills are marketing with cron.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="backup arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">base taken</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">WAL archived</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">restore timed</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">RPO met</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
+            <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">base taken</text>
+            <circle class="dot" cx="200" cy="78" r="5"/><text x="200" y="108" font-size="11" text-anchor="middle">WAL archived</text>
+            <circle class="dot" cx="340" cy="78" r="5"/><text x="340" y="52" font-size="11" text-anchor="middle">restore timed</text>
+            <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">RPO met</text>
           </svg>
           <ul class="lesson-ideas">
             <li>Time full restore plus WAL replay quarterly. RTO equals measured replay, not hoped replay.</li>
@@ -440,6 +468,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">replica tested</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">upgrade calm</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Price extension upgrades per major Postgres bump. Untested paths block version moves for quarters.</li>
@@ -458,12 +487,18 @@
           <h2>The Postgres Bill</h2>
           <p class="lesson-story">Postgres bills in IO plus storage plus replicas plus backup retention. Provisioned IOPS dominate write-heavy months. Replicas double steady state before traffic. Retention stretches archives linearly. Total cost per million writes monthly. The bill hides in the boundary between provisioned peaks plus average days.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="billing arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">IO priced</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">replicas doubled</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">retention lined</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">per-M totaled</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
+<text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
+<text x="130" y="136" font-size="11" text-anchor="middle">IO priced</text>
+<rect class="box" x="230" y="69.6" width="80" height="48.4" rx="6"/>
+<text x="270" y="63.6" font-size="11" text-anchor="middle">62</text>
+<text x="270" y="136" font-size="11" text-anchor="middle">replicas doubled</text>
+<rect class="box" x="370" y="91.5" width="80" height="26.5" rx="6"/>
+<text x="410" y="85.5" font-size="11" text-anchor="middle">34</text>
+<text x="410" y="136" font-size="11" text-anchor="middle">retention lined</text>
+<g stroke-width="2"><line x1="60" y1="118" x2="500" y2="118"/></g>
+<text class="lbl" x="280" y="144" font-size="10" text-anchor="middle">per-M totaled · modeled, not invoices</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Attribute cost per million writes per workload. Noisy neighbors hide inside shared instances.</li>
             <li>Right-size IOPS to p95, not p100. Burst credits cover peaks cheaper than provisioned ceilings.</li>
@@ -481,11 +516,11 @@
           <h2>Ship One Postgres</h2>
           <p class="lesson-story">Capstone: migrate one workload onto tuned Postgres in four weeks. Week one measures WAL plus bloat plus pool math. Week two tunes vacuum plus checkpoints plus indexes. Week three rehearses backup restore plus replica promotion. Week four ships with dashboards plus runbooks. Graduates carry numbers, not certificates.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">measure set</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">tune shipped</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">drill passed</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">migrate live</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">measure set</text>
+            <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">tune shipped</text>
+            <rect class="box" x="350" y="94" width="150" height="36" rx="8"/><text x="425" y="117" font-size="11" text-anchor="middle">drill passed</text>
+            <rect class="boxlime" x="60" y="94" width="150" height="36" rx="8"/><text x="135" y="117" font-size="11" text-anchor="middle">migrate live</text>
+            <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Exit criteria: p99 halved plus bloat under 10 percent plus restore timed plus pool sized with math shown.</li>

@@ -65,6 +65,14 @@
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
     .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
+    .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
+    @keyframes dashmove { to { stroke-dashoffset: -28; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) {
+      .cdiagram line, .cdiagram path.arr, .cdiagram .blink { animation: none; }
+    }
     @media (max-width: 900px) { .course-layout { grid-template-columns: 1fr; } .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; } .course-rail-title { display: none; } .course-rail a { white-space: nowrap; flex: none; } }
   </style>
 </head><body class="site">
@@ -147,12 +155,14 @@
           <h2>Image Layers</h2>
           <p class="lesson-story">Assumption first: an image is a stack of immutable layers, not a box. Each instruction adds a layer. Identical layers share storage plus download once. Bloated layers download on every node forever. Read layer history before trusting any image. Bytes without ledgers compound silently.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="layer arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">base set</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">layers added</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">shared cached</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">bytes billed</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">base set</text>
+<g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
+<rect class="box" x="130" y="42" width="300" height="22" rx="8"/><text x="280" y="57" font-size="11" text-anchor="middle">layers added</text>
+<g stroke-width="2"><line x1="280" y1="64" x2="280" y2="74"/></g>
+<rect class="box" x="130" y="74" width="300" height="22" rx="8"/><text x="280" y="89" font-size="11" text-anchor="middle">shared cached</text>
+<g stroke-width="2"><line x1="280" y1="96" x2="280" y2="106"/></g>
+<rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">bytes billed</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Inspect history plus sizes per layer. Mystery gigabytes usually hide in one RUN step.</li>
             <li>Prefer slim bases plus explicit versions. Latest plus full toolchains tax every pull.</li>
@@ -175,6 +185,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">code last</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rebuilds rare</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Count invalidated layers per typical commit. One early COPY can void a gigabyte of cache.</li>
@@ -193,12 +204,15 @@
           <h2>Multi-Stage Builds</h2>
           <p class="lesson-story">Build stages compile with full toolchains. Final stages carry binaries plus runtime only. A Go service drops from 900MB to 25MB when the compiler stays behind. Smaller images pull faster plus scan faster plus patch faster. Toolchains in production are freight, not features.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="multistage arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">build stage</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">binary kept</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">runtime slim</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">pulls fast</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
+<text x="280" y="26" font-size="11" text-anchor="middle">build stage</text>
+<polygon class="box" points="120.0,42 440.0,42 420.0,66 140.0,66"/>
+<text x="280" y="58" font-size="11" text-anchor="middle">binary kept</text>
+<polygon class="box" points="160.0,74 400.0,74 380.0,98 180.0,98"/>
+<text x="280" y="90" font-size="11" text-anchor="middle">runtime slim</text>
+<polygon class="box" points="200.0,106 360.0,106 340.0,130 220.0,130"/>
+<text x="280" y="122" font-size="11" text-anchor="middle">pulls fast</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Compare final size against binary size. Gaps above 5x mean toolchain rode along.</li>
             <li>Use distroless or slim final stages for static binaries. Shells in prod widen exploits.</li>
@@ -216,12 +230,18 @@
           <h2>Registry Bills</h2>
           <p class="lesson-story">Registries charge storage plus data transfer per pull. Every node pulls every image on deploy plus scale plus restart. A 1GB image across 200 nodes moves 200GB per rollout. Retention without lifecycle rules stores every experiment forever. Pull math decides image budgets.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="registry arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stored bytes</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">pulled bytes</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">nodes counted</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rules set</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
+<text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
+<text x="130" y="136" font-size="11" text-anchor="middle">stored bytes</text>
+<rect class="box" x="230" y="69.6" width="80" height="48.4" rx="6"/>
+<text x="270" y="63.6" font-size="11" text-anchor="middle">62</text>
+<text x="270" y="136" font-size="11" text-anchor="middle">pulled bytes</text>
+<rect class="box" x="370" y="91.5" width="80" height="26.5" rx="6"/>
+<text x="410" y="85.5" font-size="11" text-anchor="middle">34</text>
+<text x="410" y="136" font-size="11" text-anchor="middle">nodes counted</text>
+<g stroke-width="2"><line x1="60" y1="118" x2="500" y2="118"/></g>
+<text class="lbl" x="280" y="144" font-size="10" text-anchor="middle">rules set · modeled, not invoices</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Multiply image size by node count by deploys per month. That product is the invoice.</li>
             <li>Set lifecycle rules for dev tags plus keep release tags pinned. Infinite retention is slow debt.</li>
@@ -239,11 +259,11 @@
           <h2>Tags Versus Pins</h2>
           <p class="lesson-story">Mutable tags move under deploys while digests freeze bytes forever. Latest in production means unrepeatable incidents plus undebuggable rollbacks. Pin digests in manifests plus promote tags through environments. Repeatability without pins is luck with YAML.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pinning arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">tag moved</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">digest froze</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">promote staged</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rollback exact</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
+            <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">tag moved</text>
+            <circle class="dot" cx="200" cy="78" r="5"/><text x="200" y="108" font-size="11" text-anchor="middle">digest froze</text>
+            <circle class="dot" cx="340" cy="78" r="5"/><text x="340" y="52" font-size="11" text-anchor="middle">promote staged</text>
+            <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">rollback exact</text>
           </svg>
           <ul class="lesson-ideas">
             <li>Count deploys that cannot name their bytes. Each is an incident without a suspect.</li>
@@ -262,11 +282,11 @@
           <h2>CVE Scans</h2>
           <p class="lesson-story">Scanners grade every layer against vulnerability feeds on each push. Critical CVEs block promotion while high ones ticket with dates. Unscanned bases accumulate forbidden packages silently. Scan gates without owners become ornamental red. Verdicts need humans with dates.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="scan arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">push scanned</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">critical blocked</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">high ticketed</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">owner named</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">push scanned</text>
+            <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">critical blocked</text>
+            <rect class="box" x="350" y="94" width="150" height="36" rx="8"/><text x="425" y="117" font-size="11" text-anchor="middle">high ticketed</text>
+            <rect class="boxlime" x="60" y="94" width="150" height="36" rx="8"/><text x="135" y="117" font-size="11" text-anchor="middle">owner named</text>
+            <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Track mean time from CVE publish to patched deploy. Weeks of lag are exposure with dashboards.</li>
@@ -290,6 +310,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">tokens expire</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">layers clean</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Audit history plus inspect output for key shapes. One match means rebuild plus rotate.</li>
@@ -308,12 +329,14 @@
           <h2>Volumes</h2>
           <p class="lesson-story">Containers lose writable layers on restart by design. Volumes persist databases plus uploads plus caches outside the box lifecycle. Binds suit dev files. Named volumes suit prod data. Backups cover volumes, not containers. State without volumes is amnesia with uptime.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="volume arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">box forgets</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">volume keeps</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">backup covers</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">restore timed</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">box forgets</text>
+<g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
+<rect class="box" x="130" y="42" width="300" height="22" rx="8"/><text x="280" y="57" font-size="11" text-anchor="middle">volume keeps</text>
+<g stroke-width="2"><line x1="280" y1="64" x2="280" y2="74"/></g>
+<rect class="box" x="130" y="74" width="300" height="22" rx="8"/><text x="280" y="89" font-size="11" text-anchor="middle">backup covers</text>
+<g stroke-width="2"><line x1="280" y1="96" x2="280" y2="106"/></g>
+<rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">restore timed</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Size volumes from growth rate times retention. Full disks halt writes before alerts wake you.</li>
             <li>Separate data volumes from log volumes. Shared fate fills both together.</li>
@@ -336,6 +359,7 @@
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">east internal</text>
             <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">internet out</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
             <li>Count published ports per host. Each is an attack surface with a number.</li>
@@ -354,11 +378,11 @@
           <h2>Log Discipline</h2>
           <p class="lesson-story">Stdout plus stderr stream to collectors while files inside boxes die with restarts. JSON lines with trace IDs join logs to requests. Unbounded logs fill disks plus drown signals. Rotation plus sampling keep the stream affordable. Debugging without centralized logs is archaeology.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="log arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stdout streams</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">IDs joined</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rotated capped</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">signals kept</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
+            <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">stdout streams</text>
+            <circle class="dot" cx="200" cy="78" r="5"/><text x="200" y="108" font-size="11" text-anchor="middle">IDs joined</text>
+            <circle class="dot" cx="340" cy="78" r="5"/><text x="340" y="52" font-size="11" text-anchor="middle">rotated capped</text>
+            <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">signals kept</text>
           </svg>
           <ul class="lesson-ideas">
             <li>Budget log bytes per request times RPS. Verbose debug at peak is a second bill.</li>
@@ -377,11 +401,11 @@
           <h2>Healthchecks Gate Rollouts</h2>
           <p class="lesson-story">Health endpoints tell orchestrators when to send traffic plus when to restart. Liveness restarts the stuck. Readiness gates the unready. Startup guards slow boots. Missing probes promote broken boxes with full traffic. Truth needs endpoints, not hopes.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="probe arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">live restarts</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ready gates</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">startup guards</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">traffic earned</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">live restarts</text>
+            <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">ready gates</text>
+            <rect class="box" x="350" y="94" width="150" height="36" rx="8"/><text x="425" y="117" font-size="11" text-anchor="middle">startup guards</text>
+            <rect class="boxlime" x="60" y="94" width="150" height="36" rx="8"/><text x="135" y="117" font-size="11" text-anchor="middle">traffic earned</text>
+            <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Time p99 startup plus add headroom for thresholds. Hair triggers flap healthy boxes.</li>
@@ -400,11 +424,13 @@
           <h2>Resource Limits Are Contracts</h2>
           <p class="lesson-story">CPU shares plus memory limits turn noisy neighbors into budgeted tenants. Requests reserve scheduling. Limits cap bursts. OOM kills punish the limitless first. Unbounded boxes tax every neighbor at 3 AM. Contracts keep the host honest.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">requests reserved</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">limits capped</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">OOM avoided</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">neighbors calm</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <text class="lbl" x="10" y="52" font-size="10">before</text>
+            <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">requests reserved</text>
+            <rect class="boxhot" x="310" y="28" width="200" height="36" rx="8"/><text x="410" y="51" font-size="11" text-anchor="middle">limits capped</text>
+            <text class="lbl" x="10" y="116" font-size="10">after</text>
+            <rect class="boxlime" x="90" y="92" width="200" height="36" rx="8"/><text x="190" y="115" font-size="11" text-anchor="middle">OOM avoided</text>
+            <rect class="boxlime" x="310" y="92" width="200" height="36" rx="8"/><text x="410" y="115" font-size="11" text-anchor="middle">neighbors calm</text>
+            <g stroke-width="2"><line x1="290" y1="46" x2="310" y2="46"/><line x1="290" y1="110" x2="310" y2="110"/></g>
           </svg>
           <ul class="lesson-ideas">
             <li>Size requests from p50 plus limits from p99 with headroom. Guesses become evictions.</li>
@@ -423,12 +449,14 @@
           <h2>Compose for Dev Parity</h2>
           <p class="lesson-story">Compose files declare the same services plus networks plus volumes developers run locally. Parity kills works-on-my-machine before review. Override files carry dev-only ports plus volumes. Drift without linting returns within a quarter. Mirrors need wiping schedules.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="parity arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">services declared</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">overrides dev-only</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">parity linted</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">drift wiped</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">services declared</text>
+<g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
+<rect class="box" x="130" y="42" width="300" height="22" rx="8"/><text x="280" y="57" font-size="11" text-anchor="middle">overrides dev-only</text>
+<g stroke-width="2"><line x1="280" y1="64" x2="280" y2="74"/></g>
+<rect class="box" x="130" y="74" width="300" height="22" rx="8"/><text x="280" y="89" font-size="11" text-anchor="middle">parity linted</text>
+<g stroke-width="2"><line x1="280" y1="96" x2="280" y2="106"/></g>
+<rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">drift wiped</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Diff dev versus prod configs monthly. Each unexplained delta is a future incident.</li>
             <li>Pin dev image digests weekly. Floating dev tags hide integration breaks.</li>
@@ -446,11 +474,11 @@
           <h2>Kubernetes Handoff</h2>
           <p class="lesson-story">Docker packages plus Kubernetes schedules: registries feed clusters, probes become pod checks, limits become requests, Compose services become Deployments. Handoff checklists carry digests plus secrets paths plus health endpoints. Rework without a list repeats every lesson expensively.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="handoff arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">images pinned</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">probes mapped</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">limits carried</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">deploys green</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+            <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
+            <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">images pinned</text>
+            <circle class="dot" cx="200" cy="78" r="5"/><text x="200" y="108" font-size="11" text-anchor="middle">probes mapped</text>
+            <circle class="dot" cx="340" cy="78" r="5"/><text x="340" y="52" font-size="11" text-anchor="middle">limits carried</text>
+            <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">deploys green</text>
           </svg>
           <ul class="lesson-ideas">
             <li>Verify every Compose service has a Deployment plus Service plus limit before migration week.</li>
@@ -469,12 +497,15 @@
           <h2>Ship One Container</h2>
           <p class="lesson-story">Capstone: containerize one service in four weeks. Week one shrinks the image plus pins digests. Week two wires probes plus limits plus logs. Week three scans plus rotates secrets plus rehearses rollback. Week four ships with dashboards plus runbooks. Graduates carry pulls, not slides.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">image slim</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">gates wired</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">scans clean</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">ship live</text>
-            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
-          </svg>
+<polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
+<text x="280" y="26" font-size="11" text-anchor="middle">image slim</text>
+<polygon class="box" points="120.0,42 440.0,42 420.0,66 140.0,66"/>
+<text x="280" y="58" font-size="11" text-anchor="middle">gates wired</text>
+<polygon class="box" points="160.0,74 400.0,74 380.0,98 180.0,98"/>
+<text x="280" y="90" font-size="11" text-anchor="middle">scans clean</text>
+<polygon class="box" points="200.0,106 360.0,106 340.0,130 220.0,130"/>
+<text x="280" y="122" font-size="11" text-anchor="middle">ship live</text>
+</svg>
           <ul class="lesson-ideas">
             <li>Exit criteria: pulls under 30 seconds plus zero critical CVEs plus rollback timed plus bill shown.</li>
             <li>Present registry cost before plus after. Savings fund the next migration.</li>
