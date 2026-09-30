@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A free Postgres course in 15 forensic lessons from Mukul. WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning plus backup math, priced from production postmortems.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/learn-postgres-production.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Postgres in Production: 15 Lessons From the Write Path">
+  <meta property="og:description" content="WAL plus vacuum plus indexes priced. Fifteen forensic Postgres lessons with live diagrams plus calculators from the write path.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-postgres-wal-meme.png">
+  <meta property="og:image:alt" content="Three panels showing WAL write plus checkpoint plus index cost">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/learn-postgres-production.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Postgres in Production: 15 Lessons From the Write Path">
+  <meta name="twitter:description" content="WAL plus vacuum plus indexes priced. Fifteen forensic Postgres lessons with live diagrams plus calculators from the write path.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-postgres-wal-meme.png">
+  <meta name="twitter:image:alt" content="Three panels showing WAL write plus checkpoint plus index cost">
+  <title>Postgres in Production: 15 Lessons From the Write Path | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Course",
+    "name":"Postgres in Production: 15 Lessons From the Write Path",
+    "description":"A free Postgres course in 15 forensic lessons covering WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning, planner stats, locking, backups, extensions, cost math plus a capstone migration.",
+    "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "syllabusSections":[{"@type":"Syllabus","name":"WAL Is the Database"},{"@type":"Syllabus","name":"Checkpoints Are Priced Flushes"},{"@type":"Syllabus","name":"Vacuum Keeps the Dead Moving"},{"@type":"Syllabus","name":"Bloat Is Slow Storage Rent"},{"@type":"Syllabus","name":"Indexes Bill Per Write"},{"@type":"Syllabus","name":"Connections Are Finite"},{"@type":"Syllabus","name":"Pooling With PgBouncer Math"},{"@type":"Syllabus","name":"Replication Lag Is a Queue"},{"@type":"Syllabus","name":"Partitioning Splits the Hot Path"},{"@type":"Syllabus","name":"Planner Stats Decide the Plan"},{"@type":"Syllabus","name":"Locks Queue Behind Each Other"},{"@type":"Syllabus","name":"Backups Plus PITR Are the Contract"},{"@type":"Syllabus","name":"Extensions Without Regret"},{"@type":"Syllabus","name":"The Postgres Bill"},{"@type":"Syllabus","name":"Ship One Postgres"}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},
+      {"@type":"ListItem","position":2,"name":"System Design","item":"https://buildopsy.com/system-design/"},
+      {"@type":"ListItem","position":3,"name":"Postgres Course","item":"https://buildopsy.com/system-design/learn-postgres-production.html"}
+    ]
+  }
+  </script>
+<style>
+    .course-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .course-rail { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 12px; }
+    .course-rail-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); padding: 4px 10px 10px; }
+    .course-rail a { display: flex; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--paper); font-size: 0.82rem; line-height: 1.4; }
+    .course-rail a:hover { background: var(--card-muted); color: var(--heading); }
+    .course-rail .rnum { font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); flex: none; }
+    .lesson { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .lesson-kicker { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .lesson h2 { font-family: var(--font-serif); font-size: 1.55rem; color: var(--heading); margin: 0 0 12px; }
+    .lesson-story { border-left: 3px solid var(--gold); padding: 2px 0 2px 14px; margin: 14px 0 18px; font-style: italic; color: var(--mist); }
+    .lesson-ideas { margin: 0 0 1em; padding-left: 1.3em; }
+    .lesson-ideas li { margin: 0.45em 0; }
+    .lesson-hook { margin: 18px 0 0; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--lime) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--lime) 25%, var(--line)); font-weight: 600; }
+    .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
+    .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
+    .q-seen { font-size: 0.78rem; color: var(--mist); }
+    .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
+    .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
+    .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
+    .cdiagram .lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path, .cdiagram circle.dot { stroke: var(--mist); }
+    @media (max-width: 900px) { .course-layout { grid-template-columns: 1fr; } .course-rail { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding: 10px; } .course-rail-title { display: none; } .course-rail a { white-space: nowrap; flex: none; } }
+  </style>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" >System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html" class="on">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Postgres in Production: 15 Lessons From the Write Path</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Postgres under write pressure taught me one discipline: WAL first, pages later, plus receipts for every index. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Postgres lessons with live diagrams, from WAL to vacuum plus pooling plus backup math. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Database course · Updated September 30, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch writes travel the WAL path, then design so they land affordably.</aside>
+    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-postgres-wal-meme.svg" alt="Three panels showing WAL write plus checkpoint plus index cost" width="1200" height="680"><figcaption>Course cover. WAL first plus checkpoints priced plus indexes billed per write.</figcaption></figure>
+    <section class="sec" style="margin-bottom:32px;">
+      <h2 class="sec-title">What you will be able to do</h2>
+      <ul class="lesson-ideas">
+        <li>Size WAL plus checkpoints for peak writes, feed autovacuum before bloat rents the cache, plus tax every index per write.</li>
+        <li>Cap connections plus pool the fleet with PgBouncer math, meter replication lag in bytes plus seconds, plus split hot tables with partitions.</li>
+        <li>Keep planner stats fresh, hold locks briefly with timeouts, plus sign the backup contract with timed restores.</li>
+        <li>Total cost per million writes monthly, extend with pinned versions, plus answer database interviews with math out loud.</li>
+        <li>Ship one tuned Postgres in four weeks with dashboards plus runbooks plus a bill that falls.</li>
+      </ul>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: WAL plus pool math out loud first, incident stories with timelines second, tradeoff pricing third. Lesson 15 ships the proof.</p>
+    </section>
+    <section class="sec" id="newsletter" style="margin-bottom:32px;">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Course updates</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New lessons by email</h2>
+          <p class="fl-desc" style="margin:0;">One email per new lesson plus teardown. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <div class="course-layout">
+      <nav class="course-rail" aria-label="Course lessons">
+<div class="course-rail-title">15 lessons</div>
+<a href="#lesson-1"><span class="rnum">01</span> WAL</a>
+<a href="#lesson-2"><span class="rnum">02</span> Flush</a>
+<a href="#lesson-3"><span class="rnum">03</span> Vacuum</a>
+<a href="#lesson-4"><span class="rnum">04</span> Bloat</a>
+<a href="#lesson-5"><span class="rnum">05</span> Index</a>
+<a href="#lesson-6"><span class="rnum">06</span> Conns</a>
+<a href="#lesson-7"><span class="rnum">07</span> Pool</a>
+<a href="#lesson-8"><span class="rnum">08</span> Replicas</a>
+<a href="#lesson-9"><span class="rnum">09</span> Parts</a>
+<a href="#lesson-10"><span class="rnum">10</span> Plans</a>
+<a href="#lesson-11"><span class="rnum">11</span> Locks</a>
+<a href="#lesson-12"><span class="rnum">12</span> Backup</a>
+<a href="#lesson-13"><span class="rnum">13</span> Exts</a>
+<a href="#lesson-14"><span class="rnum">14</span> Bill</a>
+<a href="#lesson-15"><span class="rnum">15</span> Ship</a>
+      </nav>
+      <div class="course-body">
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-kicker">Lesson 01 · Foundations · Durability first</div>
+          <h2>WAL Is the Database</h2>
+          <p class="lesson-story">Assumption first: the heap is a cache with confidence. The write-ahead log is the database. Every commit lands in WAL before touching heap pages. Crash recovery replays WAL, not wishes. Size WAL for peak write bursts plus archive it before recycling. Durability without WAL math is optimism with a port number.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="wal arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">commit in</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">WAL first</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">replay wins</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">heap cached</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Measure p99 commit latency at peak writes. WAL-bound means disks, not queries.</li>
+            <li>Size WAL segments for two burst windows. Recycle stalls write. Archive lag deletes durability.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, the backup that forgot the data.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> What WAL rate fits 20K writes per second with 2KB rows? <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Archive lag hits 30 minutes. What breaks first? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">WAL secured. Now price the flush. <a href="#lesson-2">Lesson 02: Checkpoints →</a></p>
+        </section>
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-kicker">Lesson 02 · Checkpoints · Flushes with invoices</div>
+          <h2>Checkpoints Are Priced Flushes</h2>
+          <p class="lesson-story">Checkpoints push dirty pages to disk plus bound recovery time. Frequent checkpoints shorten recovery while spiking write IO. Rare checkpoints smooth IO while stretching replay past SLO. Tune checkpoint timeout plus max WAL size together. The flush schedule is a recovery budget.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="checkpoint arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">dirty pages</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">checkpoint</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">IO spike</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">replay bound</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Spread checkpoints with completion targets near 0.9. Clumped flushes stall p99.</li>
+            <li>Watch checkpoint sync time in logs. Rising sync means storage ceiling, not query drift.</li>
+            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, pool math plus flush discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Recovery must finish in 5 minutes. What checkpoint knobs deliver it? <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Checkpoint warnings flood logs weekly. What do you change? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Flushes priced. Now clear the dead. <a href="#lesson-3">Lesson 03: Vacuum →</a></p>
+        </section>
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-kicker">Lesson 03 · Vacuum · The dead must move</div>
+          <h2>Vacuum Keeps the Dead Moving</h2>
+          <p class="lesson-story">Updates plus deletes leave dead tuples behind. Autovacuum reclaims them plus freezes old transaction IDs before wraparound. Starved vacuum bloats tables plus slows every scan. Feed autovacuum workers plus cost limits for write-heavy tables. Dead rows compound like unpaid bills.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="vacuum arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">dead tuples</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">autovacuum</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">xid frozen</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">scans fast</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Track oldest transaction age per table. Past 200M demands attention before the 2B ceiling.</li>
+            <li>Raise workers plus cost limits on hot tables. Global defaults starve the busiest writes.</li>
+            <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, write-heavy deu00e9 discipline, priced.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Oldest XID passes 500M on the orders table. What runs tonight? <span class="q-seen">Seen at: database plus backend loops.</span></p>
+            <p><strong>Q2.</strong> Autovacuum cannot keep up at peak. What knobs move first? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Dead moving. Now measure the rent. <a href="#lesson-4">Lesson 04: Bloat →</a></p>
+        </section>
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-kicker">Lesson 04 · Bloat · Rent on dead pages</div>
+          <h2>Bloat Is Slow Storage Rent</h2>
+          <p class="lesson-story">Bloat is dead space between live rows. Bloated tables waste cache plus inflate IO plus slow index scans. Measure bloat per table monthly. Rebuild with concurrent methods during low windows. Storage without bloat math rents the same page twice.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="bloat arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">live rows</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">dead space</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">cache wasted</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">rebuild timed</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Compare live tuple size against relation size. Gaps above 20 percent earn a rebuild plan.</li>
+            <li>Prefer concurrent rebuilds on hot tables. Exclusive locks during peak trade bloat for outage.</li>
+            <li>Deep dive: <a href="notion-architecture.html">Notion Architecture</a>, 200B blocks with Postgres discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Orders table reads 3x pages per live row. What is the fix window? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> Cache hit ratio falls while queries stay constant. What do you inspect? <span class="q-seen">Seen at: database plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Rent measured. Now tax the writes. <a href="#lesson-5">Lesson 05: Indexes →</a></p>
+        </section>
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-kicker">Lesson 05 · Indexes · Reads borrow, writes pay</div>
+          <h2>Indexes Bill Per Write</h2>
+          <p class="lesson-story">Every index speeds reads plus taxes writes. Five indexes on a hot table multiply write amplification plus WAL volume plus vacuum load. Index the queried path, drop the hopeful one, plus measure hit ratios per index. Unused indexes are payroll for no staff.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="index arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">hot writes</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">index taxed</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">WAL grown</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">reads fast</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Audit index scans monthly. Zero-scan indexes on write tables are pure cost.</li>
+            <li>Prefer composite order that matches filters plus sort. One composite beats three singles.</li>
+            <li>Deep dive: <a href="sharechat-feature-store-cost-postmortem.html">ShareChat Assignment</a>, store requested-together data together.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Write p99 doubles after adding two indexes. What proves the cause? <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Which indexes survive a 10x write season? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Writes taxed. Now count the doors. <a href="#lesson-6">Lesson 06: Connections →</a></p>
+        </section>
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-kicker">Lesson 06 · Connections · Finite doors</div>
+          <h2>Connections Are Finite</h2>
+          <p class="lesson-story">Each Postgres connection forks a backend with dedicated memory. Thousands of direct connections exhaust RAM plus context-switch the host into stillness. Cap connections near a few hundred per primary. Queue plus pool above that line. Connections scale with pooling, not hope.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="connection arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">app fleet</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">cap set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queue formed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">primary calm</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Size max connections from RAM per backend. Past the line, latency climbs faster than throughput.</li>
+            <li>Set statement timeouts plus idle timeouts. Leaked idle connections are slow eviction.</li>
+            <li>Deep dive: <a href="discord-messages-scale-postmortem.html">Discord Messages Scale</a>, trillions of rows behind finite doors.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Fleet needs 5K concurrent sessions on one primary. What architecture holds? <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Idle connections climb nightly. What reaps them safely? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Doors counted. Now pool them. <a href="#lesson-7">Lesson 07: Pooling →</a></p>
+        </section>
+        <section class="lesson" id="lesson-7">
+          <div class="lesson-kicker">Lesson 07 · Pooling · Multiplex the fleet</div>
+          <h2>Pooling With PgBouncer Math</h2>
+          <p class="lesson-story">PgBouncer multiplexes thousands of app sessions onto tens of real backends. Transaction mode suits stateless apps. Session mode suits prepared flows with state. Pool at the edge of each region plus size for peak plus bursts. Pooling turns connection storms into queues with numbers.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pooler arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">5K sessions</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">pooler set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">40 backends</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">p99 held</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Little Law prices the pool: backends equal arrival rate times hold time plus headroom.</li>
+            <li>Pin transaction mode for stateless APIs. Audit prepared statements before switching modes.</li>
+            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, pool math at fleet scale.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Size a pool for 8K RPS with 25ms hold time. Show the math. <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> P99 spikes while backends idle. What pool knob lies? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Fleet pooled. Now watch the lag. <a href="#lesson-8">Lesson 08: Replication →</a></p>
+        </section>
+        <section class="lesson" id="lesson-8">
+          <div class="lesson-kicker">Lesson 08 · Replication · Lag is a queue</div>
+          <h2>Replication Lag Is a Queue</h2>
+          <p class="lesson-story">Streaming replication ships WAL to standbys plus replays in order. Lag equals queued bytes divided by replay rate. Long transactions plus heavy DDL stretch the queue. Monitor lag in bytes plus seconds together. Promotion without lag math promotes yesterday.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="replication arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">WAL shipped</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">replay pace</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">lag metered</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">promote safe</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Alert on lag bytes first, seconds second. Bytes measure work. Seconds measure pain.</li>
+            <li>Keep long writes off primaries during peak. One hour transaction stalls every standby.</li>
+            <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, queue math across systems.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Lag holds at 2GB during peak. When is promotion safe? <span class="q-seen">Seen at: database plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Replica serves stale reads at noon daily. What scheduled job causes it? <span class="q-seen">Seen at: data plus backend loops.</span></p>
+          </div>
+          <p class="lesson-hook">Lag metered. Now split the heat. <a href="#lesson-9">Lesson 09: Partitioning →</a></p>
+        </section>
+        <section class="lesson" id="lesson-9">
+          <div class="lesson-kicker">Lesson 09 · Partitioning · Split the hot path</div>
+          <h2>Partitioning Splits the Hot Path</h2>
+          <p class="lesson-story">Range plus list partitioning prune cold data from hot queries. Time partitions age out cleanly with detach instead of delete. Hash partitions spread writes across files. Partition for pruning plus retention, not fashion. Unpruned partitions are decoration with DDL.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="partition arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">hot range</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">prune set</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">cold detached</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">scans lean</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Verify partition pruning with explain plans. Missing constraint exclusion means full scans in costume.</li>
+            <li>Detach plus archive old partitions monthly. Delete loops bloat while detach frees instantly.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe Ledger Scale</a>, ledger growth with pruning discipline.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Queries scan all 60 monthly partitions. What constraint restores pruning? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> Retention needs 13 months online. What partition scheme holds? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Heat split. Now feed the planner. <a href="#lesson-10">Lesson 10: Planner →</a></p>
+        </section>
+        <section class="lesson" id="lesson-10">
+          <div class="lesson-kicker">Lesson 10 · Planner · Statistics choose plans</div>
+          <h2>Planner Stats Decide the Plan</h2>
+          <p class="lesson-story">The planner picks joins plus scans from table statistics. Stale stats choose nested loops for million-row joins. Analyze hot tables after bulk loads plus schema shifts. Targeted stats plus expression indexes fix skewed columns. Plans without fresh stats are guesses with cost labels.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="planner arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stats fresh</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">plan chosen</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">rows honest</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">p99 calm</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Compare estimated rows against actual rows in slow plans. Ratios past 10x mean stale stats.</li>
+            <li>Raise stats targets on skewed columns. Defaults undersample the columns that decide joins.</li>
+            <li>Deep dive: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer Cost</a>, hot paths with honest stats.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Plan estimates 100 rows, executes 2M. What runs first? <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Bulk load finishes Sunday. What runs before Monday traffic? <span class="q-seen">Seen at: data plus SRE loops.</span></p>
+          </div>
+          <p class="lesson-hook">Plans honest. Now order the queue. <a href="#lesson-11">Lesson 11: Locks →</a></p>
+        </section>
+        <section class="lesson" id="lesson-11">
+          <div class="lesson-kicker">Lesson 11 · Locking · Queues with teeth</div>
+          <h2>Locks Queue Behind Each Other</h2>
+          <p class="lesson-story">Row locks serialize writers. Table locks serialize deploys. Long transactions hold both while the queue grows. Keep transactions short plus move DDL to concurrent forms plus timeout lock waits. Lock graphs without timeouts are outage schedules.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="locking arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">short xacts</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">locks brief</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">queue thin</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">deploys live</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Log lock waits past 1 second. One holder with 500 waiters is the incident before the incident.</li>
+            <li>Use concurrent index builds plus short migrations. Single giant migration locks the quarter.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Login Queue</a>, queues that ate the morning.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Deploy adds an index with exclusive lock at noon. What is the safe form? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q2.</strong> Five hundred sessions wait on one row. What holder do you hunt? <span class="q-seen">Seen at: database plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Queue thinned. Now sign the contract. <a href="#lesson-12">Lesson 12: Backups →</a></p>
+        </section>
+        <section class="lesson" id="lesson-12">
+          <div class="lesson-kicker">Lesson 12 · Backups · The restore contract</div>
+          <h2>Backups Plus PITR Are the Contract</h2>
+          <p class="lesson-story">Base backups plus WAL archives define point-in-time recovery. Untested restores are fiction with retention labels. Restore quarterly to staging plus time the replay plus verify checksums. Recovery objectives without restore drills are marketing with cron.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="backup arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">base taken</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">WAL archived</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">restore timed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">RPO met</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Time full restore plus WAL replay quarterly. RTO equals measured replay, not hoped replay.</li>
+            <li>Retain archives across regions. Single-region archives share fate with the fire.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, backups must hold data.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> RPO demands 5 minutes. What archive cadence proves it? <span class="q-seen">Seen at: SRE plus database loops.</span></p>
+            <p><strong>Q2.</strong> Restore drill fails twice. What changes before the third run? <span class="q-seen">Seen at: platform plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Contract signed. Now extend wisely. <a href="#lesson-13">Lesson 13: Extensions →</a></p>
+        </section>
+        <section class="lesson" id="lesson-13">
+          <div class="lesson-kicker">Lesson 13 · Extensions · Power with receipts</div>
+          <h2>Extensions Without Regret</h2>
+          <p class="lesson-story">pgvector plus PostGIS plus pg_stat_statements extend Postgres into search plus geo plus observability. Each extension adds upgrade plus backup plus replication surface. Pin versions plus test upgrades on replicas first. Extensions without upgrade plans are lock-in with docs.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="extension arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">need proven</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">version pinned</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">replica tested</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">upgrade calm</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Price extension upgrades per major Postgres bump. Untested paths block version moves for quarters.</li>
+            <li>Start with pg_stat_statements everywhere. Measurement pays before vectors do.</li>
+            <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Postmortem</a>, retrieval bills with receipts.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> pgvector upgrade blocks Postgres 17. What unblocks the quarter? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> Which extensions ride the primary versus the warehouse copy? <span class="q-seen">Seen at: platform plus data loops.</span></p>
+          </div>
+          <p class="lesson-hook">Power metered. Now total the month. <a href="#lesson-14">Lesson 14: Bill →</a></p>
+        </section>
+        <section class="lesson" id="lesson-14">
+          <div class="lesson-kicker">Lesson 14 · Economics · The month totaled</div>
+          <h2>The Postgres Bill</h2>
+          <p class="lesson-story">Postgres bills in IO plus storage plus replicas plus backup retention. Provisioned IOPS dominate write-heavy months. Replicas double steady state before traffic. Retention stretches archives linearly. Total cost per million writes monthly. The bill hides in the boundary between provisioned peaks plus average days.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="billing arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">IO priced</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">replicas doubled</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">retention lined</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">per-M totaled</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Attribute cost per million writes per workload. Noisy neighbors hide inside shared instances.</li>
+            <li>Right-size IOPS to p95, not p100. Burst credits cover peaks cheaper than provisioned ceilings.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Lake Cost</a>, lake bills with the same math.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Write volume doubles next quarter. Which line item moves first? <span class="q-seen">Seen at: backend plus data loops.</span></p>
+            <p><strong>Q2.</strong> Replica fleet costs more than primary. What topology trims it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Month totaled. Now prove it aloud. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
+        </section>
+        <section class="lesson" id="lesson-15">
+          <div class="lesson-kicker">Lesson 15 · Capstone · Ship one Postgres</div>
+          <h2>Ship One Postgres</h2>
+          <p class="lesson-story">Capstone: migrate one workload onto tuned Postgres in four weeks. Week one measures WAL plus bloat plus pool math. Week two tunes vacuum plus checkpoints plus indexes. Week three rehearses backup restore plus replica promotion. Week four ships with dashboards plus runbooks. Graduates carry numbers, not certificates.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">measure set</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">tune shipped</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">drill passed</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">migrate live</text>
+            <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
+          </svg>
+          <ul class="lesson-ideas">
+            <li>Exit criteria: p99 halved plus bloat under 10 percent plus restore timed plus pool sized with math shown.</li>
+            <li>Present the bill per million writes before plus after. Savings fund the next migration.</li>
+            <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, the 15-lesson companion from real outages.</li>
+          </ul>
+          <div class="lesson-questions">
+            <div class="lesson-questions-title">Interview room</div>
+            <p><strong>Q1.</strong> Walk me through sizing WAL plus pools for 30K writes per second. <span class="q-seen">Seen at: backend plus database loops.</span></p>
+            <p><strong>Q2.</strong> Your restore drill missed RTO by 2x. What ships Monday? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+          </div>
+          <p class="lesson-hook">Course complete. Start the companion. <a href="learn-system-design.html">System Design Course →</a></p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script><script src="../js/nav.js"></script>
+</body>
+</html>

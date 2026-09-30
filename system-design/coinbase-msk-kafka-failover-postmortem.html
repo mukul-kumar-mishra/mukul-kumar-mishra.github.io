@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coinbase ran Kafka on AWS MSK across 3 zones with factor 3 plus min ISR 2, yet one AZ outage halted trading. A Mukul postmortem with ISR math plus election models plus halt economics.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Coinbase Kafka on AWS MSK: Multi-AZ That Did Not Fail Over">
+  <meta property="og:description" content="A priced teardown of the Coinbase MSK stall: 30 brokers plus factor 3 plus a stuck failover, with ISR math plus halt economics.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png">
+  <meta property="og:image:alt" content="Three stat panels showing broker count plus replica factor plus failed failover">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Coinbase Kafka on MSK: The Failover That Did Not">
+  <meta name="twitter:description" content="Thirty brokers plus factor 3 plus zero clean failovers, with ISR math plus halt economics.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png">
+  <meta name="twitter:image:alt" content="Three stat panels showing broker count plus replica factor plus failed failover">
+  <title>Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not", "description": "A priced teardown of the Coinbase trading stall after an AWS AZ failure: MSK across 3 zones with replication factor 3 plus min ISR 2 that did not fail over cleanly, with ISR math plus leader election models plus halt economics. Incident facts follow published analyses. Modeled totals are labeled estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-09-30", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html"}, "keywords": "Kafka system design, AWS MSK, Coinbase outage, multi-AZ failover, ISR, leader election, payments architecture", "image": "https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"Why did Coinbase multi-AZ Kafka not fail over?","acceptedAnswer":{"@type":"Answer","text":"The MSK cluster met textbook topology with 30 brokers plus factor 3 plus min ISR 2, yet an edge-case bug in the managed failover path stalled leadership movement after the AZ failure. Topology was correct. The failover machinery was not."}},
+      {"@type":"Question","name":"What do factor 3 plus min ISR 2 guarantee?","acceptedAnswer":{"@type":"Answer","text":"Two in-sync replicas must acknowledge each write, so one replica loss keeps the partition writable. A second simultaneous loss plus a stuck coordinator removes that promise."}},
+      {"@type":"Question","name":"What did the halt cost?","acceptedAnswer":{"@type":"Answer","text":"Halt losses scale with matched volume per minute plus backlog recovery, modeled here as multiples of steady state streaming spend. The worked model below shows each step as labeled estimates."}},
+      {"@type":"Question","name":"How do I harden MSK failover?","acceptedAnswer":{"@type":"Answer","text":"Test AZ evacuation with real leadership movement, pin critical topics with placement constraints plus rehearse client bootstrap failover. The verdict section lists the three drills."}}
+    ]
+  }
+  </script>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Streaming</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">One AWS zone failed in May 2026. Coinbase trading stalled even though its Kafka fleet met every textbook rule. This postmortem reconstructs the stall from September 2026 analyses, models the ISR plus election math plus prices the halt against the streaming footprint.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Topology was correct plus failover was not. Thirty brokers plus factor 3 plus min ISR 2 still queued behind a stuck leadership path. Test evacuation with real movement, not diagrams.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Brokers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">30 Across 3 AZ</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Replication</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Factor 3, ISR 2</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Trigger</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1 AZ Lost</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Failover</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Stuck</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the rebalance twin of this stall lives in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>. Read that deploy storm first for consumer-group math, then return here for broker-side election plus halt economics. Payments context continues in <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</aside>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is math?</strong> Topology plus trigger plus stuck-failover accounts follow published analyses linked below. Election timings plus halt totals are labeled estimates from the explicit assumption table in section 5, not exchange financials. Re-run the consumer leg in the <a href="../calculators.html#kafka-lag">kafka-lag calculator</a>.</aside>
+
+      <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/coinbase-msk-failover-meme.svg" alt="Three stat panels showing broker count plus replica factor plus failed failover" width="1200" height="680"><figcaption>Figure 1. The evening in one cartoon. Thirty brokers plus factor three plus no failover. The bill hides in the boundary.</figcaption></figure>
+
+      <section><h2>1. One Zone Failed Plus Trading Stopped</h2>
+        <p>Thermal protection shut servers down inside one AWS availability zone in May 2026. Power loss was the programmed response to rising heat, not a grid accident. Coinbase services hosted on that hardware lost compute plus attached volumes together. Traffic shifted for stateless tiers within minutes. The stateful streaming tier did not follow.</p>
+        <p>That split decides every AZ postmortem this house prices. Stateless failover is DNS plus health checks. Stateful failover is leadership plus log reconciliation plus client rediscovery. The first completes in minutes. The second stalls for hours when the machinery has never moved under load. The bill hides in the boundary between the topology diagram plus the evacuation drill nobody ran.</p>
+        <div class="callout"><strong>The mental model:</strong> replicas are potential. Leadership is kinetic. Price movement, not placement.</div>
+      </section>
+
+      <section><h2>2. Factor 3 Plus Min ISR 2 On Paper</h2>
+        <p>Published architecture accounts describe roughly 30 brokers across 3 zones with replication factor 3 plus min in-sync replicas 2. Each partition keeps three copies. Each write needs two acknowledgments. Lose one zone plus every partition should retain two live copies with quorum intact. On paper the cluster survives any single-zone loss with writes flowing.</p>
+        <p>Paper math assumes the surviving replicas can elect leaders plus serve. Election needs a live controller plus reachable voters plus clients that discover the new leaders. Remove the controller path or wedge metadata propagation plus factor 3 degrades to factor 0 for affected partitions. Redundancy without movement is inventory, not availability.</p>
+      </section>
+
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/coinbase-msk-cost-chart.svg" alt="Bar chart comparing single AZ cost against multi AZ cost against halt loss" width="1200" height="680"><figcaption>Figure 2. The invoice in one cartoon. Single AZ cheap plus multi AZ near double plus halt modeled largest.</figcaption></figure>
+
+      <section><h2>3. The Edge Case That Ate The Failover</h2>
+        <p>Platform leadership accounts attribute the stuck failover to an edge-case bug in the managed streaming deployment path. The cluster followed best-practice topology while the managed failover machinery mishandled the AZ loss. Leadership movement stalled. Clients kept bootstrapping to dead brokers. Producers queued. Consumers idled with offsets frozen.</p>
+        <p>Managed services move failure modes, not remove them. Self-hosted Kafka fails in ZooKeeper quorum plus operator runbooks teams wrote themselves. Managed Kafka fails in control automation teams never saw. Both demand evacuation drills with real leadership movement. The September 2026 analyses agree on the lesson even where their wording differs: test the path, not the plan.</p>
+      </section>
+
+      <section><h2>4. Halt Economics For A Trading Stack</h2>
+        <p>Streaming spend is steady. Halt spend is spiky. A 3-zone fleet with factor 3 roughly doubles broker plus storage cost against single-zone before traffic. Inter-zone replication traffic adds a monthly line item most teams under-read. Those premiums look like waste until matched orders stop clearing.</p>
+        <p>Model the halt as frozen matches per minute plus backlog recovery plus support load. At an illustrative 50,000 matches per minute with a 90-minute stall, 4.5M matches queue for replay. Replay at 2x normal intake needs 45 minutes of catch-up with elevated latency plus reconciliation checks. Forecasts stay forecasts. The ordering holds across fee cards: streaming premium costs double, one halt costs multiples.</p>
+      </section>
+
+      <section><h2>5. Worked Model: Election Math Plus Catch-Up</h2>
+        <p>Assumptions, all labeled estimates: 12,000 partitions across the fleet. One zone holds roughly one third of leaders at stall time, near 4,000 leaderships to move. Healthy election completes per partition in 300ms with metadata propagation near 2 seconds plus client rediscovery near 30 seconds. These numbers illustrate the arithmetic. They are not exchange telemetry.</p>
+        <p>Planned movement completes the bulk of elections inside 3 minutes with a long tail for wedged metadata. Stuck movement stretches the tail past 60 minutes while producers buffer plus consumers stall. Backlog at 50,000 matches per minute over 90 minutes equals 4.5M queued matches. Catch-up at 100,000 per minute needs 45 minutes plus reconciliation. Cap client bootstrap to healthy brokers plus pre-warm metadata plus the tail collapses toward the planned curve.</p>
+        <p>Spend ordering matters more than any total. Evacuation drills first. Client bootstrap hardening second. Placement constraints for critical topics third. Broker count last. Teams that move leadership quarterly survive the quarter when the zone goes dark.</p>
+      </section>
+
+      <section><h2>6. The Verdict: Move Leadership Before The Fire</h2>
+        <p>Three drills before the next AZ loss. First, evacuate one zone per quarter with live leadership movement plus measured catch-up. Second, harden client bootstrap with multi-broker lists plus metadata refresh budgets. Third, pin matching-critical topics with placement constraints so no partition loses quorum to one zone. The bill hides in the boundary between placed replicas plus moved leadership. Close that gap first.</p>
+        <p>Then take the consumer twin in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> plus the full streaming workshop in <a href="learn-event-streaming.html">Event Streaming in Production</a> to move what you measured.</p>
+      </section>
+
+      <section><h2>Frequently Asked Questions</h2>
+        <h3>Why did Coinbase multi-AZ Kafka not fail over?</h3>
+        <p>The MSK cluster met textbook topology with 30 brokers plus factor 3 plus min ISR 2, yet an edge-case bug in the managed failover path stalled leadership movement after the AZ failure. Topology was correct. The failover machinery was not.</p>
+        <h3>What do factor 3 plus min ISR 2 guarantee?</h3>
+        <p>Two in-sync replicas must acknowledge each write, so one replica loss keeps the partition writable. A second simultaneous loss plus a stuck coordinator removes that promise.</p>
+        <h3>What did the halt cost?</h3>
+        <p>Halt losses scale with matched volume per minute plus backlog recovery, modeled here as multiples of steady state streaming spend. The worked model above shows each step as labeled estimates.</p>
+        <h3>How do I harden MSK failover?</h3>
+        <p>Test AZ evacuation with real leadership movement, pin critical topics with placement constraints plus rehearse client bootstrap failover. The verdict section lists the three drills.</p>
+      </section>
+
+      <section><h2>Sources plus Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Topology plus trigger plus stuck-failover accounts follow published analyses linked below. Election timings plus halt totals are labeled estimates from the assumption table in section 5, not exchange financials. Thermal mechanics follow the production teardown in <a href="aws-thermal-outage-postmortem.html">AWS Thermal Postmortem</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://www.thestack.technology/coinbase-down-aws-kafka-bug/" target="_blank" rel="noopener noreferrer">The Stack September 2026: Coinbase MSK edge case during AZ outage with platform comment</a></li>
+          <li><a href="https://www.automq.com/blog/coinbase-msk-kafka-availability" target="_blank" rel="noopener noreferrer">AutoMQ May 2026: multi-AZ multi-replica design plus failover analysis</a></li>
+          <li><a href="https://www.networkworld.com/article/4168878/aws-hit-by-us-east-1-outage-after-data-center-thermal-event.html" target="_blank" rel="noopener noreferrer">Network World May 2026: thermal event plus power loss in US-EAST-1 zone</a></li>
+          <li><a href="../calculators.html#kafka-lag" rel="noopener">Buildopsy kafka-lag calculator: re-run the backlog leg with your throughput</a></li>
+          <li><a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: the consumer-side companion on rolling deploys (parent file)</a></li>
+        </ul>
+      </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script><script src="../js/nav.js"></script>
+</body>
+</html>
