@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GCP us-central1-b stalled on September 1 2026 with 15 services degraded for 4 hours plus 8 minutes. A Mukul postmortem with zone math plus retry models plus regional cost.">
+  <meta name="description" content="Google's September 2026 us-central1 outage isolated network capacity in parts of two zones for 4 hours 11 minutes. A sourced postmortem of the fiber-maintenance failure.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="GCP us-central1 Outage System Design: One Zone, 15 Queued Services">
-  <meta property="og:description" content="A priced teardown of the September 2026 us-central1-b stall: zonal blast radius plus control plane coupling plus retry amplification with regional math.">
+  <meta property="og:title" content="GCP us-central1 Outage: Fiber Isolation Across Two Zones | Buildopsy">
+  <meta property="og:description" content="Google's September 2026 us-central1 outage isolated network capacity in parts of two zones for 4 hours 11 minutes. A sourced postmortem of the fiber-maintenance failure.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta property="og:image:alt" content="Three stat panels showing services hit plus outage length plus zone scope">
+  <meta property="og:image:alt" content="Two affected zones, a 4 hour 11 minute incident window and fiber paths lost within 13 minutes">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
   <meta property="og:url" content="https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="GCP us-central1 Outage: One Slow Zone Queued 15 Services">
-  <meta name="twitter:description" content="Zonal blast radius plus control coupling plus retry amplification, priced with regional math.">
+  <meta name="twitter:title" content="GCP us-central1 Outage: Fiber Isolation Across Two Zones">
+  <meta name="twitter:description" content="Google's September 2026 report documents a fiber-maintenance failure that isolated network capacity in parts of two zones for 4 hours 11 minutes.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta name="twitter:image:alt" content="Three stat panels showing services hit plus outage length plus zone scope">
-  <title>GCP us-central1 Outage System Design: How One Slow Zone Queued 15 Services | Buildopsy</title>
+  <meta name="twitter:image:alt" content="Two affected zones, a 4 hour 11 minute incident window and fiber paths lost within 13 minutes">
+  <title>GCP us-central1 Outage: Fiber Isolation Across Two Zones | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,16 +29,16 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Outage System Design: How One Slow Zone Queued 15 Services", "description": "A priced teardown of the September 1 2026 GCP us-central1-b stall: 15 services degraded for 4 hours 8 minutes, with zonal blast radius math plus control plane coupling plus retry amplification plus regional cost models. All incident counts follow published status aggregators. Modeled rates are labeled estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-09-30", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1, system design, zonal failure, control plane coupling, retry storm, regional deployment cost", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Outage: Fiber Isolation Across Two Zones", "description": "A sourced postmortem of Google's September 2026 us-central1 network incident: incompatible transceivers and an unsafe maintenance sequence isolated capacity in parts of two zones for 4 hours 11 minutes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"What failed in the GCP us-central1 outage?","acceptedAnswer":{"@type":"Answer","text":"One zone in us-central1 stalled on September 1 2026. Fifteen dependent services degraded for 4 hours plus 8 minutes while control operations queued behind the slow zone."}},
-      {"@type":"Question","name":"Why did one zone stall fifteen services?","acceptedAnswer":{"@type":"Answer","text":"Control planes plus data planes shared fate with the slow zone. Provisioning calls queued, health signals lagged plus client retries multiplied calm traffic several times over."}},
-      {"@type":"Question","name":"What does regional deployment cost?","acceptedAnswer":{"@type":"Answer","text":"A regional footprint roughly doubles steady state spend against single-zone before traffic. The stall math below prices that premium against one queued morning."}},
-      {"@type":"Question","name":"How do I survive the next zonal stall?","acceptedAnswer":{"@type":"Answer","text":"Pin control calls to healthy zones, cap retries with budgets plus backoff plus rehearse zone evacuation before the incident. The verdict section lists the three drills."}}
+      {"@type":"Question","name":"What caused the September 2026 GCP us-central1 outage?","acceptedAnswer":{"@type":"Answer","text":"Google's incident report says incompatible optical transceivers were installed during network maintenance. A work sequence and verification failure led to fiber paths being disconnected in parts of us-central1-b and us-central1-f."}},
+      {"@type":"Question","name":"How long did the Google Cloud incident last?","acceptedAnswer":{"@type":"Answer","text":"Google reports the incident window as 07:41 to 11:52 US/Pacific on September 1, 2026, a duration of 4 hours 11 minutes."}},
+      {"@type":"Question","name":"Did the outage affect an entire region?","acceptedAnswer":{"@type":"Answer","text":"No. Google says the physical network isolation affected specific clusters in parts of two zones. Many multi-zonal deployments continued to serve through unaffected capacity, though dependent regional products also saw symptoms."}},
+      {"@type":"Question","name":"What engineering lessons does Google's report support?","acceptedAnswer":{"@type":"Answer","text":"The report describes missing work sequencing and verification safeguards. It supports explicit maintenance sequencing, stop-work checks, automated traffic diversion and rehearsed application behavior during network isolation."}}
     ]
   }
   </script>
@@ -67,79 +67,80 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-central1 Outage System Design: How One Slow Zone Queued 15 Services</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">One zone slowed on the morning of September 1 2026. Fifteen GCP services in us-central1 degraded for 4 hours plus 8 minutes. This postmortem reconstructs the stall from published status aggregators, models the queue plus the retry storm plus prices the regional footprint that would have shrugged it off.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> One slow zone queued control plus data traffic for a whole region. Retries multiplied calm load. Regional spread costs roughly double steady state plus pays for itself in one avoided morning.</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-central1 Outage: Fiber Isolation Across Two Zones</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 1, 2026, a network-maintenance error isolated compute capacity in specific clusters in us-central1-b and us-central1-f. Google's incident report attributes the failure to incompatible optical transceivers plus a work sequence that omitted required verification. The reported incident window was 4 hours 11 minutes.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The primary failure was physical network isolation during maintenance, not a demonstrated regional control-plane queue. This reconstruction separates Google's published incident facts from the resilience analysis that follows.</p>
         <div class="grid4" style="margin-top:24px;">
-          <div class="stat" style="padding:14px;"><div class="lbl">Services Hit</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">15</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Stall Length</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4H 08M</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Blast Zone</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">us-central1-b</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Recovery</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">11:52 AM</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Zones with affected clusters</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">us-central1-b and -f</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Reported incident window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h 11m</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">All paths disconnected</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Within 13m</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Published root cause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Maintenance error</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 1, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the Oregon twin of this stall lives in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 Outage System Design</a>. Read that disk stall first for the storage leg, then return here for the zonal blast radius plus retry math.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Google's final report describes network isolation in specific clusters in two zones. The affected area was not the whole us-central1 region. Numbers and the timeline below come from the primary incident report unless explicitly marked as analysis.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is math?</strong> Incident scope plus timeline follow published status aggregators linked below. Queue depths plus retry multiples plus cost totals are labeled estimates from the explicit assumption table in section 5, not invoices from any provider. Re-run the retry leg in the <a href="../calculators.html#retry-storm">retry-storm calculator</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Incident facts follow Google's September 10 incident report and September 29 addendum. Recommendations are engineering analysis. Google does not publish queue-depth or retry-amplification measurements for this event, so this article does not assign it modeled incident telemetry or financial loss.</aside>
 
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Three stat panels showing services hit plus outage length plus zone scope" width="1200" height="680"><figcaption>Figure 1. The morning in one cartoon. Fifteen services plus four hours plus one zone. The bill hides in the boundary.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Summary of Google's GCP outage report: two affected zones, a 4 hour 11 minute incident window and fiber paths disconnected during maintenance" width="1200" height="680"><figcaption>Figure 1. Google's report records fiber isolation in parts of two zones, with an incident window of 4 hours 11 minutes.</figcaption></figure>
 
-      <section><h2>1. A Zone Slowed Plus A Region Queued</h2>
-        <p>Zones promise isolation. Regions share control. When us-central1-b slowed on September 1, the failure stayed inside one zone while the pain spread across the region. Compute plus storage plus networking calls that touched the slow zone waited. Calls that avoided it still queued behind shared control operations. Isolation held for hardware. It failed for coordination.</p>
-        <p>The pattern repeats in every zonal stall this house has priced. Data planes degrade locally. Control planes serialize globally. Health checks report the zone as sick while schedulers keep offering it work. The bill hides in the boundary between the failed zone plus the shared brain that routes around it.</p>
-        <div class="callout"><strong>The mental model:</strong> zones contain blast. Control spreads it. Price the shared path before trusting the isolated one.</div>
+      <section><h2>1. What Google's report establishes</h2>
+        <p>On September 1, a scheduled capacity upgrade replaced optical transceivers on network routers supporting parts of us-central1-b and us-central1-f. The replacement transceivers were incompatible with equipment remaining in the network fabric. A manually orchestrated work list omitted the required one-router-at-a-time sequence plus the normal human and software verification steps. Fiber paths were disconnected across the affected devices within 13 minutes.</p>
+        <p>The loss isolated compute capacity from the network. Virtual machines in the affected clusters could not reach external resources, nor could outside clients reach those machines. This was a physical connectivity failure. Google's report does not attribute the event to a slow disk, a regional control-plane queue or a measured retry storm.</p>
+        <div class="callout"><strong>Failure boundary:</strong> physical work crossed device boundaries faster than safeguards could catch it. The design question is how maintenance sequencing, independent verification and traffic diversion should constrain that boundary.</div>
       </section>
 
-      <section><h2>2. Fifteen Services Behind One Slow Disk Of Truth</h2>
-        <p>Fifteen services sounds like fifteen failures. It reads better as one queue with fifteen readers. Provisioning plus autoscaling plus load balancer updates funneled through control operations that waited on the slow zone. Each service added its own timeout plus its own retry policy on top. None of them knew the other fourteen were doing the same.</p>
-        <p>Status aggregators recorded the shape: elevated errors plus latencies across the service list with recovery clustered near 11:52 AM. Clustered recovery means shared cause, not fifteen independent bugs. Fix the shared cause first. The fifteen graphs follow.</p>
+      <section><h2>2. Scope: affected clusters, not a whole region</h2>
+        <p>The incident affected specific clusters in parts of two zones. Google says many multi-zonal deployments using capacity in unaffected zones largely continued serving. Regional products that depended on workloads in the affected clusters still saw symptoms, so a zone label alone did not describe every customer's blast radius.</p>
+        <p>The September 29 addendum adds important detail: traffic diversion reduced the impact to regional products, while Cloud Run and App Engine saw a later thundering herd as workloads initialized on replacement capacity. GKE control-plane requests also experienced errors and delays. Those are reported outcomes. They do not establish the invented per-minute queue and retry counts previously shown here.</p>
       </section>
 
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Flow diagram from slow zone to stalled control to retry storm" width="1200" height="680"><figcaption>Figure 2. The mechanism in one cartoon. Slow zone plus stalled control plus retry storm at roughly eight times calm load.</figcaption></figure>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Sequence in Google's incident report: incompatible transceiver replacement, fiber-path loss, then network isolation in affected clusters" width="1200" height="680"><figcaption>Figure 2. The reported chain from incompatible maintenance hardware to network isolation. It does not depict an unreported retry multiplier.</figcaption></figure>
 
-      <section><h2>3. The Retry Amplifier Did The Real Damage</h2>
-        <p>Calm control traffic is thin. Storm control traffic is thick with repeats. At an estimated 40,000 control operations per minute in the region, a 30 percent stall rate leaves 12,000 operations waiting per minute. With default retries plus per-service timeouts, each waiting operation returns roughly three times. Add fifteen services retrying independently plus the queue sees near eight times calm load at peak. The worked table in section 5 shows each step.</p>
-        <p>Cap retries before the incident. Budgets plus backoff plus jitter keep the multiplier near 1x when the zone limps. Run the <a href="../calculators.html#retry-storm">retry-storm calculator</a> at 6x calm load before approving any policy. The incident collects that loan with interest.</p>
+      <section><h2>3. Timeline from the primary report</h2>
+        <ul>
+          <li><strong>07:41 US/Pacific:</strong> Google's report marks the start of customer impact.</li>
+          <li><strong>07:45 and 08:00:</strong> traffic diversion actions began to reduce regional impact.</li>
+          <li><strong>08:50:</strong> most physical connections had been restored and traffic began recovering.</li>
+          <li><strong>09:19:</strong> diversion actions were removed as network capacity recovered.</li>
+          <li><strong>11:52:</strong> Google confirmed recovery across nearly all affected services and long-running operations.</li>
+        </ul>
+        <p>The 4-hour-11-minute figure is Google's incident window, not a claim that every listed product was continuously unavailable for that entire period. The report describes different impact windows by product and workload.</p>
       </section>
 
-      <section><h2>4. Zonal Cheap Versus Regional Calm</h2>
-        <p>Single-zone deployment prices near half of regional for stateful workloads before traffic. Cross-zone replication plus inter-zone egress plus duplicated control readers push regional steady state toward double. That premium looks like waste on every calm morning. It looks like insurance during the four hours when one zone queues the region.</p>
-        <p>Price both sides. The modeled month below sets single-zone at index 100, regional near 190 plus one stalled morning near 340 in lost throughput plus backlog burn. Forecasts stay forecasts. The ordering holds across rate cards: prevention costs double, cure costs triple.</p>
+      <section><h2>4. Resilience lessons supported by the evidence</h2>
+        <p><strong>Sequence hazardous work in the tooling.</strong> The report says the procedure intended one router at a time, but the work list did not carry that instruction. Encode ordering constraints in the workflow rather than relying on an operator to infer them from a long list.</p>
+        <p><strong>Require independent confirmation.</strong> The final report describes missing human and software checks plus a standing stop-work procedure that was not followed. A safe workflow should pause when a live signal remains on a cable after disconnection, require a second confirmation and make the next step unavailable until checks pass.</p>
+        <p><strong>Automate traffic diversion with a bounded blast radius.</strong> Google says diversion took about 19 minutes in this event and describes a target near five minutes for its automated system. That is Google's stated remediation target, not a measured result. Applications should still tolerate partial network isolation with explicit timeouts, bounded retries and gradual traffic shifts.</p>
+        <p><strong>Test recovery behavior, not only replica placement.</strong> Rehearse how services discover healthy capacity, how retries behave during packet loss and how cold caches respond when traffic shifts. The report documents a thundering herd after restoration. It does not publish request-rate measurements, so any load test should use your own service telemetry.</p>
       </section>
 
-      <section><h2>5. Worked Model: The Queue Priced</h2>
-        <p>Assumptions, all labeled estimates: regional control baseline 40,000 operations per minute. Stall fraction 30 percent for 248 minutes. Mean retry factor 3x per waiting operation across fifteen services with uncoordinated policies. Deduplicated useful work stays 28,000 operations per minute. These numbers illustrate the arithmetic. They are not provider telemetry.</p>
-        <p>Waiting operations per minute equal 12,000. Retried load adds roughly 24,000 repeats for 64,000 total against a 40,000 baseline, near 1.6x sustained with bursts toward 8x on the slowest endpoints where timeouts stacked. Over 248 minutes the queue absorbs roughly 3M waiting operations plus 6M repeats. Useful throughput for the morning lands near 60 percent of calm while the backlog bills overtime through the afternoon. Pin control to healthy zones plus the queue drains in minutes instead of hours.</p>
-        <p>Spend ordering matters more than any total. Retry budgets first. Zone-pinned control second. Regional spread third. Sticker price last. Teams that cap retries plus pin control survive the next stall without migrating a single workload.</p>
-      </section>
-
-      <section><h2>6. The Verdict: Pin Control, Budget Retries, Spread State</h2>
-        <p>Three drills before the next zonal stall. First, route control calls away from sick zones automatically with health-gated endpoints. Second, enforce retry budgets with backoff plus jitter at the client library, not per service. Third, rehearse zone evacuation quarterly with real traffic shifts, not slideware. The bill hides in the boundary between the failed zone plus the shared brain. Close that gap first.</p>
-        <p>Then take the Oregon companion in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a> plus the full regional math in <a href="learn-kubernetes.html">Kubernetes in Production</a> to spread what you measured.</p>
+      <section><h2>5. The verdict: make maintenance stoppable</h2>
+        <p>This incident was not evidence that multi-zone design failed everywhere. Google's report says unaffected zones allowed many multi-zonal workloads to continue. It was evidence that routine maintenance can defeat physical redundancy when a procedure permits multiple paths to be removed before verification.</p>
+        <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
+        <p>For comparison, see the distinct storage event in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>. Its failure mechanism and reported scope differ from this network-maintenance incident.</p>
       </section>
 
       <section><h2>Frequently Asked Questions</h2>
-        <h3>What failed in the GCP us-central1 outage?</h3>
-        <p>One zone in us-central1 stalled on September 1 2026. Fifteen dependent services degraded for 4 hours plus 8 minutes while control operations queued behind the slow zone.</p>
-        <h3>Why did one zone stall fifteen services?</h3>
-        <p>Control planes plus data planes shared fate with the slow zone. Provisioning calls queued, health signals lagged plus client retries multiplied calm traffic several times over.</p>
-        <h3>What does regional deployment cost?</h3>
-        <p>A regional footprint roughly doubles steady state spend against single-zone before traffic. The stall math above prices that premium against one queued morning.</p>
-        <h3>How do I survive the next zonal stall?</h3>
-        <p>Pin control calls to healthy zones, cap retries with budgets plus backoff plus rehearse zone evacuation before the incident. The verdict section lists the three drills.</p>
+        <h3>What caused the September 2026 GCP us-central1 outage?</h3>
+        <p>Google's incident report says incompatible optical transceivers were installed during network maintenance. Missing sequencing and verification safeguards allowed fiber paths to be disconnected in parts of us-central1-b and us-central1-f.</p>
+        <h3>How long did the Google Cloud incident last?</h3>
+        <p>Google reports an incident window from 07:41 to 11:52 US/Pacific on September 1, 2026, a duration of 4 hours 11 minutes.</p>
+        <h3>Did the outage affect an entire region?</h3>
+        <p>No. Google describes network isolation in specific clusters in parts of two zones. Many multi-zonal deployments continued through unaffected capacity, though dependent regional products also saw symptoms.</p>
+        <h3>What engineering lessons does Google's report support?</h3>
+        <p>Use explicit maintenance sequencing, stop-work checks, automated traffic diversion and rehearsed application behavior during network isolation. Treat stated remediation targets as targets until measured.</p>
       </section>
 
-      <section><h2>Sources plus Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident scope plus timeline follow published status aggregators linked below. Queue depths plus retry multiples plus cost totals are labeled estimates from the assumption table in section 5, not provider telemetry. Retry mechanics follow the production teardown in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>.</p>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident facts and the timeline come from Google's incident report and its September 29 addendum. Recommendations are engineering analysis based on those reported failure mechanisms. This revision removes previously published queue, retry and cost figures that had no primary-source support.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://shattered.io/gcp-us-central1-b-outage-15-services-2026" target="_blank" rel="noopener noreferrer">Shattered: GCP us-central1-b outage hit 15 services in 4h08m with 11:52 AM recovery</a></li>
-          <li><a href="https://status.cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: regional status dashboard plus incident history</a></li>
-          <li><a href="https://blog.incidenthub.cloud/h1-2026-cloud-saas-reliability-report" target="_blank" rel="noopener noreferrer">IncidentHub H1 2026 reliability report: cloud dependency risk plus outage frequency</a></li>
-          <li><a href="../calculators.html#retry-storm" rel="noopener">Buildopsy retry-storm calculator: re-run the amplification leg with your traffic</a></li>
-          <li><a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 Outage System Design: the Oregon companion on disk stalled control (parent file)</a></li>
+          <li><a href="https://status.cloud.google.com/incidents/J5ia5t9p3g9Q5Wi7r8Ev" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: September 1 us-central1 network incident, final report and September 29 addendum</a></li>
+          <li><a href="https://status.cloud.google.com/summary" target="_blank" rel="noopener noreferrer">Google Cloud Service Health incident history</a></li>
+          <li><a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 outage: a separate storage incident with a different failure mechanism</a></li>
         </ul>
       </section>
       </article>

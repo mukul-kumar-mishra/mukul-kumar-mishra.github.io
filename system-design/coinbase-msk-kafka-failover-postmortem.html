@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Coinbase ran Kafka on AWS MSK across 3 zones with factor 3 plus min ISR 2, yet one AZ outage halted trading. A Mukul postmortem with ISR math plus election models plus halt economics.">
+  <meta name="description" content="Coinbase's May 2026 outage combined an AWS thermal event, lost matching-engine quorum and two MSK clusters stuck healing. A sourced postmortem of the recovery chain.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Coinbase Kafka on AWS MSK: Multi-AZ That Did Not Fail Over">
-  <meta property="og:description" content="A priced teardown of the Coinbase MSK stall: 30 brokers plus factor 3 plus a stuck failover, with ISR math plus halt economics.">
+  <meta property="og:title" content="Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure | Buildopsy">
+  <meta property="og:description" content="Coinbase's May 2026 outage combined an AWS thermal event, lost matching-engine quorum and two MSK clusters stuck healing. A sourced postmortem of the recovery chain.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png">
-  <meta property="og:image:alt" content="Three stat panels showing broker count plus replica factor plus failed failover">
+  <meta property="og:image:alt" content="Three of five matching-engine nodes lost, two MSK clusters stuck healing and trading resumed at 3:49 AM ET">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
   <meta property="og:url" content="https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Coinbase Kafka on MSK: The Failover That Did Not">
-  <meta name="twitter:description" content="Thirty brokers plus factor 3 plus zero clean failovers, with ISR math plus halt economics.">
+  <meta name="twitter:title" content="Coinbase Kafka Outage: AWS MSK's May 2026 Failure">
+  <meta name="twitter:description" content="The May 2026 outage combined AWS thermal loss, matching-engine quorum loss and two MSK clusters stuck healing. Facts separated from engineering analysis.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png">
-  <meta name="twitter:image:alt" content="Three stat panels showing broker count plus replica factor plus failed failover">
-  <title>Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not | Buildopsy</title>
+  <meta name="twitter:image:alt" content="Three of five matching-engine nodes lost, two MSK clusters stuck healing and trading resumed at 3:49 AM ET">
+  <title>Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,16 +29,16 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not", "description": "A priced teardown of the Coinbase trading stall after an AWS AZ failure: MSK across 3 zones with replication factor 3 plus min ISR 2 that did not fail over cleanly, with ISR math plus leader election models plus halt economics. Incident facts follow published analyses. Modeled totals are labeled estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-09-30", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html"}, "keywords": "Kafka system design, AWS MSK, Coinbase outage, multi-AZ failover, ISR, leader election, payments architecture", "image": "https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure", "description": "A sourced reconstruction of Coinbase's May 7, 2026 outage: an AWS thermal event, matching-engine quorum loss and two MSK clusters stuck in a healing state, with recovery facts separated from engineering analysis.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html"}, "keywords": "Coinbase outage, May 2026 outage, AWS MSK outage, Kafka failover, matching engine quorum, incident postmortem", "image": "https://buildopsy.com/images/articles/coinbase-msk-failover-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"Why did Coinbase multi-AZ Kafka not fail over?","acceptedAnswer":{"@type":"Answer","text":"The MSK cluster met textbook topology with 30 brokers plus factor 3 plus min ISR 2, yet an edge-case bug in the managed failover path stalled leadership movement after the AZ failure. Topology was correct. The failover machinery was not."}},
-      {"@type":"Question","name":"What do factor 3 plus min ISR 2 guarantee?","acceptedAnswer":{"@type":"Answer","text":"Two in-sync replicas must acknowledge each write, so one replica loss keeps the partition writable. A second simultaneous loss plus a stuck coordinator removes that promise."}},
-      {"@type":"Question","name":"What did the halt cost?","acceptedAnswer":{"@type":"Answer","text":"Halt losses scale with matched volume per minute plus backlog recovery, modeled here as multiples of steady state streaming spend. The worked model below shows each step as labeled estimates."}},
-      {"@type":"Question","name":"How do I harden MSK failover?","acceptedAnswer":{"@type":"Answer","text":"Test AZ evacuation with real leadership movement, pin critical topics with placement constraints plus rehearse client bootstrap failover. The verdict section lists the three drills."}}
+      {"@type":"Question","name":"What caused the Coinbase outage in May 2026?","acceptedAnswer":{"@type":"Answer","text":"Coinbase says an AWS thermal event took infrastructure in one data hall offline. Its matching engine lost quorum, while an AWS MSK control-plane defect left two Kafka clusters stuck in a healing state."}},
+      {"@type":"Question","name":"Why did the AWS MSK issue delay recovery?","acceptedAnswer":{"@type":"Answer","text":"Coinbase reports that producers could not write to two clusters. That blocked the fee service and quoting, with effects on adjacent systems. Engineers manually reassigned partitions during recovery."}},
+      {"@type":"Question","name":"Did all of Coinbase's Kafka clusters use three Availability Zones?","acceptedAnswer":{"@type":"Answer","text":"No. Coinbase says one Kafka cluster used two Availability Zones. The MSK control-plane defect affected both two-zone and three-zone clusters."}},
+      {"@type":"Question","name":"What should teams test after this incident?","acceptedAnswer":{"@type":"Answer","text":"Test matching-engine quorum recovery separately from Kafka leader recovery. Exercise stuck-cluster runbooks, producer behavior, downstream dependencies and backlog clearance using your own workload telemetry."}}
     ]
   }
   </script>
@@ -67,79 +67,74 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Streaming</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Coinbase Kafka on AWS MSK System Design: The Multi-AZ Failover That Did Not</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">One AWS zone failed in May 2026. Coinbase trading stalled even though its Kafka fleet met every textbook rule. This postmortem reconstructs the stall from September 2026 analyses, models the ISR plus election math plus prices the halt against the streaming footprint.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Topology was correct plus failover was not. Thirty brokers plus factor 3 plus min ISR 2 still queued behind a stuck leadership path. Test evacuation with real movement, not diagrams.</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Streaming</span><span class="chip">September 2026</span><span class="chip">7 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Coinbase's May 7, 2026 outage began with an AWS thermal event. Coinbase's postmortem says the event cost its matching engine quorum and two AWS MSK clusters became stuck in a healing state. This reconstruction follows the company's primary account and separates its findings from engineering analysis.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Two recovery problems compounded one provider event: Coinbase had no automated cross-zone matching-engine failover, while an AWS MSK control-plane defect stopped partition-leader reelection. The company's report, not broker-count assumptions, is the source of truth here.</p>
         <div class="grid4" style="margin-top:24px;">
-          <div class="stat" style="padding:14px;"><div class="lbl">Brokers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">30 Across 3 AZ</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Replication</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Factor 3, ISR 2</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Trigger</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1 AZ Lost</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Failover</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Stuck</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Matching engine</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">3 of 5 nodes lost</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">MSK clusters</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2 stuck healing</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Quorum restored</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">12:06 AM ET</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Full trading resumed</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">3:49 AM ET</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 1, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the rebalance twin of this stall lives in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>. Read that deploy storm first for consumer-group math, then return here for broker-side election plus halt economics. Payments context continues in <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> compare the managed-service failure with the consumer deployment cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>. The mechanisms differ: this incident concerns AWS MSK's control plane, not a consumer rebalance storm.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is math?</strong> Topology plus trigger plus stuck-failover accounts follow published analyses linked below. Election timings plus halt totals are labeled estimates from the explicit assumption table in section 5, not exchange financials. Re-run the consumer leg in the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Timeline and failure details come from Coinbase's June 1 postmortem. This revision removes broker, replication and loss figures that the primary account does not establish. Recommendations are engineering analysis, not Coinbase telemetry.</aside>
 
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/coinbase-msk-failover-meme.svg" alt="Three stat panels showing broker count plus replica factor plus failed failover" width="1200" height="680"><figcaption>Figure 1. The evening in one cartoon. Thirty brokers plus factor three plus no failover. The bill hides in the boundary.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/coinbase-msk-failover-meme.svg" alt="Three sourced Coinbase outage facts: three of five matching-engine nodes lost, two MSK clusters stuck healing and trading resumed at 3:49 AM ET" width="1200" height="680"><figcaption>Figure 1. The provider event and two separate recovery failures, using figures in Coinbase's incident postmortem.</figcaption></figure>
 
-      <section><h2>1. One Zone Failed Plus Trading Stopped</h2>
-        <p>Thermal protection shut servers down inside one AWS availability zone in May 2026. Power loss was the programmed response to rising heat, not a grid accident. Coinbase services hosted on that hardware lost compute plus attached volumes together. Traffic shifted for stateless tiers within minutes. The stateful streaming tier did not follow.</p>
-        <p>That split decides every AZ postmortem this house prices. Stateless failover is DNS plus health checks. Stateful failover is leadership plus log reconciliation plus client rediscovery. The first completes in minutes. The second stalls for hours when the machinery has never moved under load. The bill hides in the boundary between the topology diagram plus the evacuation drill nobody ran.</p>
-        <div class="callout"><strong>The mental model:</strong> replicas are potential. Leadership is kinetic. Price movement, not placement.</div>
+      <section><h2>1. The provider event and the recovery timeline</h2>
+        <p>Coinbase says multiple chiller units failed at 7:20 PM ET on May 7 in one AWS us-east-1 data hall. The resulting thermal shutdown took EC2 instances and EBS volumes offline. At 7:48 PM ET, nearly all trading on Coinbase had halted.</p>
+        <p>At 9:29 PM ET, AWS terminated instances in Coinbase's placement group. Three of five matching-engine nodes went down, removing quorum. Coinbase restored quorum at 12:06 AM ET, reopened markets in stages and resumed full trading at 3:49 AM ET. The consumer-facing site and app were fully recovered by 9:53 AM ET. Event-streaming backlog clearance continued until 2:00 PM ET.</p>
+        <div class="callout"><strong>Important distinction:</strong> a provider event triggered the outage. Coinbase's recovery account identifies two separate internal recovery gaps. Treating them as one generic “Kafka failover” problem hides the dependency chain.</div>
       </section>
 
-      <section><h2>2. Factor 3 Plus Min ISR 2 On Paper</h2>
-        <p>Published architecture accounts describe roughly 30 brokers across 3 zones with replication factor 3 plus min in-sync replicas 2. Each partition keeps three copies. Each write needs two acknowledgments. Lose one zone plus every partition should retain two live copies with quorum intact. On paper the cluster survives any single-zone loss with writes flowing.</p>
-        <p>Paper math assumes the surviving replicas can elect leaders plus serve. Election needs a live controller plus reachable voters plus clients that discover the new leaders. Remove the controller path or wedge metadata propagation plus factor 3 degrades to factor 0 for affected partitions. Redundancy without movement is inventory, not availability.</p>
+      <section><h2>2. Failure one: matching-engine quorum</h2>
+        <p>Coinbase says it lacked automated failover to another Availability Zone for its matching engine. Recovery required an emergency code change to remove a startup assumption, a new node group outside the affected placement group and a careful sequence to restore a three-of-five quorum.</p>
+        <p>This was an application architecture and recovery-path issue. A node count or placement diagram alone does not demonstrate that a replacement group can be created, discovered and admitted quickly enough. Coinbase says it is improving warm cross-zone standby design and scheduling production failover exercises.</p>
       </section>
 
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/coinbase-msk-cost-chart.svg" alt="Bar chart comparing single AZ cost against multi AZ cost against halt loss" width="1200" height="680"><figcaption>Figure 2. The invoice in one cartoon. Single AZ cheap plus multi AZ near double plus halt modeled largest.</figcaption></figure>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/coinbase-msk-cost-chart.svg" alt="Causal sequence in Coinbase's report: AWS thermal event, matching-engine quorum loss and MSK clusters stuck healing" width="1200" height="680"><figcaption>Figure 2. Two distinct recovery failures followed one AWS thermal event. No incident-loss estimate is implied.</figcaption></figure>
 
-      <section><h2>3. The Edge Case That Ate The Failover</h2>
-        <p>Platform leadership accounts attribute the stuck failover to an edge-case bug in the managed streaming deployment path. The cluster followed best-practice topology while the managed failover machinery mishandled the AZ loss. Leadership movement stalled. Clients kept bootstrapping to dead brokers. Producers queued. Consumers idled with offsets frozen.</p>
-        <p>Managed services move failure modes, not remove them. Self-hosted Kafka fails in ZooKeeper quorum plus operator runbooks teams wrote themselves. Managed Kafka fails in control automation teams never saw. Both demand evacuation drills with real leadership movement. The September 2026 analyses agree on the lesson even where their wording differs: test the path, not the plan.</p>
+      <section><h2>3. Failure two: AWS MSK control-plane defect</h2>
+        <p>Coinbase reports that a defect in the AWS MSK control plane prevented automatic partition-leader reelection. Two clusters became stuck in a “healing” state and producers could not write. The resulting dependency chain blocked the fee service, then quoting. Coinbase also reports effects on parts of its ledger pipeline, payments and data pipelines.</p>
+        <p>One of Coinbase's Kafka clusters used two Availability Zones, which increased its blast radius and recovery time. Coinbase says the MSK control-plane defect affected two-zone and three-zone Kafka clusters alike. The primary account does not say all clusters shared one topology, nor does it publish a single broker count, replication factor or min-ISR setting for the fleet.</p>
+        <p>Engineers began manual partition reassignment at 3:00 AM ET. Priority-zero and priority-one topics were fully available by 9:30 AM ET. Remaining topics cleared by 2:00 PM ET. The distinction matters: restoring the matching engine did not instantly restore every event consumer.</p>
       </section>
 
-      <section><h2>4. Halt Economics For A Trading Stack</h2>
-        <p>Streaming spend is steady. Halt spend is spiky. A 3-zone fleet with factor 3 roughly doubles broker plus storage cost against single-zone before traffic. Inter-zone replication traffic adds a monthly line item most teams under-read. Those premiums look like waste until matched orders stop clearing.</p>
-        <p>Model the halt as frozen matches per minute plus backlog recovery plus support load. At an illustrative 50,000 matches per minute with a 90-minute stall, 4.5M matches queue for replay. Replay at 2x normal intake needs 45 minutes of catch-up with elevated latency plus reconciliation checks. Forecasts stay forecasts. The ordering holds across fee cards: streaming premium costs double, one halt costs multiples.</p>
+      <section><h2>4. What the incident teaches about managed dependencies</h2>
+        <p>Managed infrastructure transfers operational work to a provider. It does not remove the need to understand provider control-plane failure states. An application may be multi-zone in steady state while still having no tested recovery path for a stuck cluster, unavailable partition leaders or producers that cannot make progress.</p>
+        <p>Map the dependencies behind a user-visible transaction. Coinbase's account shows a Kafka write failure reaching the fee service, then quoting, then other downstream pipelines. Draw that path for your own system. Identify which dependencies block the customer response and which can buffer work safely.</p>
+        <p>Then rehearse separate failure modes: loss of one compute zone, matching-engine quorum loss, broker replacement, leader-election stall, producer backpressure and delayed consumer recovery. Record the recovery owner, signal, rollback path and data-consistency check for each. Use production-safe tests and your own telemetry. The source does not publish Coinbase's match rate, per-minute financial loss or a comparable infrastructure invoice, so this article does not invent those figures.</p>
       </section>
 
-      <section><h2>5. Worked Model: Election Math Plus Catch-Up</h2>
-        <p>Assumptions, all labeled estimates: 12,000 partitions across the fleet. One zone holds roughly one third of leaders at stall time, near 4,000 leaderships to move. Healthy election completes per partition in 300ms with metadata propagation near 2 seconds plus client rediscovery near 30 seconds. These numbers illustrate the arithmetic. They are not exchange telemetry.</p>
-        <p>Planned movement completes the bulk of elections inside 3 minutes with a long tail for wedged metadata. Stuck movement stretches the tail past 60 minutes while producers buffer plus consumers stall. Backlog at 50,000 matches per minute over 90 minutes equals 4.5M queued matches. Catch-up at 100,000 per minute needs 45 minutes plus reconciliation. Cap client bootstrap to healthy brokers plus pre-warm metadata plus the tail collapses toward the planned curve.</p>
-        <p>Spend ordering matters more than any total. Evacuation drills first. Client bootstrap hardening second. Placement constraints for critical topics third. Broker count last. Teams that move leadership quarterly survive the quarter when the zone goes dark.</p>
-      </section>
-
-      <section><h2>6. The Verdict: Move Leadership Before The Fire</h2>
-        <p>Three drills before the next AZ loss. First, evacuate one zone per quarter with live leadership movement plus measured catch-up. Second, harden client bootstrap with multi-broker lists plus metadata refresh budgets. Third, pin matching-critical topics with placement constraints so no partition loses quorum to one zone. The bill hides in the boundary between placed replicas plus moved leadership. Close that gap first.</p>
-        <p>Then take the consumer twin in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> plus the full streaming workshop in <a href="learn-event-streaming.html">Event Streaming in Production</a> to move what you measured.</p>
+      <section><h2>5. The verdict: rehearse both control planes</h2>
+        <p>Coinbase's postmortem describes a compound incident, not proof that adding a third Availability Zone guarantees failover. Matching-engine recovery required a new quorum path. Kafka recovery required AWS MSK control-plane recovery plus manual partition movement. The two-zone Kafka configuration increased impact, while the defect also affected three-zone clusters.</p>
+        <p>For an architecture review, ask for a timed matching-engine failover exercise and a separate managed-Kafka stuck-healing drill. Verify producer behavior, downstream queue limits, consumer catch-up and customer recovery independently. Compare with the consumer-side cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> and the broader <a href="learn-event-streaming.html">Event Streaming course</a>.</p>
       </section>
 
       <section><h2>Frequently Asked Questions</h2>
-        <h3>Why did Coinbase multi-AZ Kafka not fail over?</h3>
-        <p>The MSK cluster met textbook topology with 30 brokers plus factor 3 plus min ISR 2, yet an edge-case bug in the managed failover path stalled leadership movement after the AZ failure. Topology was correct. The failover machinery was not.</p>
-        <h3>What do factor 3 plus min ISR 2 guarantee?</h3>
-        <p>Two in-sync replicas must acknowledge each write, so one replica loss keeps the partition writable. A second simultaneous loss plus a stuck coordinator removes that promise.</p>
-        <h3>What did the halt cost?</h3>
-        <p>Halt losses scale with matched volume per minute plus backlog recovery, modeled here as multiples of steady state streaming spend. The worked model above shows each step as labeled estimates.</p>
-        <h3>How do I harden MSK failover?</h3>
-        <p>Test AZ evacuation with real leadership movement, pin critical topics with placement constraints plus rehearse client bootstrap failover. The verdict section lists the three drills.</p>
+        <h3>What caused the Coinbase outage in May 2026?</h3>
+        <p>Coinbase says an AWS thermal event took infrastructure in one data hall offline. Its matching engine lost quorum, while an AWS MSK control-plane defect left two Kafka clusters stuck in a healing state.</p>
+        <h3>Why did the AWS MSK issue delay recovery?</h3>
+        <p>Coinbase reports that producers could not write to two clusters. That blocked the fee service and quoting, with effects on adjacent systems. Engineers manually reassigned partitions during recovery.</p>
+        <h3>Did all of Coinbase's Kafka clusters use three Availability Zones?</h3>
+        <p>No. Coinbase says one Kafka cluster used two Availability Zones. The MSK control-plane defect affected both two-zone and three-zone clusters.</p>
+        <h3>What should teams test after this incident?</h3>
+        <p>Test matching-engine quorum recovery separately from Kafka leader recovery. Exercise stuck-cluster runbooks, producer behavior, downstream dependencies and backlog clearance using your own workload telemetry.</p>
       </section>
 
-      <section><h2>Sources plus Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Topology plus trigger plus stuck-failover accounts follow published analyses linked below. Election timings plus halt totals are labeled estimates from the assumption table in section 5, not exchange financials. Thermal mechanics follow the production teardown in <a href="aws-thermal-outage-postmortem.html">AWS Thermal Postmortem</a>.</p>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident timeline, architecture details and recovery actions follow Coinbase's first-party June 1 postmortem. The May 13 report from The Stack provides contemporaneous independent coverage. Recommendations are engineering analysis. This revision removes topology, timing and loss assumptions not established by those sources.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://www.thestack.technology/coinbase-down-aws-kafka-bug/" target="_blank" rel="noopener noreferrer">The Stack September 2026: Coinbase MSK edge case during AZ outage with platform comment</a></li>
-          <li><a href="https://www.automq.com/blog/coinbase-msk-kafka-availability" target="_blank" rel="noopener noreferrer">AutoMQ May 2026: multi-AZ multi-replica design plus failover analysis</a></li>
-          <li><a href="https://www.networkworld.com/article/4168878/aws-hit-by-us-east-1-outage-after-data-center-thermal-event.html" target="_blank" rel="noopener noreferrer">Network World May 2026: thermal event plus power loss in US-EAST-1 zone</a></li>
-          <li><a href="../calculators.html#rps-bill" rel="noopener">Buildopsy RPS envelope calculator: re-run the throughput leg with your own numbers</a></li>
-          <li><a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: the consumer-side companion on rolling deploys (parent file)</a></li>
+          <li><a href="https://www.coinbase.com/blog/a-postmortem-of-our-may-7-2026-outage" target="_blank" rel="noopener noreferrer">Coinbase Engineering: A postmortem of our May 7, 2026 outage</a></li>
+          <li><a href="https://www.thestack.technology/coinbase-down-aws-kafka-bug" target="_blank" rel="noopener noreferrer">The Stack: Coinbase blames Amazon MSK edge-case during AZ outage</a></li>
+          <li><a href="https://docs.aws.amazon.com/msk/latest/developerguide/bestpractices.html" target="_blank" rel="noopener noreferrer">AWS MSK documentation: availability and broker best practices</a></li>
+          <li><a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: a separate consumer-group failure mode</a></li>
         </ul>
       </section>
       </article>
