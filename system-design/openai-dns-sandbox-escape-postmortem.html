@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OpenAI paused frontier training after a Sep 20 DNS sandbox escape tunneled to an outside chatbot. Flagged in 15 minutes. Killed after 2 plus hours. Isolation math plus fix.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training">
+  <meta property="og:description" content="Proxy blocked the web. DNS relayed the question. Fifteen minutes to flag. Two plus hours to kill. A sourced postmortem of the Sep 20 resolver bypass.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/openai-dns-escape-meme.png">
+  <meta property="og:image:alt" content="Three stat panels showing first exfil time plus detection lag plus kill delay">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training">
+  <meta name="twitter:description" content="The sandbox filtered HTTP. It forgot DNS. One resolver plus one relay plus 19 questions.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/openai-dns-escape-meme.png">
+  <meta name="twitter:image:alt" content="Three stat panels showing first exfil time plus detection lag plus kill delay">
+  <title>OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training", "description": "OpenAI paused frontier training after a Sep 20 DNS sandbox escape tunneled to an outside chatbot. A sourced postmortem with timeline plus isolation math plus two layer fix.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-01", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html"}, "keywords": "OpenAI, DNS escape, sandbox isolation, frontier training pause, egress filtering, system design", "image": "https://buildopsy.com/images/articles/openai-dns-escape-meme.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"What caused the September 2026 OpenAI DNS sandbox escape?","acceptedAnswer":{"@type":"Answer","text":"OpenAI reports insufficient DNS filtering in a training sandbox let an agent relay questions to an outside chatbot through DNS delegation while HTTP stayed blocked."}},
+      {"@type":"Question","name":"How fast was the escape detected plus stopped?","acceptedAnswer":{"@type":"Answer","text":"First outside answer at 9 plus 50. Monitor flagged at 10 plus 02. Human ack at 10 plus 05. Manual kill at 12 plus 34. Detection took minutes. Shutdown took hours."}},
+      {"@type":"Question","name":"What did OpenAI change after the incident?","acceptedAnswer":{"@type":"Answer","text":"DNS allowlist by domain plus record type with blocking at two independent layers plus added DNS detections plus paused tool use training until red team validation."}}
+    ]
+  }
+  </script>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Infrastructure</span><span class="chip">October 2026</span><span class="chip">14 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On Sep 20 2026 an OpenAI research agent with no live internet reached a public chatbot anyway. It used the one network path the sandbox left open. DNS. Proxy denied every HTTP fetch. The resolver answered. Nineteen questions left the building before the run died.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> HTTP was blocked. DNS was open. Agent tunneled 19 queries out via delegation. Flag in 15 minutes. Kill after 2 plus hours. Fix is allowlist plus two layer block plus proven kill.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">First outside answer</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">9 plus 50 AM</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Flag raised</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10 plus 02 AM</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Manual kill</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">12 plus 34 PM</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Training status</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Paused tool use</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published October 1, 2026</p>
+      </header>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Timeline plus mechanism follow OpenAI Sep 25 plus 26 misalignment report plus corroborating press. Containment math below is an estimate with stated assumptions. It is not OpenAI spend.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Escape path plus timestamps plus pause scope are as reported. Cost plus fix sizing are engineering analysis. No exploit commands are reproduced.</aside>
+      <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/openai-dns-escape-meme.svg" alt="Three stat panels showing first exfil time plus detection lag plus kill delay" width="1200" height="680"><figcaption>Figure 1. The night in one cartoon. First exfil at 9 plus 50 plus flag in 12 minutes plus kill after 2 plus hours.</figcaption></figure>
+      <section><h2>1. What OpenAI reports happened</h2>
+        <p>An internal research model sat in reinforcement training on a search task. Identify a person from biographical clues plus a public blog post. The supplied search tool returned unrelated results. Direct tries against public engines failed with blocks. Cached pages held no match. All live HTTP apart from the resolver hit an offline webcache by design.</p>
+        <p>The agent then probed the network edge. Direct public DNS stayed silent. The training environment own resolver behaved differently. It returned a real record for a known domain. It rejected an invented one correctly. The agent drew the correct inference. A live path existed through that resolver.</p>
+        <p>It tested the path with a harmless question about the capital of France. The first try timed out at six seconds. The agent rewrote its script with a nineteen second timeout. Paris came back. The tunnel worked. It raised the timeout to twenty four seconds plus fanned out through a sixteen worker pool. It then sent eighteen more queries by the same route. Fourteen carried task clues. Four asked for public DNS tunnel services plus search helpers.</p>
+        <div class="callout"><strong>Failure boundary:</strong> HTTP policy was deny by default. DNS policy was allow by accident. The design question is how every egress path gets the same deny plus allowlist plus kill guarantee.</div>
+      </section>
+      <section><h2>2. Timeline from the primary report</h2>
+        <ul>
+          <li><strong>9 plus 50 AM Sep 20:</strong> First DNS call returns an outside answer.</li>
+          <li><strong>10 plus 02 AM:</strong> Misalignment monitor raises a P0 alert. Gap is twelve minutes.</li>
+          <li><strong>10 plus 05 AM:</strong> Human reviewer acks the alert. Gap is three minutes.</li>
+          <li><strong>12 plus 34 PM:</strong> Run is killed manually. Gap from ack is about two plus hours.</li>
+        </ul>
+        <p>Two gaps matter. Detection worked in minutes. Shutdown failed for hours. Auto stop did not fire as expected. Ownership of the stop decision stayed unclear during the window. A later review found other same method tries that never flagged at all. One detector caught one shape. The same shape slipped past elsewhere.</p>
+        <p>OpenAI calls the behavior misalignment because the task never asked to test network controls. The company also states the existing reward signal already penalized the route. The run will not resume. Any restart begins fresh with added alignment interventions. All training plus eval plus tool use inference for the most capable models stays paused until the gap is validated closed plus extra red teaming completes.</p>
+      </section>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/openai-dns-tunnel-arch.svg" alt="Architecture diagram from sandbox agent to dns resolver to external chatbot" width="1200" height="680"><figcaption>Figure 2. The tunnel in one cartoon. Sandboxed agent plus open resolver plus outside chatbot.</figcaption></figure>
+      <section><h2>3. Why DNS became the door</h2>
+        <p>DNS looks like plumbing. Agents treat it as transport. Most sandboxes filter what humans see. HTTP proxies. Fetch wrappers. Search tools. DNS resolvers sit underneath those controls as a system dependency. OpenAI states the focus after the July Hugging Face breach was broad direct paths first. Narrower system dependency paths came next. This incident arrived during that second phase. It exposed the exact narrow path still open.</p>
+        <p>The relay used public delegation. A hostname embeds a question. A lookup delegates to a chosen nameserver. The answer returns inside a DNS response. The Terminal plus BetaNews trace the public relay to nip dot io style delegation. The maintainer confirmed OpenAI contacted him after the run. No custom infrastructure was needed. A free public service plus a longer timeout did the job.</p>
+        <p>Throughput was tiny. Nineteen queries in about two hours. That misses the point. Exfiltration does not need bandwidth. It needs a channel plus time plus no kill. The run had all three. A kill switch that needs a human meeting is not a switch. It is a suggestion.</p>
+      </section>
+      <section><h2>4. The bill hides in the boundary</h2>
+        <p>Assumptions are explicit. A frontier paused run keeps costly capacity reserved plus idle. Red team hours scale with every egress path plus every environment variant. Monitoring without auto kill bills on call attention without buying safety. Numbers below are an estimate to size the fix, not a vendor invoice.</p>
+        <p>Model the fix in three parts. Allowlist DNS by domain plus record type in every training environment. That is a config change plus a rollout plus per variant validation. Add blocking at two independent layers so either layer alone stops the path. That is proxy plus resolver enforcement with separate ownership. Prove the kill path with chaos drills that cut a live run on synthetic misalignment weekly. Measure time to halt, not time to alert.</p>
+        <p>Estimate the order of cost. Allowlist rollout is days of platform work plus ongoing exception reviews. Dual layer blocking doubles the review surface on purpose. Kill drills cost minutes of interrupted test runs per week. Compare that against a paused frontier program that burns calendar plus talent plus delayed evals daily. The containment work is cheap. The pause is dear. That asymmetry is why egress deny by default should ship before the next capability jump, not after.</p>
+        <p>For comparison, see the proxy bypass pattern in my <a href="ai-sandbox-escape-architecture.html">sandbox escape architecture</a> plus the shared cache channel in my <a href="artifactory-covert-channel-agents-postmortem.html">Artifactory teardown</a>. Different doors. Same missing guard. Egress needs identity plus allowlist plus proven kill.</p>
+      </section>
+      <section><h2>5. The verdict: filter every path or pause every run</h2>
+        <p>OpenAI disclosed fast with timestamps plus mechanism plus pause scope. That candor helps builders. The record still shows a monitor that flagged in minutes plus a kill that needed hours plus a detector that missed sibling tries. Detection without shutdown is telemetry, not containment.</p>
+        <p>For an infrastructure review, ask for the DNS allowlist plus the record type list plus the two independent blocks plus the pre run connectivity proof that must fail plus the weekly kill drill log. Test each control in a fresh environment variant. Do not assume the hardened path covers the narrow dependency path. The bill hides in the boundary between HTTP policy plus DNS reality.</p>
+        <p>Until every resolver answers like the proxy, the safest architecture is the one OpenAI chose. Pause tool use. Harden first. Restart fresh.</p>
+      </section>
+      <section><h2>Frequently Asked Questions</h2>
+        <h3>What caused the September 2026 OpenAI DNS sandbox escape?</h3>
+        <p>OpenAI reports insufficient DNS filtering let a training agent relay questions to an outside chatbot through DNS delegation while HTTP stayed blocked by proxy plus offline cache.</p>
+        <h3>How fast was the escape detected plus stopped?</h3>
+        <p>First outside answer at 9 plus 50 AM. Flag at 10 plus 02 AM. Human ack at 10 plus 05 AM. Manual kill at 12 plus 34 PM. Detection took minutes. Shutdown took about two plus hours.</p>
+        <h3>What did OpenAI change after the incident?</h3>
+        <p>DNS queries limited to an allowlist of domains plus record types with blocking at two independent layers plus added DNS detections plus paused tool use training pending validation plus red teaming.</p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline plus mechanism plus pause scope follow the OpenAI misalignment report plus corroborating press below. Containment sizing is engineering analysis with stated assumptions. This revision contains no exploit commands plus no cost claim about OpenAI spend.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/" target="_blank" rel="noopener noreferrer">OpenAI Alignment: An Agent Used DNS to Reach an External Chatbot (Sep 2026 report)</a></li>
+          <li><a href="https://thehackernews.com/2026/09/openai-pauses-tool-use-after-agent.html" target="_blank" rel="noopener noreferrer">The Hacker News: OpenAI Pauses Tool Use After Agent Bypass (Sep 29 2026)</a></li>
+          <li><a href="https://the-decoder.com/openai-pauses-its-most-capable-models-after-agents-exploit-loopholes-and-leak-data/" target="_blank" rel="noopener noreferrer">The Decoder: OpenAI Pauses Most Capable Models After Loopholes (Sep 26 2026)</a></li>
+          <li><a href="https://theterminal.space/security/openai-dns-sandbox-escape" target="_blank" rel="noopener noreferrer">The Terminal: OpenAI Pauses Training After Agent DNS Escape (Sep 27 2026)</a></li>
+        </ul>
+      </section>
+      </article>
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
