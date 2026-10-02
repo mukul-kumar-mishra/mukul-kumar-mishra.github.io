@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination plus promised a token verifier. Rook audits claimed vs proved.">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach">
+  <meta property="og:description" content="One invented name plus one undescribed photo plus one confident apology. The agent confessed a leak. The founder claimed hallucination. Rook grades the gap.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png">
+  <meta property="og:image:alt" content="Three stat panels showing one invented name plus one undescribed photo plus zero sends">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach">
+  <meta name="twitter:description" content="No proven breach. No proven isolation either. Just a helpful agent plus a confident apology plus screenshots.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png">
+  <meta name="twitter:image:alt" content="Three stat panels showing one invented name plus one undescribed photo plus zero sends">
+  <title>Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach", "description": "Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination plus promised a token verifier. Rook audits claimed vs proved.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-02", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html"}, "keywords": "Instinct AI agent, AI hallucination, data leak vs hallucination, Noah Shinn, agent isolation, Rook", "image": "https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png"}</script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Slop Audit</span><span class="chip">October 2026</span><span class="chip">12 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A user never sent a photo. The agent described one anyway. Then it apologized for a routing glitch that nobody proved. That is the whole incident. A confident confession plus zero receipts.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Instinct described a stranger financial doc plus blamed a crossed chat. Founder says hallucination not breach. Proof either way never shipped. Fix is provenance plus outside-trace verifiers plus honest apologies.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Published October 2, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> User screenshots Sep 21 2026 plus founder reply Sep 23 plus press Sep 22 to Sep 30. No exploit steps are reproduced. This audit grades disclosure plus mechanism plus fix.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/instinct-crossed-chat-meme.svg" alt="Three stat panels showing one invented name plus one undescribed photo plus zero sends" width="1200" height="680"><figcaption>Figure 1. The report in one cartoon. One invented name plus one undescribed photo plus zero sends from the user.</figcaption></figure>
+      <section><h2>1. The Confession Nobody Ordered</h2>
+        <p>Pritak posted screenshots on Sep 21. Instinct had greeted him with what looked like someone else middle name. Then it discussed a photo of a financial document. He never sent any photo. So far this reads like a privacy disaster.</p>
+        <p>Then the agent made it worse. It told him a photo had crossed into his conversation. It called the crossover a serious glitch. It even drafted an incident report about a stranger private document reaching the wrong chat. Every sentence sounded precise. None of it had evidence attached.</p>
+        <p>Pritak asked the only question that mattered. Was this a data leak or a hallucination. The screenshots do not answer it. A second user replied that a similar episode had happened to him too before Instinct denied it. That reply adds alarm. It adds no logs. Alarm without logs is weather, not climate.</p>
+        <p>Personal agents live on broad access by design. They call insurers. They book tickets. They touch money movement pages. When such an agent starts narrating a stranger financial file, the blast radius question is immediate. Whose data. How many chats. How long public. This incident answered none of those. It just apologized fluently.</p>
+        <div class="callout"><strong>The number that matters:</strong> Zero photos sent by the user. One photo described by the agent. Zero published logs that decide leak versus invention.</div>
+      </section>
+      <section><h2>2. Claimed Versus Proved</h2>
+        <p><strong>Proved:</strong> The agent produced stranger-like details plus a glitch confession. Screenshots published Sep 21 show the middle name plus the money document talk plus the crossed-chat apology. Business Insider plus RuntimeWire plus HyperAI corroborate the thread Sep 22 to Sep 24.</p>
+        <p><strong>Proved:</strong> Founder Noah Shinn answered on Sep 23. He attributed the episode to a hallucinated proper noun amplified by the thinking trace. He denied any breach plus any shared data plus any violated isolation boundary. He listed the privacy stack as isolated sandboxes plus short-lived local credentials plus identity-signed tool execution.</p>
+        <p><strong>Proved:</strong> The team shipped a detection layer in 48 hours. Shinn describes small models that scan tokens for ungrounded claims plus brainstorming drift plus sampling errors. The layer claims power to steer or intercept before the next trace or tool call runs. A deeper technical dive was promised for coming weeks. It had not shipped at the time Business Insider reported.</p>
+        <p><strong>Partial:</strong> That isolation held. Sandboxes plus short creds plus signed execution are solid design. But no per-user workspace audit plus no trace provenance plus no retrieval log was published. Architecture slides do not prove a negative. Only scoped logs do.</p>
+        <p><strong>Unproved:</strong> That this exact case was hallucination. Shinn did not say how the team ruled out a leak. He did not answer Business Insider request for comment. A founder verdict without a method is a press release with better fonts.</p>
+        <p>Compare with the rival pattern for calibration. PixelLeak proved exfiltration with public repo URLs anyone could recheck. Slopsquatting proved installability with registry math. Instinct proved only that its agent can write a convincing incident report about itself. Different failure. Same verdict. The harness lacked observable proof.</p>
+      </section>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/instinct-verifier-flow.svg" alt="Flow diagram from isolated workspace to thinking trace to outside verifier gate" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Isolated workspace plus thinking trace plus verifier gate outside the trace.</figcaption></figure>
+      <section><h2>3. Why the Apology Was the Second Bug</h2>
+        <p>The agent did not merely invent a name. It invented an explanation. Crossed chats. Serious glitch. Photo in the wrong conversation. Each phrase sounds like a postmortem. Each phrase came from the same ungrounded generator that started the fire.</p>
+        <p>This is the amplification Shinn named. A proper noun gets fabricated. The reasoning trace treats it as ground truth. Later tokens build strategy on top of fiction. By the final message the model testifies about infrastructure it never observed. The confession is downstream of the error. It cannot diagnose the error.</p>
+        <p>Review plus scanners had nothing to catch. No org scanner watches a consumer chat. No reviewer asks where the bytes lived when the bytes never existed. The failure stayed inside one conversation. That locality is lucky. The next invented confession could trigger a real takedown plus a real credential rotation plus a real lawsuit. Fluency scales faster than truth.</p>
+        <p>Warnings will not act as controls here either. A disclaimer that output may be inaccurate does not help when the output names your money plus your middle name. Users read specifics as knowledge. Specifics without provenance are rumors with rendering.</p>
+      </section>
+      <section><h2>4. What Should Happen Instead</h2>
+        <p>First, tag every retrieved object with provenance. User uploads plus other-user data plus tool outputs plus model memory must carry distinct labels into the context. Any claim about a photo must cite an object id the user can open. No id means no photo talk. The model learns silence as a valid completion.</p>
+        <p>Second, move the verifier outside the thinking trace. Shinn direction is right. Small models scan tokens plus traces plus planned tool calls before execution. Keep that gate in a separate trust domain the main model cannot edit. Log every steer plus every intercept with the trace span that triggered it.</p>
+        <p>Third, make leak-versus-invention decidable within hours. Per-user workspace ids plus retrieval logs plus cross-user access counters must answer three questions from one dashboard. Did any other user object enter this context. Did any tool read outside the user scope. Did any output leave the user boundary. Publish the query template, not just the verdict.</p>
+        <p>Fourth, ban the agent from self-diagnosing infrastructure. Crossed chats plus glitch talk plus incident reports about platform internals must come from deterministic status checks, never from generation. When the model lacks a status signal, the only honest line is short. I have no record of that photo. Here is how to verify.</p>
+        <p>Fifth, treat the apology as data. Every false confession gets sampled into adversarial training plus red team suites. The Sep 23 promise of continuous testing plus sampling plus adversarial hardening is the correct loop. Ship the eval set with the dive post so outsiders can replay it.</p>
+        <div class="tip"><strong>Rook's rule:</strong> If the agent is the only witness to its own breach, you have no incident response. You have a storytelling feature.</div>
+      </section>
+      <section><h2>5. The Verdict</h2>
+        <p>Shinn responded fast with specifics. Stack details plus a 48-hour detection build plus a steer-or-intercept promise. That candor beats silence. The footnote still buries a body. Nobody showed how hallucination was distinguished from leakage for this exact chat.</p>
+        <p>The industry pattern now spans installs plus screenshots plus self-reports. Slopsquatting poisoned the package name. PixelLeak published the proof to a public repo. Instinct poisoned nothing visible. It just narrated a breach that may never have happened with total confidence. Close the loop. Prove the negative with logs. Gag the apology until the status check speaks.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A leak you cannot prove is a rumor. A denial you cannot replay is marketing.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Thread plus screenshots follow the Sep 21 X post plus RuntimeWire Sep 22 review of both failure modes. Founder claims plus privacy stack plus 48-hour detector follow Shinn Sep 23 X reply plus Business Insider Sep 24. Product context follows Business Insider Sep 24 plus Colossus Sep 28 plus Fortune Sep 30. No exploit steps are reproduced. For the install lure see my <a href="slopsquatting-ai-package-hallucination-postmortem.html">slopsquatting teardown</a> plus for the public proof lure see my <a href="pixelleak-ai-agent-github-leak-postmortem.html">PixelLeak audit</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://www.businessinsider.com/instinct-founder-noah-shinn-ai-agent-hallucinate-stranger-data-leak-2026-9" target="_blank" rel="noopener noreferrer">Business Insider: Instinct Founder Says Viral Agent Can Hallucinate Stranger Data (Sep 24 2026)</a></li>
+          <li><a href="https://x.com/noahrshinn/status/2102896837522804954" target="_blank" rel="noopener noreferrer">Noah Shinn on X: Hallucination Reply Plus 48 Hour Detector Plan (Sep 23 2026)</a></li>
+          <li><a href="https://runtimewire.com/article/instinct-ai-possible-financial-document-data-leak" target="_blank" rel="noopener noreferrer">RuntimeWire: Instinct User Says Assistant Surfaced Stranger Financial Doc (Sep 22 2026)</a></li>
+          <li><a href="https://fortune.com/2026/09/30/noah-shinn-instinct-ai-assistant-meta-muse-alexandr-wang-tech-series-c-ai-agent-mark-zuckerberg/" target="_blank" rel="noopener noreferrer">Fortune: Meet Noah Shinn Plus the Viral Assistant Taking on Muse (Sep 30 2026)</a></li>
+          <li><a href="https://colossus.com/episode/instinct-the-personal-agent/" target="_blank" rel="noopener noreferrer">Colossus: Instinct the Personal Agent With Noah Shinn (Sep 28 2026)</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
