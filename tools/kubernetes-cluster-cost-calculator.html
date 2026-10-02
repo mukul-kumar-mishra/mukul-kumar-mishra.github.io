@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/kubernetes-cluster-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy">
+  <meta property="og:description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta property="og:url" content="https://buildopsy.com/tools/kubernetes-cluster-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Kubernetes Cluster Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy">
+  <meta name="twitter:description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta name="twitter:image:alt" content="Kubernetes Cluster Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does an EKS cluster cost per month?","acceptedAnswer":{"@type":"Answer","text":"EKS charges $73 a month for the control plane plus the cost of the worker nodes. Six nodes at $140 each plus the fee is $913 a month before storage. This calculator prices the full cluster."}},
+      {"@type":"Question","name":"Do managed Kubernetes control planes cost money?","acceptedAnswer":{"@type":"Answer","text":"EKS and GKE charge about $73 per cluster a month. AKS charges nothing for the control plane. A self-managed control plane has no fee but you run and patch the nodes yourself."}},
+      {"@type":"Question","name":"Why is most of the Kubernetes bill worker nodes?","acceptedAnswer":{"@type":"Answer","text":"Worker nodes run your workloads, so they scale with demand. The control plane is a flat fee. In the default model nodes are about 87 percent of the bill, which is why rightsizing nodes matters more than the cluster fee."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes Cluster Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">A cluster bill is worker nodes plus the control plane fee plus persistent volumes. The defaults price six nodes at $140 each, an EKS control plane at $73 and 500 GB of storage at $0.10 per GB, which lands at $963.00 a month. Switch the presets to compare managed platforms.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="k8s-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a cluster from its node pool, its control plane fee and its persistent storage. Starts from a six-node EKS cluster.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly cluster bill</span>
+              <span class="radar-count-description"> · Nodes plus control plane plus storage, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Platform presets">
+              <button class="radar-filter active" data-set="k8s-cp:73">EKS</button>
+              <button class="radar-filter" data-set="k8s-cp:73">GKE</button>
+              <button class="radar-filter" data-set="k8s-cp:0">AKS</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="k8s-nodes">Worker nodes</label><input type="number" id="k8s-nodes" value="6" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="k8s-node">Cost per node ($ / month)</label><input type="number" id="k8s-node" value="140" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="k8s-cp">Control plane ($ / month)</label><input type="number" id="k8s-cp" value="73" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="k8s-pv">Persistent storage (GB)</label><input type="number" id="k8s-pv" value="500" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="k8s-pvp">Storage price ($ / GB-month)</label><input type="number" id="k8s-pvp" value="0.10" step="0.01" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="k8s-monthly">$963</div>
+                <div class="radar-count-description">per month · nodes + control plane + storage</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix</div>
+                  <div class="calc-donut" id="k8s-donut" role="img" aria-label="Share of cluster cost across worker nodes, control plane and persistent storage" style="background:conic-gradient(#38bdf8 0.0% 87.2%,#fb7185 87.2% 94.8%,#a3e635 94.8% 100.0%)"><div class="calc-donut-center"><span id="k8s-mix-top">87.2%</span><small>nodes</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Worker nodes</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Control plane</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Storage</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="k8s-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Node cost</div>
+              <div class="radar-trend-value" id="k8s-compute">$840 nodes</div>
+              <div class="radar-trend-sub">workers times node price</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Storage cost</div>
+              <div class="radar-trend-value" id="k8s-storage">$50 storage</div>
+              <div class="radar-trend-sub">volumes times price</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Distributed Systems</span></div><h3><a class="feature-link-title" href="../system-design/cell-based-control-plane.html">RFC: Cell-Based Control Plane Architecture</a></h3><p class="fl-desc">Regional isolation, failure containment and zero-blast-radius control planes.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a> · <a href="cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> · <a href="ec2-compute-cost-calculator.html">EC2 Compute Cost Calculator</a> · <a href="kubernetes-hpa-calculator.html">Kubernetes HPA Replica Calculator</a> · <a href="error-budget-calculator.html">Error Budget Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="kubernetes-cluster-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-kubernetes-cluster-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

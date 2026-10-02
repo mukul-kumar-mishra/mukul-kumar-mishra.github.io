@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
+  <meta name="description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Thirteen tools, no signup.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/calculators.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta property="og:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
+  <meta property="og:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Thirteen tools, no signup.">
   <meta property="og:url" content="https://buildopsy.com/calculators.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Free engineering calculators for cost, SLO and scaling">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta name="twitter:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nine tools, no signup.">
+  <meta name="twitter:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Thirteen tools, no signup.">
   <meta name="twitter:image:alt" content="Free engineering calculators for cost, SLO and scaling">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy</title>
@@ -71,9 +71,9 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">9 calculators</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">13 calculators</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine instruments for developers, SREs and CTOs. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost, all runnable in seconds. Everything runs in your browser with no data sent. Each links to its teardown.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Thirteen instruments for developers, SREs and CTOs. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost, plus cloud cost math for S3, egress, compute and Kubernetes, all runnable in seconds. Everything runs in your browser with no data sent. Each links to its teardown.</p>
       <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a> · <a href="#error-budget">Error Budget</a> · <a href="#hpa-size">HPA Sizer</a> · <a href="#obs-sample">Sampling Fit</a> · <a href="#pool-size">Pool Sizer</a> · <a href="#downtime-cost">Downtime Cost</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a>, <a href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="system-design/aws-thermal-outage-postmortem.html">AWS thermal</a> teardowns.</p>
     </header>
 
@@ -653,6 +653,16 @@
         </div>
       </section>
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/aws-thermal-outage-postmortem.html">AWS Thermal Postmortem: Cooling Failed First</a></h3><p class="fl-desc">A thermal event impaired nine services in one Availability Zone. Compare snapshot restoration with launching in unaffected zones.</p></article>
+    </section>
+
+    <section class="sec" id="cloud-cost">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="cloud"></i> Cloud Cost Calculators</h2>
+        <a class="sec-link" href="tools/aws-s3-storage-cost-calculator.html">Open standalone →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;">Price the line items that dominate a real cloud bill. Each tool opens as a standalone page you can bookmark, runs locally and sends no data.</p>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="tools/aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a> · <a href="tools/cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> · <a href="tools/ec2-compute-cost-calculator.html">EC2 Compute Cost Calculator</a> · <a href="tools/kubernetes-cluster-cost-calculator.html">Kubernetes Cluster Cost Calculator</a></p>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">Shards, CDC, vector search and the modeled bill of a 200-billion-block platform.</p></article>
     </section>
 
     <div class="ad-slot" data-ad-slot="calculators-below-tools" role="complementary" aria-label="Advertisement">

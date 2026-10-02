@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EC2 Compute Cost Calculator With Reserved Savings | Buildopsy">
+  <meta property="og:description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta property="og:url" content="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="EC2 Compute Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="EC2 Compute Cost Calculator With Reserved Savings | Buildopsy">
+  <meta name="twitter:description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta name="twitter:image:alt" content="EC2 Compute Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>EC2 Compute Cost Calculator With Reserved Savings | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does one EC2 instance cost per month?","acceptedAnswer":{"@type":"Answer","text":"An m5.large at $0.096 an hour running 730 hours costs $70.08 a month on demand. Ten of them cost $700.80. Enter the count and hourly price to price your own fleet."}},
+      {"@type":"Question","name":"How much do reserved instances save?","acceptedAnswer":{"@type":"Answer","text":"A one-year reserved commitment typically saves about 37 percent against on demand and a three-year commitment about 55 percent. Spot capacity can save about 70 percent but can be reclaimed. Use the presets to model each."}},
+      {"@type":"Question","name":"Does utilization change the compute bill?","acceptedAnswer":{"@type":"Answer","text":"On demand you pay for the instance whether it is busy or idle. This calculator scales the bill by average utilization so you can see what an idle fleet wastes and where rightsizing pays."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">EC2 Compute Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Compute bills are instances times hourly price times hours, then reduced by whatever commitment you hold. The defaults price ten m5.large instances at $0.096 an hour over 730 hours, which lands at $700.80 a month on demand. Switch the presets to price reserved and spot.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="compute-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate, hours and average utilization, then apply a commitment discount. Starts from ten instances at list price.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly compute bill</span>
+              <span class="radar-count-description"> · On-demand value scaled by utilization and discount.</span>
+            <div class="radar-filters" aria-label="Pricing presets">
+              <button class="radar-filter active" data-set="ec2-disc:0">ON-DEMAND</button>
+              <button class="radar-filter" data-set="ec2-disc:37">1YR RESERVED</button>
+              <button class="radar-filter" data-set="ec2-disc:55">3YR RESERVED</button>
+              <button class="radar-filter" data-set="ec2-disc:70">SPOT</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-count">Instances</label><input type="number" id="ec2-count" value="10" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hr">Price ($ / instance-hour)</label><input type="number" id="ec2-hr" value="0.096" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hours">Hours / month</label><input type="number" id="ec2-hours" value="730" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-util">Average utilization (percent)</label><input type="number" id="ec2-util" value="100" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-disc">Discount (percent)</label><input type="number" id="ec2-disc" value="0" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="ec2-monthly">$701</div>
+                <div class="radar-count-description">per month · on demand × utilization × discount</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Spend mix</div>
+                  <div class="calc-donut" id="ec2-donut" role="img" aria-label="Share of on-demand value across what you pay and what the discount saves" style="background:conic-gradient(#38bdf8 0.0% 100.0%,#a3e635 100.0% 100.0%)"><div class="calc-donut-center"><span id="ec2-mix-top">100.0%</span><small>paid</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Paid</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Saved</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="compute-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">On-demand value</div>
+              <div class="radar-trend-value" id="ec2-ondemand">$701 on demand</div>
+              <div class="radar-trend-sub">count × rate × hours</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Discount savings</div>
+              <div class="radar-trend-value" id="ec2-savings">$0 saved</div>
+              <div class="radar-trend-sub">commitment or spot</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Bill Was Waiting</a></h3><p class="fl-desc">Concurrency, cold starts and the serverless economics that arrive after the invoice.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a> · <a href="cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> · <a href="kubernetes-cluster-cost-calculator.html">Kubernetes Cluster Cost Calculator</a> · <a href="kubernetes-hpa-calculator.html">Kubernetes HPA Replica Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="ec2-compute-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-ec2-compute-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

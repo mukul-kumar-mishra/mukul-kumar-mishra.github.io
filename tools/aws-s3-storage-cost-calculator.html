@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
+  <meta property="og:description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta property="og:url" content="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="AWS S3 Storage Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
+  <meta name="twitter:description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta name="twitter:image:alt" content="AWS S3 Storage Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>AWS S3 Storage Cost Calculator With Request Fees | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does 1 TB of S3 Standard storage cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the US East list price of $0.023 per GB-month, 1,000 GB of S3 Standard storage costs $23.00 a month before request and retrieval fees. This calculator adds PUT and GET fees on top."}},
+      {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"Requests are priced per thousand. One million PUTs at $0.005 per thousand adds $5.00. Ten million GETs at $0.0004 per thousand adds $4.00. High-churn buckets can pay more in requests than in storage."}},
+      {"@type":"Question","name":"What is the cheapest S3 storage class?","acceptedAnswer":{"@type":"Answer","text":"S3 Glacier Deep Archive is the cheapest class at about $0.00099 per GB-month, but retrieval is slow and billed per GB. Use the class presets to compare Standard, Standard-IA, Glacier and Deep Archive."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AWS S3 Storage Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">S3 bills storage per GB-month plus a fee per thousand requests plus retrieval per GB. The defaults price 1,000 GB in S3 Standard at $0.023 per GB plus one million PUTs and ten million GETs, which lands at $32.00 a month. Change any field to model your own bucket.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="s3-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a bucket from its storage class, its request mix and any retrieval. Starts from 1 TB in Standard with a million writes and ten million reads.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly S3 bill</span>
+              <span class="radar-count-description"> · Storage plus requests plus retrieval, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Storage class presets">
+              <button class="radar-filter active" data-set="s3-price:0.023;s3-retp:0">STANDARD</button>
+              <button class="radar-filter" data-set="s3-price:0.0125;s3-retp:0.01">STANDARD-IA</button>
+              <button class="radar-filter" data-set="s3-price:0.004;s3-retp:0.01">GLACIER</button>
+              <button class="radar-filter" data-set="s3-price:0.00099;s3-retp:0.02">DEEP ARCHIVE</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-gb">Storage (GB)</label><input type="number" id="s3-gb" value="1000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-price">Storage price ($ / GB-month)</label><input type="number" id="s3-price" value="0.023" step="0.0001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-put">PUT requests / month</label><input type="number" id="s3-put" value="1000000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-putp">PUT price ($ / 1k requests)</label><input type="number" id="s3-putp" value="0.005" step="0.0001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-get">GET requests / month</label><input type="number" id="s3-get" value="10000000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-getp">GET price ($ / 1k requests)</label><input type="number" id="s3-getp" value="0.0004" step="0.00001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-ret">Retrieval (GB)</label><input type="number" id="s3-ret" value="0" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="s3-retp">Retrieval price ($ / GB)</label><input type="number" id="s3-retp" value="0" step="0.001" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="s3-monthly">$32.00</div>
+                <div class="radar-count-description">per month · storage + requests + retrieval</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix</div>
+                  <div class="calc-donut" id="s3-donut" role="img" aria-label="Share of monthly S3 cost across storage, requests and retrieval" style="background:conic-gradient(#a3e635 0.0% 71.9%,#38bdf8 71.9% 100.0%,#fb7185 100.0% 100.0%)"><div class="calc-donut-center"><span id="s3-mix-top">71.9%</span><small>storage</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Storage</span></li>
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Requests</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Retrieval</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="s3-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Storage cost</div>
+              <div class="radar-trend-value" id="s3-storage">$23.00 storage</div>
+              <div class="radar-trend-sub">gigabytes times price</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Request cost</div>
+              <div class="radar-trend-value" id="s3-requests">$9.00 requests</div>
+              <div class="radar-trend-sub">PUTs plus GETs</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Cost per GB</div>
+              <div class="radar-trend-value" id="s3-pergb">$0.0320 / GB</div>
+              <div class="radar-trend-sub">blended unit cost</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">Shards, CDC, vector search and the modeled bill of a 200-billion-block platform.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> · <a href="ec2-compute-cost-calculator.html">EC2 Compute Cost Calculator</a> · <a href="kubernetes-cluster-cost-calculator.html">Kubernetes Cluster Cost Calculator</a> · <a href="llm-token-cost-calculator.html">LLM Token Cost Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="aws-s3-storage-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-aws-s3-storage-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

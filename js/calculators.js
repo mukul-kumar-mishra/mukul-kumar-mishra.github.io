@@ -125,6 +125,46 @@
       var loss = (nonneg(o.rev) / 43800) * nonneg(o.mins);
       var credit = nonneg(o.bill) * (nonneg(o.creditPct) / 100);
       return { loss: loss, credit: credit, total: loss + credit };
+    },
+    /* S3 storage bill. Storage GB-month plus request fees priced per
+       thousand plus retrieval GB. Defaults: 1 TB Standard, 1M PUTs,
+       10M GETs, no retrieval. */
+    s3Cost: function (o) {
+      var storage = nonneg(o.gb) * nonneg(o.price);
+      var requests = nonneg(o.puts) / 1000 * nonneg(o.putPrice) +
+        nonneg(o.gets) / 1000 * nonneg(o.getPrice);
+      var retrieval = nonneg(o.retGb) * nonneg(o.retPrice);
+      var monthly = storage + requests + retrieval;
+      return {
+        storage: storage, requests: requests, retrieval: retrieval,
+        monthly: monthly, perGb: o.gb > 0 ? monthly / o.gb : 0
+      };
+    },
+    /* Cloud egress bill. Billable gigabytes above the free allowance,
+       times the price per gigabyte. */
+    egressCost: function (o) {
+      var billable = Math.max(0, nonneg(o.gb) - nonneg(o.free));
+      var monthly = billable * nonneg(o.price);
+      return { billable: billable, monthly: monthly, daily: monthly / 30 };
+    },
+    /* Compute bill. Instances times hourly price times hours, scaled by
+       average utilization, then reduced by the commitment or spot discount. */
+    computeCost: function (o) {
+      var onDemand = nonneg(o.count) * nonneg(o.hr) * nonneg(o.hours);
+      var monthly = onDemand * (clamp(o.util, 0, 100) / 100) *
+        (1 - clamp(o.disc, 0, 100) / 100);
+      return { onDemand: onDemand, monthly: monthly, savings: onDemand - monthly };
+    },
+    /* Kubernetes cluster bill. Worker nodes plus control plane plus
+       persistent volume storage. */
+    k8sCost: function (o) {
+      var compute = nonneg(o.nodes) * nonneg(o.node);
+      var control = nonneg(o.cp);
+      var storage = nonneg(o.pv) * nonneg(o.pvPrice);
+      return {
+        compute: compute, control: control, storage: storage,
+        monthly: compute + control + storage
+      };
     }
   };
 
@@ -282,6 +322,63 @@
     donut('dt-donut', [[r.loss, ROSE], [r.credit, CYAN]], pct(r.loss, r.total));
   }
 
+  function renderS3() {
+    var o = {
+      gb: num('s3-gb', 1000), price: num('s3-price', 0.023),
+      puts: num('s3-put', 1000000), putPrice: num('s3-putp', 0.005),
+      gets: num('s3-get', 10000000), getPrice: num('s3-getp', 0.0004),
+      retGb: num('s3-ret', 0), retPrice: num('s3-retp', 0)
+    };
+    var r = Calcs.s3Cost(o);
+    set('s3-monthly', money(r.monthly, 2));
+    set('s3-storage', money(r.storage, 2) + ' storage');
+    set('s3-requests', money(r.requests, 2) + ' requests');
+    set('s3-pergb', money(r.perGb, 4) + ' / GB');
+    donut('s3-donut', [[r.storage, LIME], [r.requests, CYAN], [r.retrieval, ROSE]],
+      pct(r.storage, r.monthly));
+  }
+
+  function renderEgress() {
+    var o = {
+      gb: num('eg-gb', 10000), price: num('eg-price', 0.09),
+      free: num('eg-free', 100)
+    };
+    var r = Calcs.egressCost(o);
+    set('eg-monthly', money(r.monthly, 0));
+    set('eg-billable', big(r.billable, 0) + ' GB billed');
+    set('eg-daily', money(r.daily, 0) + ' / day');
+    donut('eg-donut', [[r.billable, CYAN], [nonneg(o.free), LIME]],
+      pct(r.billable, r.billable + nonneg(o.free)));
+  }
+
+  function renderCompute() {
+    var o = {
+      count: num('ec2-count', 10), hr: num('ec2-hr', 0.096),
+      hours: num('ec2-hours', 730), util: num('ec2-util', 100),
+      disc: num('ec2-disc', 0)
+    };
+    var r = Calcs.computeCost(o);
+    set('ec2-monthly', money(r.monthly, 0));
+    set('ec2-ondemand', money(r.onDemand, 0) + ' on demand');
+    set('ec2-savings', money(r.savings, 0) + ' saved');
+    donut('ec2-donut', [[r.monthly, CYAN], [r.savings, LIME]],
+      pct(r.monthly, r.onDemand));
+  }
+
+  function renderK8s() {
+    var o = {
+      nodes: num('k8s-nodes', 6), node: num('k8s-node', 140),
+      cp: num('k8s-cp', 73), pv: num('k8s-pv', 500),
+      pvPrice: num('k8s-pvp', 0.10)
+    };
+    var r = Calcs.k8sCost(o);
+    set('k8s-monthly', money(r.monthly, 0));
+    set('k8s-compute', money(r.compute, 0) + ' nodes');
+    set('k8s-storage', money(r.storage, 0) + ' storage');
+    donut('k8s-donut', [[r.compute, CYAN], [r.control, ROSE], [r.storage, LIME]],
+      pct(r.compute, r.monthly));
+  }
+
   function renderAll() {
     renderToken();
     renderRps();
@@ -292,6 +389,10 @@
     renderObs();
     renderPool();
     renderDowntime();
+    renderS3();
+    renderEgress();
+    renderCompute();
+    renderK8s();
   }
 
   if (typeof window !== 'undefined') {
@@ -299,7 +400,8 @@
     /* Boot on whichever tool the page carries: the hub hosts all nine, each
        /tools/ page hosts exactly one. Missing ids are skipped by bind/set. */
     var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly',
-      'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total'];
+      'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total',
+      's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly'];
     var onToolPage = RESULT_IDS.some(function (id) { return !!document.getElementById(id); });
     if (onToolPage) {
       bind(['tk-in', 'tk-cache', 'tk-cachep', 'tk-freshp', 'tk-out', 'tk-outp', 'tk-turns'], renderToken);
@@ -311,6 +413,10 @@
       bind(['obs-rps', 'obs-bytes', 'obs-price', 'obs-budget'], renderObs);
       bind(['pool-rps', 'pool-lat', 'pool-safety', 'pool-pods'], renderPool);
       bind(['dt-rev', 'dt-mins', 'dt-bill', 'dt-credit'], renderDowntime);
+      bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp'], renderS3);
+      bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
+      bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-util', 'ec2-disc'], renderCompute);
+      bind(['k8s-nodes', 'k8s-node', 'k8s-cp', 'k8s-pv', 'k8s-pvp'], renderK8s);
       renderAll();
     }
     /* Preset pills: data-set="id:value;id:value" sets inputs and re-renders. */
