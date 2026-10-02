@@ -69,14 +69,14 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes HPA Replica Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A basic single-CPU-metric HPA estimate: current replicas times utilization over target, rounded up, then clamped between minReplicas and maxReplicas. It assumes at least one replica; other metrics, tolerance, scale-to-zero and stabilization windows are not modeled.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A basic single-CPU-metric HPA estimate: current replicas times utilization over target, rounded up, then clamped between minReplicas and maxReplicas. It assumes at least one replica. Other metrics, tolerance, scale-to-zero and stabilization windows are not modeled.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
-    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. Default results remain visible without it. The linked teardown explains each formula.</p></noscript>
 
     <section class="sec" id="hpa-size">
-      <p class="fl-desc" style="margin:0 0 14px;">A basic single-metric HPA estimate: desired replicas equal current replicas times current utilization over target utilization, rounded up and clamped to the minimum and maximum. It assumes at least one replica; other HPA behaviors are not modeled.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">A basic single-metric HPA estimate: desired replicas equal current replicas times current utilization over target utilization, rounded up and clamped to the minimum and maximum. It assumes at least one replica. Other HPA behaviors are not modeled.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
