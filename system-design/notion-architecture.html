@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Notion architecture explained: how 200 billion blocks survive 480 Postgres shards, CDC through Kafka, a decoupled data lake plus vector search, with scale math and cost controls.">
+  <meta name="description" content="Notion system architecture: how 200B+ blocks scale across 480 Postgres shards, Kafka CDC, Hudi on S3, search plus vector tiers. Includes a source-backed design, modeled 100k RPS workload plus cost assumptions.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/notion-architecture.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search">
-  <meta property="og:description" content="A postmortem of Notion system design: block storage, Postgres sharding, CDC data lake, vector search economics plus cost at scale.">
+  <meta property="og:description" content="Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search plus vector tiers. See the sourced design, modeled 100k RPS workload and cost assumptions.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/notion-architecture-guide.png">
   <meta property="og:image:alt" content="Notion data architecture diagram">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search">
-  <meta name="twitter:description" content="480 Postgres shards, CDC lake, vector tiering, 100k RPS math plus cost controls.">
+  <meta name="twitter:description" content="480 Postgres shards, Kafka CDC, Hudi/S3, search plus vector tiers. Source-backed Notion system design with modeled 100k RPS and cost assumptions.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/notion-architecture-guide.png">
   <meta name="twitter:image:alt" content="Notion data architecture diagram">
   <title>Notion Architecture: Scaling to 200 Billion Blocks | Buildopsy</title>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion architecture explained: 480 Postgres shards, CDC through Kafka into a decoupled lake, vector search tiering, 100k RPS scale math plus cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search plus vector tiers. Includes a source-backed design, modeled 100k RPS workload plus cost assumptions.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
