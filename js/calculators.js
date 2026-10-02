@@ -627,5 +627,71 @@
         if (id) showPanel(id, false);
       });
     }
+
+    var directory = document.getElementById('calculator-directory');
+    if (directory) {
+      var search = document.getElementById('calculatorSearch');
+      var status = document.getElementById('calculatorDirectoryStatus');
+      var more = document.getElementById('calculatorDirectoryMore');
+      var empty = document.getElementById('calculatorDirectoryEmpty');
+      var clear = document.getElementById('calculatorDirectoryClear');
+      var cards = Array.prototype.slice.call(directory.querySelectorAll('[data-calculator-card]'));
+      var featured = Array.prototype.slice.call(
+        directory.querySelectorAll('#calculatorDirectoryFeatured [data-calculator-card]'));
+      var extra = Array.prototype.slice.call(
+        directory.querySelectorAll('.calc-directory-grid-more [data-calculator-card]'));
+
+      function refreshDirectoryStatus() {
+        if (!status || (search && search.value.trim())) return;
+        status.textContent = more && more.open ?
+          'Showing all ' + cards.length + ' standalone calculators.' :
+          'Showing ' + featured.length + ' of ' + cards.length + ' calculators. Search the full list or expand to browse all tools.';
+      }
+
+      function filterDirectory() {
+        if (!search) return;
+        var query = search.value.trim().toLowerCase();
+        if (!query) {
+          cards.forEach(function (card) { card.hidden = false; });
+          if (more) {
+            more.hidden = false;
+            more.open = false;
+          }
+          if (empty) empty.hidden = true;
+          refreshDirectoryStatus();
+          return;
+        }
+
+        var matches = 0;
+        var extraMatches = 0;
+        cards.forEach(function (card) {
+          var haystack = (card.getAttribute('data-search') || '') + ' ' + card.textContent;
+          var found = haystack.toLowerCase().indexOf(query) !== -1;
+          card.hidden = !found;
+          if (found) {
+            matches++;
+            if (extra.indexOf(card) !== -1) extraMatches++;
+          }
+        });
+
+        if (more) {
+          more.hidden = extraMatches === 0;
+          more.open = extraMatches > 0;
+        }
+        if (empty) empty.hidden = matches > 0;
+        if (status) status.textContent = matches + ' of ' + cards.length +
+          ' calculators match “' + search.value.trim() + '”.';
+      }
+
+      if (search) search.addEventListener('input', filterDirectory);
+      if (clear) clear.addEventListener('click', function () {
+        if (!search) return;
+        search.value = '';
+        filterDirectory();
+        search.focus();
+      });
+      if (more) more.addEventListener('toggle', refreshDirectoryStatus);
+      filterDirectory();
+    }
   }
 })();

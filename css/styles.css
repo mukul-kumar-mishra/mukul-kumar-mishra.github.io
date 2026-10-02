@@ -472,6 +472,28 @@ h1, h2, h3, h4, h5, h6 {
 .calc-tab { flex: none; font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--paper); cursor: pointer; white-space: nowrap; }
 .calc-tab:hover { border-color: var(--cyan); color: var(--heading); }
 .calc-tab[aria-selected="true"] { background: var(--lime); border-color: var(--lime); color: #fff; }
+.calc-directory { scroll-margin-top: 90px; }
+.calc-directory-label { display: block; margin-bottom: 8px; color: var(--mist); font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; }
+.calc-directory-search { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--mist); }
+.calc-directory-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--paper); font: inherit; font-size: 0.95rem; }
+.calc-directory-search:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 16%, transparent); }
+.calc-directory-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.calc-directory-card { display: flex; min-width: 0; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--paper); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+.calc-directory-card:hover { border-color: var(--cyan); color: var(--paper); transform: translateY(-1px); }
+.calc-directory-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.calc-directory-card[hidden] { display: none; }
+.calc-directory-category { color: var(--mist); font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.calc-directory-card h3 { margin: 0; color: var(--heading); font-family: var(--font-display); font-size: 0.94rem; line-height: 1.35; }
+.calc-directory-card p { margin: 0; color: var(--mist); font-size: 0.8rem; line-height: 1.5; }
+.calc-directory-open { margin-top: auto; padding-top: 4px; color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; }
+.calc-directory-more { margin-top: 14px; }
+.calc-directory-more[hidden] { display: none; }
+.calc-directory-more summary { width: fit-content; cursor: pointer; color: var(--cyan); font-family: var(--font-display); font-size: 0.84rem; font-weight: 700; }
+.calc-directory-empty { padding: 14px; border: 1px dashed var(--line); border-radius: 10px; }
+.calc-directory-clear { margin-left: 8px; border: 0; background: transparent; color: var(--cyan); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+@media (max-width: 1000px) { .calc-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .calc-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .calc-directory-grid { grid-template-columns: minmax(0, 1fr); } }
 .article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
 .article-card:hover { color: var(--paper); }

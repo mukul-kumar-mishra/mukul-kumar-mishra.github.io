@@ -74,8 +74,144 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">19 calculators</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nineteen instruments for developers, SREs and CTOs. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost, plus cloud cost math for S3, egress, compute, Kubernetes, warehouses, Postgres, serverless, CDNs, observability and vector stores, all runnable in seconds. Everything runs in your browser with no data sent. Each links to its teardown.</p>
-      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a> · <a href="#error-budget">Error Budget</a> · <a href="#hpa-size">HPA Sizer</a> · <a href="#obs-sample">Sampling Fit</a> · <a href="#pool-size">Pool Sizer</a> · <a href="#downtime-cost">Downtime Cost</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a>, <a href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="system-design/aws-thermal-outage-postmortem.html">AWS thermal</a> teardowns.</p>
+      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#calculator-directory">Find a calculator</a> · <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a> · <a href="#error-budget">Error Budget</a> · <a href="#hpa-size">HPA Sizer</a> · <a href="#obs-sample">Sampling Fit</a> · <a href="#pool-size">Pool Sizer</a> · <a href="#downtime-cost">Downtime Cost</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a>, <a href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="system-design/aws-thermal-outage-postmortem.html">AWS thermal</a> teardowns.</p>
     </header>
+
+    <section class="sec calc-directory" id="calculator-directory" aria-labelledby="calculator-directory-title">
+      <div class="sec-head">
+        <h2 class="sec-title" id="calculator-directory-title"><i data-lucide="search"></i> Find a Calculator</h2>
+        <span class="chip">19 tools</span>
+      </div>
+      <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
+      <div class="calc-directory-search">
+        <i data-lucide="search" aria-hidden="true"></i>
+        <input id="calculatorSearch" type="search" placeholder="Try Postgres, retries or egress" aria-label="Search all 19 calculators" autocomplete="off">
+      </div>
+      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 8 of 19 calculators. Search the full list or expand to browse all tools.</p>
+      <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
+        <a class="calc-directory-card" href="tools/llm-token-cost-calculator.html" data-calculator-card data-search="llm token inference model input output cache ai agent">
+          <span class="calc-directory-category">AI inference</span>
+          <h3>LLM Token Cost Calculator</h3>
+          <p>Price input, cache and output tokens per turn then scale to a monthly workload.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/managed-postgres-cost-calculator.html" data-calculator-card data-search="managed postgres database rds cloud sql aurora instance storage backup">
+          <span class="calc-directory-category">Database</span>
+          <h3>Managed Postgres Cost Calculator</h3>
+          <p>Estimate instance hours plus provisioned storage and backup charges.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/data-warehouse-cost-calculator.html" data-calculator-card data-search="data warehouse snowflake credits compute storage analytics">
+          <span class="calc-directory-category">Data platform</span>
+          <h3>Data Warehouse Cost Calculator</h3>
+          <p>Model warehouse compute credits and stored terabytes in one monthly bill.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/observability-cost-calculator.html" data-calculator-card data-search="observability datadog new relic monitoring hosts logs ingest telemetry">
+          <span class="calc-directory-category">Observability</span>
+          <h3>Observability Cost Calculator</h3>
+          <p>Compare host-based monitoring charges with log-ingest costs.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/cdn-cost-calculator.html" data-calculator-card data-search="cdn cloudfront fastly cloudflare bandwidth requests edge delivery">
+          <span class="calc-directory-category">Edge delivery</span>
+          <h3>CDN Cost Calculator</h3>
+          <p>Estimate bandwidth and request charges across common CDN pricing models.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/serverless-function-cost-calculator.html" data-calculator-card data-search="serverless aws lambda requests duration memory gb seconds functions">
+          <span class="calc-directory-category">Serverless</span>
+          <h3>Serverless Function Cost Calculator</h3>
+          <p>Price requests and compute time from function duration and memory.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
+          <span class="calc-directory-category">AI data</span>
+          <h3>Vector Database Cost Calculator</h3>
+          <p>Estimate vector storage overhead plus the serving fleet.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/cloud-egress-cost-calculator.html" data-calculator-card data-search="cloud egress network outbound data transfer bandwidth gb allowance">
+          <span class="calc-directory-category">Networking</span>
+          <h3>Cloud Egress Cost Calculator</h3>
+          <p>Price outbound data transfer after the provider’s free allowance.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+      </div>
+      <details class="calc-directory-more" id="calculatorDirectoryMore">
+        <summary>Show 11 more calculators</summary>
+        <div class="calc-directory-grid calc-directory-grid-more">
+          <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 object storage bucket request get put retrieval gb">
+            <span class="calc-directory-category">Cloud storage</span>
+            <h3>AWS S3 Storage Cost Calculator</h3>
+            <p>Estimate storage, request and retrieval charges for an S3 workload.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/ec2-compute-cost-calculator.html" data-calculator-card data-search="ec2 compute instances hourly utilization commitment discount aws">
+            <span class="calc-directory-category">Cloud compute</span>
+            <h3>EC2 Compute Cost Calculator</h3>
+            <p>Model instance-hour spend with utilization and commitment discounts.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/kubernetes-cluster-cost-calculator.html" data-calculator-card data-search="kubernetes cluster node control plane persistent volume storage cost">
+            <span class="calc-directory-category">Kubernetes</span>
+            <h3>Kubernetes Cluster Cost Calculator</h3>
+            <p>Add worker nodes, control plane and persistent volumes to the bill.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/edge-request-cost-calculator.html" data-calculator-card data-search="rps envelope edge request throughput million events monthly cost">
+            <span class="calc-directory-category">Traffic and scale</span>
+            <h3>RPS Envelope Estimator</h3>
+            <p>Turn requests per second into variable and fixed monthly spend.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/agent-retry-cost-calculator.html" data-calculator-card data-search="agent retry storm failed attempts task inference wasted monthly cost">
+            <span class="calc-directory-category">AI reliability</span>
+            <h3>Agent Retry Cost Calculator</h3>
+            <p>Estimate monthly spend from failed tasks and repeated attempts.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/context-compaction-calculator.html" data-calculator-card data-search="context compaction survival tokens reread replay llm agent cost">
+            <span class="calc-directory-category">AI context</span>
+            <h3>Context Compaction Calculator</h3>
+            <p>See what survives compaction and estimate the cost of rebuilding context.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/error-budget-calculator.html" data-calculator-card data-search="error budget slo burn rate downtime runway reliability">
+            <span class="calc-directory-category">SRE</span>
+            <h3>Error Budget Burn Calculator</h3>
+            <p>Calculate SLO downtime allowance and remaining runway at the current burn.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/kubernetes-hpa-calculator.html" data-calculator-card data-search="kubernetes hpa replica autoscaling cpu utilization target">
+            <span class="calc-directory-category">Kubernetes</span>
+            <h3>Kubernetes HPA Replica Estimator</h3>
+            <p>Estimate desired replicas from current and target utilization.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/trace-sampling-rate-calculator.html" data-calculator-card data-search="trace sampling rate observability spans ingest budget telemetry">
+            <span class="calc-directory-category">Observability</span>
+            <h3>Trace Sampling Rate Calculator</h3>
+            <p>Fit span ingest volume to a monthly observability budget.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/connection-pool-calculator.html" data-calculator-card data-search="database connection pool sizing postgres rps p99 latency little law">
+            <span class="calc-directory-category">Database</span>
+            <h3>Database Connection Pool Sizer</h3>
+            <p>Size concurrent connections from peak RPS and p99 latency.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/downtime-cost-calculator.html" data-calculator-card data-search="downtime outage cost revenue lost sla credits reliability">
+            <span class="calc-directory-category">Reliability</span>
+            <h3>Downtime Cost Calculator</h3>
+            <p>Estimate revenue loss plus SLA credits during an outage.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+        </div>
+      </details>
+      <p class="fl-desc calc-directory-empty" id="calculatorDirectoryEmpty" role="status" hidden>No calculators match that search. Try a provider or task name. <button class="calc-directory-clear" id="calculatorDirectoryClear" type="button">Clear search</button></p>
+      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 19 standalone calculators.</p></noscript>
+    </section>
 
     <div class="calc-tabs" role="tablist" aria-label="Calculators">
       <button class="calc-tab" role="tab" data-target="token-bill" aria-selected="true">Token Bill</button>
@@ -658,10 +794,10 @@
     <section class="sec" id="cloud-cost">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="cloud"></i> Cloud Cost Calculators</h2>
-        <a class="sec-link" href="tools/aws-s3-storage-cost-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="#calculator-directory">Find a cloud cost tool ↑</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Price the line items that dominate a real cloud bill. Each tool opens as a standalone page you can bookmark, runs locally and sends no data.</p>
-      <p class="fl-desc" style="margin:0 0 14px;"><a href="tools/aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a> · <a href="tools/cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> · <a href="tools/ec2-compute-cost-calculator.html">EC2 Compute Cost Calculator</a> · <a href="tools/kubernetes-cluster-cost-calculator.html">Kubernetes Cluster Cost Calculator</a> · <a href="tools/data-warehouse-cost-calculator.html">Data Warehouse Cost Calculator</a> · <a href="tools/managed-postgres-cost-calculator.html">Managed Postgres Cost Calculator</a> · <a href="tools/serverless-function-cost-calculator.html">Serverless Function Cost Calculator</a> · <a href="tools/cdn-cost-calculator.html">CDN Cost Calculator</a> · <a href="tools/observability-cost-calculator.html">Observability Cost Calculator</a> · <a href="tools/vector-database-cost-calculator.html">Vector Database Cost Calculator</a></p>
+      <p class="fl-desc" style="margin:0 0 14px;">Use the searchable directory above to find any of the ten cloud cost tools by provider or bill component.</p>
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">Shards, CDC, vector search and the modeled bill of a 200-billion-block platform.</p></article>
     </section>
 
