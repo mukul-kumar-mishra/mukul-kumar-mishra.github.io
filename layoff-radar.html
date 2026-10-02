@@ -1197,6 +1197,15 @@
       return new Intl.NumberFormat("en-US").format(value || 0);
     }
 
+    function getCountryName(code) {
+      return Object.prototype.hasOwnProperty.call(countryNames, code) ? countryNames[code] : String(code);
+    }
+
+    function escapeHtml(value) {
+      const entities = { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" };
+      return String(value).replace(/[&<>"']/g, (char) => entities[char]);
+    }
+
     function formatDateTime(date) {
       return new Intl.DateTimeFormat("en-IN", {
         dateStyle: "medium",
@@ -1260,7 +1269,7 @@
       const maxCount = countries[0]?.[1] || 1;
 
       countryTable.innerHTML = countries.slice(0, 25).map(([code, count], index) => {
-        const name = countryNames[code] || code;
+        const name = escapeHtml(getCountryName(code));
         const share = (count / total) * 100;
         const width = (count / maxCount) * 100;
 
@@ -1383,7 +1392,7 @@
       const donut = document.getElementById("radar-donut");
       if (!centerTop || !donutRows.length) return;
       const [code, count] = donutRows[donutIdx % donutRows.length];
-      const name = countryNames[code] || code;
+      const name = getCountryName(code);
       centerTop.textContent = `${((count / donutTotal) * 100).toFixed(1)}%`;
       centerSub.textContent = name;
       donut.setAttribute("aria-label", `Share of reports by publisher country. ${name} at about ${Math.round((count / donutTotal) * 100)} percent.`);
@@ -1419,7 +1428,7 @@
       if (donutTimer) clearInterval(donutTimer);
       donutTimer = setInterval(() => { if (!document.hidden) showDonutCenter(); }, 2000);
       legend.innerHTML = rows.map(([code, count], i) => {
-        const name = code === "Others" ? "Others" : (countryNames[code] || code);
+        const name = escapeHtml(code === "Others" ? "Others" : getCountryName(code));
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(127,127,127,0.35)";
         return `<li><span class="dot" style="background:${color}"></span><span class="lname">${name}</span><span class="lval">${formatNumber(count)}</span></li>`;
       }).join("");
@@ -1552,7 +1561,7 @@
       const entries = Object.entries((src && src.countries) || {}).slice(0, 5);
       const topSum = entries.reduce((sum, [, count]) => sum + count, 0);
       const rows = entries.concat([["Others", Math.max(total - topSum, 0)]]);
-      const topName = rows.length ? (countryNames[rows[0][0]] || rows[0][0]) : "—";
+      const topName = rows.length ? getCountryName(rows[0][0]) : "—";
       const topPct = total ? (rows[0][1] / total) * 100 : 0;
       ctx.fillStyle = "#0f172a";
       ctx.fillRect(0, 0, W, H);
@@ -1606,7 +1615,7 @@
       }
       let ly = 432;
       rows.forEach(([code, count], i) => {
-        const name = code === "Others" ? "Others" : (countryNames[code] || code);
+        const name = code === "Others" ? "Others" : getCountryName(code);
         const color = i < DONUT_COLORS.length ? DONUT_COLORS[i] : "rgba(148,163,184,0.4)";
         ctx.beginPath();
         ctx.fillStyle = color;
