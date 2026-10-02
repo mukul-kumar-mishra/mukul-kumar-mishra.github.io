@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Anthropic cut Opus to $4 plus $20 on Sep 22. OpenAI halved GPT-6 an hour later. Mukul models the per-task bill plus cache economics plus the Sonnet 5.5 paradox.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost">
+  <meta property="og:description" content="Two vendors shipped within the hour. List prices fell up to half. Cache reads fell further. The per-task bill moved differently than the price list.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/opus-price-war-meme.png">
+  <meta property="og:image:alt" content="Bar chart comparing input price per million tokens across four frontier models">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost">
+  <meta name="twitter:description" content="The price list fell. The cache read fell further. The task bill follows neither. It follows the hit rate.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/opus-price-war-meme.png">
+  <meta name="twitter:image:alt" content="Bar chart comparing input price per million tokens across four frontier models">
+  <title>Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost", "description": "Anthropic cut Opus to $4 plus $20 on Sep 22. OpenAI halved GPT-6 an hour later. A sourced teardown with list prices plus cache math plus per-task estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-02", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html"}, "keywords": "Claude Opus 5.5, GPT-6 pricing, inference cost, prompt caching, price war, system design", "image": "https://buildopsy.com/images/articles/opus-price-war-meme.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"What changed in frontier model pricing on September 22 2026?","acceptedAnswer":{"@type":"Answer","text":"Anthropic launched Claude Opus 5.5 at $4 input plus $20 output per million tokens, down 20 percent from Opus 5. About an hour later OpenAI launched GPT-6 Sol plus Luna at roughly half their GPT-5.6 equivalents."}},
+      {"@type":"Question","name":"Why do cache read prices matter more than list prices?","acceptedAnswer":{"@type":"Answer","text":"Long agentic runs process 90 percent plus of input tokens at cached rates. Opus 5.5 cache reads fell 60 percent to $0.20 per million, so the effective per-task bill drops faster than the 20 percent list cut."}},
+      {"@type":"Question","name":"What is the Sonnet 5.5 paradox?","acceptedAnswer":{"@type":"Answer","text":"Sonnet 5.5 kept Sonnet 5 list prices while beating Opus 5.5 on Terminal-Bench 4.0 plus writing 30 percent faster. Same price plus fewer tokens per task means a lower bill without a price cut."}}
+    ]
+  }
+  </script>
+</head><body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">14 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On Sep 22 2026 Anthropic shipped Opus 5.5 at twenty percent below Opus 5. About an hour later OpenAI shipped GPT-6 Sol plus Luna at half their predecessors. Grok had undercut both the day before. Three price lists moved inside twenty four hours. The task bill moved on a fourth variable nobody lists.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> List prices fell up to half on Sep 22. Cache reads fell further. Long agent runs bill 90 percent plus at cached rates, so hit rate plus tokens per task decide the invoice. Model it per task, not per token.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Vendors shipping Sep 22</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Two in one hour</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Opus 5.5 list price</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$4 plus $20 per M</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Cache read cut</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">60 percent down</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Run cost vs Opus 5</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">40 percent lower</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published October 2, 2026</p>
+      </header>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> List prices plus benchmarks follow Anthropic plus OpenAI announcements plus independent tracking Sep 22 to 29. Per-task math below is an estimate with stated assumptions. It is not any vendor invoice.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Prices plus dates plus scores are as published. Effective bill modeling plus routing advice are engineering analysis. No API keys are involved.</aside>
+      <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/opus-price-war-meme.svg" alt="Bar chart comparing input price per million tokens across four frontier models" width="1200" height="680"><figcaption>Figure 1. The price list in one cartoon. Luna at ten cents plus Sol at two dollars plus Opus at four plus Fable at ten.</figcaption></figure>
+      <section><h2>1. What happened on September 22</h2>
+        <p>Anthropic opened with Claude Opus 5.5, first of the 5.5 family plus first release since the pace-the-frontier call. Input $4 per million plus output $20, down from $5 plus $25. Cache reads $0.20, down from $0.50. Terminal-Bench 4.0 at 66.4 percent against 52.3 for Opus 5. GDPval at 1846 Elo. Output over 30 percent faster. Context one million plus max output 128K unchanged. Thinking stays always on with effort as the only control.</p>
+        <p>About an hour later OpenAI answered with GPT-6 Sol at $2 plus $10 plus GPT-6 Luna at $0.10 plus $0.50. Both roughly half their GPT-5.6 equivalents. GPT-5.6 carries a scheduled 25 percent hike in November, which makes the GPT-6 cut deeper than half against future prices. Grok 4.7 had priced at $2 plus $6 the previous day, an undercut that survived barely twenty four hours before matching Sol on input.</p>
+        <p>Six days later Anthropic extended the family. Sonnet 5.5 shipped Sep 28 at Sonnet 5 prices, $2 plus $10, while writing over 30 percent faster plus scoring 70.6 on Terminal-Bench 4.0, ahead of Opus 5.5 at 66.4. Haiku 5.5 follows in the coming weeks. The pattern is set. Mid tiers absorb flagship scores while flagships chase efficiency.</p>
+        <div class="callout"><strong>Failure boundary:</strong> List price is a ceiling. Cache policy is the floor. Teams that budget per token while running agents overpay in planning plus underpay in nothing. The design question is effective cost per completed task.</div>
+      </section>
+      <section><h2>2. The table both vendors published</h2>
+        <ul>
+          <li><strong>GPT-6 Luna:</strong> $0.10 input plus $0.01 cached plus $0.50 output per million. The batch tier for everything cheap.</li>
+          <li><strong>GPT-6 Sol:</strong> $2 input plus $0.20 cached plus $10 output per million. Half of GPT-5.6 Sol across the row.</li>
+          <li><strong>Claude Opus 5.5:</strong> $4 input plus $0.20 cached plus $20 output per million. Twenty percent list cut plus sixty percent cache read cut.</li>
+          <li><strong>Claude Fable 5.1 plus GPT-6 Astra:</strong> $10 input plus $50 output per million. The frontier ceiling both vendors kept.</li>
+        </ul>
+        <p>Two details hide in the rows. Opus 5.5 fast mode bills double at $8 plus $40 for faster output, down from $10 plus $50 on Opus 5. It runs only on the Anthropic provider with no batch combination. Cache writes cost $5 for five minutes plus $8 for one hour. LiteLLM shipped day-zero support with cost tracking, which tells you how fast proxies had to move. Pricing landed in a config reload, not a migration.</p>
+        <p>Benchmarks frame the value, with the usual vendor caution. Opus 5.5 leads Terminal-Bench 4.0 plus FrontierCode plus OSWorld computer use. Astra answers on Terminal-Bench-Science at 64.6 against 58.7. Anthropic itself warns that margins at this capability level guide less than they appear to. Scores rent attention. Bills arrive monthly regardless.</p>
+      </section>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/opus-cache-flow.svg" alt="Flow diagram from list price to cached share to effective task bill" width="1200" height="680"><figcaption>Figure 2. The invoice in one cartoon. List price in plus cached share applied plus task bill out.</figcaption></figure>
+      <section><h2>3. Why cache reads decide the bill</h2>
+        <p>Long agentic conversations process 90 percent plus of input tokens at cached rates. System prompts plus repo context plus tool schemas repeat every turn. Only the newest tokens bill at list. A twenty percent list cut applied to ten percent of tokens moves the total two percent. A sixty percent cache read cut applied to ninety percent moves it fifty four. The second number is the story. The first is the headline.</p>
+        <p>Opus 5.5 compounds the cut with fewer tokens per task. Anthropic reports roughly 40 percent lower run cost against Opus 5 after both effects. That matches independent tracking. Day-zero proxy docs confirm the shape. Faster output plus leaner traces plus cheaper cache reads multiply instead of adding.</p>
+        <p>Sonnet 5.5 is the paradox that proves the model. Same list prices as Sonnet 5. Higher scores plus faster writes plus fewer tokens per task. The per-task bill falls with no price change at all. Any team routing on list price alone keeps sending work to Opus while Sonnet clears the same bar at half the line rate. Routing tables need benchmark plus token-efficiency columns, not price columns.</p>
+      </section>
+      <section><h2>4. The bill hides in the boundary</h2>
+        <p>Assumptions are explicit. Model a one million task month with a 70-20-10 split across Luna class, Sonnet class, plus Opus class workloads. Price the agent loop at 90 percent cached input plus modest output per task. Numbers below size routing policy, not any invoice. Swap in your hit rates before spending.</p>
+        <p>Model the routing in three tiers. Bulk classification plus extraction plus evals go to Luna class at ten cents list with penny cache reads. Interactive coding plus review go to Sonnet class where the 5.5 generation wins on speed plus score per dollar. Reserve Opus class plus frontier ceiling models for tasks that demonstrably fail one tier down, measured by retry cost rather than prestige. Fast mode stays off unless latency SLAs price it in explicitly.</p>
+        <p>Estimate the order of savings. Moving repeatable agent loops from list-rate Opus budgeting to cached Sonnet execution cuts the line by more than half before any vendor discount. Batch eligible offline work halves again at fifty percent off where supported. Compare that against single-tier routing where every task bills at flagship rates plus retries re-bill full price. The price war handed you cheaper tokens. The cache math hands you fewer of them. Take both.</p>
+        <p>For the prefill plus decode plus batching method behind this math, see my <a href="llm-inference-cost-per-task-postmortem.html">inference cost per task teardown</a> plus size retry policy with my <a href="../tools/agent-retry-cost-calculator.html">agent retry cost calculator</a>. Different pages. Same missing guard. Cost needs method plus meter plus routing proof.</p>
+      </section>
+      <section><h2>5. The verdict: route per task, not per token</h2>
+        <p>Both vendors disclosed fast with prices plus benchmarks plus availability across clouds on day one. That candor helps buyers. The record still shows list prices doing the talking while cache rates do the billing. Teams that renegotiate tiers without remeasuring hit rates will celebrate the headline plus miss the invoice.</p>
+        <p>For an infrastructure review, ask for the per-tier hit rate plus tokens per task plus retry share plus the routing table with promotion criteria. Re-run the table after every model drop. September moved three lists in a day. The next move lands without warning. The bill hides in the boundary between list price plus cached reality.</p>
+        <p>Until routing follows measured task cost, the safest budget is the one recomputed monthly. Price the task. Meter the cache. Promote on proof.</p>
+      </section>
+      <section><h2>Frequently Asked Questions</h2>
+        <h3>What changed in frontier model pricing on September 22 2026?</h3>
+        <p>Anthropic launched Claude Opus 5.5 at $4 input plus $20 output per million tokens, down 20 percent from Opus 5. About an hour later OpenAI launched GPT-6 Sol plus Luna at roughly half their GPT-5.6 equivalents.</p>
+        <h3>Why do cache read prices matter more than list prices?</h3>
+        <p>Long agentic runs process 90 percent plus of input tokens at cached rates. Opus 5.5 cache reads fell 60 percent to $0.20 per million, so the effective per-task bill drops faster than the 20 percent list cut.</p>
+        <h3>What is the Sonnet 5.5 paradox?</h3>
+        <p>Sonnet 5.5 kept Sonnet 5 list prices while beating Opus 5.5 on Terminal-Bench 4.0 plus writing 30 percent faster. Same price plus fewer tokens per task means a lower bill without a price cut.</p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Prices plus dates plus scores follow Anthropic plus OpenAI announcements Sep 22 plus independent tracking below. Sonnet 5.5 details follow Sep 28 to 29 coverage. Per-task math is modeled with stated assumptions. For method see my <a href="llm-inference-cost-per-task-postmortem.html">inference cost per task teardown</a>.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://www.anthropic.com/claude-opus-5-5" target="_blank" rel="noopener noreferrer">Anthropic: Introducing Claude Opus 5.5 With Pricing Plus Benchmarks (Sep 22 2026)</a></li>
+          <li><a href="https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/" target="_blank" rel="noopener noreferrer">Simon Willison: Claude Opus 5.5 Plus GPT-6 Sol Plus Luna Plus a New Price War (Sep 22 2026)</a></li>
+          <li><a href="https://mashable.com/tech/claude-opus-launch-promises-better-performance-cheaper-price" target="_blank" rel="noopener noreferrer">Mashable: Anthropic Launches Claude Opus 5.5 at Lower Price (Sep 22 2026)</a></li>
+          <li><a href="https://docs.litellm.ai/blog/claude_opus_5_5" target="_blank" rel="noopener noreferrer">LiteLLM: Day Zero Support for Claude Opus 5.5 With Pricing Notes (Sep 22 2026)</a></li>
+          <li><a href="https://believemy.com/en/r/claude-sonnet-5-5-price-and-benchmarks" target="_blank" rel="noopener noreferrer">Believemy: Claude Sonnet 5.5 Nears Opus at Half Price (Sep 29 2026)</a></li>
+        </ul>
+      </section>
+    </article>
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
