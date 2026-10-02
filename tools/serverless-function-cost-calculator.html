@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/serverless-function-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Serverless Function Cost Calculator (AWS Lambda) | Buildopsy">
+  <meta property="og:description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta property="og:url" content="https://buildopsy.com/tools/serverless-function-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Serverless Function Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Serverless Function Cost Calculator (AWS Lambda) | Buildopsy">
+  <meta name="twitter:description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta name="twitter:image:alt" content="Serverless Function Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Serverless Function Cost Calculator (AWS Lambda) | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does AWS Lambda cost per month?","acceptedAnswer":{"@type":"Answer","text":"Lambda bills requests plus GB-seconds of compute. At $0.20 per million requests and $0.0000166667 per GB-second, 100 million requests at 200 ms and 512 MB costs $179.80 a month after the free tier."}},
+      {"@type":"Question","name":"What is a GB-second in serverless billing?","acceptedAnswer":{"@type":"Answer","text":"A GB-second is one gigabyte of memory held for one second. A 512 MB function runs at half a gigabyte, so a 200 ms invocation bills 0.1 GB-second. Multiply by the request count to get total compute."}},
+      {"@type":"Question","name":"Does more memory cost more or less on Lambda?","acceptedAnswer":{"@type":"Answer","text":"More memory raises the per-millisecond price but often finishes the work faster. This calculator prices memory directly, so you can test whether a larger size lowers the total GB-seconds."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Serverless Function Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests plus GB-seconds of compute. The defaults price 100 million requests at 200 ms and 512 MB, which lands at $179.80 a month after the free tier. Compute is about 89 percent of that, so memory and duration decide the bill.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="serverless-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a function from request volume, duration and memory, then apply the monthly free tier of one million requests plus 400,000 GB-seconds.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly function bill</span>
+              <span class="radar-count-description"> · Requests plus compute, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Memory presets">
+              <button class="radar-filter" data-set="lm-mem:128">128 MB</button>
+              <button class="radar-filter active" data-set="lm-mem:512">512 MB</button>
+              <button class="radar-filter" data-set="lm-mem:1024">1024 MB</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-req">Requests (millions / month)</label><input type="number" id="lm-req" value="100" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-dur">Duration (ms)</label><input type="number" id="lm-dur" value="200" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-mem">Memory (MB)</label><input type="number" id="lm-mem" value="512" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-reqp">Request price ($ / million)</label><input type="number" id="lm-reqp" value="0.20" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-gbs">Compute price ($ / GB-second)</label><input type="number" id="lm-gbs" value="0.0000166667" step="0.0000001" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="lm-monthly">$180</div>
+                <div class="radar-count-description">per month · requests + compute after free tier</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix</div>
+                  <div class="calc-donut" id="lm-donut" role="img" aria-label="Share of serverless cost across compute GB-seconds and requests" style="background:conic-gradient(#38bdf8 0.0% 89.0%,#a3e635 89.0% 100.0%)"><div class="calc-donut-center"><span id="lm-mix-top">89.0%</span><small>compute</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Compute</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Requests</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="serverless-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Request cost</div>
+              <div class="radar-trend-value" id="lm-reqcost">$19.80 requests</div>
+              <div class="radar-trend-sub">billable requests</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Compute cost</div>
+              <div class="radar-trend-value" id="lm-computecost">$160.00 compute</div>
+              <div class="radar-trend-sub">GB-seconds billed</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute: The Bill Was Waiting</a></h3><p class="fl-desc">Concurrency, cold starts and the serverless economics that arrive after the invoice.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="data-warehouse-cost-calculator.html">Data Warehouse Cost Calculator</a> · <a href="managed-postgres-cost-calculator.html">Managed Postgres Cost Calculator</a> · <a href="edge-request-cost-calculator.html">Edge Request Cost Calculator</a> · <a href="agent-retry-cost-calculator.html">Agent Retry Cost Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="serverless-function-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-serverless-function-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

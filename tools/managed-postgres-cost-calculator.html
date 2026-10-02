@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/managed-postgres-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy">
+  <meta property="og:description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta property="og:url" content="https://buildopsy.com/tools/managed-postgres-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Managed Postgres Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy">
+  <meta name="twitter:description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta name="twitter:image:alt" content="Managed Postgres Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does an RDS Postgres instance cost per month?","acceptedAnswer":{"@type":"Answer","text":"A db.m5.large at $0.171 an hour running 730 hours costs $124.83 a month. Two of them cost $249.66. Add storage and backups and the bill lands near $266. This calculator prices all three lines."}},
+      {"@type":"Question","name":"Does managed Postgres cost more than self-hosted?","acceptedAnswer":{"@type":"Answer","text":"The instance price is higher than raw compute because it includes failover, patching and backups. The trade is operational load. Set the hourly price to compare a managed instance against a self-managed one."}},
+      {"@type":"Question","name":"How do backups change the managed Postgres bill?","acceptedAnswer":{"@type":"Answer","text":"Backups bill per gigabyte stored. At $0.095 per GB, 50 GB of backups adds $4.75 a month. Retention beyond the free window is what usually grows this line over time."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Managed Postgres Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">A managed Postgres bill is instances plus storage plus backups. The defaults price two db.m5.large instances at $0.171 an hour over 730 hours plus 100 GB of storage and 50 GB of backups, which lands at $266 a month. Switch the presets to size the instance.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="postgres-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a managed database from instance count, hourly rate and hours plus provisioned storage and backup storage. Starts from two db.m5.large instances.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly database bill</span>
+              <span class="radar-count-description"> · Instances plus storage plus backups, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Instance presets">
+              <button class="radar-filter" data-set="rds-hr:0.068">db.t3.medium</button>
+              <button class="radar-filter active" data-set="rds-hr:0.171">db.m5.large</button>
+              <button class="radar-filter" data-set="rds-hr:0.48">db.r5.xlarge</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-count">Instances</label><input type="number" id="rds-count" value="2" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-hr">Price ($ / instance-hour)</label><input type="number" id="rds-hr" value="0.171" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-hours">Hours / month</label><input type="number" id="rds-hours" value="730" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-storage">Storage (GB)</label><input type="number" id="rds-storage" value="100" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-storagep">Storage price ($ / GB-month)</label><input type="number" id="rds-storagep" value="0.115" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-backup">Backups (GB)</label><input type="number" id="rds-backup" value="50" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-backupp">Backup price ($ / GB-month)</label><input type="number" id="rds-backupp" value="0.095" step="0.001" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="rds-monthly">$266</div>
+                <div class="radar-count-description">per month · instances + storage + backups</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix</div>
+                  <div class="calc-donut" id="rds-donut" role="img" aria-label="Share of database cost across instances, storage and backups" style="background:conic-gradient(#38bdf8 0.0% 93.9%,#a3e635 93.9% 98.2%,#fb7185 98.2% 100.0%)"><div class="calc-donut-center"><span id="rds-mix-top">93.9%</span><small>instances</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Instances</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Storage</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Backups</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="postgres-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Instance cost</div>
+              <div class="radar-trend-value" id="rds-instance">$249.66 instances</div>
+              <div class="radar-trend-sub">count × rate × hours</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Storage cost</div>
+              <div class="radar-trend-value" id="rds-storagecost">$16.25 storage</div>
+              <div class="radar-trend-sub">data plus backups</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Database Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/supabase-postgres-scale-postmortem.html">Supabase: The Postgres You Called Serverless</a></h3><p class="fl-desc">Connection pooling, read replicas and the bill behind a database that pretends to scale itself.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="data-warehouse-cost-calculator.html">Data Warehouse Cost Calculator</a> · <a href="serverless-function-cost-calculator.html">Serverless Function Cost Calculator</a> · <a href="connection-pool-calculator.html">Connection Pool Size Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a> · <a href="aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="managed-postgres-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-managed-postgres-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

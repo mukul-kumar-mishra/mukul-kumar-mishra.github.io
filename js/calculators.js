@@ -165,6 +165,59 @@
         compute: compute, control: control, storage: storage,
         monthly: compute + control + storage
       };
+    },
+    /* Data warehouse bill. Compute credits times credit price plus stored
+       terabytes times storage price. */
+    warehouseCost: function (o) {
+      var compute = nonneg(o.credits) * nonneg(o.creditPrice);
+      var storage = nonneg(o.tb) * nonneg(o.tbPrice);
+      return { compute: compute, storage: storage, monthly: compute + storage };
+    },
+    /* Managed Postgres bill. Instances times hourly price times hours
+       plus provisioned storage plus backup storage. */
+    rdsCost: function (o) {
+      var instance = nonneg(o.count) * nonneg(o.hr) * nonneg(o.hours);
+      var storage = nonneg(o.storageGb) * nonneg(o.storagePrice);
+      var backup = nonneg(o.backupGb) * nonneg(o.backupPrice);
+      return {
+        instance: instance, storage: storage, backup: backup,
+        monthly: instance + storage + backup
+      };
+    },
+    /* Serverless bill. Requests in millions times the price per million
+       plus gigabytes-seconds above the monthly free grant. */
+    lambdaCost: function (o) {
+      var reqM = nonneg(o.reqM);
+      var reqCost = Math.max(0, reqM - 1) * nonneg(o.reqPrice);
+      var gbs = reqM * 1e6 * (nonneg(o.ms) / 1000) * (nonneg(o.mem) / 1024);
+      var compute = Math.max(0, gbs - 400000) * nonneg(o.gbsPrice);
+      return { reqCost: reqCost, compute: compute, gbs: gbs, monthly: reqCost + compute };
+    },
+    /* CDN bill. Bandwidth gigabytes times price plus requests priced per
+       ten thousand. */
+    cdnCost: function (o) {
+      var bandwidth = nonneg(o.gb) * nonneg(o.gbPrice);
+      var requests = nonneg(o.reqM) * 1e6 / 10000 * nonneg(o.reqPrice);
+      return { bandwidth: bandwidth, requests: requests, monthly: bandwidth + requests };
+    },
+    /* Observability bill. Hosts times per-host price plus log ingest
+       gigabytes times price per gigabyte. */
+    observabilityCost: function (o) {
+      var hosts = nonneg(o.hosts) * nonneg(o.hostPrice);
+      var logs = nonneg(o.logGb) * nonneg(o.logPrice);
+      return { hosts: hosts, logs: logs, monthly: hosts + logs };
+    },
+    /* Vector database bill. Raw vector bytes with index overhead become
+       stored gigabytes, plus a fixed serving pod fleet. */
+    vectorCost: function (o) {
+      var rawGb = nonneg(o.millions) * 1e6 * nonneg(o.dim) * 4 / 1e9;
+      var storageGb = rawGb * nonneg(o.overhead);
+      var storage = storageGb * nonneg(o.storagePrice);
+      var compute = nonneg(o.pods) * nonneg(o.podPrice);
+      return {
+        storageGb: storageGb, storage: storage, compute: compute,
+        monthly: compute + storage
+      };
     }
   };
 
@@ -379,6 +432,82 @@
       pct(r.compute, r.monthly));
   }
 
+  function renderWarehouse() {
+    var o = {
+      credits: num('dw-credits', 2000), creditPrice: num('dw-creditp', 3),
+      tb: num('dw-tb', 10), tbPrice: num('dw-tbp', 23)
+    };
+    var r = Calcs.warehouseCost(o);
+    set('dw-monthly', money(r.monthly, 0));
+    set('dw-compute', money(r.compute, 0) + ' compute');
+    set('dw-storage', money(r.storage, 0) + ' storage');
+    donut('dw-donut', [[r.compute, CYAN], [r.storage, LIME]], pct(r.compute, r.monthly));
+  }
+
+  function renderRds() {
+    var o = {
+      count: num('rds-count', 2), hr: num('rds-hr', 0.171),
+      hours: num('rds-hours', 730), storageGb: num('rds-storage', 100),
+      storagePrice: num('rds-storagep', 0.115), backupGb: num('rds-backup', 50),
+      backupPrice: num('rds-backupp', 0.095)
+    };
+    var r = Calcs.rdsCost(o);
+    set('rds-monthly', money(r.monthly, 0));
+    set('rds-instance', money(r.instance, 2) + ' instances');
+    set('rds-storagecost', money(r.storage + r.backup, 2) + ' storage');
+    donut('rds-donut', [[r.instance, CYAN], [r.storage, LIME], [r.backup, ROSE]],
+      pct(r.instance, r.monthly));
+  }
+
+  function renderLambda() {
+    var o = {
+      reqM: num('lm-req', 100), ms: num('lm-dur', 200), mem: num('lm-mem', 512),
+      reqPrice: num('lm-reqp', 0.20), gbsPrice: num('lm-gbs', 0.0000166667)
+    };
+    var r = Calcs.lambdaCost(o);
+    set('lm-monthly', money(r.monthly, 0));
+    set('lm-reqcost', money(r.reqCost, 2) + ' requests');
+    set('lm-computecost', money(r.compute, 2) + ' compute');
+    donut('lm-donut', [[r.compute, CYAN], [r.reqCost, LIME]], pct(r.compute, r.monthly));
+  }
+
+  function renderCdn() {
+    var o = {
+      gb: num('cdn-gb', 10000), gbPrice: num('cdn-gbp', 0.085),
+      reqM: num('cdn-req', 100), reqPrice: num('cdn-reqp', 0.0075)
+    };
+    var r = Calcs.cdnCost(o);
+    set('cdn-monthly', money(r.monthly, 0));
+    set('cdn-bandwidth', money(r.bandwidth, 0) + ' bandwidth');
+    set('cdn-requests', money(r.requests, 0) + ' requests');
+    donut('cdn-donut', [[r.bandwidth, CYAN], [r.requests, LIME]], pct(r.bandwidth, r.monthly));
+  }
+
+  function renderObservability() {
+    var o = {
+      hosts: num('ob-hosts', 20), hostPrice: num('ob-hostp', 23),
+      logGb: num('ob-loggb', 1000), logPrice: num('ob-loggbp', 0.10)
+    };
+    var r = Calcs.observabilityCost(o);
+    set('ob-monthly', money(r.monthly, 0));
+    set('ob-hostcost', money(r.hosts, 0) + ' hosts');
+    set('ob-logcost', money(r.logs, 0) + ' logs');
+    donut('ob-donut', [[r.hosts, CYAN], [r.logs, LIME]], pct(r.hosts, r.monthly));
+  }
+
+  function renderVector() {
+    var o = {
+      millions: num('vec-count', 10), dim: num('vec-dim', 1536),
+      overhead: num('vec-overhead', 2), storagePrice: num('vec-storagep', 0.115),
+      pods: num('vec-pods', 3), podPrice: num('vec-podp', 70)
+    };
+    var r = Calcs.vectorCost(o);
+    set('vec-monthly', money(r.monthly, 0));
+    set('vec-storagegb', big(r.storageGb, 1) + ' GB stored');
+    set('vec-compute', money(r.compute, 0) + ' pods');
+    donut('vec-donut', [[r.compute, CYAN], [r.storage, LIME]], pct(r.compute, r.monthly));
+  }
+
   function renderAll() {
     renderToken();
     renderRps();
@@ -393,6 +522,12 @@
     renderEgress();
     renderCompute();
     renderK8s();
+    renderWarehouse();
+    renderRds();
+    renderLambda();
+    renderCdn();
+    renderObservability();
+    renderVector();
   }
 
   if (typeof window !== 'undefined') {
@@ -401,7 +536,8 @@
        /tools/ page hosts exactly one. Missing ids are skipped by bind/set. */
     var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly',
       'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total',
-      's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly'];
+      's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly',
+      'dw-monthly', 'rds-monthly', 'lm-monthly', 'cdn-monthly', 'ob-monthly', 'vec-monthly'];
     var onToolPage = RESULT_IDS.some(function (id) { return !!document.getElementById(id); });
     if (onToolPage) {
       bind(['tk-in', 'tk-cache', 'tk-cachep', 'tk-freshp', 'tk-out', 'tk-outp', 'tk-turns'], renderToken);
@@ -417,6 +553,12 @@
       bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
       bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-util', 'ec2-disc'], renderCompute);
       bind(['k8s-nodes', 'k8s-node', 'k8s-cp', 'k8s-pv', 'k8s-pvp'], renderK8s);
+      bind(['dw-credits', 'dw-creditp', 'dw-tb', 'dw-tbp'], renderWarehouse);
+      bind(['rds-count', 'rds-hr', 'rds-hours', 'rds-storage', 'rds-storagep', 'rds-backup', 'rds-backupp'], renderRds);
+      bind(['lm-req', 'lm-dur', 'lm-mem', 'lm-reqp', 'lm-gbs'], renderLambda);
+      bind(['cdn-gb', 'cdn-gbp', 'cdn-req', 'cdn-reqp'], renderCdn);
+      bind(['ob-hosts', 'ob-hostp', 'ob-loggb', 'ob-loggbp'], renderObservability);
+      bind(['vec-count', 'vec-dim', 'vec-overhead', 'vec-storagep', 'vec-pods', 'vec-podp'], renderVector);
       renderAll();
     }
     /* Preset pills: data-set="id:value;id:value" sets inputs and re-renders. */

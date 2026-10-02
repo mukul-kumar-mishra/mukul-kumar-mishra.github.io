@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/vector-database-cost-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy">
+  <meta property="og:description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta property="og:url" content="https://buildopsy.com/tools/vector-database-cost-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Vector Database Cost Calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy">
+  <meta name="twitter:description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta name="twitter:image:alt" content="Vector Database Cost Calculator">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much storage do one million vectors need?","acceptedAnswer":{"@type":"Answer","text":"A 1,536-dimension float32 vector is 6,144 bytes. One million vectors are 6.14 GB raw. With a 2x index overhead that is about 12.3 GB, which stores for a few dollars a month on a managed database."}},
+      {"@type":"Question","name":"Is storage or compute the bigger vector database cost?","acceptedAnswer":{"@type":"Answer","text":"Compute usually dominates. A serving fleet of three pods at $70 each costs $210 a month, while 10 million vectors use about 14 dollars of storage. In the default model compute is about 94 percent of the bill."}},
+      {"@type":"Question","name":"Is pgvector cheaper than a managed vector database?","acceptedAnswer":{"@type":"Answer","text":"pgvector adds vector search to a Postgres instance you already pay for, so there is no separate storage fee. A managed vector database adds pods and a per-vector price but removes the tuning. Set the pod count to zero to model a pgvector-only bill."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:12px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;">
+      <i data-lucide="arrow-left"></i> All calculators
+    </a></p>
+
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Vector Database Cost Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">A vector store bill is storage plus a serving fleet. The defaults price 10 million 1,536-dimension vectors with 2x index overhead plus three pods at $70 each, which lands at $224 a month. Compute is about 94 percent of it, so pod count matters most.</p>
+      <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+    </header>
+
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
+
+    <section class="sec" id="vector-bill">
+      <p class="fl-desc" style="margin:0 0 14px;">Price a vector store from embedding count, dimensions, index overhead and the serving fleet. Starts from 10 million vectors across three pods.</p>
+      <section class="radar-card">
+        <div class="radar-main">
+          <div class="radar-hero-grid calc-top">
+            <div class="radar-hero-left">
+              <span class="radar-count-label">Live result · Monthly vector bill</span>
+              <span class="radar-count-description"> · Storage plus serving pods, priced for a full month.</span>
+            <div class="radar-filters" aria-label="Fleet presets">
+              <button class="radar-filter" data-set="vec-pods:1">1 POD</button>
+              <button class="radar-filter active" data-set="vec-pods:3">3 PODS</button>
+              <button class="radar-filter" data-set="vec-pods:6">6 PODS</button>
+            </div>
+            <div class="calc-inputs">
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-count">Vectors (millions)</label><input type="number" id="vec-count" value="10" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-dim">Dimensions</label><input type="number" id="vec-dim" value="1536" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-overhead">Index overhead (multiplier)</label><input type="number" id="vec-overhead" value="2" step="0.1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-storagep">Storage price ($ / GB-month)</label><input type="number" id="vec-storagep" value="0.115" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-pods">Serving pods</label><input type="number" id="vec-pods" value="3" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="vec-podp">Price ($ / pod-month)</label><input type="number" id="vec-podp" value="70" class="field-input"></div>
+            </div>
+            </div>
+            <div class="calc-side">
+              <div class="calc-result-box">
+                <div class="radar-trend-label">Monthly bill</div>
+                <div class="calc-result-value" id="vec-monthly">$224</div>
+                <div class="radar-count-description">per month · storage + pods</div>
+              </div>
+              <div class="calc-donut-wrap">
+                <div>
+                  <div class="radar-donut-title">Cost mix</div>
+                  <div class="calc-donut" id="vec-donut" role="img" aria-label="Share of vector database cost across serving pods and storage" style="background:conic-gradient(#38bdf8 0.0% 93.7%,#a3e635 93.7% 100.0%)"><div class="calc-donut-center"><span id="vec-mix-top">93.7%</span><small>compute</small></div></div>
+                </div>
+                <ul class="radar-legend">
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Compute</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Storage</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="radar-meta">
+            <div class="radar-updated">Runs locally · No data sent</div>
+            <button class="radar-refresh" data-reset="vector-bill" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button>
+          </div>
+          <div class="radar-trend">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Stored data</div>
+              <div class="radar-trend-value" id="vec-storagegb">122.9 GB stored</div>
+              <div class="radar-trend-sub">vectors times dimensions times overhead</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Compute cost</div>
+              <div class="radar-trend-value" id="vec-compute">$210 pods</div>
+              <div class="radar-trend-sub">fleet times pod price</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">AI Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/perplexity-answer-engine-postmortem.html">Perplexity: Eleven Words In, Twelve Thousand Out</a></h3><p class="fl-desc">Retrieval, ranking and the serving cost behind an answer engine.</p></article>
+    </section>
+
+    <section class="sec" id="more-tools">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="layout-grid"></i> More engineering calculators</h2>
+        <a class="sec-link" href="../calculators.html">Open the hub →</a>
+      </div>
+      <p class="fl-desc" style="margin:0 0 14px;"><a href="data-warehouse-cost-calculator.html">Data Warehouse Cost Calculator</a> · <a href="managed-postgres-cost-calculator.html">Managed Postgres Cost Calculator</a> · <a href="llm-token-cost-calculator.html">LLM Token Cost Calculator</a> · <a href="context-compaction-calculator.html">Context Compaction Calculator</a> · <a href="downtime-cost-calculator.html">Downtime Cost Calculator</a></p>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="vector-database-cost-calculator" role="complementary" aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <div class="ad-slot-body" id="ad-vector-database-cost-calculator"></div>
+    </div>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
