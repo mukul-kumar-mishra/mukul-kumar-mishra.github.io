@@ -96,7 +96,7 @@
     <section class="sec" id="token-bill">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="coins"></i> Token Bill Calculator</h2>
-        <a class="sec-link" href="tools/llm-token-cost-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/llm-token-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits plus 1.5k output tokens.</p>
       <section class="radar-card">
@@ -158,7 +158,7 @@
     <section class="sec" id="rps-bill">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="activity"></i> RPS Envelope Estimator</h2>
-        <a class="sec-link" href="tools/edge-request-cost-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/edge-request-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, plus fixed platform spend.</p>
       <section class="radar-card">
@@ -221,7 +221,7 @@
     <section class="sec" id="compaction">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="scissors"></i> Compaction Survival Calculator</h2>
-        <a class="sec-link" href="tools/context-compaction-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/context-compaction-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. Defaults mirror the measured median: 575k crushed to about 4.3k, then roughly 28 steps of re-reading.</p>
       <section class="radar-card">
@@ -285,7 +285,7 @@
     <section class="sec" id="retry-storm">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="refresh-cw"></i> Retry-Storm Cost Calculator</h2>
-        <a class="sec-link" href="tools/agent-retry-cost-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/agent-retry-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Failed agent attempts rebill every retry. Multiply tasks by retries by attempt cost and watch the storm's share of the budget.</p>
       <section class="radar-card">
@@ -342,7 +342,7 @@
     <section class="sec" id="error-budget">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="shield-alert"></i> Error Budget Burn Calculator</h2>
-        <a class="sec-link" href="tools/error-budget-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/error-budget-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
       <section class="radar-card">
@@ -405,7 +405,7 @@
     <section class="sec" id="hpa-size">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="layers"></i> HPA Replica Estimator</h2>
-        <a class="sec-link" href="tools/kubernetes-hpa-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/kubernetes-hpa-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">A basic single-metric HPA estimate: desired replicas equal current replicas times current utilization over target utilization, rounded up and clamped to the minimum and maximum. CPU utilization is relative to the pod CPU request. It assumes at least one replica; other HPA behaviors are not modeled.</p>
       <section class="radar-card">
@@ -470,7 +470,7 @@
     <section class="sec" id="obs-sample">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="activity"></i> Observability Sampling Fitter</h2>
-        <a class="sec-link" href="tools/trace-sampling-rate-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/trace-sampling-rate-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Spans per second times bytes per span is your daily ingest. Price it, then compute the keep rate that fits the budget. Defaults ingest 50k spans a second at 2 KB against a $20k monthly budget.</p>
       <section class="radar-card">
@@ -534,7 +534,7 @@
     <section class="sec" id="pool-size">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="database"></i> Connection Pool Sizer</h2>
-        <a class="sec-link" href="tools/connection-pool-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/connection-pool-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Conservative p99-based pool sizing: peak RPS times p99 latency in seconds, times a safety factor, spread across pods. This heuristic differs from formal Little's Law, which uses mean time in system.</p>
       <section class="radar-card">
@@ -598,7 +598,7 @@
     <section class="sec" id="downtime-cost">
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="coins"></i> Downtime Cost Calculator</h2>
-        <a class="sec-link" href="tools/downtime-cost-calculator.html">Open standalone →</a>
+        <a class="sec-link" href="tools/downtime-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
       <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
       <section class="radar-card">

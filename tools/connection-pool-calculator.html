@@ -7,7 +7,7 @@
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/connection-pool-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Connection Pool Size Calculator: Little’s Law | Buildopsy">
+  <meta property="og:title" content="Connection Pool Size Calculator: p99 Estimate | Buildopsy">
   <meta property="og:description" content="Estimate database pool size from peak RPS, p99 latency and a safety factor. This conservative heuristic differs from formal Little's Law, which uses mean time in system.">
   <meta property="og:url" content="https://buildopsy.com/tools/connection-pool-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Connection Pool Size Calculator: Little’s Law | Buildopsy">
+  <meta name="twitter:title" content="Connection Pool Size Calculator: p99 Estimate | Buildopsy">
   <meta name="twitter:description" content="Estimate database pool size from peak RPS, p99 latency and a safety factor. This conservative heuristic differs from formal Little's Law, which uses mean time in system.">
   <meta name="twitter:image:alt" content="Connection Pool Size Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>Connection Pool Size Calculator: Little’s Law | Buildopsy</title>
+  <title>Connection Pool Size Calculator: p99 Estimate | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How do I estimate database connection pool size?","acceptedAnswer":{"@type":"Answer","text":"This conservative heuristic multiplies peak RPS by p99 latency, then applies a safety factor. Formal Little's Law uses mean time in system rather than p99. At 10,000 RPS, 45 ms p99 and a 1.5 factor, the estimate is 675 connections, or 17 per pod across 40 pods."}},
-      {"@type":"Question","name":"What happens if the connection pool is too small?","acceptedAnswer":{"@type":"Answer","text":"Requests queue while waiting for a connection, and observed p99 latency can rise. This heuristic will then estimate more concurrency; validate pool size and queueing behavior with workload measurements."}}
+      {"@type":"Question","name":"What happens if the connection pool is too small?","acceptedAnswer":{"@type":"Answer","text":"Requests queue while waiting for a connection. Observed p99 latency can rise, causing this heuristic to estimate more concurrency. Validate pool size and queueing behavior with workload measurements."}}
     ]
   }
   </script>
@@ -73,7 +73,7 @@
       <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
-    <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
+    <noscript><p class="fl-desc">Live recalculation needs JavaScript. Default results remain visible without it. Every formula is explained in the linked teardown.</p></noscript>
 
     <section class="sec" id="pool-size">
       <p class="fl-desc" style="margin:0 0 14px;">Conservative p99-based pool sizing: peak RPS times p99 latency in seconds, times a safety factor, spread across pods. This is a heuristic rather than formal Little's Law, which uses mean time in system.</p>
