@@ -1,4 +1,7 @@
-/* Engineering calculators: the math behind the postmortems, runnable locally.
+/* Copyright (c) 2026 Buildopsy. All rights reserved. No license to reuse or
+ * redistribute this source is granted.
+ *
+ * Engineering calculators: the math behind the postmortems, runnable locally.
  * Pure functions live on window.Calcs for testability. No network calls,
  * no storage, no tracking. All defaults come from the published teardowns;
  * every card links the article its model is simplified from. */
@@ -29,8 +32,8 @@
     });
   }
 
-  /* Input guards. Type="number" accepts anything, so percentages are clamped
-     to their legal range and counts/rates to non-negative before arithmetic. */
+  /* Input guards. Type="number" accepts anything, so bounded percentages are
+     clamped and counts/rates are made non-negative before arithmetic. */
   function clamp(v, lo, hi) {
     return Math.max(lo, Math.min(hi, v));
   }
@@ -45,9 +48,11 @@
        $15/M lands at $0.0735, shown as ~$0.074. */
     tokenTurn: function (o) {
       var hit = clamp(o.cachePct, 0, 100) / 100;
-      var cached = o.inTokens * hit / 1e6 * o.cachePrice;
-      var fresh = o.inTokens * (1 - hit) / 1e6 * o.freshPrice;
-      var out = o.outTokens / 1e6 * o.outPrice;
+      var inputTokens = nonneg(o.inTokens);
+      var outputTokens = nonneg(o.outTokens);
+      var cached = inputTokens * hit / 1e6 * nonneg(o.cachePrice);
+      var fresh = inputTokens * (1 - hit) / 1e6 * nonneg(o.freshPrice);
+      var out = outputTokens / 1e6 * nonneg(o.outPrice);
       var perTurn = cached + fresh + out;
       return {
         cached: cached, fresh: fresh, out: out, perTurn: perTurn,
@@ -90,14 +95,19 @@
       var daysLeft = left <= 0 ? 0 : (dailyBurn > 0 ? left / dailyBurn : Infinity);
       return { budget: budget, left: left, daysLeft: daysLeft, exhausted: left <= 0 };
     },
-    /* Kubernetes HPA formula. Desired replicas equal current replicas
-       times current utilization over target utilization, rounded up,
-       then clamped to the configured maximum. */
+    /* Basic Kubernetes HPA CPU recommendation. Apply min/max replicas around
+       ceil(current replicas x current utilization / target utilization). */
     hpa: function (o) {
-      var rep = nonneg(o.rep), target = nonneg(o.target), max = nonneg(o.max);
+      var rep = Math.floor(nonneg(o.rep));
+      var min = Math.max(1, Math.floor(nonneg(o.minReplicas == null ? 1 : o.minReplicas)));
+      var max = Math.max(min, Math.floor(nonneg(o.max)));
+      var target = nonneg(o.target);
       var raw = (target > 0 && rep > 0) ? Math.ceil(rep * (nonneg(o.util) / target)) : rep;
-      var desired = Math.min(raw, max);
-      return { desired: desired, delta: desired - rep, capped: raw > max };
+      var desired = Math.min(max, Math.max(min, raw));
+      return {
+        desired: desired, delta: desired - rep, capped: raw > max,
+        min: min, max: max
+      };
     },
     /* Observability sampling fit. Daily ingest equals spans per second
        times bytes per span times 86400 seconds, converted to gigabytes.
@@ -109,13 +119,14 @@
       var keepPct = monthly > 0 ? Math.min(100, (budget / monthly) * 100) : 100;
       return { gbDay: gbDay, monthly: monthly, keepPct: keepPct };
     },
-    /* Connection pool from Little's law. Concurrent connections equal
-       peak RPS times p99 latency in seconds; the pool adds a safety
-       factor and spreads across pods. */
+    /* Conservative pool-sizing heuristic: peak RPS times p99 latency in
+       seconds approximates concurrent work (formal Little's Law uses mean
+       time in system). Add a safety factor, then spread across pods. */
     poolSize: function (o) {
       var conc = nonneg(o.rps) * (nonneg(o.p99ms) / 1000);
       var pool = Math.ceil(conc * nonneg(o.safety));
-      var perPod = o.pods > 0 ? Math.ceil(pool / o.pods) : pool;
+      var pods = Math.floor(nonneg(o.pods));
+      var perPod = pods > 0 ? Math.ceil(pool / pods) : NaN;
       return { conc: conc, pool: pool, perPod: perPod };
     },
     /* Downtime cost. Revenue loss equals revenue per minute over a
@@ -137,7 +148,7 @@
       var monthly = storage + requests + retrieval;
       return {
         storage: storage, requests: requests, retrieval: retrieval,
-        monthly: monthly, perGb: o.gb > 0 ? monthly / o.gb : 0
+        monthly: monthly, perGb: nonneg(o.gb) > 0 ? monthly / nonneg(o.gb) : NaN
       };
     },
     /* Cloud egress bill. Billable gigabytes above the free allowance,
@@ -147,18 +158,19 @@
       var monthly = billable * nonneg(o.price);
       return { billable: billable, monthly: monthly, daily: monthly / 30 };
     },
-    /* Compute bill. Instances times hourly price times hours, scaled by
-       average utilization, then reduced by the commitment or spot discount. */
+    /* EC2 instance usage is billed while running, even when CPU-idle. The
+       running percentage models powered-on time; discount is an editable
+       effective-rate scenario, not a Reserved Instance/Savings Plan quote. */
     computeCost: function (o) {
-      var onDemand = nonneg(o.count) * nonneg(o.hr) * nonneg(o.hours);
-      var monthly = onDemand * (clamp(o.util, 0, 100) / 100) *
-        (1 - clamp(o.disc, 0, 100) / 100);
+      var onDemand = Math.floor(nonneg(o.count)) * nonneg(o.hr) *
+        nonneg(o.hours) * (clamp(o.runningPct, 0, 100) / 100);
+      var monthly = onDemand * (1 - clamp(o.disc, 0, 100) / 100);
       return { onDemand: onDemand, monthly: monthly, savings: onDemand - monthly };
     },
     /* Kubernetes cluster bill. Worker nodes plus control plane plus
        persistent volume storage. */
     k8sCost: function (o) {
-      var compute = nonneg(o.nodes) * nonneg(o.node);
+      var compute = Math.floor(nonneg(o.nodes)) * nonneg(o.node);
       var control = nonneg(o.cp);
       var storage = nonneg(o.pv) * nonneg(o.pvPrice);
       return {
@@ -176,7 +188,7 @@
     /* Managed Postgres bill. Instances times hourly price times hours
        plus provisioned storage plus backup storage. */
     rdsCost: function (o) {
-      var instance = nonneg(o.count) * nonneg(o.hr) * nonneg(o.hours);
+      var instance = Math.floor(nonneg(o.count)) * nonneg(o.hr) * nonneg(o.hours);
       var storage = nonneg(o.storageGb) * nonneg(o.storagePrice);
       var backup = nonneg(o.backupGb) * nonneg(o.backupPrice);
       return {
@@ -188,10 +200,18 @@
        plus gigabytes-seconds above the monthly free grant. */
     lambdaCost: function (o) {
       var reqM = nonneg(o.reqM);
-      var reqCost = Math.max(0, reqM - 1) * nonneg(o.reqPrice);
-      var gbs = reqM * 1e6 * (nonneg(o.ms) / 1000) * (nonneg(o.mem) / 1024);
-      var compute = Math.max(0, gbs - 400000) * nonneg(o.gbsPrice);
-      return { reqCost: reqCost, compute: compute, gbs: gbs, monthly: reqCost + compute };
+      var freeReqM = nonneg(o.freeReqM == null ? 1 : o.freeReqM);
+      var billableReqM = Math.max(0, reqM - freeReqM);
+      var reqCost = billableReqM * nonneg(o.reqPrice);
+      var billedMs = reqM > 0 ? Math.max(1, nonneg(o.ms)) : 0;
+      var gbs = reqM * 1e6 * (billedMs / 1000) * (nonneg(o.mem) / 1024);
+      var billableGbs = Math.max(0, gbs - nonneg(o.freeGbSeconds == null ? 400000 : o.freeGbSeconds));
+      var compute = billableGbs * nonneg(o.gbsPrice);
+      return {
+        reqCost: reqCost, compute: compute, gbs: gbs,
+        billableReqM: billableReqM, billableGbs: billableGbs,
+        monthly: reqCost + compute
+      };
     },
     /* CDN bill. Bandwidth gigabytes times price plus requests priced per
        ten thousand. */
@@ -213,7 +233,7 @@
       var rawGb = nonneg(o.millions) * 1e6 * nonneg(o.dim) * 4 / 1e9;
       var storageGb = rawGb * nonneg(o.overhead);
       var storage = storageGb * nonneg(o.storagePrice);
-      var compute = nonneg(o.pods) * nonneg(o.podPrice);
+      var compute = Math.floor(nonneg(o.pods)) * nonneg(o.podPrice);
       return {
         storageGb: storageGb, storage: storage, compute: compute,
         monthly: compute + storage
@@ -326,13 +346,15 @@
   function renderHpa() {
     var o = {
       rep: num('hpa-rep', 8), util: num('hpa-util', 72),
-      target: num('hpa-target', 60), max: num('hpa-max', 20)
+      target: num('hpa-target', 60), minReplicas: num('hpa-min', 1),
+      max: num('hpa-max', 20)
     };
     var r = Calcs.hpa(o);
     set('hpa-desired', big(r.desired, 0));
     set('hpa-delta', r.delta > 0 ? '+' + r.delta + ' to add' :
       (r.delta < 0 ? r.delta + ' to remove' : 'no change'));
-    set('hpa-cap', r.capped ? 'CAPPED, raise max' : 'within max ' + o.max);
+    set('hpa-cap', r.capped ? 'CAPPED, raise max' :
+      'within ' + r.min + '-' + r.max + ' bounds');
     var swing = Math.abs(r.delta);
     donut('hpa-donut', [[o.rep, CYAN], [swing, r.delta >= 0 ? LIME : ROSE]],
       big(o.rep, 0));
@@ -407,12 +429,12 @@
   function renderCompute() {
     var o = {
       count: num('ec2-count', 10), hr: num('ec2-hr', 0.096),
-      hours: num('ec2-hours', 730), util: num('ec2-util', 100),
+      hours: num('ec2-hours', 730), runningPct: num('ec2-running', 100),
       disc: num('ec2-disc', 0)
     };
     var r = Calcs.computeCost(o);
     set('ec2-monthly', money(r.monthly, 0));
-    set('ec2-ondemand', money(r.onDemand, 0) + ' on demand');
+    set('ec2-ondemand', money(r.onDemand, 0) + ' before discount');
     set('ec2-savings', money(r.savings, 0) + ' saved');
     donut('ec2-donut', [[r.monthly, CYAN], [r.savings, LIME]],
       pct(r.monthly, r.onDemand));
@@ -446,7 +468,7 @@
 
   function renderRds() {
     var o = {
-      count: num('rds-count', 2), hr: num('rds-hr', 0.171),
+      count: num('rds-count', 2), hr: num('rds-hr', 0.178),
       hours: num('rds-hours', 730), storageGb: num('rds-storage', 100),
       storagePrice: num('rds-storagep', 0.115), backupGb: num('rds-backup', 50),
       backupPrice: num('rds-backupp', 0.095)
@@ -462,7 +484,8 @@
   function renderLambda() {
     var o = {
       reqM: num('lm-req', 100), ms: num('lm-dur', 200), mem: num('lm-mem', 512),
-      reqPrice: num('lm-reqp', 0.20), gbsPrice: num('lm-gbs', 0.0000166667)
+      reqPrice: num('lm-reqp', 0.20), gbsPrice: num('lm-gbs', 0.0000166667),
+      freeReqM: num('lm-free-req', 1), freeGbSeconds: num('lm-free-gbs', 400000)
     };
     var r = Calcs.lambdaCost(o);
     set('lm-monthly', money(r.monthly, 0));
@@ -545,17 +568,17 @@
       bind(['cx-win', 'cx-surv', 'cx-steps', 'cx-stepc'], renderCompaction);
       bind(['rt-tasks', 'rt-retries', 'rt-cost'], renderRetry);
       bind(['eb-slo', 'eb-used', 'eb-burn'], renderErrorBudget);
-      bind(['hpa-rep', 'hpa-util', 'hpa-target', 'hpa-max'], renderHpa);
+      bind(['hpa-rep', 'hpa-util', 'hpa-target', 'hpa-min', 'hpa-max'], renderHpa);
       bind(['obs-rps', 'obs-bytes', 'obs-price', 'obs-budget'], renderObs);
       bind(['pool-rps', 'pool-lat', 'pool-safety', 'pool-pods'], renderPool);
       bind(['dt-rev', 'dt-mins', 'dt-bill', 'dt-credit'], renderDowntime);
       bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp'], renderS3);
       bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
-      bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-util', 'ec2-disc'], renderCompute);
+      bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-running', 'ec2-disc'], renderCompute);
       bind(['k8s-nodes', 'k8s-node', 'k8s-cp', 'k8s-pv', 'k8s-pvp'], renderK8s);
       bind(['dw-credits', 'dw-creditp', 'dw-tb', 'dw-tbp'], renderWarehouse);
       bind(['rds-count', 'rds-hr', 'rds-hours', 'rds-storage', 'rds-storagep', 'rds-backup', 'rds-backupp'], renderRds);
-      bind(['lm-req', 'lm-dur', 'lm-mem', 'lm-reqp', 'lm-gbs'], renderLambda);
+      bind(['lm-req', 'lm-dur', 'lm-mem', 'lm-reqp', 'lm-gbs', 'lm-free-req', 'lm-free-gbs'], renderLambda);
       bind(['cdn-gb', 'cdn-gbp', 'cdn-req', 'cdn-reqp'], renderCdn);
       bind(['ob-hosts', 'ob-hostp', 'ob-loggb', 'ob-loggbp'], renderObservability);
       bind(['vec-count', 'vec-dim', 'vec-overhead', 'vec-storagep', 'vec-pods', 'vec-podp'], renderVector);

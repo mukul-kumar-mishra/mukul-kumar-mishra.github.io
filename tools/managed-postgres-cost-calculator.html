@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta name="description" content="Estimate managed Postgres instance, storage and billable backup costs with editable rates. Prices and included backup allowances vary by provider, region and storage type.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/managed-postgres-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy">
-  <meta property="og:description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta property="og:title" content="Managed Postgres Cost Calculator: Instance and Storage | Buildopsy">
+  <meta property="og:description" content="Estimate managed Postgres instance, storage and billable backup costs with editable rates. Prices and included backup allowances vary by provider, region and storage type.">
   <meta property="og:url" content="https://buildopsy.com/tools/managed-postgres-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Managed Postgres Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy">
-  <meta name="twitter:description" content="Free managed Postgres cost calculator. Price instances by count, hourly rate and hours plus provisioned storage and backups, then read the monthly bill.">
+  <meta name="twitter:title" content="Managed Postgres Cost Calculator: Instance and Storage | Buildopsy">
+  <meta name="twitter:description" content="Estimate managed Postgres instance, storage and billable backup costs with editable rates. Prices and included backup allowances vary by provider, region and storage type.">
   <meta name="twitter:image:alt" content="Managed Postgres Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>Managed Postgres Cost Calculator (RDS and Cloud SQL) | Buildopsy</title>
+  <title>Managed Postgres Cost Calculator: Instance and Storage | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does an RDS Postgres instance cost per month?","acceptedAnswer":{"@type":"Answer","text":"A db.m5.large at $0.171 an hour running 730 hours costs $124.83 a month. Two of them cost $249.66. Add storage and backups and the bill lands near $266. This calculator prices all three lines."}},
-      {"@type":"Question","name":"Does managed Postgres cost more than self-hosted?","acceptedAnswer":{"@type":"Answer","text":"The instance price is higher than raw compute because it includes failover, patching and backups. The trade is operational load. Set the hourly price to compare a managed instance against a self-managed one."}},
-      {"@type":"Question","name":"How do backups change the managed Postgres bill?","acceptedAnswer":{"@type":"Answer","text":"Backups bill per gigabyte stored. At $0.095 per GB, 50 GB of backups adds $4.75 a month. Retention beyond the free window is what usually grows this line over time."}}
+      {"@type":"Question","name":"How much does an RDS Postgres instance cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the example US East Single-AZ PostgreSQL rate, a db.m5.large at $0.178 an hour for 730 hours costs $129.94 a month. Two cost $259.88 before storage and billable backups. Rates vary by region, engine and deployment."}},
+      {"@type":"Question","name":"Does managed Postgres cost more than self-hosted?","acceptedAnswer":{"@type":"Answer","text":"This calculator does not compare total cost of ownership. A managed service reduces database operations, while availability configuration, backups, storage, I/O and data transfer can be separate billable items. Compare the complete configuration and operational costs, not only the instance rate."}},
+      {"@type":"Question","name":"How do backups change the managed Postgres bill?","acceptedAnswer":{"@type":"Answer","text":"This field is billable backup storage after any provider allowance. For RDS, eligible backup storage up to provisioned database storage can be included. At an entered rate of $0.095 per GB-month, 50 billable GB adds $4.75."}}
     ]
   }
   </script>
@@ -70,14 +70,15 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Managed Postgres Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A managed Postgres bill is instances plus storage plus backups. The defaults price two db.m5.large instances at $0.171 an hour over 730 hours plus 100 GB of storage and 50 GB of backups, which lands at $266 a month. Switch the presets to size the instance.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A managed Postgres bill is instances plus storage plus billable backups. This example uses two Single-AZ db.m5.large PostgreSQL instances at $0.178 an hour for 730 hours, 100 GB of gp3 storage and 50 GB of billable backups, totaling $276.13. Rates and included backup allowances vary by provider, region and storage type.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
+    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> Defaults use editable US East (N. Virginia) Single-AZ PostgreSQL on-demand example rates. Platform presets only change the instance-hour rate. This sums entered instance-hours, storage and billable backup storage; it does not automatically model Multi-AZ topology, provisioned IOPS, I/O, data transfer, extended support, burstable CPU credits or account free-tier benefits. RDS backup allowance is shared by eligible backups in a Region. <a href="https://aws.amazon.com/rds/postgresql/pricing/" target="_blank" rel="noopener noreferrer">AWS RDS for PostgreSQL pricing</a>.</aside>
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="postgres-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a managed database from instance count, hourly rate and hours plus provisioned storage and backup storage. Starts from two db.m5.large instances.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Enter provider-specific instance and storage rates. The backup input is billable GB after any included allowance.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -85,30 +86,30 @@
               <span class="radar-count-label">Live result · Monthly database bill</span>
               <span class="radar-count-description"> · Instances plus storage plus backups, priced for a full month.</span>
             <div class="radar-filters" aria-label="Instance presets">
-              <button class="radar-filter" data-set="rds-hr:0.068">db.t3.medium</button>
-              <button class="radar-filter active" data-set="rds-hr:0.171">db.m5.large</button>
-              <button class="radar-filter" data-set="rds-hr:0.48">db.r5.xlarge</button>
+              <button class="radar-filter" data-set="rds-hr:0.072">db.t3.medium · PG</button>
+              <button class="radar-filter active" data-set="rds-hr:0.178">db.m5.large · PG</button>
+              <button class="radar-filter" data-set="rds-hr:0.5">db.r5.xlarge · PG</button>
             </div>
             <div class="calc-inputs">
-              <div style="margin:0 0 12px;"><label class="field-label" for="rds-count">Instances</label><input type="number" id="rds-count" value="2" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="rds-hr">Price ($ / instance-hour)</label><input type="number" id="rds-hr" value="0.171" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-count">Instances</label><input type="number" id="rds-count" value="2" min="0" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-hr">Postgres price ($ / instance-hour)</label><input type="number" id="rds-hr" value="0.178" step="0.001" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="rds-hours">Hours / month</label><input type="number" id="rds-hours" value="730" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="rds-storage">Storage (GB)</label><input type="number" id="rds-storage" value="100" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="rds-storagep">Storage price ($ / GB-month)</label><input type="number" id="rds-storagep" value="0.115" step="0.001" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="rds-backup">Backups (GB)</label><input type="number" id="rds-backup" value="50" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="rds-backup">Billable backup storage after allowance (GB)</label><input type="number" id="rds-backup" value="50" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="rds-backupp">Backup price ($ / GB-month)</label><input type="number" id="rds-backupp" value="0.095" step="0.001" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly bill</div>
-                <div class="calc-result-value" id="rds-monthly">$266</div>
+                <div class="calc-result-value" id="rds-monthly">$276</div>
                 <div class="radar-count-description">per month · instances + storage + backups</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Cost mix</div>
-                  <div class="calc-donut" id="rds-donut" role="img" aria-label="Share of database cost across instances, storage and backups" style="background:conic-gradient(#38bdf8 0.0% 93.9%,#a3e635 93.9% 98.2%,#fb7185 98.2% 100.0%)"><div class="calc-donut-center"><span id="rds-mix-top">93.9%</span><small>instances</small></div></div>
+                  <div class="calc-donut" id="rds-donut" role="img" aria-label="Share of database cost across instances, storage and backups" style="background:conic-gradient(#38bdf8 0.0% 94.1%,#a3e635 94.1% 98.3%,#fb7185 98.3% 100.0%)"><div class="calc-donut-center"><span id="rds-mix-top">94.1%</span><small>instances</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Instances</span></li>
@@ -125,7 +126,7 @@
           <div class="radar-trend">
             <div class="radar-trend-block">
               <div class="radar-trend-label">Instance cost</div>
-              <div class="radar-trend-value" id="rds-instance">$249.66 instances</div>
+              <div class="radar-trend-value" id="rds-instance">$259.88 instances</div>
               <div class="radar-trend-sub">count × rate × hours</div>
             </div>
             <div class="radar-trend-divider"></div>

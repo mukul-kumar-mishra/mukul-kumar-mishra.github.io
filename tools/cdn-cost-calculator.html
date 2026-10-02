@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free CDN cost calculator. Price bandwidth per GB plus requests, then read the monthly bill and the bandwidth share. Compare CloudFront, Fastly and Cloudflare.">
+  <meta name="description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/cdn-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="CDN Cost Calculator (CloudFront and Cloudflare) | Buildopsy">
-  <meta property="og:description" content="Free CDN cost calculator. Price bandwidth per GB plus requests, then read the monthly bill and the bandwidth share. Compare CloudFront, Fastly and Cloudflare.">
+  <meta property="og:title" content="CDN Cost Calculator: Bandwidth and Requests | Buildopsy">
+  <meta property="og:description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
   <meta property="og:url" content="https://buildopsy.com/tools/cdn-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="CDN Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CDN Cost Calculator (CloudFront and Cloudflare) | Buildopsy">
-  <meta name="twitter:description" content="Free CDN cost calculator. Price bandwidth per GB plus requests, then read the monthly bill and the bandwidth share. Compare CloudFront, Fastly and Cloudflare.">
+  <meta name="twitter:title" content="CDN Cost Calculator: Bandwidth and Requests | Buildopsy">
+  <meta name="twitter:description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
   <meta name="twitter:image:alt" content="CDN Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>CDN Cost Calculator (CloudFront and Cloudflare) | Buildopsy</title>
+  <title>CDN Cost Calculator: Bandwidth and Requests | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does CloudFront cost per month?","acceptedAnswer":{"@type":"Answer","text":"CloudFront lists about $0.085 per GB for the first 10 TB plus request fees. Ten thousand GB costs $850. One hundred million requests add $75, for $925 a month. This calculator prices both lines."}},
-      {"@type":"Question","name":"Is bandwidth or requests the bigger CDN cost?","acceptedAnswer":{"@type":"Answer","text":"Bandwidth usually dominates. In the default model transfer is about 92 percent of the bill and requests about 8 percent. Video and large assets push bandwidth higher while API traffic pushes requests higher."}},
-      {"@type":"Question","name":"Which CDN has free egress?","acceptedAnswer":{"@type":"Answer","text":"Cloudflare charges nothing for egress on most plans. CloudFront lists about $0.085 per GB and Fastly about $0.12 per GB. Set the price field to compare."}}
+      {"@type":"Question","name":"How is the monthly CDN estimate calculated?","acceptedAnswer":{"@type":"Answer","text":"The model adds monthly bandwidth times its entered price per GB to requests in groups of 10,000 times the entered request price. With the example inputs, the estimate is $925 before plan fees or free-tier allowances."}},
+      {"@type":"Question","name":"Is bandwidth or request volume the bigger cost in this example?","acceptedAnswer":{"@type":"Answer","text":"Bandwidth is about 92 percent of this example bill and requests about 8 percent. The mix changes when traffic volume, object size or the unit rates change."}},
+      {"@type":"Question","name":"Does this include CDN free tiers or plan fees?","acceptedAnswer":{"@type":"Answer","text":"No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan."}}
     ]
   }
   </script>
@@ -70,7 +70,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">CDN Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A CDN bill is bandwidth plus requests. The defaults price 10,000 GB of transfer at $0.085 per GB plus 100 million requests at $0.0075 per ten thousand, which lands at $925 a month. Bandwidth is about 92 percent of it.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This two-line estimate adds bandwidth charges to request charges. The example inputs price 10,000 GB at $0.085 per GB plus 100 million requests at $0.0075 per ten thousand, for $925 before free tiers or fixed plan fees. Enter your provider's billable volume and rates.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
@@ -83,12 +83,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly CDN bill</span>
-              <span class="radar-count-description"> · Bandwidth plus requests, priced for a full month.</span>
-            <div class="radar-filters" aria-label="Provider presets">
-              <button class="radar-filter active" data-set="cdn-gbp:0.085">CLOUDFRONT</button>
-              <button class="radar-filter" data-set="cdn-gbp:0.12">FASTLY</button>
-              <button class="radar-filter" data-set="cdn-gbp:0">CLOUDFLARE</button>
-            </div>
+              <span class="radar-count-description"> · Enter billable bandwidth and requests after any free tier.</span>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="cdn-gb">Bandwidth (GB / month)</label><input type="number" id="cdn-gb" value="10000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="cdn-gbp">Bandwidth price ($ / GB)</label><input type="number" id="cdn-gbp" value="0.085" step="0.001" class="field-input"></div>

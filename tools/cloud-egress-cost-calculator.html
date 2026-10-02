@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free cloud egress cost calculator. Price outbound data transfer per GB after the free allowance, then read the monthly bill and the daily burn.">
+  <meta name="description" content="Estimate outbound cloud data-transfer charges from billable GB, your provider rate and remaining free allowance. Rates vary by service, region and destination.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/cloud-egress-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Cloud Egress Cost Calculator: AWS, GCP, Azure | Buildopsy">
-  <meta property="og:description" content="Free cloud egress cost calculator. Price outbound data transfer per GB after the free allowance, then read the monthly bill and the daily burn.">
+  <meta property="og:title" content="Cloud Egress Cost Calculator: Outbound Transfer Estimate | Buildopsy">
+  <meta property="og:description" content="Estimate outbound cloud data-transfer charges from billable GB, your provider rate and remaining free allowance. Rates vary by service, region and destination.">
   <meta property="og:url" content="https://buildopsy.com/tools/cloud-egress-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Cloud Egress Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cloud Egress Cost Calculator: AWS, GCP, Azure | Buildopsy">
-  <meta name="twitter:description" content="Free cloud egress cost calculator. Price outbound data transfer per GB after the free allowance, then read the monthly bill and the daily burn.">
+  <meta name="twitter:title" content="Cloud Egress Cost Calculator: Outbound Transfer Estimate | Buildopsy">
+  <meta name="twitter:description" content="Estimate outbound cloud data-transfer charges from billable GB, your provider rate and remaining free allowance. Rates vary by service, region and destination.">
   <meta name="twitter:image:alt" content="Cloud Egress Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>Cloud Egress Cost Calculator: AWS, GCP, Azure | Buildopsy</title>
+  <title>Cloud Egress Cost Calculator: Outbound Transfer Estimate | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does 10 TB of AWS egress cost?","acceptedAnswer":{"@type":"Answer","text":"At the AWS list price of $0.09 per GB, 10,000 GB of internet egress costs $900 a month after the first 100 GB free. This calculator subtracts the free allowance and shows the daily burn."}},
-      {"@type":"Question","name":"Why is egress more expensive than storage?","acceptedAnswer":{"@type":"Answer","text":"Cloud providers price outbound transfer to keep data inside their network. At $0.09 per GB, moving a single terabyte out costs $90, which is more than storing it for a year at $0.023 per GB."}},
-      {"@type":"Question","name":"Which cloud has the cheapest egress?","acceptedAnswer":{"@type":"Answer","text":"Cloudflare charges nothing for egress on most plans. AWS and Azure list about $0.09 per GB and Google Cloud lists about $0.12 per GB. Set the price field to compare providers."}}
+      {"@type":"Question","name":"How much does 10 TB of AWS egress cost?","acceptedAnswer":{"@type":"Answer","text":"In this US East first-tier example, 10,000 GB at $0.09 per GB with the full 100 GB AWS monthly allowance remaining is $891. The allowance is aggregated across eligible AWS services and regions, and the rate depends on destination and tier."}},
+      {"@type":"Question","name":"How should I compare transfer cost with storage?","acceptedAnswer":{"@type":"Answer","text":"Compare the same data volume over the same time period. At the example $0.09 per GB rate, one TB of outbound transfer is about $90 before allowances; 1 TB stored at $0.023 per GB-month is about $23 for one month."}},
+      {"@type":"Question","name":"How should I compare provider egress rates?","acceptedAnswer":{"@type":"Answer","text":"Use the price and remaining allowance for the exact service, source region, destination and transfer tier. Free allowances and rate thresholds differ, so one provider's rate should not be treated as universal."}}
     ]
   }
   </script>
@@ -70,30 +70,25 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Cloud Egress Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Outbound transfer is the line item that surprises teams. The defaults price 10,000 GB of AWS internet egress at $0.09 per GB after the first 100 GB free, which lands at $891.00 a month. Set the price field to compare AWS, Google Cloud, Azure and Cloudflare.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Outbound transfer is the line item that surprises teams. This example prices 10,000 GB of AWS internet egress at the US East first-tier rate of $0.09 per GB with the full 100 GB monthly allowance remaining, for $891. Rates vary by region, destination and tier.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
+    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> The price and allowance are inputs for one transfer path. AWS's first 100 GB allowance is shared across eligible services and regions, so enter only the remaining amount. This model does not handle tiered rates or product-specific exceptions. See <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">AWS transfer pricing</a> and <a href="https://cloud.google.com/vpc/network-pricing" target="_blank" rel="noopener noreferrer">Google Cloud network pricing</a>.</aside>
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="egress-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price outbound data transfer from volume, unit price and the free allowance. Starts from 10 TB leaving AWS in a month.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price one transfer path from volume, unit rate and remaining allowance. The starting example is 10 TB of AWS internet egress.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly egress bill</span>
               <span class="radar-count-description"> · Billable gigabytes after the free tier, priced for a full month.</span>
-            <div class="radar-filters" aria-label="Provider presets">
-              <button class="radar-filter active" data-set="eg-price:0.09">AWS</button>
-              <button class="radar-filter" data-set="eg-price:0.12">GOOGLE</button>
-              <button class="radar-filter" data-set="eg-price:0.087">AZURE</button>
-              <button class="radar-filter" data-set="eg-price:0">CLOUDFLARE</button>
-            </div>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="eg-gb">Egress (GB / month)</label><input type="number" id="eg-gb" value="10000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="eg-price">Egress price ($ / GB)</label><input type="number" id="eg-price" value="0.09" step="0.001" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="eg-free">Free allowance (GB)</label><input type="number" id="eg-free" value="100" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="eg-free">Remaining free allowance (GB)</label><input type="number" id="eg-free" value="100" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">

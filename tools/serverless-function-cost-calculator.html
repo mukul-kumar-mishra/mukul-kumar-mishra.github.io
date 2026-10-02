@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does AWS Lambda cost per month?","acceptedAnswer":{"@type":"Answer","text":"Lambda bills requests plus GB-seconds of compute. At $0.20 per million requests and $0.0000166667 per GB-second, 100 million requests at 200 ms and 512 MB costs $179.80 a month after the free tier."}},
-      {"@type":"Question","name":"What is a GB-second in serverless billing?","acceptedAnswer":{"@type":"Answer","text":"A GB-second is one gigabyte of memory held for one second. A 512 MB function runs at half a gigabyte, so a 200 ms invocation bills 0.1 GB-second. Multiply by the request count to get total compute."}},
-      {"@type":"Question","name":"Does more memory cost more or less on Lambda?","acceptedAnswer":{"@type":"Answer","text":"More memory raises the per-millisecond price but often finishes the work faster. This calculator prices memory directly, so you can test whether a larger size lowers the total GB-seconds."}}
+      {"@type":"Question","name":"How much does AWS Lambda cost per month?","acceptedAnswer":{"@type":"Answer","text":"With the default rates and the full monthly free tier still available to the account, 100 million 200 ms invocations at 512 MB cost about $179.80. Other Lambda functions may already use part of the account-level free tier."}},
+      {"@type":"Question","name":"What is a GB-second in serverless billing?","acceptedAnswer":{"@type":"Answer","text":"A GB-second is one gigabyte of allocated memory for one second. A 512 MB function running for 200 ms uses 0.1 GB-second per invocation. Lambda bills duration in 1 ms increments; use billed duration for the closest estimate."}},
+      {"@type":"Question","name":"Does more memory cost more or less on Lambda?","acceptedAnswer":{"@type":"Answer","text":"This model holds duration constant when memory changes. Higher memory raises compute capacity and the price per millisecond; measure the new duration and enter it to compare total GB-seconds."}}
     ]
   }
   </script>
@@ -70,14 +70,15 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Serverless Function Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests plus GB-seconds of compute. The defaults price 100 million requests at 200 ms and 512 MB, which lands at $179.80 a month after the free tier. Compute is about 89 percent of that, so memory and duration decide the bill.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests plus GB-seconds of compute. This example prices 100 million requests at 200 ms and 512 MB at about $179.80 after the full monthly free tier. That free tier is shared across the AWS account; enter what remains after other functions.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
+    <aside class="tip" style="margin-bottom:24px;"><strong>Pricing scope:</strong> The default $0.20/million request rate and $0.0000166667/GB-second compute rate are an editable US East (N. Virginia) x86 on-demand example in the first duration tier. Use valid function settings: 128–10,240 MB memory and 1–900,000 ms billed duration. Compute rates vary by region, architecture and volume tier. Free requests and compute are monthly account-level allowances; enter the remaining amounts after all functions. Provisioned concurrency, response streaming, Lambda Managed Instances, ephemeral storage, logs and networking are excluded. <a href="https://aws.amazon.com/lambda/pricing/" target="_blank" rel="noopener noreferrer">AWS Lambda pricing</a>.</aside>
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="serverless-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a function from request volume, duration and memory, then apply the monthly free tier of one million requests plus 400,000 GB-seconds.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price a function from request volume, duration and memory, then subtract the remaining monthly account-level grants (defaults: one million requests and 400,000 GB-seconds).</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -91,8 +92,10 @@
             </div>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="lm-req">Requests (millions / month)</label><input type="number" id="lm-req" value="100" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="lm-dur">Duration (ms)</label><input type="number" id="lm-dur" value="200" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="lm-mem">Memory (MB)</label><input type="number" id="lm-mem" value="512" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-dur">Billed duration (ms / invocation)</label><input type="number" id="lm-dur" value="200" min="1" max="900000" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-mem">Memory (MB)</label><input type="number" id="lm-mem" value="512" min="128" max="10240" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-free-req">Remaining free requests (millions / account this month)</label><input type="number" id="lm-free-req" value="1" min="0" step="0.01" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="lm-free-gbs">Remaining free compute (GB-seconds / account this month)</label><input type="number" id="lm-free-gbs" value="400000" min="0" step="1000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="lm-reqp">Request price ($ / million)</label><input type="number" id="lm-reqp" value="0.20" step="0.01" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="lm-gbs">Compute price ($ / GB-second)</label><input type="number" id="lm-gbs" value="0.0000166667" step="0.0000001" class="field-input"></div>
             </div>

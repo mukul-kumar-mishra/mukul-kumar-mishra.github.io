@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta name="description" content="Estimate S3 storage, PUT/GET requests and retrieval with editable rates. Region and storage class change request fees, retrieval charges and minimums.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta property="og:description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta property="og:description" content="Estimate S3 storage, PUT/GET requests and retrieval with editable rates. Region and storage class change request fees, retrieval charges and minimums.">
   <meta property="og:url" content="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="AWS S3 Storage Cost Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta name="twitter:description" content="Free AWS S3 cost calculator. Price storage per GB by class plus PUT and GET request fees, then read the monthly bill and the cost per GB.">
+  <meta name="twitter:description" content="Estimate S3 storage, PUT/GET requests and retrieval with editable rates. Region and storage class change request fees, retrieval charges and minimums.">
   <meta name="twitter:image:alt" content="AWS S3 Storage Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>AWS S3 Storage Cost Calculator With Request Fees | Buildopsy</title>
@@ -35,8 +35,8 @@
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How much does 1 TB of S3 Standard storage cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the US East list price of $0.023 per GB-month, 1,000 GB of S3 Standard storage costs $23.00 a month before request and retrieval fees. This calculator adds PUT and GET fees on top."}},
-      {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"Requests are priced per thousand. One million PUTs at $0.005 per thousand adds $5.00. Ten million GETs at $0.0004 per thousand adds $4.00. High-churn buckets can pay more in requests than in storage."}},
-      {"@type":"Question","name":"What is the cheapest S3 storage class?","acceptedAnswer":{"@type":"Answer","text":"S3 Glacier Deep Archive is the cheapest class at about $0.00099 per GB-month, but retrieval is slow and billed per GB. Use the class presets to compare Standard, Standard-IA, Glacier and Deep Archive."}}
+      {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"They can. At the example US East Standard rates, one million PUTs at $0.005 per thousand adds $5, and ten million GETs at $0.0004 per thousand adds $4. Request rates vary by storage class and region."}},
+      {"@type":"Question","name":"What costs are not included in this S3 estimate?","acceptedAnswer":{"@type":"Answer","text":"The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for the selected region and class."}}
     ]
   }
   </script>
@@ -70,26 +70,22 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AWS S3 Storage Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">S3 bills storage per GB-month plus a fee per thousand requests plus retrieval per GB. The defaults price 1,000 GB in S3 Standard at $0.023 per GB plus one million PUTs and ten million GETs, which lands at $32.00 a month. Change any field to model your own bucket.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This line-item estimate adds storage, requests and retrieval. The defaults are an editable US East S3 Standard example at $0.023 per GB-month plus one million PUTs and ten million GETs, for $32.00 before other charges.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
+
+    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> For a different class or region, update every applicable storage, request and retrieval rate. This model omits class-specific minimum billable object sizes (128 KB for Standard-IA, One Zone-IA and Glacier Instant Retrieval), minimum storage durations, early deletion, lifecycle-transition and data-transfer charges. See <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">AWS S3 pricing</a> and <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" rel="noopener noreferrer">storage class rules</a>.</aside>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="s3-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a bucket from its storage class, its request mix and any retrieval. Starts from 1 TB in Standard with a million writes and ten million reads.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Enter the storage rate, request rates and retrieval volume for your selected class and region. The defaults describe S3 Standard only.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly S3 bill</span>
               <span class="radar-count-description"> · Storage plus requests plus retrieval, priced for a full month.</span>
-            <div class="radar-filters" aria-label="Storage class presets">
-              <button class="radar-filter active" data-set="s3-price:0.023;s3-retp:0">STANDARD</button>
-              <button class="radar-filter" data-set="s3-price:0.0125;s3-retp:0.01">STANDARD-IA</button>
-              <button class="radar-filter" data-set="s3-price:0.004;s3-retp:0.01">GLACIER</button>
-              <button class="radar-filter" data-set="s3-price:0.00099;s3-retp:0.02">DEEP ARCHIVE</button>
-            </div>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="s3-gb">Storage (GB)</label><input type="number" id="s3-gb" value="1000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="s3-price">Storage price ($ / GB-month)</label><input type="number" id="s3-price" value="0.023" step="0.0001" class="field-input"></div>

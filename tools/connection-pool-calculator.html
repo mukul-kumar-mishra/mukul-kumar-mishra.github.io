@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free connection pool calculator. Size database pools with Little’s law: peak RPS times p99 latency times a safety factor, divided across pods.">
+  <meta name="description" content="Estimate database pool size from peak RPS, p99 latency and a safety factor. This conservative heuristic differs from formal Little's Law, which uses mean time in system.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/connection-pool-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Connection Pool Size Calculator: Little’s Law | Buildopsy">
-  <meta property="og:description" content="Free connection pool calculator. Size database pools with Little’s law: peak RPS times p99 latency times a safety factor, divided across pods.">
+  <meta property="og:description" content="Estimate database pool size from peak RPS, p99 latency and a safety factor. This conservative heuristic differs from formal Little's Law, which uses mean time in system.">
   <meta property="og:url" content="https://buildopsy.com/tools/connection-pool-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Connection Pool Size Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Connection Pool Size Calculator: Little’s Law | Buildopsy">
-  <meta name="twitter:description" content="Free connection pool calculator. Size database pools with Little’s law: peak RPS times p99 latency times a safety factor, divided across pods.">
+  <meta name="twitter:description" content="Estimate database pool size from peak RPS, p99 latency and a safety factor. This conservative heuristic differs from formal Little's Law, which uses mean time in system.">
   <meta name="twitter:image:alt" content="Connection Pool Size Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Connection Pool Size Calculator: Little’s Law | Buildopsy</title>
@@ -34,8 +34,8 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How do I calculate database connection pool size?","acceptedAnswer":{"@type":"Answer","text":"Concurrent connections equal peak RPS times p99 latency in seconds, multiplied by a safety factor. 10,000 RPS at 45ms p99 with a 1.5 factor gives 675 connections, or 17 per pod across 40 pods."}},
-      {"@type":"Question","name":"What happens if the connection pool is too small?","acceptedAnswer":{"@type":"Answer","text":"Requests queue waiting for a connection, p99 latency climbs, and Little's law demand rises with it. That feedback loop is how a pool starves a service under load."}}
+      {"@type":"Question","name":"How do I estimate database connection pool size?","acceptedAnswer":{"@type":"Answer","text":"This conservative heuristic multiplies peak RPS by p99 latency, then applies a safety factor. Formal Little's Law uses mean time in system rather than p99. At 10,000 RPS, 45 ms p99 and a 1.5 factor, the estimate is 675 connections, or 17 per pod across 40 pods."}},
+      {"@type":"Question","name":"What happens if the connection pool is too small?","acceptedAnswer":{"@type":"Answer","text":"Requests queue while waiting for a connection, and observed p99 latency can rise. This heuristic will then estimate more concurrency; validate pool size and queueing behavior with workload measurements."}}
     ]
   }
   </script>
@@ -69,20 +69,20 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Connection Pool Size Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Little's law for connection pools: concurrent connections equal peak requests per second times p99 latency in seconds. Add a safety factor, then spread the pool across pods.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A conservative connection-pool estimate: peak RPS times p99 latency gives a p99-based concurrency heuristic. Add a safety factor, then spread the pool across pods. Formal Little's Law uses mean time in system.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="pool-size">
-      <p class="fl-desc" style="margin:0 0 14px;">Little's law for pools. Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor, spread across pods. Defaults mirror a 10k TPS payments switch at 45ms p99.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Conservative p99-based pool sizing: peak RPS times p99 latency in seconds, times a safety factor, spread across pods. This is a heuristic rather than formal Little's Law, which uses mean time in system.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Pool size</span>
-              <span class="radar-count-description"> · Little's law, plus a safety factor.</span>
+              <span class="radar-count-description"> · p99-based concurrency estimate plus safety factor.</span>
             <div class="radar-filters" aria-label="Latency presets">
               <button class="radar-filter" data-set="pool-lat:20">20MS P99</button>
               <button class="radar-filter active" data-set="pool-lat:45">45MS P99</button>
@@ -121,7 +121,7 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">Concurrent in flight</div>
               <div class="radar-trend-value" id="pool-conc">450 concurrent</div>
-              <div class="radar-trend-sub">Little's law output</div>
+              <div class="radar-trend-sub">peak RPS × p99 latency</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">

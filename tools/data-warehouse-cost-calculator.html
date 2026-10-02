@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free data warehouse cost calculator. Price compute credits by rate plus stored terabytes, then read the monthly bill and the compute share.">
+  <meta name="description" content="Estimate warehouse spend from monthly credits and stored data using editable rates. Snowflake credit and storage prices vary by edition, region and contract.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/data-warehouse-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Data Warehouse Cost Calculator (Snowflake Credits) | Buildopsy">
-  <meta property="og:description" content="Free data warehouse cost calculator. Price compute credits by rate plus stored terabytes, then read the monthly bill and the compute share.">
+  <meta property="og:title" content="Data Warehouse Cost Calculator: Credits and Storage | Buildopsy">
+  <meta property="og:description" content="Estimate warehouse spend from monthly credits and stored data using editable rates. Snowflake credit and storage prices vary by edition, region and contract.">
   <meta property="og:url" content="https://buildopsy.com/tools/data-warehouse-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Data Warehouse Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Data Warehouse Cost Calculator (Snowflake Credits) | Buildopsy">
-  <meta name="twitter:description" content="Free data warehouse cost calculator. Price compute credits by rate plus stored terabytes, then read the monthly bill and the compute share.">
+  <meta name="twitter:title" content="Data Warehouse Cost Calculator: Credits and Storage | Buildopsy">
+  <meta name="twitter:description" content="Estimate warehouse spend from monthly credits and stored data using editable rates. Snowflake credit and storage prices vary by edition, region and contract.">
   <meta name="twitter:image:alt" content="Data Warehouse Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>Data Warehouse Cost Calculator (Snowflake Credits) | Buildopsy</title>
+  <title>Data Warehouse Cost Calculator: Credits and Storage | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does a Snowflake warehouse cost per month?","acceptedAnswer":{"@type":"Answer","text":"A bill is compute credits plus stored data. At $3 per credit, 2,000 credits cost $6,000. Ten terabytes of storage at $23 per terabyte adds $230, for $6,230 a month. This calculator prices both."}},
-      {"@type":"Question","name":"Why is compute most of the warehouse bill?","acceptedAnswer":{"@type":"Answer","text":"Warehouses bill for the time a virtual warehouse runs, not for the query. An idle warehouse left running still burns credits. In the default model compute is about 96 percent of the bill, so auto-suspend matters most."}},
-      {"@type":"Question","name":"Does storage or compute drive a data warehouse bill?","acceptedAnswer":{"@type":"Answer","text":"Compute almost always dominates. Storage lists at about $23 per terabyte a month while a single credit costs $2 to $4. Set the credit and storage fields to see the split for your own workload."}}
+      {"@type":"Question","name":"How is a warehouse bill estimated?","acceptedAnswer":{"@type":"Answer","text":"This model multiplies monthly credits by the entered credit rate, then adds stored terabytes times the entered storage rate. The default inputs produce $6,230; they are example rates, not a Snowflake quote."}},
+      {"@type":"Question","name":"Are Snowflake credit prices the same for every account?","acceptedAnswer":{"@type":"Answer","text":"No. Credit and storage rates depend on edition, cloud, region and on-demand or capacity contract. Enter the rates from your account's price guide or bill."}},
+      {"@type":"Question","name":"Does this estimate include every warehouse charge?","acceptedAnswer":{"@type":"Answer","text":"No. It models warehouse credits and storage only. Serverless features, cloud services, data transfer and other account line items are not included."}}
     ]
   }
   </script>
@@ -70,25 +70,22 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Data Warehouse Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A warehouse bill is compute credits plus stored data. The defaults price 2,000 credits at $3 each plus 10 TB of storage at $23 per TB, which lands at $6,230 a month. Switch the credit presets to compare Snowflake editions.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This estimate multiplies monthly warehouse credits by a credit rate, then adds stored-data cost. The example inputs ($3 per credit and $23 per TB-month) produce $6,230. Actual Snowflake rates vary by edition, cloud, region and contract.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
+
+    <aside class="tip" style="margin-bottom:24px;"><strong>Pricing note:</strong> The $3 credit and $23/TB rates are example inputs. Snowflake says platform credit and storage rates vary by edition, region and On-Demand versus Capacity account. Enter your account's actual rates. <a href="https://docs.snowflake.com/en/user-guide/intro-editions" target="_blank" rel="noopener noreferrer">Snowflake edition pricing factors</a>.</aside>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="warehouse-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a warehouse from credits consumed, the credit rate and stored terabytes. Starts from 2,000 credits plus 10 TB.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Enter credits consumed plus your account's credit and storage rates. This model does not include serverless features, data transfer or cloud-services adjustments.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly warehouse bill</span>
               <span class="radar-count-description"> · Compute plus storage, priced for a full month.</span>
-            <div class="radar-filters" aria-label="Edition presets">
-              <button class="radar-filter" data-set="dw-creditp:2">STANDARD</button>
-              <button class="radar-filter active" data-set="dw-creditp:3">ENTERPRISE</button>
-              <button class="radar-filter" data-set="dw-creditp:4">BUSINESS CRITICAL</button>
-            </div>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="dw-credits">Credits / month</label><input type="number" id="dw-credits" value="2000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="dw-creditp">Price ($ / credit)</label><input type="number" id="dw-creditp" value="3" step="0.01" class="field-input"></div>

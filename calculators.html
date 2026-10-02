@@ -37,8 +37,8 @@
       {"@type":"Question","name":"How much does 1M agent turns cost with token caching?","acceptedAnswer":{"@type":"Answer","text":"Enter input tokens, cache hit rate and output price in the Token Bill calculator. It prices one turn then scales to one million turns. At 80k input tokens with 87.5 percent cache hits the example shows the monthly bill in seconds."}},
       {"@type":"Question","name":"What is the difference between token cost and RPS envelope?","acceptedAnswer":{"@type":"Answer","text":"Token cost prices per turn with cache. RPS envelope prices events per second at 1M RPS for a month. Use Token Bill for agent cost and RPS Envelope for infrastructure cost."}},
       {"@type":"Question","name":"How many minutes of downtime does a 99.9 percent SLO allow?","acceptedAnswer":{"@type":"Answer","text":"A 99.9 percent SLO over a 30-day month allows 43.2 minutes of downtime. Enter the SLO plus burned minutes in the Error Budget calculator to see what is left and how fast the current burn rate exhausts it."}},
-      {"@type":"Question","name":"How does the Kubernetes HPA decide replica count?","acceptedAnswer":{"@type":"Answer","text":"Desired replicas equal current replicas times current utilization over target utilization, rounded up. Enter live CPU numbers in the HPA Sizer to get the exact replica count plus any max cap warning."}},
-      {"@type":"Question","name":"How do I size a database connection pool?","acceptedAnswer":{"@type":"Answer","text":"Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor. Enter peak load plus pod count in the Pool Sizer to get total pool size and per-pod connections."}}
+      {"@type":"Question","name":"How does the Kubernetes HPA decide replica count?","acceptedAnswer":{"@type":"Answer","text":"This basic CPU estimate rounds up current replicas times utilization over target, then clamps between minReplicas and maxReplicas. CPU utilization is relative to the pod CPU request. It assumes at least one replica and does not model tolerance, stabilization windows, scale-to-zero or multiple metrics."}},
+      {"@type":"Question","name":"How do I estimate a database connection pool?","acceptedAnswer":{"@type":"Answer","text":"The Pool Sizer uses a conservative heuristic: peak RPS times p99 latency, then a safety factor. Formal Little's Law uses mean time in system. Enter peak load and pod count to estimate total and per-pod connections."}}
     ]
   }
   </script>
@@ -74,145 +74,10 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free tools</span><span class="chip">Runs locally</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Free tools for AI inference, cloud costs, scaling and SRE. Change the inputs in your browser; no data leaves your device. Each calculator explains its assumptions.</p>
-      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#calculator-directory">Tool finder</a> · <a href="#quick-calculators">Quick calculators</a>. Results are estimates, not provider quotes.</p>
+      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#quick-calculators">Quick calculators on this page</a> · <a href="#calculator-directory">All standalone tools</a>. Results are estimates, not provider quotes.</p>
     </header>
 
-    <section class="sec calc-directory" id="calculator-directory" aria-labelledby="calculator-directory-title">
-      <div class="sec-head">
-      <h2 class="sec-title" id="calculator-directory-title"><i data-lucide="search"></i> Find a calculator</h2>
-      </div>
-      <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
-      <div class="calc-directory-search">
-        <i data-lucide="search" aria-hidden="true"></i>
-        <input id="calculatorSearch" type="search" placeholder="Try Postgres, retries or egress" aria-label="Search all 19 calculators" autocomplete="off">
-      </div>
-      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 6 of 19. Search or expand to see all.</p>
-      <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
-        <a class="calc-directory-card" href="tools/llm-token-cost-calculator.html" data-calculator-card data-search="llm token inference model input output cache ai agent">
-          <span class="calc-directory-category">AI inference</span>
-          <h3>LLM Token Cost Calculator</h3>
-          <p>Price input, cache and output tokens per turn then scale to a monthly workload.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/managed-postgres-cost-calculator.html" data-calculator-card data-search="managed postgres database rds cloud sql aurora instance storage backup">
-          <span class="calc-directory-category">Database</span>
-          <h3>Managed Postgres Cost Calculator</h3>
-          <p>Estimate instance hours plus provisioned storage and backup charges.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/data-warehouse-cost-calculator.html" data-calculator-card data-search="data warehouse snowflake credits compute storage analytics">
-          <span class="calc-directory-category">Data platform</span>
-          <h3>Data Warehouse Cost Calculator</h3>
-          <p>Model warehouse compute credits and stored terabytes in one monthly bill.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/observability-cost-calculator.html" data-calculator-card data-search="observability datadog new relic monitoring hosts logs ingest telemetry">
-          <span class="calc-directory-category">Observability</span>
-          <h3>Observability Cost Calculator</h3>
-          <p>Compare host-based monitoring charges with log-ingest costs.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/cdn-cost-calculator.html" data-calculator-card data-search="cdn cloudfront fastly cloudflare bandwidth requests edge delivery">
-          <span class="calc-directory-category">Edge delivery</span>
-          <h3>CDN Cost Calculator</h3>
-          <p>Estimate bandwidth and request charges across common CDN pricing models.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/serverless-function-cost-calculator.html" data-calculator-card data-search="serverless aws lambda requests duration memory gb seconds functions">
-          <span class="calc-directory-category">Serverless</span>
-          <h3>Serverless Function Cost Calculator</h3>
-          <p>Price requests and compute time from function duration and memory.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-      </div>
-      <details class="calc-directory-more" id="calculatorDirectoryMore">
-        <summary>More calculators (13)</summary>
-        <div class="calc-directory-grid calc-directory-grid-more">
-          <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
-            <span class="calc-directory-category">AI data</span>
-            <h3>Vector Database Cost Calculator</h3>
-            <p>Estimate vector storage overhead plus the serving fleet.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/cloud-egress-cost-calculator.html" data-calculator-card data-search="cloud egress network outbound data transfer bandwidth gb allowance">
-            <span class="calc-directory-category">Networking</span>
-            <h3>Cloud Egress Cost Calculator</h3>
-            <p>Price outbound data transfer after the provider’s free allowance.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 object storage bucket request get put retrieval gb">
-            <span class="calc-directory-category">Cloud storage</span>
-            <h3>AWS S3 Storage Cost Calculator</h3>
-            <p>Estimate storage, request and retrieval charges for an S3 workload.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/ec2-compute-cost-calculator.html" data-calculator-card data-search="ec2 compute instances hourly utilization commitment discount aws">
-            <span class="calc-directory-category">Cloud compute</span>
-            <h3>EC2 Compute Cost Calculator</h3>
-            <p>Model instance-hour spend with utilization and commitment discounts.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/kubernetes-cluster-cost-calculator.html" data-calculator-card data-search="kubernetes cluster node control plane persistent volume storage cost">
-            <span class="calc-directory-category">Kubernetes</span>
-            <h3>Kubernetes Cluster Cost Calculator</h3>
-            <p>Add worker nodes, control plane and persistent volumes to the bill.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/edge-request-cost-calculator.html" data-calculator-card data-search="rps envelope edge request throughput million events monthly cost">
-            <span class="calc-directory-category">Traffic and scale</span>
-            <h3>RPS Envelope Estimator</h3>
-            <p>Turn requests per second into variable and fixed monthly spend.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/agent-retry-cost-calculator.html" data-calculator-card data-search="agent retry storm failed attempts task inference wasted monthly cost">
-            <span class="calc-directory-category">AI reliability</span>
-            <h3>Agent Retry Cost Calculator</h3>
-            <p>Estimate monthly spend from failed tasks and repeated attempts.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/context-compaction-calculator.html" data-calculator-card data-search="context compaction survival tokens reread replay llm agent cost">
-            <span class="calc-directory-category">AI context</span>
-            <h3>Context Compaction Calculator</h3>
-            <p>See what survives compaction and estimate the cost of rebuilding context.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/error-budget-calculator.html" data-calculator-card data-search="error budget slo burn rate downtime runway reliability">
-            <span class="calc-directory-category">SRE</span>
-            <h3>Error Budget Burn Calculator</h3>
-            <p>Calculate SLO downtime allowance and remaining runway at the current burn.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/kubernetes-hpa-calculator.html" data-calculator-card data-search="kubernetes hpa replica autoscaling cpu utilization target">
-            <span class="calc-directory-category">Kubernetes</span>
-            <h3>Kubernetes HPA Replica Estimator</h3>
-            <p>Estimate desired replicas from current and target utilization.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/trace-sampling-rate-calculator.html" data-calculator-card data-search="trace sampling rate observability spans ingest budget telemetry">
-            <span class="calc-directory-category">Observability</span>
-            <h3>Trace Sampling Rate Calculator</h3>
-            <p>Fit span ingest volume to a monthly observability budget.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/connection-pool-calculator.html" data-calculator-card data-search="database connection pool sizing postgres rps p99 latency little law">
-            <span class="calc-directory-category">Database</span>
-            <h3>Database Connection Pool Sizer</h3>
-            <p>Size concurrent connections from peak RPS and p99 latency.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-          <a class="calc-directory-card" href="tools/downtime-cost-calculator.html" data-calculator-card data-search="downtime outage cost revenue lost sla credits reliability">
-            <span class="calc-directory-category">Reliability</span>
-            <h3>Downtime Cost Calculator</h3>
-            <p>Estimate revenue loss plus SLA credits during an outage.</p>
-            <span class="calc-directory-open">Open calculator →</span>
-          </a>
-        </div>
-      </details>
-      <p class="fl-desc calc-directory-empty" id="calculatorDirectoryEmpty" role="status" hidden>No calculators match that search. Try a provider or task name. <button class="calc-directory-clear" id="calculatorDirectoryClear" type="button">Clear search</button></p>
-      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 19 standalone calculators.</p></noscript>
-    </section>
-
-    <details class="calc-quick-tools" id="quick-calculators">
+    <details class="calc-quick-tools" id="quick-calculators" open>
       <summary>Quick calculators on this page</summary>
       <p class="fl-desc">Use one of the nine embedded calculators here, or open its standalone page from the directory.</p>
     <div class="calc-tabs" role="tablist" aria-label="Quick calculators">
@@ -542,7 +407,7 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> HPA Replica Estimator</h2>
         <a class="sec-link" href="tools/kubernetes-hpa-calculator.html">Open standalone →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">The real Kubernetes autoscaler formula. Desired replicas equal current replicas times current utilization over target utilization, rounded up. Defaults scale 8 replicas at 72 percent toward a 60 percent target.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">A basic single-metric HPA estimate: desired replicas equal current replicas times current utilization over target utilization, rounded up and clamped to the minimum and maximum. CPU utilization is relative to the pod CPU request. It assumes at least one replica; other HPA behaviors are not modeled.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -555,10 +420,11 @@
               <button class="radar-filter" data-set="hpa-util:95">95 PCT CPU</button>
             </div>
             <div class="calc-inputs">
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (percent)</label><input type="number" id="hpa-util" value="72" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (percent)</label><input type="number" id="hpa-target" value="60" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" min="0" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (% of request)</label><input type="number" id="hpa-util" value="72" min="0" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (% of request)</label><input type="number" id="hpa-target" value="60" min="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-min">Min replicas</label><input type="number" id="hpa-min" value="1" min="1" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" min="1" step="1" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">
@@ -592,7 +458,7 @@
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cap status</div>
-              <div class="radar-trend-value" id="hpa-cap">within max 20</div>
+              <div class="radar-trend-value" id="hpa-cap">within 1-20 bounds</div>
               <div class="radar-trend-sub">against max replicas</div>
             </div>
           </div>
@@ -670,13 +536,13 @@
         <h2 class="sec-title"><i data-lucide="database"></i> Connection Pool Sizer</h2>
         <a class="sec-link" href="tools/connection-pool-calculator.html">Open standalone →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Little's law for pools. Concurrent connections equal peak RPS times p99 latency in seconds, times a safety factor, spread across pods. Defaults mirror a 10k TPS payments switch at 45ms p99.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Conservative p99-based pool sizing: peak RPS times p99 latency in seconds, times a safety factor, spread across pods. This heuristic differs from formal Little's Law, which uses mean time in system.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Pool size</span>
-              <span class="radar-count-description"> · Little's law, plus a safety factor.</span>
+              <span class="radar-count-description"> · p99-based concurrency estimate plus safety factor.</span>
             <div class="radar-filters" aria-label="Latency presets">
               <button class="radar-filter" data-set="pool-lat:20">20MS P99</button>
               <button class="radar-filter active" data-set="pool-lat:45">45MS P99</button>
@@ -715,7 +581,7 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">Concurrent in flight</div>
               <div class="radar-trend-value" id="pool-conc">450 concurrent</div>
-              <div class="radar-trend-sub">Little's law output</div>
+              <div class="radar-trend-sub">peak RPS × p99 latency</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
@@ -794,6 +660,141 @@
     </section>
 
     </details>
+
+    <section class="sec calc-directory" id="calculator-directory" aria-labelledby="calculator-directory-title">
+      <div class="sec-head">
+      <h2 class="sec-title" id="calculator-directory-title"><i data-lucide="search"></i> Browse standalone tools</h2>
+      </div>
+      <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
+      <div class="calc-directory-search">
+        <i data-lucide="search" aria-hidden="true"></i>
+        <input id="calculatorSearch" type="search" placeholder="Try Postgres, retries or egress" aria-label="Search all 19 calculators" autocomplete="off">
+      </div>
+      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 6 of 19. Search or expand to see all.</p>
+      <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
+        <a class="calc-directory-card" href="tools/llm-token-cost-calculator.html" data-calculator-card data-search="llm token inference model input output cache ai agent">
+          <span class="calc-directory-category">AI inference</span>
+          <h3>LLM Token Cost Calculator</h3>
+          <p>Price input, cache and output tokens per turn then scale to a monthly workload.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/managed-postgres-cost-calculator.html" data-calculator-card data-search="managed postgres database rds cloud sql aurora instance storage backup">
+          <span class="calc-directory-category">Database</span>
+          <h3>Managed Postgres Cost Calculator</h3>
+          <p>Estimate instance hours plus provisioned storage and backup charges.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/data-warehouse-cost-calculator.html" data-calculator-card data-search="data warehouse snowflake credits compute storage analytics">
+          <span class="calc-directory-category">Data platform</span>
+          <h3>Data Warehouse Cost Calculator</h3>
+          <p>Model warehouse compute credits and stored terabytes in one monthly bill.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/observability-cost-calculator.html" data-calculator-card data-search="observability datadog new relic monitoring hosts logs ingest telemetry">
+          <span class="calc-directory-category">Observability</span>
+          <h3>Observability Cost Calculator</h3>
+          <p>Compare host-based monitoring charges with log-ingest costs.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/cdn-cost-calculator.html" data-calculator-card data-search="cdn cloudfront fastly cloudflare bandwidth requests edge delivery">
+          <span class="calc-directory-category">Edge delivery</span>
+          <h3>CDN Cost Calculator</h3>
+          <p>Estimate bandwidth and request charges across common CDN pricing models.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+        <a class="calc-directory-card" href="tools/serverless-function-cost-calculator.html" data-calculator-card data-search="serverless aws lambda requests duration memory gb seconds functions">
+          <span class="calc-directory-category">Serverless</span>
+          <h3>Serverless Function Cost Calculator</h3>
+          <p>Price requests and compute time from function duration and memory.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
+      </div>
+      <details class="calc-directory-more" id="calculatorDirectoryMore">
+        <summary>More calculators (13)</summary>
+        <div class="calc-directory-grid calc-directory-grid-more">
+          <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
+            <span class="calc-directory-category">AI data</span>
+            <h3>Vector Database Cost Calculator</h3>
+            <p>Estimate vector storage overhead plus the serving fleet.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/cloud-egress-cost-calculator.html" data-calculator-card data-search="cloud egress network outbound data transfer bandwidth gb allowance">
+            <span class="calc-directory-category">Networking</span>
+            <h3>Cloud Egress Cost Calculator</h3>
+            <p>Price outbound data transfer after the provider’s free allowance.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 object storage bucket request get put retrieval gb">
+            <span class="calc-directory-category">Cloud storage</span>
+            <h3>AWS S3 Storage Cost Calculator</h3>
+            <p>Estimate storage, request and retrieval charges for an S3 workload.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/ec2-compute-cost-calculator.html" data-calculator-card data-search="ec2 compute instances hourly utilization commitment discount aws">
+            <span class="calc-directory-category">Cloud compute</span>
+            <h3>EC2 Compute Cost Calculator</h3>
+            <p>Model instance-hour spend with utilization and commitment discounts.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/kubernetes-cluster-cost-calculator.html" data-calculator-card data-search="kubernetes cluster node control plane persistent volume storage cost">
+            <span class="calc-directory-category">Kubernetes</span>
+            <h3>Kubernetes Cluster Cost Calculator</h3>
+            <p>Add worker nodes, control plane and persistent volumes to the bill.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/edge-request-cost-calculator.html" data-calculator-card data-search="rps envelope edge request throughput million events monthly cost">
+            <span class="calc-directory-category">Traffic and scale</span>
+            <h3>RPS Envelope Estimator</h3>
+            <p>Turn requests per second into variable and fixed monthly spend.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/agent-retry-cost-calculator.html" data-calculator-card data-search="agent retry storm failed attempts task inference wasted monthly cost">
+            <span class="calc-directory-category">AI reliability</span>
+            <h3>Agent Retry Cost Calculator</h3>
+            <p>Estimate monthly spend from failed tasks and repeated attempts.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/context-compaction-calculator.html" data-calculator-card data-search="context compaction survival tokens reread replay llm agent cost">
+            <span class="calc-directory-category">AI context</span>
+            <h3>Context Compaction Calculator</h3>
+            <p>See what survives compaction and estimate the cost of rebuilding context.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/error-budget-calculator.html" data-calculator-card data-search="error budget slo burn rate downtime runway reliability">
+            <span class="calc-directory-category">SRE</span>
+            <h3>Error Budget Burn Calculator</h3>
+            <p>Calculate SLO downtime allowance and remaining runway at the current burn.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/kubernetes-hpa-calculator.html" data-calculator-card data-search="kubernetes hpa replica autoscaling cpu utilization target">
+            <span class="calc-directory-category">Kubernetes</span>
+            <h3>Kubernetes HPA Replica Estimator</h3>
+            <p>Estimate desired replicas from current and target utilization.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/trace-sampling-rate-calculator.html" data-calculator-card data-search="trace sampling rate observability spans ingest budget telemetry">
+            <span class="calc-directory-category">Observability</span>
+            <h3>Trace Sampling Rate Calculator</h3>
+            <p>Fit span ingest volume to a monthly observability budget.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/connection-pool-calculator.html" data-calculator-card data-search="database connection pool sizing postgres rps p99 latency little law">
+            <span class="calc-directory-category">Database</span>
+            <h3>Database Connection Pool Sizer</h3>
+            <p>Size concurrent connections from peak RPS and p99 latency.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/downtime-cost-calculator.html" data-calculator-card data-search="downtime outage cost revenue lost sla credits reliability">
+            <span class="calc-directory-category">Reliability</span>
+            <h3>Downtime Cost Calculator</h3>
+            <p>Estimate revenue loss plus SLA credits during an outage.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+        </div>
+      </details>
+      <p class="fl-desc calc-directory-empty" id="calculatorDirectoryEmpty" role="status" hidden>No calculators match that search. Try a provider or task name. <button class="calc-directory-clear" id="calculatorDirectoryClear" type="button">Clear search</button></p>
+      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 19 standalone calculators.</p></noscript>
+    </section>
 
     <div class="ad-slot" data-ad-slot="calculators-below-tools" role="complementary" aria-label="Advertisement">
       <span class="ad-slot-label">Advertisement</span>

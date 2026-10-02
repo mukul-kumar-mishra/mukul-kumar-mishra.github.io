@@ -492,7 +492,7 @@ h1, h2, h3, h4, h5, h6 {
 .calc-directory-more summary { width: fit-content; cursor: pointer; color: var(--cyan); font-family: var(--font-display); font-size: 0.84rem; font-weight: 700; }
 .calc-directory-empty { padding: 14px; border: 1px dashed var(--line); border-radius: 10px; }
 .calc-directory-clear { margin-left: 8px; border: 0; background: transparent; color: var(--cyan); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
-.calc-quick-tools { margin-top: 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; }
+.calc-quick-tools { margin-top: 28px; scroll-margin-top: 90px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; }
 .calc-quick-tools summary { cursor: pointer; color: var(--cyan); font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; }
 .calc-quick-tools[open] summary { margin-bottom: 18px; }
 @media (max-width: 700px) {

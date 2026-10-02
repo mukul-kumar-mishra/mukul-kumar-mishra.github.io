@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta name="description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/vector-database-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy">
-  <meta property="og:description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta property="og:title" content="Vector Database Cost Calculator: Storage and Serving | Buildopsy">
+  <meta property="og:description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
   <meta property="og:url" content="https://buildopsy.com/tools/vector-database-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Vector Database Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy">
-  <meta name="twitter:description" content="Free vector database cost calculator. Turn vector count and dimensions into storage with index overhead, add a serving pod fleet, then read the monthly bill.">
+  <meta name="twitter:title" content="Vector Database Cost Calculator: Storage and Serving | Buildopsy">
+  <meta name="twitter:description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
   <meta name="twitter:image:alt" content="Vector Database Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>Vector Database Cost Calculator (pgvector and Pinecone) | Buildopsy</title>
+  <title>Vector Database Cost Calculator: Storage and Serving | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much storage do one million vectors need?","acceptedAnswer":{"@type":"Answer","text":"A 1,536-dimension float32 vector is 6,144 bytes. One million vectors are 6.14 GB raw. With a 2x index overhead that is about 12.3 GB, which stores for a few dollars a month on a managed database."}},
-      {"@type":"Question","name":"Is storage or compute the bigger vector database cost?","acceptedAnswer":{"@type":"Answer","text":"Compute usually dominates. A serving fleet of three pods at $70 each costs $210 a month, while 10 million vectors use about 14 dollars of storage. In the default model compute is about 94 percent of the bill."}},
-      {"@type":"Question","name":"Is pgvector cheaper than a managed vector database?","acceptedAnswer":{"@type":"Answer","text":"pgvector adds vector search to a Postgres instance you already pay for, so there is no separate storage fee. A managed vector database adds pods and a per-vector price but removes the tuning. Set the pod count to zero to model a pgvector-only bill."}}
+      {"@type":"Question","name":"How much storage do one million vectors need?","acceptedAnswer":{"@type":"Answer","text":"A 1,536-dimension float32 vector is 6,144 bytes. One million vectors are 6.144 decimal GB raw. With a 2x index overhead that is 12.288 GB; at the example $0.115/GB-month input, storage alone is about $1.41 before compute or provider-specific charges."}},
+      {"@type":"Question","name":"Is storage or compute the bigger vector database cost?","acceptedAnswer":{"@type":"Answer","text":"In the default model, compute dominates. Three serving pods at $70 each cost $210 a month, while 10 million vectors use about $14.13 of modeled storage. Compute is about 94 percent of the example bill."}},
+      {"@type":"Question","name":"Does this compare pgvector with managed vector database pricing?","acceptedAnswer":{"@type":"Answer","text":"No. It estimates float32 vector bytes with an entered index-overhead multiplier, storage rate and serving-pod fleet. pgvector still consumes billable Postgres storage, while managed services can bill by vector count, queries or capacity, which this model does not represent."}}
     ]
   }
   </script>
@@ -70,9 +70,11 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Vector Database Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A vector store bill is storage plus a serving fleet. The defaults price 10 million 1,536-dimension vectors with 2x index overhead plus three pods at $70 each, which lands at $224 a month. Compute is about 94 percent of it, so pod count matters most.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This scenario estimates float32 vector storage plus a serving-pod fleet. Ten million 1,536-dimension vectors with 2x index overhead and three $70 pods model to about $224 a month. Change the assumed rates to match your setup.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
+
+    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> Raw storage assumes four bytes per dimension (float32) and decimal GB (1 GB = 1 billion bytes), then applies the chosen index-overhead multiplier. This includes storage plus serving pods only. Query charges, backups, replicas and managed per-vector pricing are not included.</aside>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 

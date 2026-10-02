@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta name="description" content="Free EC2 instance cost calculator. Price running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="EC2 Compute Cost Calculator With Reserved Savings | Buildopsy">
-  <meta property="og:description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta property="og:title" content="EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy">
+  <meta property="og:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
   <meta property="og:url" content="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="EC2 Compute Cost Calculator">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EC2 Compute Cost Calculator With Reserved Savings | Buildopsy">
-  <meta name="twitter:description" content="Free EC2 compute cost calculator. Price instances by count, hourly rate and hours, then apply utilization and a reserved or spot discount to see the savings.">
+  <meta name="twitter:title" content="EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy">
+  <meta name="twitter:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
   <meta name="twitter:image:alt" content="EC2 Compute Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>EC2 Compute Cost Calculator With Reserved Savings | Buildopsy</title>
+  <title>EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does one EC2 instance cost per month?","acceptedAnswer":{"@type":"Answer","text":"An m5.large at $0.096 an hour running 730 hours costs $70.08 a month on demand. Ten of them cost $700.80. Enter the count and hourly price to price your own fleet."}},
-      {"@type":"Question","name":"How much do reserved instances save?","acceptedAnswer":{"@type":"Answer","text":"A one-year reserved commitment typically saves about 37 percent against on demand and a three-year commitment about 55 percent. Spot capacity can save about 70 percent but can be reclaimed. Use the presets to model each."}},
-      {"@type":"Question","name":"Does utilization change the compute bill?","acceptedAnswer":{"@type":"Answer","text":"On demand you pay for the instance whether it is busy or idle. This calculator scales the bill by average utilization so you can see what an idle fleet wastes and where rightsizing pays."}}
+      {"@type":"Question","name":"How are EC2 instance charges estimated?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours. This example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount."}},
+      {"@type":"Question","name":"Does CPU utilization reduce the EC2 instance charge?","acceptedAnswer":{"@type":"Answer","text":"No. EC2 instance usage is billed while the instance is running, even if it is idle. The running-time input models powered-on time as a share of the entered hours, not CPU load."}},
+      {"@type":"Question","name":"Does this calculator reproduce Reserved Instance or Savings Plan billing?","acceptedAnswer":{"@type":"Answer","text":"No. The discount field applies an effective percentage to modeled running usage. Reserved Instances and Savings Plans are commitments that can be billed even when matching usage is absent, and actual discounts depend on terms and usage."}}
     ]
   }
   </script>
@@ -70,39 +70,34 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">EC2 Compute Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Compute bills are instances times hourly price times hours, then reduced by whatever commitment you hold. The defaults price ten m5.large instances at $0.096 an hour over 730 hours, which lands at $700.80 a month on demand. Switch the presets to price reserved and spot.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">EC2 charges for instance runtime, not CPU utilization. The example prices ten m5.large instances at an editable $0.096 per hour for 730 hours: $700.80 before discounts.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
+    <aside class="tip" style="margin-bottom:24px;"><strong>Billing note:</strong> AWS bills an instance while it is running, even when idle. Running time below models powered-on hours. The default $0.096/hour rate is a Linux m5.large example in US East (N. Virginia). The discount field is a sensitivity input, not a live Reserved Instance or Savings Plan quote. Actual rates depend on instance type, region and operating system. <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html" target="_blank" rel="noopener noreferrer">AWS instance billing states</a>.</aside>
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="compute-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate, hours and average utilization, then apply a commitment discount. Starts from ten instances at list price.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate and the fraction of the month it is running. Apply an optional effective discount scenario.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly compute bill</span>
-              <span class="radar-count-description"> · On-demand value scaled by utilization and discount.</span>
-            <div class="radar-filters" aria-label="Pricing presets">
-              <button class="radar-filter active" data-set="ec2-disc:0">ON-DEMAND</button>
-              <button class="radar-filter" data-set="ec2-disc:37">1YR RESERVED</button>
-              <button class="radar-filter" data-set="ec2-disc:55">3YR RESERVED</button>
-              <button class="radar-filter" data-set="ec2-disc:70">SPOT</button>
-            </div>
+              <span class="radar-count-description"> · Running instance-hours times the effective rate.</span>
             <div class="calc-inputs">
-              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-count">Instances</label><input type="number" id="ec2-count" value="10" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hr">Price ($ / instance-hour)</label><input type="number" id="ec2-hr" value="0.096" step="0.001" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hours">Hours / month</label><input type="number" id="ec2-hours" value="730" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-util">Average utilization (percent)</label><input type="number" id="ec2-util" value="100" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-disc">Discount (percent)</label><input type="number" id="ec2-disc" value="0" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-count">Instances</label><input type="number" id="ec2-count" value="10" min="0" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hr">Price ($ / instance-hour)</label><input type="number" id="ec2-hr" value="0.096" min="0" step="0.001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hours">Hours / month</label><input type="number" id="ec2-hours" value="730" min="0" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-running">Running time (percent of month)</label><input type="number" id="ec2-running" value="100" min="0" max="100" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="ec2-disc">Effective discount scenario (percent)</label><input type="number" id="ec2-disc" value="0" min="0" max="100" step="1" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly bill</div>
                 <div class="calc-result-value" id="ec2-monthly">$701</div>
-                <div class="radar-count-description">per month · on demand × utilization × discount</div>
+                <div class="radar-count-description">per month · running hours × rate after discount</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
@@ -122,15 +117,15 @@
           </div>
           <div class="radar-trend">
             <div class="radar-trend-block">
-              <div class="radar-trend-label">On-demand value</div>
-              <div class="radar-trend-value" id="ec2-ondemand">$701 on demand</div>
-              <div class="radar-trend-sub">count × rate × hours</div>
+                <div class="radar-trend-label">Base instance charge</div>
+              <div class="radar-trend-value" id="ec2-ondemand">$701 before discount</div>
+                <div class="radar-trend-sub">running instance-hours × rate</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Discount savings</div>
               <div class="radar-trend-value" id="ec2-savings">$0 saved</div>
-              <div class="radar-trend-sub">commitment or spot</div>
+              <div class="radar-trend-sub">modeled discount</div>
             </div>
           </div>
         </div>

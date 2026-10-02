@@ -34,8 +34,8 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does an EKS cluster cost per month?","acceptedAnswer":{"@type":"Answer","text":"EKS charges $73 a month for the control plane plus the cost of the worker nodes. Six nodes at $140 each plus the fee is $913 a month before storage. This calculator prices the full cluster."}},
-      {"@type":"Question","name":"Do managed Kubernetes control planes cost money?","acceptedAnswer":{"@type":"Answer","text":"EKS and GKE charge about $73 per cluster a month. AKS charges nothing for the control plane. A self-managed control plane has no fee but you run and patch the nodes yourself."}},
+      {"@type":"Question","name":"How much does an EKS cluster cost per month?","acceptedAnswer":{"@type":"Answer","text":"Standard-support EKS charges $0.10 per cluster-hour, about $73 for a 730-hour month. Six worker nodes at $140 each plus that fee cost $913 before storage. This model adds entered persistent storage; networking, load balancers, logging and other services are excluded."}},
+      {"@type":"Question","name":"Do managed Kubernetes control planes cost money?","acceptedAnswer":{"@type":"Answer","text":"Standard-support EKS and eligible non-Enterprise GKE clusters cost $0.10 per cluster-hour. GKE provides a $74.40 monthly credit for one eligible zonal Standard or Autopilot cluster; regional clusters are not eligible. AKS Free has no management fee but no financially backed SLA; AKS Standard is about $73 per 730-hour month and Premium about $438. The GKE preset shows the gross fee before its credit."}},
       {"@type":"Question","name":"Why is most of the Kubernetes bill worker nodes?","acceptedAnswer":{"@type":"Answer","text":"Worker nodes run your workloads, so they scale with demand. The control plane is a flat fee. In the default model nodes are about 87 percent of the bill, which is why rightsizing nodes matters more than the cluster fee."}}
     ]
   }
@@ -70,10 +70,11 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes Cluster Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A cluster bill is worker nodes plus the control plane fee plus persistent volumes. The defaults price six nodes at $140 each, an EKS control plane at $73 and 500 GB of storage at $0.10 per GB, which lands at $963.00 a month. Switch the presets to compare managed platforms.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A cluster bill is worker nodes plus control-plane fees plus persistent volumes. This example prices six nodes at $140 each, a gross $73 EKS control-plane fee and 500 GB of storage at $0.10/GB-month, for $963 before credits. GKE's credit can offset one eligible cluster.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
+    <aside class="tip" style="margin-bottom:24px;"><strong>Pricing note:</strong> This estimate totals worker compute, control-plane management and entered persistent storage only; it excludes networking, load balancers, logging and other services. Presets model EKS standard support ($0.10/hour), GKE gross management fees ($0.10/hour, before its credit), or AKS Free, Standard ($0.10/hour) and Premium ($0.60/hour) tiers. The presets change only the control-plane fee; node and storage rates stay as editable example inputs. The GKE $74.40 monthly credit covers one eligible zonal Standard or Autopilot cluster, not regional clusters; GKE Enterprise is exempt from the management fee. EKS extended support costs more. See <a href="https://aws.amazon.com/eks/pricing/" target="_blank" rel="noopener noreferrer">EKS</a>, <a href="https://cloud.google.com/kubernetes-engine/pricing" target="_blank" rel="noopener noreferrer">GKE</a> and <a href="https://azure.microsoft.com/en-us/pricing/details/kubernetes-service/" target="_blank" rel="noopener noreferrer">AKS</a> pricing.</aside>
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="k8s-bill">
@@ -85,9 +86,11 @@
               <span class="radar-count-label">Live result · Monthly cluster bill</span>
               <span class="radar-count-description"> · Nodes plus control plane plus storage, priced for a full month.</span>
             <div class="radar-filters" aria-label="Platform presets">
-              <button class="radar-filter active" data-set="k8s-cp:73">EKS</button>
-              <button class="radar-filter" data-set="k8s-cp:73">GKE</button>
-              <button class="radar-filter" data-set="k8s-cp:0">AKS</button>
+              <button class="radar-filter active" data-set="k8s-cp:73">EKS STANDARD</button>
+              <button class="radar-filter" data-set="k8s-cp:73">GKE GROSS</button>
+              <button class="radar-filter" data-set="k8s-cp:0">AKS FREE</button>
+              <button class="radar-filter" data-set="k8s-cp:73">AKS STANDARD</button>
+              <button class="radar-filter" data-set="k8s-cp:438">AKS PREMIUM</button>
             </div>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="k8s-nodes">Worker nodes</label><input type="number" id="k8s-nodes" value="6" class="field-input"></div>

@@ -35,7 +35,7 @@
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How much does one hour of downtime cost?","acceptedAnswer":{"@type":"Answer","text":"Divide monthly revenue at risk by 43,800 minutes and multiply by 60. At $4M a month one hour costs $5,479 in lost revenue, before any SLA credit."}},
-      {"@type":"Question","name":"Is an SLA credit a cost or a saving?","acceptedAnswer":{"@type":"Answer","text":"For the provider it is money owed back to customers, so it adds to exposure. Here 25 percent of a $320,000 cloud bill adds $80,000 to the $21,918 of revenue lost."}}
+      {"@type":"Question","name":"Is an SLA credit a cost or a saving?","acceptedAnswer":{"@type":"Answer","text":"For the provider it is money owed back to customers, so it adds to exposure. Here a 25 percent credit on the $320,000 monthly bill covered by the SLA adds $80,000 to the $21,918 of revenue lost."}}
     ]
   }
   </script>
@@ -69,14 +69,14 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Downtime Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. The defaults model a four-hour outage against $4M of monthly revenue at risk.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Minutes down times revenue per minute, plus an SLA credit modeled against the bill covered by the agreement. The defaults model a four-hour outage against $4M of monthly revenue at risk.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="downtime-cost">
-      <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus a modeled SLA credit on the covered monthly bill. Use the bill for services covered by the SLA, not the full cloud account if coverage is narrower. Assumes a 43,800-minute month.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -91,7 +91,7 @@
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="dt-rev">Monthly revenue at risk ($)</label><input type="number" id="dt-rev" value="4000000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="dt-mins">Downtime (minutes)</label><input type="number" id="dt-mins" value="240" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="dt-bill">Monthly cloud bill ($)</label><input type="number" id="dt-bill" value="320000" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="dt-bill">Monthly bill covered by the SLA ($)</label><input type="number" id="dt-bill" value="320000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="dt-credit">SLA credit (percent of bill)</label><input type="number" id="dt-credit" value="25" class="field-input"></div>
             </div>
             </div>

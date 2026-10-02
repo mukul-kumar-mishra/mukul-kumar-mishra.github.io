@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free Kubernetes HPA calculator. Apply the real autoscaler formula: current replicas times utilization over target, rounded up, then capped at max.">
+  <meta name="description" content="Free Kubernetes HPA calculator. Estimate desired replicas from current CPU utilization, target, minReplicas and maxReplicas.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/kubernetes-hpa-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Kubernetes HPA Calculator: Replica Count Formula | Buildopsy">
-  <meta property="og:description" content="Free Kubernetes HPA calculator. Apply the real autoscaler formula: current replicas times utilization over target, rounded up, then capped at max.">
+  <meta property="og:description" content="Estimate desired Kubernetes HPA replicas from current utilization, target, minReplicas and maxReplicas.">
   <meta property="og:url" content="https://buildopsy.com/tools/kubernetes-hpa-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Kubernetes HPA Replica Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kubernetes HPA Calculator: Replica Count Formula | Buildopsy">
-  <meta name="twitter:description" content="Free Kubernetes HPA calculator. Apply the real autoscaler formula: current replicas times utilization over target, rounded up, then capped at max.">
+  <meta name="twitter:description" content="Estimate desired Kubernetes HPA replicas from current utilization, target, minReplicas and maxReplicas.">
   <meta name="twitter:image:alt" content="Kubernetes HPA Replica Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Kubernetes HPA Calculator: Replica Count Formula | Buildopsy</title>
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How does the Kubernetes HPA calculate replicas?","acceptedAnswer":{"@type":"Answer","text":"Desired replicas equal current replicas times current utilization divided by target utilization, rounded up to the next whole number, then limited by maxReplicas. The default 8 replicas at 72 percent toward a 60 percent target yields 10."}},
+      {"@type":"Question","name":"How does the Kubernetes HPA calculate replicas?","acceptedAnswer":{"@type":"Answer","text":"For this single CPU metric estimate, desired replicas equal ceil(current replicas times current utilization divided by target utilization), clamped between minReplicas and maxReplicas. CPU utilization is measured relative to the pod CPU request. The model omits tolerance, stabilization windows and other metrics."}},
       {"@type":"Question","name":"Why does my HPA not scale near the target?","acceptedAnswer":{"@type":"Answer","text":"The autoscaler applies a tolerance, usually 0.1, so it ignores fluctuations under 10 percent around the target. This calculator shows the raw formula without the tolerance."}}
     ]
   }
@@ -69,14 +69,14 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes HPA Replica Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">The formula the Kubernetes autoscaler actually runs: current replicas times current utilization over target utilization, rounded up, then clamped to your maximum. Enter live CPU numbers to read the replica count.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A basic single-CPU-metric HPA estimate: current replicas times utilization over target, rounded up, then clamped between minReplicas and maxReplicas. It assumes at least one replica; other metrics, tolerance, scale-to-zero and stabilization windows are not modeled.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result on this page is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in, and every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="hpa-size">
-      <p class="fl-desc" style="margin:0 0 14px;">The real Kubernetes autoscaler formula. Desired replicas equal current replicas times current utilization over target utilization, rounded up. Defaults scale 8 replicas at 72 percent toward a 60 percent target.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">A basic single-metric HPA estimate: desired replicas equal current replicas times current utilization over target utilization, rounded up and clamped to the minimum and maximum. It assumes at least one replica; other HPA behaviors are not modeled.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -89,10 +89,11 @@
               <button class="radar-filter" data-set="hpa-util:95">95 PCT CPU</button>
             </div>
             <div class="calc-inputs">
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (percent)</label><input type="number" id="hpa-util" value="72" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (percent)</label><input type="number" id="hpa-target" value="60" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-rep">Current replicas</label><input type="number" id="hpa-rep" value="8" min="0" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-util">Current CPU utilization (% of request)</label><input type="number" id="hpa-util" value="72" min="0" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-target">Target CPU utilization (% of request)</label><input type="number" id="hpa-target" value="60" min="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-min">Min replicas</label><input type="number" id="hpa-min" value="1" min="1" step="1" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="hpa-max">Max replicas</label><input type="number" id="hpa-max" value="20" min="1" step="1" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">
@@ -126,7 +127,7 @@
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cap status</div>
-              <div class="radar-trend-value" id="hpa-cap">within max 20</div>
+              <div class="radar-trend-value" id="hpa-cap">within 1-20 bounds</div>
               <div class="radar-trend-sub">against max replicas</div>
             </div>
           </div>
