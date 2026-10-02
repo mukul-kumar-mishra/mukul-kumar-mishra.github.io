@@ -112,6 +112,10 @@
         <input id="articleSearch" type="search" placeholder="Search all articles by title, topic, or tag" aria-label="Search articles" autocomplete="off" style="flex:1;background:transparent;border:0;outline:0;color:var(--paper);font-family:var(--font-body);font-size:0.95rem;min-width:0;">
       </div>
       <p id="resultCount" class="fl-desc" style="margin:0 0 14px;"></p>
+      <div id="noResults" style="display:none;padding:18px;border:1px dashed var(--line);border-radius:8px;margin:0 0 14px;">
+        <p class="fl-desc" style="margin:0 0 12px;">Nothing on this shelf matches. Frontier incident files like the Instinct audit live on the AI Slop Watch shelf.</p>
+        <p style="margin:0;display:flex;gap:8px;flex-wrap:wrap;"><button class="chip" id="clearSearchBtn" type="button" style="cursor:pointer;">Clear search</button><a class="chip" href="ai-slop.html">Browse AI Slop Watch</a></p>
+      </div>
       <div id="articleList" style="display:grid;gap:16px;">
         <article class="feature-link"><div><span class="fl-tag">Free Course</span> <span class="chip">15 lessons</span></div><h3><a class="feature-link-title" href="course.html">System Design Course: 15 Lessons From Real Outages</a></h3><p class="fl-desc">Start here. Story-driven lessons with diagrams from request paths to interview playbooks, built from production postmortems.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">14 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="openai-dns-sandbox-escape-postmortem.html">OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training</a></h3><p class="fl-desc">Proxy blocked the web plus DNS relayed the question. Flagged in 15 minutes plus killed after 2 plus hours.</p></article>
@@ -196,6 +200,8 @@
       var moreBtn = document.getElementById('loadMoreBtn');
       var sentinel = document.getElementById('scrollSentinel');
       var counter = document.getElementById('resultCount');
+      var noBox = document.getElementById('noResults');
+      var clearBtn = document.getElementById('clearSearchBtn');
       var embeddedArticles = [
         {"title": "OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training", "url": "openai-dns-sandbox-escape-postmortem.html", "tag": "Agent Infrastructure", "dateLabel": "October 2026", "readTime": "14 min read", "desc": "Proxy blocked the web plus DNS relayed the question. Flagged in 15 minutes plus killed after 2 plus hours.", "tags": ["OpenAI", "DNS", "Sandbox", "Egress"]},
         {"title": "Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure", "url": "coinbase-msk-kafka-failover-postmortem.html", "tag": "Event Streaming", "dateLabel": "September 2026", "readTime": "7 min read", "desc": "Coinbase's account of an AWS thermal event, lost matching-engine quorum and two MSK clusters stuck healing.", "tags": ["Kafka", "AWS MSK", "Coinbase", "Failover"]},
@@ -242,6 +248,7 @@
       var visibleArticles = [];
       var shownCount = 0;
       var activeQuery = '';
+      var moreMeansClear = false;
 
       function chipRow(tags) {
         var out = '';
@@ -265,25 +272,45 @@
       function paintCounter() {
         if (!visibleArticles.length) {
           counter.textContent = activeQuery
-            ? 'No articles match "' + activeQuery + '". Try fewer words.'
+            ? ('No articles match "' + activeQuery + '".')
             : 'No articles found yet. New postmortems land here first.';
+          noBox.style.display = activeQuery ? 'block' : 'none';
           return;
         }
+        noBox.style.display = 'none';
         counter.textContent = activeQuery
-          ? (visibleArticles.length + (visibleArticles.length === 1 ? ' result' : ' results') + ' for "' + activeQuery + '"')
+          ? (visibleArticles.length + (visibleArticles.length === 1 ? ' result for "' : ' results for "') + activeQuery + '". Showing ' + shownCount + '.')
           : ('Showing ' + shownCount + ' of ' + visibleArticles.length + ' articles');
       }
 
       function renderMore() {
-        if (shownCount >= visibleArticles.length) return;
+        if (shownCount >= visibleArticles.length) {
+          if (activeQuery) {
+            moreBtn.textContent = 'Clear search and show all articles';
+            moreBtn.style.display = 'inline-flex';
+            sentinel.style.display = 'none';
+            moreMeansClear = true;
+          }
+          paintCounter();
+          return;
+        }
         var html = '';
         var slice = visibleArticles.slice(shownCount, shownCount + PAGE_SIZE);
         for (var i = 0; i < slice.length; i++) html += cardHtml(slice[i]);
         list.insertAdjacentHTML('beforeend', html);
         shownCount += slice.length;
         var hasMore = shownCount < visibleArticles.length;
-        moreBtn.style.display = hasMore ? 'inline-flex' : 'none';
-        sentinel.style.display = hasMore ? 'block' : 'none';
+        if (activeQuery && !hasMore) {
+          moreBtn.textContent = 'Clear search and show all articles';
+          moreBtn.style.display = 'inline-flex';
+          sentinel.style.display = 'none';
+          moreMeansClear = true;
+        } else {
+          moreBtn.textContent = 'Load more articles';
+          moreBtn.style.display = hasMore ? 'inline-flex' : 'none';
+          sentinel.style.display = hasMore ? 'block' : 'none';
+          moreMeansClear = false;
+        }
         paintCounter();
       }
 
@@ -306,12 +333,26 @@
         renderMore();
       }
 
+      function resetSearch() {
+        searchInput.value = '';
+        applySearch();
+        searchInput.focus();
+      }
+
       var debounce = null;
       searchInput.addEventListener('input', function () {
         if (debounce) clearTimeout(debounce);
         debounce = setTimeout(applySearch, 150);
       });
-      moreBtn.addEventListener('click', renderMore);
+      searchInput.addEventListener('search', applySearch);
+      clearBtn.addEventListener('click', resetSearch);
+      moreBtn.addEventListener('click', function () {
+        if (moreMeansClear) {
+          resetSearch();
+          return;
+        }
+        renderMore();
+      });
 
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (entries) {
@@ -321,7 +362,7 @@
 
       visibleArticles = allArticles.slice();
       list.innerHTML = '';
-      renderMore();
+      applySearch();
     })();
   </script>
 <script src="../js/nav.js"></script>

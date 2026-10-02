@@ -95,7 +95,16 @@
       <div class="sec-head">
         <h2 class="sec-title"><i data-lucide="siren"></i> Open Cases</h2>
       </div>
-      <div style="display:grid;gap:16px;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);">
+        <i data-lucide="search" style="flex:none;"></i>
+        <input id="slopSearch" type="search" placeholder="Search incident files by title, topic, or tag" aria-label="Search incident files" autocomplete="off" style="flex:1;background:transparent;border:0;outline:0;color:var(--paper);font-family:var(--font-body);font-size:0.95rem;min-width:0;">
+      </div>
+      <p id="slopCount" class="fl-desc" style="margin:0 0 14px;"></p>
+      <div id="noSlopResults" style="display:none;padding:18px;border:1px dashed var(--line);border-radius:8px;margin:0 0 14px;">
+        <p class="fl-desc" style="margin:0 0 12px;">Nothing on this shelf matches. System design teardowns like Kafka plus Figma live on the System Design shelf.</p>
+        <p style="margin:0;display:flex;gap:8px;flex-wrap:wrap;"><button class="chip" id="clearSlopSearch" type="button" style="cursor:pointer;">Clear search</button><a class="chip" href="index.html">Browse System Design</a></p>
+      </div>
+      <div id="slopList" style="display:grid;gap:16px;">
         <article class="feature-link">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Slop Audit</span><span class="chip">12 min read</span><span class="chip">October 2026</span><span class="chip">Rook</span></div>
           <h3><a class="feature-link-title" href="instinct-ai-agent-hallucination-postmortem.html">Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach</a></h3>
@@ -337,6 +346,49 @@
       syncIcons();
     });
     (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script>
+    (function () {
+      var box = document.getElementById('slopSearch');
+      var counter = document.getElementById('slopCount');
+      var noBox = document.getElementById('noSlopResults');
+      var clearBtn = document.getElementById('clearSlopSearch');
+      var grid = document.getElementById('slopList');
+      var cards = grid.querySelectorAll('article.feature-link');
+      function applySlop() {
+        var q = box.value.trim().toLowerCase();
+        var words = q ? q.split(/\s+/) : [];
+        var shown = 0;
+        for (var i = 0; i < cards.length; i++) {
+          var hay = cards[i].textContent.toLowerCase();
+          var hit = true;
+          for (var j = 0; j < words.length; j++) {
+            if (hay.indexOf(words[j]) === -1) { hit = false; break; }
+          }
+          cards[i].style.display = hit ? '' : 'none';
+          if (hit) shown++;
+        }
+        if (!shown) {
+          counter.textContent = q
+            ? ('No incident files match "' + q + '".')
+            : 'No incident files found yet. New audits land here first.';
+          noBox.style.display = q ? 'block' : 'none';
+          return;
+        }
+        noBox.style.display = 'none';
+        counter.textContent = q
+          ? (shown + (shown === 1 ? ' result for "' : ' results for "') + q + '".')
+          : ('Showing ' + shown + ' of ' + cards.length + ' incident files');
+      }
+      box.addEventListener('input', applySlop);
+      box.addEventListener('search', applySlop);
+      clearBtn.addEventListener('click', function () {
+        box.value = '';
+        applySlop();
+        box.focus();
+      });
+      applySlop();
+    })();
   </script>
 <script src="../js/nav.js"></script>
 </body>
