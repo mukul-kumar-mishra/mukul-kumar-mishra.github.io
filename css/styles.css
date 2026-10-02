@@ -477,23 +477,32 @@ h1, h2, h3, h4, h5, h6 {
 .calc-directory-search { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--mist); }
 .calc-directory-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--paper); font: inherit; font-size: 0.95rem; }
 .calc-directory-search:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 16%, transparent); }
-.calc-directory-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.calc-directory-card { display: flex; min-width: 0; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--paper); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
-.calc-directory-card:hover { border-color: var(--cyan); color: var(--paper); transform: translateY(-1px); }
+.calc-directory-grid { border-top: 1px solid var(--line); }
+.calc-directory-card { display: grid; grid-template-columns: minmax(190px, 0.9fr) minmax(0, 2fr) auto; align-items: center; gap: 4px 18px; min-width: 0; padding: 13px 10px; border-bottom: 1px solid var(--line); color: var(--paper); text-decoration: none; transition: background-color 0.15s; }
+.calc-directory-card:hover { background: var(--panel); color: var(--paper); }
 .calc-directory-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .calc-directory-card[hidden] { display: none; }
-.calc-directory-category { color: var(--mist); font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.calc-directory-category { grid-column: 1; grid-row: 1; color: var(--mist); font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .calc-directory-card h3 { margin: 0; color: var(--heading); font-family: var(--font-display); font-size: 0.94rem; line-height: 1.35; }
-.calc-directory-card p { margin: 0; color: var(--mist); font-size: 0.8rem; line-height: 1.5; }
-.calc-directory-open { margin-top: auto; padding-top: 4px; color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; }
+.calc-directory-card h3 { grid-column: 1; grid-row: 2; }
+.calc-directory-card p { grid-column: 2; grid-row: 1 / span 2; margin: 0; color: var(--mist); font-size: 0.84rem; line-height: 1.45; }
+.calc-directory-open { grid-column: 3; grid-row: 1 / span 2; color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
 .calc-directory-more { margin-top: 14px; }
 .calc-directory-more[hidden] { display: none; }
 .calc-directory-more summary { width: fit-content; cursor: pointer; color: var(--cyan); font-family: var(--font-display); font-size: 0.84rem; font-weight: 700; }
 .calc-directory-empty { padding: 14px; border: 1px dashed var(--line); border-radius: 10px; }
 .calc-directory-clear { margin-left: 8px; border: 0; background: transparent; color: var(--cyan); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
-@media (max-width: 1000px) { .calc-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 700px) { .calc-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 460px) { .calc-directory-grid { grid-template-columns: minmax(0, 1fr); } }
+.calc-quick-tools { margin-top: 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; }
+.calc-quick-tools summary { cursor: pointer; color: var(--cyan); font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; }
+.calc-quick-tools[open] summary { margin-bottom: 18px; }
+@media (max-width: 700px) {
+  .calc-directory-card { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+  .calc-directory-category, .calc-directory-card h3 { grid-column: 1; }
+  .calc-directory-category { grid-row: 1; }
+  .calc-directory-card h3 { grid-row: 2; }
+  .calc-directory-card p { grid-column: 1 / -1; grid-row: 3; }
+  .calc-directory-open { grid-column: 2; grid-row: 1 / span 2; }
+}
 .article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
 .article-card:hover { color: var(--paper); }

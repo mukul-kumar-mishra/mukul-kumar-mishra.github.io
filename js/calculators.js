@@ -644,8 +644,8 @@
       function refreshDirectoryStatus() {
         if (!status || (search && search.value.trim())) return;
         status.textContent = more && more.open ?
-          'Showing all ' + cards.length + ' standalone calculators.' :
-          'Showing ' + featured.length + ' of ' + cards.length + ' calculators. Search the full list or expand to browse all tools.';
+          'Showing all ' + cards.length + ' calculators.' :
+          'Showing ' + featured.length + ' of ' + cards.length + '. Search or expand to see all.';
       }
 
       function filterDirectory() {

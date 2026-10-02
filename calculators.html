@@ -71,23 +71,22 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tools</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">19 calculators</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free tools</span><span class="chip">Runs locally</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nineteen instruments for developers, SREs and CTOs. Token bills, error budgets, HPA sizing, sampling fits, pool sizing and downtime cost, plus cloud cost math for S3, egress, compute, Kubernetes, warehouses, Postgres, serverless, CDNs, observability and vector stores, all runnable in seconds. Everything runs in your browser with no data sent. Each links to its teardown.</p>
-      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#calculator-directory">Find a calculator</a> · <a href="#token-bill">Token Bill</a> · <a href="#rps-bill">RPS Envelope</a> · <a href="#compaction">Compaction</a> · <a href="#retry-storm">Retry Storm</a> · <a href="#error-budget">Error Budget</a> · <a href="#hpa-size">HPA Sizer</a> · <a href="#obs-sample">Sampling Fit</a> · <a href="#pool-size">Pool Sizer</a> · <a href="#downtime-cost">Downtime Cost</a>. Built from the <a href="system-design/cursor-claude-token-exhaustion-postmortem.html">Cursor token</a>, <a href="system-design/replit-agent-runtime-postmortem.html">Replit retry</a>, <a href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="system-design/aws-thermal-outage-postmortem.html">AWS thermal</a> teardowns.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Free tools for AI inference, cloud costs, scaling and SRE. Change the inputs in your browser; no data leaves your device. Each calculator explains its assumptions.</p>
+      <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#calculator-directory">Tool finder</a> · <a href="#quick-calculators">Quick calculators</a>. Results are estimates, not provider quotes.</p>
     </header>
 
     <section class="sec calc-directory" id="calculator-directory" aria-labelledby="calculator-directory-title">
       <div class="sec-head">
-        <h2 class="sec-title" id="calculator-directory-title"><i data-lucide="search"></i> Find a Calculator</h2>
-        <span class="chip">19 tools</span>
+      <h2 class="sec-title" id="calculator-directory-title"><i data-lucide="search"></i> Find a calculator</h2>
       </div>
       <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
       <div class="calc-directory-search">
         <i data-lucide="search" aria-hidden="true"></i>
         <input id="calculatorSearch" type="search" placeholder="Try Postgres, retries or egress" aria-label="Search all 19 calculators" autocomplete="off">
       </div>
-      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 8 of 19 calculators. Search the full list or expand to browse all tools.</p>
+      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 6 of 19. Search or expand to see all.</p>
       <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
         <a class="calc-directory-card" href="tools/llm-token-cost-calculator.html" data-calculator-card data-search="llm token inference model input output cache ai agent">
           <span class="calc-directory-category">AI inference</span>
@@ -125,22 +124,22 @@
           <p>Price requests and compute time from function duration and memory.</p>
           <span class="calc-directory-open">Open calculator →</span>
         </a>
-        <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
-          <span class="calc-directory-category">AI data</span>
-          <h3>Vector Database Cost Calculator</h3>
-          <p>Estimate vector storage overhead plus the serving fleet.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
-        <a class="calc-directory-card" href="tools/cloud-egress-cost-calculator.html" data-calculator-card data-search="cloud egress network outbound data transfer bandwidth gb allowance">
-          <span class="calc-directory-category">Networking</span>
-          <h3>Cloud Egress Cost Calculator</h3>
-          <p>Price outbound data transfer after the provider’s free allowance.</p>
-          <span class="calc-directory-open">Open calculator →</span>
-        </a>
       </div>
       <details class="calc-directory-more" id="calculatorDirectoryMore">
-        <summary>Show 11 more calculators</summary>
+        <summary>More calculators (13)</summary>
         <div class="calc-directory-grid calc-directory-grid-more">
+          <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
+            <span class="calc-directory-category">AI data</span>
+            <h3>Vector Database Cost Calculator</h3>
+            <p>Estimate vector storage overhead plus the serving fleet.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/cloud-egress-cost-calculator.html" data-calculator-card data-search="cloud egress network outbound data transfer bandwidth gb allowance">
+            <span class="calc-directory-category">Networking</span>
+            <h3>Cloud Egress Cost Calculator</h3>
+            <p>Price outbound data transfer after the provider’s free allowance.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
           <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 object storage bucket request get put retrieval gb">
             <span class="calc-directory-category">Cloud storage</span>
             <h3>AWS S3 Storage Cost Calculator</h3>
@@ -213,7 +212,10 @@
       <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 19 standalone calculators.</p></noscript>
     </section>
 
-    <div class="calc-tabs" role="tablist" aria-label="Calculators">
+    <details class="calc-quick-tools" id="quick-calculators">
+      <summary>Quick calculators on this page</summary>
+      <p class="fl-desc">Use one of the nine embedded calculators here, or open its standalone page from the directory.</p>
+    <div class="calc-tabs" role="tablist" aria-label="Quick calculators">
       <button class="calc-tab" role="tab" data-target="token-bill" aria-selected="true">Token Bill</button>
       <button class="calc-tab" role="tab" data-target="rps-bill" aria-selected="false">RPS Envelope</button>
       <button class="calc-tab" role="tab" data-target="compaction" aria-selected="false">Compaction</button>
@@ -791,34 +793,12 @@
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/aws-thermal-outage-postmortem.html">AWS Thermal Postmortem: Cooling Failed First</a></h3><p class="fl-desc">A thermal event impaired nine services in one Availability Zone. Compare snapshot restoration with launching in unaffected zones.</p></article>
     </section>
 
-    <section class="sec" id="cloud-cost">
-      <div class="sec-head">
-        <h2 class="sec-title"><i data-lucide="cloud"></i> Cloud Cost Calculators</h2>
-        <a class="sec-link" href="#calculator-directory">Find a cloud cost tool ↑</a>
-      </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Price the line items that dominate a real cloud bill. Each tool opens as a standalone page you can bookmark, runs locally and sends no data.</p>
-      <p class="fl-desc" style="margin:0 0 14px;">Use the searchable directory above to find any of the ten cloud cost tools by provider or bill component.</p>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a></h3><p class="fl-desc">Shards, CDC, vector search and the modeled bill of a 200-billion-block platform.</p></article>
-    </section>
+    </details>
 
     <div class="ad-slot" data-ad-slot="calculators-below-tools" role="complementary" aria-label="Advertisement">
       <span class="ad-slot-label">Advertisement</span>
       <div class="ad-slot-body" id="ad-calculators-below-tools"></div>
     </div>
-
-    <section class="sec" id="newsletter">
-      <div class="newsletter-band">
-        <div style="min-width:0;">
-          <span class="fl-tag">Newsletter</span>
-          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
-          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
-        </div>
-        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
-          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
-          <button class="btn btn-primary" type="submit">Subscribe</button>
-        </form>
-      </div>
-    </section>
 
   </main>
 
