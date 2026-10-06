@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Google Docs system design explained: OT transform plus revision log plus per-document owner plus presence lane plus snapshot economics plus priced scale math you can rerun.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/google-docs-system-design.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Google Docs System Design: How Operational Transformation Actually Works">
+  <meta property="og:description" content="A forensic teardown of Docs collaboration: OT ordering plus revision log plus presence split plus snapshot economics plus cost at scale.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/google-docs-system-design.png">
+  <meta property="og:image:alt" content="Google Docs collaboration diagram showing OT owner plus revision log plus presence lane">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/google-docs-system-design.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Google Docs System Design: How Operational Transformation Actually Works">
+  <meta name="twitter:description" content="OT transform plus per-document owner plus ephemeral presence plus snapshot cadence plus priced RPS math.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/google-docs-system-design.png">
+  <meta name="twitter:image:alt" content="Google Docs collaboration diagram showing OT owner plus revision log plus presence lane">
+  <title>Google Docs System Design: How Operational Transformation Survives Millions of Editors | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Google Docs System Design: How Operational Transformation Survives Millions of Concurrent Editors", "description": "Google Docs system design explained: OT transform plus revision log plus per-document owner plus presence lane plus snapshot economics plus priced scale math you can rerun.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-10-06", "dateModified": "2026-10-06", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/google-docs-system-design.html"}, "keywords": "Google Docs system design, Operational Transformation, OT versus CRDT, realtime collaboration, revision log", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/google-docs-system-design.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How does Google Docs collaboration work?","acceptedAnswer":{"@type":"Answer","text":"Browser clients apply edits optimistically plus send small ops over a persistent connection to the owner process holding their document. The server orders ops authoritatively plus broadcasts transformed ops to every connected client."}},
+      {"@type":"Question","name":"Does Google Docs use OT or CRDT?","acceptedAnswer":{"@type":"Answer","text":"Google Docs uses Operational Transformation with a central server that assigns revision order. CRDT libraries like Yjs power newer tools such as Notion plus Linear where offline-first merging matters more."}},
+      {"@type":"Question","name":"Why did Docs keep OT instead of switching to CRDT?","acceptedAnswer":{"@type":"Answer","text":"OT keeps ops tiny plus needs no per-character metadata. A central owner already exists for ordering so the transform stays tractable while CRDT tombstones would tax every long-lived document."}},
+      {"@type":"Question","name":"How does Docs handle offline edits?","acceptedAnswer":{"@type":"Answer","text":"The client buffers ops against its last synced revision. On reconnect the server transforms queued ops against everything committed during the outage plus replays missed ops from the revision log."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">October 2026</span><span class="chip">18 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Google Docs System Design: How Operational Transformation Survives Millions of Concurrent Editors</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two cursors land in the same sentence at the same millisecond. Nobody refreshes. Nobody merges. Nobody loses a paragraph. This teardown explains the ordering machine behind that trick plus what the ordering costs at scale.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Docs merges edits with central OT ordering plus per-document serialization. Presence stays ephemeral while ops stay durable. Snapshots bound replay cost.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Documents</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1B plus</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Conflict Model</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">OT Central</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Presence</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Ephemeral 10 Hz</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Snapshot</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Every 30 Ops</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published October 6, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is math?</strong> The OT protocol plus revision discipline below come from Google engineering posts plus the Wave plus Jupiter lineage. RPS plus cost figures are my labeled scenario model. Replace my assumptions with your telemetry wherever they differ.</aside>
+
+      <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/google-docs-ot-transform.svg" alt="Google Docs collaboration diagram showing OT owner plus revision log plus presence lane" width="1200" height="680"><figcaption>Figure 1. Every keystroke follows one path: browser to edge to OT owner plus revision log. Presence rides beside it, never inside it.</figcaption></figure>
+
+      <section><h2>1. The Moment Typing Became A Distributed System</h2>
+        <p>Most products can queue writes politely. A word processor cannot. When a lawyer types a comma, the comma must appear now, not after consensus across three zones. When a second lawyer deletes the same sentence, both screens must converge without a merge dialog. When the train tunnel eats the network, the offline paragraphs must rejoin the document without duplicating the exhibit list.</p>
+        <p>Docs is therefore an ordering system wearing a toolbar. Clients hold a local copy plus apply edits instantly. Every edit becomes a small op: insert text at a position plus delete a range plus retain formatting across a span. Ops travel over a persistent connection to the owner process for that document. The owner assigns a revision number plus broadcasts the accepted op to every witness.</p>
+        <p>The hard question is positional drift. An op authored against revision 41 may arrive after revision 44 has committed three inserts before its target index. Applied literally, the op lands in the wrong paragraph. Operational Transformation rewrites the late op so its intent survives the new history. That rewrite is the whole product.</p>
+        <div class="callout"><strong>The working picture:</strong> one ledger plus a single pen. Clients draft optimistically. The owner sequences every entry. The broadcast is the statement everyone reads at once.</div>
+      </section>
+
+      <section><h2>2. Why Docs Beats Another Chat Clone As An Autopsy</h2>
+        <p>Chat systems route blobs plus delete them after delivery. Docs must preserve intent plus history plus undo across years of edits from strangers sharing one paragraph. The constraints are stricter so the lessons travel further.</p>
+        <p>The paper trail helps. Google shipped Wave in 2009 on OT plus retired the product while keeping the engine. The Jupiter system formalized the client revision model. The Drive team then published a three-part collaboration series describing optimistic clients plus server ordering plus revision logs. Few realtime products document their conflict core this openly.</p>
+        <p>The contrast with Figma sharpens the lesson. <a href="figma-system-design.html">Figma multiplayer</a> chose server-authoritative property resolution for spatial objects where last-writer-wins stays legible. Docs edits prose where character interleaving must preserve both authors. Same realtime family. Opposite conflict math. The bill hides in the boundary between the two choices.</p>
+      </section>
+
+      <section><h2>3. The Architecture: One Document Plus One Owner Plus Many Witnesses</h2>
+        <p>Open a document plus your browser downloads a snapshot plus opens a persistent connection. A routing layer pins every connection for that document to its owner process using consistent hashing on the document identifier. Two unrelated documents never share an ordering lock. One overloaded thesis cannot stall a stranger boarding pass.</p>
+        <p>The owner holds live state plus the revision counter. Edge gateways terminate sockets plus authenticate plus forward. Product data such as permissions plus comments plus Drive metadata lives outside the OT path in transactional stores plus a search index. That split keeps a slow comment thread from freezing keystrokes.</p>
+        <p>Durability sits behind speed. The owner appends every accepted op to an append-only revision log before broadcast fans out. Periodic snapshots capture full state roughly every 30 ops in this scenario. Recovery loads the newest snapshot plus replays only the tail. History plus undo plus offline catch-up all ride the same log.</p>
+        <div class="tip"><strong>Architecture tip:</strong> separate state by durability need. Ops need ordered persistence. Cursors need fast forgetting. Snapshots need cheap reads. One magic realtime store serving all three becomes a 3 a.m. pager with a toolbar.</div>
+      </section>
+
+      <section><h2>4. The Transform Core: How Two Edits Stop Erasing Each Other</h2>
+        <p>Consider the canonical collision. Ana inserts X at position 5 against revision 41. Ben deletes the character at position 3 against the same revision. The server commits Ana first as revision 42. Ben op arrives late. Applied literally, Ben deletion points at the wrong character because Ana insert shifted every index after position 5.</p>
+        <p>The transform function repairs it. Transform takes two ops authored against one base state plus returns adjusted forms that compose in either order while preserving intent. Ben delete at 3 stays valid. A later insert authored at 5 after a prior delete at 3 shifts left by one. Overlapping deletes collapse to a no-op for the already removed range. Inserts at the same index tie-break deterministically by author plus session order so every replica picks the same winner.</p>
+        <p>Jupiter discipline makes this tractable. Each client tracks its last synced revision plus a buffer of sent-but-unacked ops plus a buffer of unsent local edits. The server transforms each arrival against every commit since the sender last revision. Clients transform pending buffers against each broadcast. Periodic text checksums force a resync when a replica drifts. Central order plus linear history plus checksums. That trio carries the correctness load.</p>
+        <div class="tip"><strong>Interview line:</strong> name the three buffers plus the revision number. Optimistic apply buys latency. Server order buys convergence. Checksums buy honesty when transforms hide a bug.</div>
+      </section>
+
+      <section><h2>5. The Transform Matrix: Which Op Pairs Actually Collide</h2>
+        <p>Transform looks like one function. In production it is a matrix of op-pair cases, plus the matrix is where convergence bugs hide. Plain text pairs are the easy rows. Rich pairs carry the risk.</p>
+        <p>Walk the common rows. <code>insert</code> against <code>insert</code> at one index: both survive in a deterministic order fixed by author plus session tie-break, so every replica picks the same winner. <code>insert</code> against <code>delete</code>: the insert index shifts past the removed range. <code>delete</code> against <code>delete</code>: overlap collapses plus the second op shrinks to the surviving range or becomes a no-op when its target already vanished. Formatting span against delete: the span shrinks to the surviving characters instead of dangling across removed text.</p>
+        <table><thead><tr><th>Base text</th><th>Ana op</th><th>Ben op</th><th>Server order</th><th>Transformed late op</th><th>Converged text</th></tr></thead><tbody>
+          <tr><td>Hello</td><td>insert X at 2</td><td>delete at 0</td><td>Ana then Ben</td><td>delete at 0 stands</td><td>eXllo</td></tr>
+          <tr><td>Hello</td><td>insert X at 2</td><td>delete at 0</td><td>Ben then Ana</td><td>insert 2 shifts to 1</td><td>eXllo</td></tr>
+          <tr><td>ab</td><td>insert X at 1</td><td>insert Y at 1</td><td>either order</td><td>tie-break fixes one order</td><td>aXYb</td></tr>
+          <tr><td>abcd</td><td>delete 1 to 2</td><td>delete 2 to 3</td><td>either order</td><td>overlap shrinks to survivors</td><td>a</td></tr>
+        </tbody></table>
+        <p>The literature names the deeper properties TP1 plus TP2: pairwise convergence plus path independence across three or more concurrent ops. Proving both for rich text is genuinely hard, plus published OT algorithms have failed on specific interleavings in the past. The central linear history is the practical escape: the server reduces every many-way tangle to a sequence of pairwise transforms against one ordered log. Peer meshes face the full property. A pinned owner faces it one op at a time.</p>
+        <div class="tip"><strong>Testing tip:</strong> fuzz op pairs, not just single ops. Generate random concurrent pairs across inserts plus deletes plus spans, apply them in both orders plus compare checksums. Order-swapped divergence is the cheapest convergence oracle ever built.</div>
+      </section>
+
+      <section><h2>6. OT Against CRDT: Why Docs Kept The Server</h2>
+        <p>CRDT designs remove the transform by giving every character a stable sortable identifier plus tombstoning deletes. Replicas merge in any order with no central rewrite. Libraries like Yjs plus Automerge prove the model daily. <a href="notion-architecture.html">Notion</a> leans on this family for offline-first block merging where peer convergence matters more than wire size.</p>
+        <p>Docs kept OT for three priced reasons. First, ops stay tiny: position plus payload versus identifier plus causal context per character. At billions of keystrokes, bytes become budget. Second, a server already exists for auth plus storage plus search, so central ordering costs nothing extra while removing an entire class of transform proof burden. Third, tombstones accumulate: heavily edited long-lived documents carry many times their visible size until garbage collection, a tax OT never pays.</p>
+        <p>The rule transfers cleanly. Central server plus rich text plus always-online adjudication favors OT. Decentralized plus offline-first plus peer merge favors CRDT. Figma picked a third shape because canvas objects tolerate property resolution while prose cannot. Choose by product invariant, never by conference fashion.</p>
+      </section>
+
+      <section><h2>7. The RPS Model: How Much Traffic Does Typing Make</h2>
+        <p>Google does not publish a per-keystroke histogram, so the following is a scenario with explicit assumptions. Assume 300 million monthly editors plus 8 million concurrent sessions at a busy peak. Assume each active session produces 30 ops per minute including typing bursts plus formatting plus suggestion threads. That yields 4 million durable ops per second before fan-out.</p>
+        <p>Presence dwarfs edits. Assume 8 million concurrent sessions each emit throttled cursor plus selection frames at 2 per second after client coalescing. That is 16 million ephemeral frames per second. Snapshot plus log writes add a smaller durable tail: one snapshot per 30 ops across 400 thousand hot documents produces roughly 130 thousand snapshot writes per minute plus log appends equal to op rate.</p>
+        <table><thead><tr><th>Workload</th><th>Scenario</th><th>Result</th></tr></thead><tbody>
+          <tr><td>Durable ops</td><td>8M sessions at 30 ops per min</td><td>4M ops per sec</td></tr>
+          <tr><td>Presence frames</td><td>8M sessions at 2 per sec</td><td>16M frames per sec</td></tr>
+          <tr><td>Fan-out deliveries</td><td>3 witnesses per op average</td><td>12M pushes per sec</td></tr>
+          <tr><td>Snapshot writes</td><td>400k hot docs per 30 ops</td><td>2.2k writes per sec</td></tr>
+        </tbody></table>
+        <p>Remodel these assumptions with your own session counts in the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. What follows uses the same boundaries as <a href="figma-multiplayer-cost-postmortem.html">the Figma presence split</a>: durable ops get ordering plus storage while presence gets speed plus loss.</p>
+      </section>
+
+      <section><h2>8. What This Ordering Machine Might Cost</h2>
+        <p>Cost the scenario as regional infrastructure: edge plus owner fleet plus log plus snapshot stores. Suppose 600 edge plus owner workers average 0.55 per hour after commitments plus connection proxies plus control services. Compute lands near 240 thousand per month. Add cross-zone transfer plus load balancing plus observability plus failover headroom: <strong>180 thousand to 320 thousand per month</strong>.</p>
+        <p>Transform workers need memory for hot documents. Assume 400 thousand hot documents at 25 MB resident OT state plus buffers plus replica overhead. That is 10 TB logical before replication. With three-way replication plus spare pools, managed memory plus compute envelope lands near <strong>140 thousand to 260 thousand per month</strong>.</p>
+        <p>The revision log plus snapshots plus product data complete the ledger. Assume 2 PB of op history with lifecycle trimming plus 800 TB of snapshots plus Drive metadata plus permissions plus search indexing. Storage plus transfer plus indexing envelope lands near <strong>160 thousand to 330 thousand per month</strong>. Combined, the collaboration platform in this scenario lands near <strong>480 thousand to 910 thousand per month</strong>, roughly <strong>16 thousand to 30 thousand per day</strong>.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly range</th><th>What moves the number</th></tr></thead><tbody>
+          <tr><td>Edge plus sockets</td><td>180k to 320k</td><td>connections, regions, fan-out</td></tr>
+          <tr><td>OT owners plus transform</td><td>140k to 260k</td><td>hot docs, buffers, replicas</td></tr>
+          <tr><td>Op log plus snapshots</td><td>90k to 180k</td><td>history depth, cadence, reads</td></tr>
+          <tr><td>Product data plus search</td><td>70k to 150k</td><td>permissions, comments, index</td></tr>
+          <tr><td><strong>Total scenario</strong></td><td><strong>480k to 910k</strong></td><td><strong>16k to 30k per day</strong></td></tr>
+        </tbody></table>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/google-docs-cost-ledger.svg" alt="Google Docs cost ledger splitting edge plus owners plus op log plus product data" width="1200" height="680"><figcaption>Figure 2. The ledger in one cartoon. Ordering is cheap. Fanning the order out plus keeping every revision is the bill.</figcaption></figure>
+        <p>Model snapshot storage against your own retention with the <a href="../tools/aws-s3-storage-cost-calculator.html">S3 storage cost calculator</a>.</p>
+      </section>
+
+      <section><h2>9. The One Million RPS Thought Experiment</h2>
+        <p>Treat one million durable ops per second as a stress lens, not a Google disclosure. Assume each op carries 0.5 KB inbound plus 1 KB outbound plus three persisted copies across routing plus processing plus failover. The wire carries roughly 4.5M KB per second. Over a 30-day month, that is about 11.7 PB of logical movement before compression.</p>
+        <p>Take the unoptimized shape first: assume a fully loaded origin cost of 0.0000012 per op including transform plus log append plus fan-out. The math is <strong>1,000,000 x 2,592,000 x 0.0000012 = 3.11M per month</strong>. This covers owners plus revision log plus cross-zone fan-out plus metrics plus spare headroom.</p>
+        <p>The proposed shape separates lanes. Coalesce typing bursts at the client plus route presence through a lossy relay plus serve reads from snapshots plus edge caches plus send only canonical ops to the owner. If origin traffic falls to 40 percent at 0.0000008 per op, origin work is <strong>400,000 x 2,592,000 x 0.0000008 = 829k per month</strong>. Add 260k for relays plus caches plus observability plus headroom. The proposed envelope totals near <strong>1.09M per month</strong>, about 65 percent below the unoptimized shape.</p>
+        <div class="callout"><strong>The takeaway for a million ops per second:</strong> lane separation decides the invoice, language choice only prices the remainder.</div>
+      </section>
+
+      <section><h2>10. How I Would Cut The Bill Without Losing Convergence</h2>
+        <p><strong>1. Treat presence as disposable.</strong> Cursors plus selections plus viewport hints ride a best-effort relay with 10 Hz caps plus coalescing plus no persistence. Never append a cursor to the revision log. A dropped cursor is invisible. A journaled cursor is a storage annuity.</p>
+        <p><strong>2. Pin documents near their dominant editors.</strong> One owner per document simplifies order but punishes intercontinental sessions when the owner sits on the wrong ocean. Place owners near the heaviest editor cluster plus proxy the rest. Migrate only when measured round-trip savings beat handoff complexity.</p>
+        <p><strong>3. Coalesce bursts before they become history.</strong> Typing arrives in bursts. Merge intra-word keystrokes within short windows into compact ops before transform plus persistence. Keep semantic undo granularity while refusing to immortalize every inter-key interval.</p>
+        <p><strong>4. Tune snapshot cadence by edit velocity.</strong> Hot documents earn frequent snapshots to bound replay. Cold documents keep sparse snapshots plus deep logs. Snapshot policy should follow measured ops per minute, never a global constant inherited from a calmer era.</p>
+        <p><strong>5. Isolate hot documents automatically.</strong> One viral planning doc with hundreds of witnesses must never share an owner with thousands of quiet memos. Detect queue depth plus transform latency plus broadcast backlog. Route outliers to isolated owners without human triage.</p>
+        <p><strong>6. Buy commitments for the floor plus spot for the broom.</strong> Owners plus edge plus log writes are the floor. Reindexing plus export rendering plus historical compaction are the broom. Commit to the floor. Interrupt the broom. A compaction that cannot survive preemption is a hostage note, not a job.</p>
+        <p><strong>7. Verify convergence with checksums, not hope.</strong> Clients send cheap text hashes with revision markers. The server compares plus forces resync on mismatch. Transform code stays small plus honest because an independent check watches every merge.</p>
+        <div class="tip"><strong>Optimization tip:</strong> track dollars per million durable ops plus dollars per million presence frames plus dollars per GB of revision history per month. Blended cost per user hides whether the invoice comes from writing or from watching cursors dance.</div>
+      </section>
+
+      <section><h2>11. Failure Modes: What Breaks Plus How The Log Saves You</h2>
+        <p>Ordering machines fail in specific ways. Each row below names the blast radius first plus the recovery path second, because the second decides whether the first matters.</p>
+        <table><thead><tr><th>Failure</th><th>Blast radius</th><th>Recovery path</th></tr></thead><tbody>
+          <tr><td>Owner process crashes</td><td>one document pauses</td><td>hash ring re-pins, rebuild snapshot plus tail, clients retry at new revision</td></tr>
+          <tr><td>Hot document overload</td><td>broadcast backlog grows</td><td>isolate the owner, shed presence first, never shed ops</td></tr>
+          <tr><td>Checksum mismatch</td><td>one replica diverges</td><td>force resync from the server copy at last agreed revision</td></tr>
+          <tr><td>Deep offline divergence</td><td>transform cost grows with gap</td><td>snapshot resync beyond a threshold instead of op-by-op replay</td></tr>
+          <tr><td>Presence storm</td><td>relay saturates</td><td>10 Hz caps plus coalescing plus drop policy hold the line</td></tr>
+        </tbody></table>
+        <p>Notice the pattern. Every recovery reads from the same two artifacts: the newest snapshot plus the ordered tail. The log is not just durability. It is the failover plan, the audit trail plus the offline bridge in one structure. Systems that persist ops get all three. Systems that persist rendered state get none of them for free.</p>
+        <div class="tip"><strong>On-call tip:</strong> alert on transform queue depth plus broadcast backlog per document, not just fleet CPU. Averages hide the one thesis stalling a thousand quiet memos.</div>
+      </section>
+
+        <div class="course-promo">
+          <strong class="course-promo-title">Related production courses</strong>
+          <p>Review <a href="learn-interview-bootcamp.html">System Design Interview Bootcamp</a> for the whiteboard version of this exact OT problem, then <a href="learn-event-streaming.html">Event Streaming in Production</a> for ordered fan-out plus replay discipline.</p>
+        </div>
+
+      <section><h2>12. The Postmortem Verdict</h2>
+        <p>Docs endures because it refuses to solve the general collaboration problem. It solves text with a central order plus tiny ops plus an honest log. No peer mesh. No universal CRDT. No journaled cursors. The constraints look narrow until a million people type at once, at which point narrow is the only shape that fits through the door.</p>
+        <p>Steal the owner rule first. One serializer per document keeps agreement off the hot path. Steal the lane split next. Ephemeral presence must never touch durable storage. Steal the snapshot discipline last. History is a product feature with a storage price, so price the cadence explicitly.</p>
+        <p>The canvas at Figma feels simple because a server settles property fights elsewhere. The page at Docs feels simple because a server rewrites late ops before witnesses see them. Different conflict math. Shared discipline: name the line between durable plus disposable in code, because production bills whatever you leave unnamed.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Everyone types at once because one process decides the order plus proves it with a log.</strong></p>
+      </section>
+
+      <section><h2>Frequently Asked Questions</h2>
+        <h3>How does Google Docs collaboration work?</h3>
+        <p>Browser clients apply edits optimistically plus send small ops over a persistent connection to the owner process holding their document. The server orders ops authoritatively plus broadcasts transformed ops to every connected client.</p>
+        <h3>Does Google Docs use OT or CRDT?</h3>
+        <p>Google Docs uses Operational Transformation with a central server that assigns revision order. CRDT libraries like Yjs power newer tools such as Notion plus Linear where offline-first merging matters more.</p>
+        <h3>Why did Docs keep OT instead of switching to CRDT?</h3>
+        <p>OT keeps ops tiny plus needs no per-character metadata. A central owner already exists for ordering so the transform stays tractable while CRDT tombstones would tax every long-lived document.</p>
+        <h3>How does Docs handle offline edits?</h3>
+        <p>The client buffers ops against its last synced revision. On reconnect the server transforms queued ops against everything committed during the outage plus replays missed ops from the revision log.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Protocol plus revision discipline above come from Google engineering posts plus the Wave plus Jupiter lineage. Yjs plus Automerge docs inform the CRDT comparison. Figma engineering posts inform the canvas contrast. RPS plus cost figures are modeled estimates, not Google disclosures. Prices move quarterly. Re-run every assumption against your own telemetry before budgeting.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html" target="_blank" rel="noopener noreferrer">Google Drive Blog: What Is Different About The New Google Docs</a></li>
+          <li><a href="https://www.figma.com/blog/how-figmas-multiplayer-technology-works/" target="_blank" rel="noopener noreferrer">Figma Engineering: How Figma Multiplayer Technology Works</a></li>
+          <li><a href="https://www.figma.com/blog/realtime-editing-of-ordered-sequences/" target="_blank" rel="noopener noreferrer">Figma Engineering: Realtime Editing of Ordered Sequences</a></li>
+          <li><a href="https://docs.yjs.dev/" target="_blank" rel="noopener noreferrer">Yjs Documentation: Shared Editing Primitives</a></li>
+          <li><a href="https://automerge.org/" target="_blank" rel="noopener noreferrer">Automerge: Data Structures for Collaborative Applications</a></li>
+        </ul>
+      </section>
+      </article>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>

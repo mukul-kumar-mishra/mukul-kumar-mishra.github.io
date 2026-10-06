@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Google Docs cost ledger showing edge plus workers plus op log plus snapshots plus product data">
+  <defs>
+    <filter id="grainC" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="62" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/></filter>
+  </defs>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grainC)"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">GOOGLE DOCS LEDGER: PRICE THE ORDERING</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="122" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="32" font-weight="bold" fill="#0f172a">Ordering is cheap. Fanning it out is the bill.</text>
+  <g font-family="Sora, 'Segoe UI', Verdana, sans-serif">
+    <g>
+      <text x="80" y="200" font-size="19" font-weight="bold" fill="#0f172a">EDGE plus SOCKETS</text>
+      <rect x="80" y="215" width="380" height="42" rx="8" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+      <rect x="80" y="215" width="300" height="42" rx="8" fill="#0369a1"/>
+      <text x="480" y="244" font-size="19" font-weight="bold" fill="#0f172a">$180k-320k</text>
+      <text x="80" y="285" font-size="17" fill="#475569">persistent connections plus pinning plus regional fan-out</text>
+    </g>
+    <g>
+      <text x="80" y="325" font-size="19" font-weight="bold" fill="#0f172a">OT OWNERS plus TRANSFORM</text>
+      <rect x="80" y="340" width="380" height="42" rx="8" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+      <rect x="80" y="340" width="250" height="42" rx="8" fill="#b45309"/>
+      <text x="480" y="369" font-size="19" font-weight="bold" fill="#0f172a">$140k-260k</text>
+      <text x="80" y="410" font-size="17" fill="#475569">per-doc serialization plus revision assignment plus checksums</text>
+    </g>
+    <g>
+      <text x="680" y="200" font-size="19" font-weight="bold" fill="#0f172a">OP LOG plus SNAPSHOTS</text>
+      <rect x="680" y="215" width="380" height="42" rx="8" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+      <rect x="680" y="215" width="210" height="42" rx="8" fill="#16a34a"/>
+      <text x="1080" y="244" font-size="19" font-weight="bold" fill="#0f172a">$90k-180k</text>
+      <text x="680" y="285" font-size="17" fill="#475569">append log plus 30-op snapshots plus replay tail</text>
+    </g>
+    <g>
+      <text x="680" y="325" font-size="19" font-weight="bold" fill="#0f172a">PRODUCT DATA plus SEARCH</text>
+      <rect x="680" y="340" width="380" height="42" rx="8" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+      <rect x="680" y="340" width="170" height="42" rx="8" fill="#64748b"/>
+      <text x="1080" y="369" font-size="19" font-weight="bold" fill="#0f172a">$70k-150k</text>
+      <text x="680" y="410" font-size="17" fill="#475569">permissions plus comments plus drive metadata plus index</text>
+    </g>
+    <rect x="60" y="450" width="1080" height="90" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="3"/>
+    <text x="600" y="486" font-size="20" font-weight="bold" fill="#0f172a" text-anchor="middle">SCENARIO ENVELOPE: $480k-910k PER MONTH</text>
+    <text x="600" y="516" font-size="17" fill="#475569" text-anchor="middle">modeled from public architecture plus labeled assumptions. not a vendor invoice.</text>
+    <rect x="60" y="560" width="1080" height="64" rx="12" fill="#0f172a"/>
+    <text x="600" y="600" font-size="20" font-weight="bold" fill="#f8fafc" text-anchor="middle">MUKUL LEDGER: presence stays ephemeral. ops stay durable. mix them plus pay twice.</text>
+  </g>
+</svg>

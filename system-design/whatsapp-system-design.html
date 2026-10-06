@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WhatsApp system design explained: Erlang connection density plus Signal E2E plus store-and-forward inbox plus group fan-out math plus priced scale model you can rerun.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/whatsapp-system-design.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="WhatsApp System Design: How End-to-End Encrypted Relay Actually Works">
+  <meta property="og:description" content="A forensic teardown of WhatsApp routing: Erlang density plus Signal protocol plus transient inbox plus group fan-out plus cost at scale.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/whatsapp-system-design.png">
+  <meta property="og:image:alt" content="WhatsApp relay diagram showing Erlang gateway plus session registry plus offline inbox">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/whatsapp-system-design.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WhatsApp System Design: How End-to-End Encrypted Relay Actually Works">
+  <meta name="twitter:description" content="Erlang density plus Signal E2E plus transient inbox plus group fan-out math plus priced relay model.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/whatsapp-system-design.png">
+  <meta name="twitter:image:alt" content="WhatsApp relay diagram showing Erlang gateway plus session registry plus offline inbox">
+  <title>WhatsApp System Design: How End-to-End Encrypted Relay Serves Billions | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users", "description": "WhatsApp system design explained: Erlang connection density plus Signal E2E plus store-and-forward inbox plus group fan-out math plus priced scale model you can rerun.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-10-06", "dateModified": "2026-10-06", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/whatsapp-system-design.html"}, "keywords": "WhatsApp system design, end-to-end encryption, Erlang, Signal protocol, store-and-forward", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/whatsapp-system-design.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How does WhatsApp deliver messages?","acceptedAnswer":{"@type":"Answer","text":"Each device holds a persistent connection mapped in a session registry. The router looks up the recipient gateway plus pushes immediately when online. Offline messages park in a transient inbox plus drain on reconnect."}},
+      {"@type":"Question","name":"Why does WhatsApp delete messages after delivery?","acceptedAnswer":{"@type":"Answer","text":"The server is a relay, not an archive. Once the recipient ack arrives the ciphertext is deleted plus history lives only on endpoints. Transient storage is what keeps a hundred-billion-message day affordable."}},
+      {"@type":"Question","name":"How does WhatsApp end-to-end encryption work?","acceptedAnswer":{"@type":"Answer","text":"Clients encrypt with the Signal protocol: X3DH prekeys allow starting sessions with offline recipients plus the Double Ratchet derives fresh keys per message plus Sender Keys make group encryption O(1). The server routes opaque blobs it cannot read."}},
+      {"@type":"Question","name":"How do WhatsApp group chats scale?","acceptedAnswer":{"@type":"Answer","text":"Groups cap near 1024 members so fan-out stays bounded. One send becomes one inbox write per recipient device inside a single transaction plus online members receive pushes from a lossy pub-sub lane."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Messaging Infrastructure</span><span class="chip">October 2026</span><span class="chip">19 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two billion people press send every day. The server never reads a word, keeps almost nothing plus deletes what it held the moment the ack lands. This teardown prices the relay that made forgetting a business model.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> WhatsApp routes opaque ciphertext between persistent sockets plus holds undelivered messages briefly plus deletes on ack. Groups fan out per recipient device. Presence stays lossy.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2B plus</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Delivery</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Store plus Forward</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Encryption</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Signal E2E</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Group Cap</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1024</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published October 6, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is math?</strong> The relay discipline plus Signal properties below come from public engineering accounts plus protocol docs. Traffic plus cost figures are my labeled scenario model. Replace my assumptions with your telemetry wherever they differ.</aside>
+
+      <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/whatsapp-relay-lane.svg" alt="WhatsApp relay diagram showing Erlang gateway plus session registry plus offline inbox" width="1200" height="680"><figcaption>Figure 1. Every message follows one route: phone to gateway to router, then socket or inbox. The server carries ciphertext it cannot read.</figcaption></figure>
+
+      <section><h2>1. The Moment A Message Became A Routing Problem</h2>
+        <p>Most messaging designs start with a table. Sender writes a row. Recipient reads the row. Add an index plus call it a day. That model collapses the week two billion people press send while holding a socket open doing nothing. The load shaping the architecture is not the message rate. It is the count of idle connections waiting for a push that may never come.</p>
+        <p>WhatsApp reframed the product as a telephone exchange with cryptography attached. Each device holds one persistent connection. The server maps every user plus device to the gateway holding its socket. A message arrives as an opaque blob. The router asks one question: is the recipient connected now. Yes means push down the live socket. No means park in a transient inbox plus nudge the app awake.</p>
+        <p>Once delivered plus acked, the server deletes its copy. History lives on endpoints, never in the relay. That single deletion rule is why a hundred-billion-message day fits in a fleet most startups could rent. Storage is not the system. The socket map is the system.</p>
+        <div class="callout"><strong>The mental model:</strong> think of the backend as a post office that burns every letter after the signature arrives. Fast counters up front. Small lockers out back. No archive in the basement.</div>
+      </section>
+
+      <section><h2>2. Why A Relay That Forgets Deserves A Teardown</h2>
+        <p>Chat clones teach CRUD. WhatsApp teaches density plus forgetting plus blindness. The public record gives three load-bearing facts: Erlang processes holding millions of sockets per host, a 2014 peak near 342 thousand inbound plus 712 thousand outbound messages per second on roughly 150 chat servers, plus a tiny team running planetary scale. Few systems publish a clearer efficiency ledger.</p>
+        <p>The contrast with <a href="discord-messaging-system-design.html">Discord messaging</a> sharpens the lesson. Discord keeps channel history forever across Cassandra partitions because channels are the product. WhatsApp deletes on ack because live delivery is the product. Same messaging family. Opposite durability contract. The bill hides in the boundary between remembering everything plus remembering nothing.</p>
+        <p>Encryption adds the third lesson. Signal E2E makes the server formally blind, which removes entire feature temptations: server search plus content moderation plus link previews all die at the architecture line. Constraints that delete code paths are the cheapest scaling strategy ever published.</p>
+      </section>
+
+      <section><h2>3. The Architecture: Sockets Plus Registry Plus Transient Inbox</h2>
+        <p>Phones open one persistent connection each to a gateway fleet built on Erlang OTP, where every socket is a lightweight process with isolated memory plus independent garbage collection. Reported density reaches 1 to 2 million connections per host. A fast in-memory registry maps each user plus device to its gateway with a TTL refreshed by heartbeats. Delivery trusts the registry, never a guess.</p>
+        <p>The router sits behind the gateways. It accepts the ciphertext blob plus looks up the recipient mapping plus pushes to online sockets. Offline recipients get inbox rows sharded by recipient identifier plus a wake-up nudge through platform push services carrying no content. Media never touches the hot path: clients upload to blob storage plus the message carries only an encrypted pointer with a bounded TTL.</p>
+        <p>Ordering stays per conversation, not global. A partitioned log keyed by conversation identifier preserves chat order plus decouples group fan-out from gateway latency, the same partitioning discipline behind <a href="kafka-consumer-rebalance.html">Kafka consumer scaling</a>. Presence rides a separate lossy lane with 30-second heartbeats plus typing throttles, the same lane split behind <a href="google-docs-system-design.html">the Docs presence boundary</a>. Durable inbox for truth. Lossy lanes for speed.</p>
+        <div class="tip"><strong>Architecture tip:</strong> keep the fast path to one relay hop. Everything heavy such as media plus receipts plus analytics leaves the delivery path. Whatever sits on that hop multiplies by your entire connected population.</div>
+      </section>
+
+      <section><h2>4. The Routing Problem: Finding Bob Without Shouting</h2>
+        <p>Alice socket lands on server A. Bob socket lands on server B. Alice message arrives at A, which holds no Bob socket. Storage is shared but sockets are not, so durability alone delivers nothing until B hears about it. Four designs climb this ladder. Sticky load balancing fails on every reconnect. One topic per user fails on broker arithmetic at billions of topics. Consistent hashing works but turns fleet growth into a rehashing event with dual-delivery handoffs.</p>
+        <p>The chosen answer makes the subscription the registry. When Bob socket lands on B, B subscribes to Bob topic on an in-memory pub-sub layer. Any server publishes to Bob topic. The layer forwards to subscribers. Placement becomes free plus scaling stops being a migration. The catch is printed on the tin: pub-sub is at-most-once, so a missed push must replay from the inbox on reconnect plus a periodic sweep closes transient gaps. Cheap lossy lane for speed. One durable write for truth.</p>
+        <p>Delivery is therefore at-least-once by construction. A crash between push plus inbox delete replays the row. Duplicates die at the receiver: every message carries a client-generated UUID, clients keep a seen window plus ack without rendering replays, senders retry with the same identifier so double sends collapse server-side. At-least-once transport plus idempotent endpoints compose into effectively-once conversation, tracked through SENT plus DELIVERED plus READ receipt events that delete the offline copy on DELIVERED, not on READ.</p>
+        <div class="tip"><strong>Interview line:</strong> name the registry plus the inbox plus the dedup window. Registry finds the socket. Inbox survives the miss. Client UUIDs make the retry safe.</div>
+      </section>
+
+      <section><h2>5. E2E Without Breaking The Relay: X3DH Plus Ratchet Plus Sender Keys</h2>
+        <p>Signal properties change surprisingly little structurally because the relay already treats content as opaque. X3DH lets Ana start a session with offline Ben using pre-published public bundles from a key directory, so no round trip needs Ben awake. The Double Ratchet then derives fresh keys per message, giving forward secrecy plus break-in recovery automatically. Compromise today exposes neither yesterday nor tomorrow after the next ratchet step.</p>
+        <p>Groups use Sender Keys: each sender distributes one chain once over pairwise channels, then encrypts subsequent messages once instead of once per member. Naive group crypto costs O(members) per message. Sender Keys cost O(1) per message after setup. Multi-device multiplies endpoints instead: phone plus desktop plus tablet are separate cryptographic identities, so true fan-out is recipients times devices per recipient, all routed as blobs the server never opens.</p>
+        <p>The price is explicit. The server surrenders search plus content filtering plus previews plus compliance holds. Legal discovery becomes structurally impossible rather than merely unimplemented. Name that boundary in design reviews instead of improvising past it. Blindness is the privacy guarantee plus the missing-feature list in one line item.</p>
+      </section>
+
+      <section><h2>6. The Fan-Out Ledger: What One Send Really Writes</h2>
+        <p>Fans call it one message. The storage layer calls it recipients times devices. Count the writes before praising the latency.</p>
+        <table><thead><tr><th>Conversation shape</th><th>Recipient devices</th><th>Inbox writes per send</th></tr></thead><tbody>
+          <tr><td>Direct message</td><td>1 device</td><td>1 row</td></tr>
+          <tr><td>Direct message</td><td>3 devices</td><td>3 rows</td></tr>
+          <tr><td>Group of 50</td><td>2 average</td><td>100 rows</td></tr>
+          <tr><td>Group of 200</td><td>3 average</td><td>600 rows</td></tr>
+          <tr><td>Group of 1024</td><td>3 average</td><td>3072 rows</td></tr>
+        </tbody></table>
+        <p>All rows for one send commit inside a single transaction, plus the sender sees SENT only after that commit. Cost plus failure surface both grow linearly with recipients times devices, which is why the group cap is load-bearing rather than cosmetic. A 100-million-follower broadcast would need 100 million plus rows per post, so timeline systems pull celebrity content at read time instead. The inverse durability choice lives in <a href="discord-messaging-system-design.html">Discord messaging</a>, which keeps channel history queryable while WhatsApp deletes on ack. Same messaging family. Opposite ledger.</p>
+        <div class="tip"><strong>Capacity tip:</strong> load-test the 1024-member group with all members online plus all members offline. Online tests the push lane. Offline tests the inbox write storm. Most designs pass one plus melt on the other.</div>
+      </section>
+
+      <section><h2>7. The RPS Model: How Much Traffic Does Chatting Make</h2>
+        <p>Public figures anchor the scenario: roughly 2 billion users plus about 100 billion messages per day in industry estimates. That is 1.16 million inbound messages per second on average. Assume a 3x busy peak plus 4x average fan-out from groups plus multi-device copies. Outbound deliveries average 4.6 million per second with peaks near 14 million.</p>
+        <p>Heartbeats dwarf messages. Assume 500 million concurrent sockets each sending a heartbeat every 30 seconds. That is 16.7 million tiny events per second served from memory, never touching durable storage. Inbox writes stay small: with 5 percent of deliveries meeting offline recipients, durable writes average 230 thousand per second. Receipt events roughly track deliveries at 4.6 million per second but carry identifiers only.</p>
+        <table><thead><tr><th>Workload</th><th>Scenario</th><th>Result</th></tr></thead><tbody>
+          <tr><td>Inbound messages</td><td>100B per day average</td><td>1.16M per sec</td></tr>
+          <tr><td>Peak inbound</td><td>3x busy multiplier</td><td>3.5M per sec</td></tr>
+          <tr><td>Outbound deliveries</td><td>4x fan-out average</td><td>4.6M per sec</td></tr>
+          <tr><td>Heartbeat events</td><td>500M sockets per 30 sec</td><td>16.7M per sec</td></tr>
+          <tr><td>Inbox writes</td><td>5 percent offline rate</td><td>230k per sec</td></tr>
+        </tbody></table>
+        <p>Swap in your own concurrency plus fan-out multiples in the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. From here the discipline matches the Docs ledger: durable events get ordering plus storage while ephemeral frames get memory plus loss.</p>
+      </section>
+
+      <section><h2>8. What This Relay Might Cost</h2>
+        <p>Translate the scenario into fleet: a gateway tier holding 500 million concurrent sockets at 1.5 million per host: roughly 330 large hosts plus regional spares plus relay points of presence for calls. Suppose fleet plus registry plus call relays average out with bandwidth plus observability: <strong>220 thousand to 380 thousand per month</strong>.</p>
+        <p>The inbox plus ordering layer needs durable writes for the offline fraction plus per-conversation ordering plus receipt tracking. Assume a wide-row store fleet sized for 230 thousand writes per second sustained plus 3x bursts plus replication plus a partitioned log for fan-out buffering: <strong>150 thousand to 270 thousand per month</strong>.</p>
+        <p>Presence plus push plus media complete the ledger. Heartbeat memory plus typing relays plus wake-up push volume land near <strong>60 thousand to 120 thousand per month</strong>. Blob storage plus CDN egress for media plus the prekey directory land near <strong>110 thousand to 210 thousand per month</strong>. Combined, the relay in this scenario lands near <strong>540 thousand to 980 thousand per month</strong>, roughly <strong>18 thousand to 33 thousand per day</strong>.</p>
+        <table><thead><tr><th>Cost center</th><th>Modeled monthly range</th><th>What moves the number</th></tr></thead><tbody>
+          <tr><td>Gateway fleet</td><td>220k to 380k</td><td>sockets, regions, call relays</td></tr>
+          <tr><td>Inbox plus ordering</td><td>150k to 270k</td><td>offline rate, fan-out, retention</td></tr>
+          <tr><td>Presence plus push</td><td>60k to 120k</td><td>heartbeat cadence, wake-ups</td></tr>
+          <tr><td>Media plus keys</td><td>110k to 210k</td><td>blob TTL, egress, directory</td></tr>
+          <tr><td><strong>Total scenario</strong></td><td><strong>540k to 980k</strong></td><td><strong>18k to 33k per day</strong></td></tr>
+        </tbody></table>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/whatsapp-cost-ledger.svg" alt="WhatsApp cost ledger splitting gateway fleet plus inbox plus presence plus media" width="1200" height="680"><figcaption>Figure 2. The ledger in one cartoon. Sockets dominate. Messages are the minority. Forgetting keeps both small.</figcaption></figure>
+        <p>Size the socket fleet against your own concurrency with the <a href="../tools/connection-pool-calculator.html">connection pool calculator</a>.</p>
+      </section>
+
+      <section><h2>9. The One Million RPS Thought Experiment</h2>
+        <p>Read one million inbound messages per second as a load test, not a vendor disclosure. With 4x average fan-out, the relay performs 4 million deliveries per second. Over a 30-day month that is about 10.4 trillion deliveries before retries.</p>
+        <p>Start from the unoptimized relay: assume a fully loaded cost of 0.0000003 per delivery including routing plus inbox plus fan-out plus receipts. The math is <strong>4,000,000 x 2,592,000 x 0.0000003 = 3.11M per month</strong>. This covers gateways plus registry plus transient storage plus cross-region movement plus monitoring plus spare capacity.</p>
+        <p>The proposed shape pushes relays to the edge plus coalesces receipts plus keeps the hot path transient-first. If per-delivery cost falls to 0.0000001 at the same volume, delivery work is <strong>4,000,000 x 2,592,000 x 0.0000001 = 1.04M per month</strong>. Add 250k for edge relays plus presence memory plus telemetry plus standby margin. The proposed envelope settles near <strong>1.29M per month</strong>, about 59 percent below the unoptimized shape.</p>
+        <div class="callout"><strong>The lesson for a million messages per second:</strong> socket density plus transient-first routing set the bill, crypto choice only protects privacy.</div>
+      </section>
+
+      <section><h2>10. How I Would Cut The Bill Without Losing A Message</h2>
+        <p><strong>1. Choose density over sprawl.</strong> Fewer large hosts with millions of processes each beat fleets of small nodes for idle-connection economics. Tune the runtime plus allocator plus NIC path instead of adding boxes. Idle sockets are the workload, so price per socket first.</p>
+        <p><strong>2. Delete after delivery plus bound the TTL.</strong> Hold undelivered ciphertext for roughly 30 days maximum, then drop. Never build an archive behind the relay. Every retained byte needs a product reason plus an expiry, or growth becomes the roadmap.</p>
+        <p><strong>3. Push fan-out work to senders where blindness allows.</strong> Per-device encryption already happens client-side. Keep the server fanning blobs, never plaintext, so routing scales without becoming a decryption point plus a compliance magnet.</p>
+        <p><strong>4. Treat the group cap as load-bearing.</strong> A 1024-member ceiling bounds write amplification per send to thousands of rows, not millions. Raising the cap reintroduces the celebrity problem from timeline design, so any increase ships with a paged fan-out plan plus a read-time merge fallback.</p>
+        <p><strong>5. Keep media off the hot path.</strong> Presigned blob uploads plus encrypted pointers plus CDN delivery plus 30-day TTL keep gateways routing small blobs. A relay that proxies video becomes a CDN with a chat hobby.</p>
+        <p><strong>6. Isolate presence plus receipts from delivery.</strong> Heartbeats plus typing plus read markers ride lossy lanes with independent scaling plus shedding. Shedding presence under load protects message latency, which is the only metric users feel.</p>
+        <p><strong>7. Fail gracefully by shedding, not queueing.</strong> Throttle plus backpressure plus regional isolation beat unbounded queues. A relay that degrades to slower presence plus delayed receipts while protecting sends survives the spike that kills the queue-everything design.</p>
+        <div class="tip"><strong>Optimization tip:</strong> watch three unit costs weekly: per million deliveries, per million held sockets, per GB-month of transient inbox. A single blended cost per user cannot tell holding sockets apart from forgetting to delete.</div>
+      </section>
+
+      <section><h2>11. Failure Modes: Storms, Splits Plus Hot Groups</h2>
+        <p>Relays fail at boundaries between liveness plus durability. Each row names the first signal plus the response that protects sends above everything else.</p>
+        <table><thead><tr><th>Failure</th><th>First signal</th><th>Response</th></tr></thead><tbody>
+          <tr><td>Reconnect storm</td><td>inbox drain spikes after outage</td><td>jittered reconnect plus paginated drain plus paced wake-up nudges</td></tr>
+          <tr><td>Gateway crash</td><td>registry entries point at dead sockets</td><td>generation-checked publish plus re-register on connect plus inbox replay covers the gap</td></tr>
+          <tr><td>Dual registration</td><td>two gateways claim one user</td><td>incarnation id plus last-writer mapping plus client UUID window absorbs duplicate pushes</td></tr>
+          <tr><td>Hot group storm</td><td>per-conversation ordering bottleneck</td><td>coalesce receipts plus typing, shed presence first, protect message pushes</td></tr>
+          <tr><td>Prekey drain</td><td>one-time prekey pool runs low</td><td>refill monitoring plus signed-prekey fallback for new sessions</td></tr>
+        </tbody></table>
+        <p>The doctrine stays constant across all five rows. Shed presence before receipts. Shed receipts before messages. Shed everything before sends. Users forgive a frozen typing indicator. Nobody forgives a lost message.</p>
+        <div class="tip"><strong>On-call tip:</strong> chart inbox age, not just inbox size. A million fresh rows draining fast is health. Ten thousand rows aging past minutes is the outage starting.</div>
+      </section>
+
+        <div class="course-promo">
+          <strong class="course-promo-title">Related production courses</strong>
+          <p>Review <a href="learn-event-streaming.html">Event Streaming in Production</a> for partitioned ordering plus fan-out buffering, then <a href="learn-interview-bootcamp.html">System Design Interview Bootcamp</a> for rehearsing this chat design as an interview round.</p>
+        </div>
+
+      <section><h2>12. The Postmortem Verdict</h2>
+        <p>WhatsApp endures because it refuses to be a database. It holds sockets plus routes blobs plus forgets on ack. No message archive. No server search. No content-aware anything. The constraints look spartan until a continent reconnects after a cable cut, at which point spartan is the only shape that drains the inbox before lunch.</p>
+        <p>Steal the registry first. A live socket map with TTLs removes discovery from the hot path. Steal the deletion rule next. Transient storage with bounded TTL keeps growth linear in offline users, not in history. Steal the blindness last. A server that cannot read its payload is smaller plus simpler plus safer than one that merely promises not to look.</p>
+        <p>Docs feels instant because one process decides op order plus proves it with a log. WhatsApp feels instant because one registry finds the socket plus the relay forgets everything else. Different product, same test. If routing plus history share one store, the invoice draws the boundary. Draw it first.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Everyone presses send at once because the relay holds the socket, not the archive.</strong></p>
+      </section>
+
+      <section><h2>Frequently Asked Questions</h2>
+        <h3>How does WhatsApp deliver messages?</h3>
+        <p>Each device holds a persistent connection mapped in a session registry. The router looks up the recipient gateway plus pushes immediately when online. Offline messages park in a transient inbox plus drain on reconnect.</p>
+        <h3>Why does WhatsApp delete messages after delivery?</h3>
+        <p>The server is a relay, not an archive. Once the recipient ack arrives the ciphertext is deleted plus history lives only on endpoints. Transient storage is what keeps a hundred-billion-message day affordable.</p>
+        <h3>How does WhatsApp end-to-end encryption work?</h3>
+        <p>Clients encrypt with the Signal protocol: X3DH prekeys allow starting sessions with offline recipients plus the Double Ratchet derives fresh keys per message plus Sender Keys make group encryption O(1). The server routes opaque blobs it cannot read.</p>
+        <h3>How do WhatsApp group chats scale?</h3>
+        <p>Groups cap near 1024 members so fan-out stays bounded. One send becomes one inbox write per recipient device inside a single transaction plus online members receive pushes from a lossy pub-sub lane.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Relay discipline plus density figures above come from public engineering accounts of the Erlang gateway era. Signal properties come from the protocol docs. Redis plus Kafka docs inform the registry plus ordering patterns. Traffic plus cost figures are my working estimates, not vendor invoices. Traffic mixes drift with seasons. Validate every assumption against production telemetry before committing capacity.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://signal.org/docs/" target="_blank" rel="noopener noreferrer">Signal Documentation: Protocol Docs Plus Specifications</a></li>
+          <li><a href="https://www.erlang.org/" target="_blank" rel="noopener noreferrer">Erlang OTP: Concurrent Plus Fault-Tolerant Runtime</a></li>
+          <li><a href="https://kafka.apache.org/documentation/" target="_blank" rel="noopener noreferrer">Apache Kafka Documentation: Partitioned Ordering Plus Fan-Out</a></li>
+          <li><a href="https://redis.io/docs/" target="_blank" rel="noopener noreferrer">Redis Documentation: In-Memory Registry Plus Pub-Sub Patterns</a></li>
+        </ul>
+      </section>
+      </article>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Cost math in your inbox</h2>
+          <p class="fl-desc" style="margin:0;">One teardown a week with calculators. No spam, unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
