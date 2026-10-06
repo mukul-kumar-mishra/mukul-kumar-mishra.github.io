@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A source-backed postmortem of Disney+ Hotstar's pre-event EKS IP shortage, subnet math, legacy Endpoints limits and JioHotstar's later CDN QoS controls for live cricket streaming.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness | Buildopsy">
+  <meta property="og:description" content="A source-backed postmortem of Disney+ Hotstar's pre-event EKS IP shortage, subnet math, legacy Endpoints limits and JioHotstar's later CDN QoS controls for live cricket streaming.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/jiohotstar-eks-ip-ceiling-meme.png">
+  <meta property="og:image:alt" content="JioHotstar scale preparation: subnet IP headroom against planned Kubernetes node count">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness | Buildopsy">
+  <meta name="twitter:description" content="A source-backed postmortem of Disney+ Hotstar's pre-event EKS IP shortage, subnet math, legacy Endpoints limits and JioHotstar's later CDN QoS controls for live cricket streaming.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/jiohotstar-eks-ip-ceiling-meme.png">
+  <meta name="twitter:image:alt" content="JioHotstar scale preparation: subnet IP headroom against planned Kubernetes node count">
+  <title>JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness",
+    "description": "A source-backed postmortem of Disney+ Hotstar's pre-event EKS IP shortage, subnet math, legacy Endpoints limits and JioHotstar's later CDN QoS controls for live cricket streaming.",
+    "author": {
+      "@type": "Person",
+      "name": "Mukul Kumar Mishra",
+      "url": "https://buildopsy.com/about.html#author-mukul",
+      "sameAs": [
+        "https://github.com/slimdestro",
+        "https://www.linkedin.com/in/mukul-kumar-b9b33b428/",
+        "https://dev.to/slimdestro"
+      ]
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Buildopsy",
+      "url": "https://buildopsy.com/",
+      "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}
+    },
+    "datePublished": "2026-10-06",
+    "dateModified": "2026-10-06",
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html"},
+    "image": "https://buildopsy.com/images/articles/jiohotstar-eks-ip-ceiling-meme.png",
+    "keywords": "JioHotstar system design, Hotstar EKS IP shortage, live cricket streaming, CDN QoS, Kubernetes subnet capacity"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a>
+        <a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Live Streaming Infrastructure</span><span class="chip">October 2026</span><span class="chip">10 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A cricket stream can hit a network wall before the match begins. In its account of preparing for the 2023 World Cup, Disney+ Hotstar described an EKS cluster that could not scale past roughly 350 worker nodes because its pod IP pool was running short. The fix involved subnet space, VPC CNI targets and a hard look at service-discovery limits.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>Summary:</strong> The IP shortage was caught during cluster preparation, not during a live-match outage. Later JioHotstar disclosures describe CDN QoS controls and a 72.5 million peak. Those facts belong to different events and are kept separate below.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Subnet pool</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">about 12.3K IPs</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Reported node ceiling</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">about 350</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Planned scale</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">400+ nodes</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Later peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">72.5M concurrent</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Research-led architecture postmortem · Published October 6, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This is a retrospective of a pre-event capacity problem disclosed by Disney+ Hotstar, now JioHotstar. The company said the IP issue was fixed during cluster setup. This is not a claim that the 72.5 million-viewer final suffered an outage or that the same cluster served that later event.</aside>
+
+      <article class="prose">
+        <section>
+          <h2>1. First, Separate the Audience Metrics</h2>
+          <p>Large cricket numbers are easy to flatten into one word: viewers. That hides the most important distinction. Concurrent streams count people watching at the same time. Digital views count starts or plays under a platform's reporting definition. Reach may combine people across a full tournament, across television and digital. They answer different questions.</p>
+          <table>
+            <thead><tr><th>Reported number</th><th>What it measures</th><th>Event</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>72.5 million</td><td>Peak concurrent streams</td><td>ICC Men's T20 World Cup final, 2026</td><td>Reliance FY26 annual report</td></tr>
+              <tr><td>65.2 million</td><td>Peak concurrent viewers</td><td>India–England semi-final, March 5, 2026</td><td>ICC media release</td></tr>
+              <tr><td>619 million</td><td>Digital views</td><td>The same semi-final</td><td>ICC media release</td></tr>
+              <tr><td>1.2 billion</td><td>Season reach across TV and digital</td><td>IPL 2026</td><td>JioStar press release</td></tr>
+            </tbody>
+          </table>
+          <p>The first two figures are peaks from different matches. The third is a count of digital views. The fourth is reach accumulated across a season and across screens. None says that 12 or 20 crore people were watching one match simultaneously. For capacity planning, the 72.5 million peak is the relevant concurrency figure in the sources reviewed here.</p>
+        </section>
+
+        <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/jiohotstar-audience-metrics-panel.svg" alt="Panels distinguish 72.5 million peak concurrency, 619 million digital views and 1.2 billion season reach" width="1200" height="680"><figcaption>Figure 1. A peak, a view count and a season reach are not interchangeable metrics.</figcaption></figure>
+
+        <section>
+          <h2>2. The Capacity Incident Happened Before the Match</h2>
+          <p>Disney+ Hotstar's 2024 engineering retrospective describes the preparation for the 2023 Asia Cup and World Cup. The team had previously managed about 25 million concurrent streams across two Kubernetes clusters. A new mobile offering increased the scale they needed to plan for, so the engineers modeled capacity near 50 million concurrent streams on a newer architecture.</p>
+          <p>A 2019 Hotstar engineering post described the shift from manually stepped capacity ladders to Kubernetes plus a custom autoscaler. The company reported twice the concurrency with one tenth of its earlier compute. That comparison came from its own workload, not a ratio another platform can copy. It shows the 2023 IP issue arose inside a capacity strategy already evolving toward workload-aware scaling.</p>
+          <p>The first constraint was not a video codec or a CDN price. During cluster creation, the team hit a shortage of pod IP addresses. Their report says the environment needed more than 400 worker nodes but could not scale beyond roughly 350. The issue was caught while cluster creation was beginning. The source says the team added subnet capacity and adjusted CNI allocation before major disruption.</p>
+          <div class="callout"><strong>Postmortem boundary:</strong> This was a real infrastructure incident in pre-event preparation. The public source does not report that viewers lost the live match because of this IP shortage.</div>
+          <p>The same 2024 post opens by describing a later 59 million concurrent-stream peak. It also details separate work on CDN API segregation, NAT gateway scaling, worker-node throughput and phased cluster scaling. That overall peak should not be attributed to the IP-pool fix alone.</p>
+        </section>
+
+        <section>
+          <h2>3. The IP Arithmetic Behind the Ceiling</h2>
+          <p>The report describes three /20 subnets. A /20 contains 4,096 IPv4 addresses before AWS reservations. Hotstar rounded the usable pool to about 4,090 addresses per subnet, or roughly 12,300 across the three subnets.</p>
+          <p>The VPC CNI settings included a <code>MINIMUM_IP_TARGET</code> of 35 and a <code>WARM_IP_TARGET</code> of 10. The first value sets a floor for IP allocation per node. The second maintains a pool of unassigned IPs for pod placement. Warm addresses improve assignment speed, but they still consume subnet space.</p>
+          <p>A back-of-envelope check divides 12,300 addresses by the 35-IP minimum, giving about 351 node-equivalents before other reservations. The 10-IP warm target plus primary ENIs, host workloads and subnet reservations can reduce practical capacity. This is not a full EKS max-pods calculation. Hotstar reported that its cluster stopped near 350 nodes.</p>
+          <p>The team added larger /19 subnets, which it reported increased the pool to about 48,000 addresses. It later lowered <code>MINIMUM_IP_TARGET</code> to 20 and <code>WARM_IP_TARGET</code> to 5. Hotstar reported about 40 percent IP utilization during the World Cup. The important move was to treat subnet address space as a planned capacity resource, not as leftover configuration.</p>
+          <table>
+            <thead><tr><th>Preparation state</th><th>Reported value</th><th>Operational meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Initial pool</td><td>3 × /20, about 12.3K usable IPs</td><td>Finite pod-address budget</td></tr>
+              <tr><td>Initial CNI floor</td><td>35 minimum IPs per node</td><td>Roughly 350 node-equivalents from the pool</td></tr>
+              <tr><td>Planned cluster</td><td>400+ worker nodes</td><td>Required more address headroom</td></tr>
+              <tr><td>Revised pool</td><td>About 48K IPs</td><td>More subnet room for the event plan</td></tr>
+              <tr><td>Later CNI targets</td><td>20 minimum plus 5 warm IPs</td><td>Less unused reservation</td></tr>
+            </tbody>
+          </table>
+          <div class="tip"><strong>Operator check:</strong> estimate pod IP demand from node count, pods per node and CNI warm-pool settings before the event load test. Compare that demand with usable subnet addresses plus addresses reserved for infrastructure.</div>
+        </section>
+
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/jiohotstar-eks-ip-ceiling-meme.svg" alt="Three panels show the subnet IP budget, CNI minimum allocation and reported node ceiling" width="1200" height="680"><figcaption>Figure 2. The address pool became a hard ceiling before the planned node count.</figcaption></figure>
+
+        <section>
+          <h2>4. A Legacy Endpoint Limit Added a Second Boundary</h2>
+          <p>The same retrospective describes a separate service-discovery limit. Some services needed more than 1,000 pods. The legacy Kubernetes <code>Endpoints</code> resource truncates its address list above 1,000 entries. Kubernetes now recommends the EndpointSlice API for scalable endpoint discovery. Hotstar said its API Gateway did not support EndpointSlices at the time, so the team identified high-pod-count services and kept those services below the legacy limit through vertical scaling.</p>
+          <p>This was a compatibility boundary, not a general Kubernetes pod limit. EndpointSlices can represent larger endpoint sets. The constraint existed because a component in the request path still depended on the older API.</p>
+          <div class="callout"><strong>Design lesson:</strong> capacity is limited by the narrowest component in the path. Node count, subnet space and endpoint discovery all need their own ceilings and failure modes.</div>
+        </section>
+
+        <section>
+          <h2>5. The CDN Was Also an API Gateway</h2>
+          <p>Hotstar's 2024 post explains that its CDNs also served as the external API gateway. They handled cacheable and non-cacheable API requests plus security and routing work. Under event traffic, that request processing consumed edge compute. The team grouped APIs by behavior and moved cacheable paths to a separately configured CDN domain, reducing unnecessary work in the critical path.</p>
+          <p>The same post describes network bottlenecks in NAT Gateways and worker nodes. One cluster used half its NAT network throughput at roughly one tenth of expected peak traffic. Some services used 8 to 9 Gbps on worker nodes. Hotstar introduced higher-throughput nodes and topology-spread constraints for its internal gateway pods, which brought per-node traffic into the 2 to 3 Gbps range in its tests.</p>
+          <p>Those findings are specific to the reported architecture. They do not prove that every streaming platform should put its API gateway on a CDN or use the same node topology. The transferable method is to test every layer at realistic user-journey load before choosing a scaling lever.</p>
+        </section>
+
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/jiohotstar-qos-routing-flow.svg" alt="A feedback loop scores viewer cohorts using playback failure, rebuffering and round-trip latency before steering CDN traffic" width="1200" height="680"><figcaption>Figure 3. The later QoS Routing Manager uses playback signals and capacity guardrails to steer traffic.</figcaption></figure>
+
+        <section>
+          <h2>6. Quality-of-Service Routing Became a Feedback Loop</h2>
+          <p>In a 2026 engineering post, JioHotstar describes a QoS Routing Manager that selects CDN traffic weights for a granular cohort. The cohort combines autonomous system number, country, state, city and user type. That can distinguish a poor last-mile route in one city from healthy service elsewhere on the same provider.</p>
+          <p>The service scores Playback Failure Rate, rebuffering and Round-Trip Time. The article says it smooths noisy telemetry with an Exponentially Weighted Moving Average using an alpha near 0.6. Its two-phase capacity steering throttles a CDN approaching its utilization threshold, then aims to exhaust available CDN capacity more uniformly once the threshold is crossed. A healthy CDN keeps a minimum traffic share (typically 5 percent) to remain ready for failover. Hard network constraints prevent routing a cohort to a CDN that cannot serve it.</p>
+          <p>JioHotstar reports an A/B rollout on ASN-State cohorts during a T20 match. The treatment group saw an 11 percent improvement in Playback Failure Rate, while rebuffering and RTT latency each improved by 2 percent. These are company-reported results for that experiment, not universal gains or a measurement of the later 72.5 million-viewer final.</p>
+          <p>The architecture lesson is that global CDN health is not enough. Routing needs a local view of playback quality plus a controller that changes weights slowly enough to avoid creating new oscillations.</p>
+        </section>
+
+        <section>
+          <h2>7. Capacity Math Without Pretending to Know the Private Bill</h2>
+          <p>The simplest live-video capacity estimate starts with a deliberately narrow formula:</p>
+          <div class="callout"><strong>Illustrative payload bandwidth:</strong> concurrent streams × assumed average bitrate. At 72.5 million simultaneous streams, a 1 Mbps average is 72.5 Tbps of media payload. At 2 Mbps it is 145 Tbps. These are scenarios, not JioHotstar measurements.</div>
+          <p>The peak concurrency figure is an instant, not a promise that every viewer watched at peak for an hour. The average bitrate mix, segment overhead, retransmits, cache-hit ratio, midgress and contracted CDN prices are not public in the sources reviewed here. JioHotstar's separate engineering post discusses a 60 to 80 Tbps live-event bandwidth requirement in its own context. The public evidence does not establish that figure as the measured bandwidth of the 72.5 million peak event, so the two numbers should not be forced into one calculation.</p>
+          <p>For your own architecture, vary concurrent viewers and bitrate in the <a href="../tools/cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> and <a href="../tools/cdn-cost-calculator.html">CDN Cost Calculator</a>. Use your region, cache behavior and negotiated rates. Do not treat a public list price as JioHotstar's invoice.</p>
+          <table>
+            <thead><tr><th>Assumed average bitrate</th><th>Payload bandwidth at 72.5M streams</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>1 Mbps</td><td>72.5 Tbps</td><td>Illustrative scenario</td></tr>
+              <tr><td>2 Mbps</td><td>145 Tbps</td><td>Illustrative scenario</td></tr>
+              <tr><td>4 Mbps</td><td>290 Tbps</td><td>Illustrative scenario</td></tr>
+            </tbody>
+          </table>
+          <div class="tip"><strong>Modeling rule:</strong> keep disclosed values, measured test results and scenario inputs in separate columns. A clean multiplication does not turn an assumption into a platform fact.</div>
+        </section>
+
+        <section>
+          <h2>8. What a Smaller Team Can Reuse</h2>
+          <p>Do not copy 72.5 million as a scaling target. The useful work is the sequence of constraints:</p>
+          <ul>
+            <li>Build an address budget from expected nodes and CNI pool settings before raising pod density.</li>
+            <li>Load-test API control paths as well as video delivery. Cacheable scorecards and non-cacheable session operations have different behavior.</li>
+            <li>Measure CDN quality by viewer network cohort when a single country-wide score hides local congestion.</li>
+            <li>Keep EndpointSlice support in the service-discovery plan. A legacy Endpoints dependency has a documented 1,000-address ceiling.</li>
+            <li>Define a safe degradation mode before kickoff. JioHotstar's earlier scaling post describes a deliberate sequence for jettisoning non-critical features while protecting playback.</li>
+          </ul>
+          <p>The calculation is useful only when it has an owner. Add a dashboard for free subnet addresses, node IP reservations, API gateway throughput, PFR, rebuffering and RTT. Run the test before event day. If the fallback is a spreadsheet plus an on-call engineer, document who acts and what gets switched off.</p>
+        </section>
+
+        <div class="course-promo">
+          <strong class="course-promo-title">Related production courses</strong>
+          <p>Review <a href="learn-kubernetes.html">Kubernetes in Production</a> for cluster and workload scaling, then <a href="learn-sre-observability.html">SRE and Observability in Production</a> for service-level signals and alert design.</p>
+        </div>
+
+        <section>
+          <h2>9. The Verdict</h2>
+          <p>The headline record is the easy part. The engineering story is a set of narrower constraints: pod addresses, gateway compute, endpoint discovery and network quality that varies by cohort. Hotstar's public write-ups show the team discovering these ceilings before or during scale preparation, then changing subnet capacity, CNI targets, gateway placement and CDN steering.</p>
+          <p>One boundary matters throughout this article: the disclosed IP shortage was corrected during pre-event cluster setup. It is not evidence that the 72.5 million-stream final failed. The later concurrency record shows the scale of live sports demand. It does not prove which exact cluster or configuration delivered it.</p>
+          <p>The reusable lesson is narrower and stronger than “add more servers.” Model the address pool. Measure player outcomes by network cohort. Keep failover paths warm. Then test what happens when the event begins before the dashboard looks calm.</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A live-stream peak is a number. Capacity is every boundary beneath it.</strong></p>
+        </section>
+
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The EKS IP issue, CNI settings, gateway topology and NAT findings come from Disney+ Hotstar's engineering retrospective. The QoS Routing Manager results come from JioHotstar's own engineering post. Audience metrics come from Reliance, JioStar and ICC releases. The bandwidth table is our scenario math, not a JioHotstar disclosure. Brand names reflect the sources' dates.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://blog.hotstar.com/scaling-infrastructure-for-millions-from-challenges-to-triumphs-part-1-6099141a99ef" target="_blank" rel="noopener noreferrer">Disney+ Hotstar Engineering: Scaling Infrastructure for Millions, Part 1</a></li>
+            <li><a href="https://blog.hotstar.com/scaling-the-hotstar-platform-for-50m-a7f96a019add" target="_blank" rel="noopener noreferrer">Hotstar Engineering: Scaling the Hotstar Platform for 50M</a></li>
+            <li><a href="https://blog.hotstar.com/orchestrating-jiohotstar-traffic-the-difference-between-a-loading-spinner-and-a-winning-six-8a385b01380e" target="_blank" rel="noopener noreferrer">JioHotstar Engineering: Orchestrating JioHotstar Traffic with the QoS Routing Manager</a></li>
+            <li><a href="https://www.ril.com/ar2025-26/media-and-entertainment.html" target="_blank" rel="noopener noreferrer">Reliance Industries FY 2025–26 Annual Report: Media and Entertainment</a></li>
+            <li><a href="https://www.icc-cricket.com/media-releases/icc-men-s-t20-world-cup-2026-sets-new-global-streaming-record-on-jiohotstar-during-india-england-semi-final" target="_blank" rel="noopener noreferrer">ICC: India–England T20 World Cup semi-final streaming record</a></li>
+            <li><a href="https://www.jiostar.com/news/jiostar-takes-tata-ipl-2026-reach-to-an-all-time-high-of-over-1-2-billion" target="_blank" rel="noopener noreferrer">JioStar: TATA IPL 2026 reach and watch-time announcement</a></li>
+            <li><a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener noreferrer">Kubernetes documentation: over-capacity Endpoints and EndpointSlices</a></li>
+            <li><a href="https://docs.aws.amazon.com/eks/latest/best-practices/vpc-cni.html" target="_blank" rel="noopener noreferrer">AWS EKS Best Practices: Amazon VPC CNI IP targets</a></li>
+            <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html" target="_blank" rel="noopener noreferrer">AWS VPC documentation: subnet address reservations</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;">
+        <span>Mukul Kumar Mishra</span>
+        <div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+          <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+          <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+          <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+          <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+          <a class="chip" data-share="copy" href="#">Copy link</a>
+        </div>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a>
+      </footer>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    (function(){
+      var row=document.querySelector('[data-share-row]');
+      if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;
+      var c=document.querySelector('link[rel="canonical"]');
+      var u=c?c.getAttribute('href'):location.href;
+      var t=document.title;
+      function q(s){return encodeURIComponent(s);}
+      var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};
+      var as=row.querySelectorAll('a[data-share]');
+      for(var i=0;i<as.length;i++)(function(a){
+        var k=a.getAttribute('data-share');
+        if(k==='copy'){
+          a.addEventListener('click',function(e){
+            e.preventDefault();
+            var done=function(message){var o=a.textContent;a.textContent=message;setTimeout(function(){a.textContent=o;},1500);};
+            var legacyCopy=function(){var ta=document.createElement('textarea');ta.value=u;ta.setAttribute('readonly','');ta.style.position='fixed';document.body.appendChild(ta);ta.select();var copied=false;try{copied=document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done(copied?'Copied':'Copy failed');};
+            if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){done('Copied');},legacyCopy);}
+            else{legacyCopy();}
+          });
+        }else if(links[k]){a.setAttribute('href',links[k]);}
+      })(as[i]);
+    })();
+  </script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') !== 'light') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide ? lucide.createIcons() : document.addEventListener('DOMContentLoaded', function () { window.lucide && lucide.createIcons(); }));
+  </script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
