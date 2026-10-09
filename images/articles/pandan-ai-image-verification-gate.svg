@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Verification gate for public AI-image reports</title>
+  <desc id="desc">A proposed verification process separates a submitted image, its provenance, independent location and time checks, a human safety decision, and a public update. The process is Rook's recommendation, not a documented Singapore agency workflow.</desc>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">PUBLIC IMAGE REPORTS NEED A PROVENANCE GATE</text>
+  <text x="948" y="41" font-family="Sora, Arial, sans-serif" font-size="24" font-weight="700" fill="#f8fafc">Build<tspan fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="117" font-family="Sora, Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">Separate “act safely now” from “this image is authentic.”</text>
+  <text x="60" y="149" font-family="Montserrat, Arial, sans-serif" font-size="16" fill="#475569">Recommended control flow. This is not a claim about PUB's internal systems.</text>
+  <g>
+    <rect x="55" y="220" width="205" height="145" rx="12" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
+    <text x="80" y="267" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">1 · RECEIVE</text>
+    <text x="80" y="304" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">Preserve original file</text>
+    <text x="80" y="330" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">plus reporter details.</text>
+  </g>
+  <path d="M270 292 H310" stroke="#0f172a" stroke-width="4"/><path d="M310 292 l-13 -8 v16 z" fill="#0f172a"/>
+  <g>
+    <rect x="320" y="220" width="205" height="145" rx="12" fill="#ffffff" stroke="#fbbf24" stroke-width="3"/>
+    <text x="345" y="267" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">2 · VERIFY</text>
+    <text x="345" y="304" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">Check time, location</text>
+    <text x="345" y="330" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">plus independent reports.</text>
+  </g>
+  <path d="M535 292 H575" stroke="#0f172a" stroke-width="4"/><path d="M575 292 l-13 -8 v16 z" fill="#0f172a"/>
+  <g>
+    <rect x="585" y="220" width="205" height="145" rx="12" fill="#ffffff" stroke="#fb7185" stroke-width="3"/>
+    <text x="610" y="267" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">3 · TRIAGE</text>
+    <text x="610" y="304" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">Use risk to set</text>
+    <text x="610" y="330" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">reversible precautions.</text>
+  </g>
+  <path d="M800 292 H840" stroke="#0f172a" stroke-width="4"/><path d="M840 292 l-13 -8 v16 z" fill="#0f172a"/>
+  <g>
+    <rect x="850" y="220" width="295" height="145" rx="12" fill="#ffffff" stroke="#a3e635" stroke-width="3"/>
+    <text x="875" y="267" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">4 · UPDATE</text>
+    <text x="875" y="304" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">Say what is known,</text>
+    <text x="875" y="330" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#334155">unknown, plus next check.</text>
+  </g>
+  <rect x="155" y="430" width="890" height="82" rx="12" fill="#fee2e2" stroke="#fb7185" stroke-width="2"/>
+  <text x="600" y="464" text-anchor="middle" font-family="Sora, Arial, sans-serif" font-size="18" font-weight="700" fill="#7f1d1d">AI detector result = signal, not a verdict</text>
+  <text x="600" y="491" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#7f1d1d">If inconclusive, keep safety measures proportionate and keep verifying.</text>
+  <text x="1110" y="650" text-anchor="end" font-family="monospace" font-size="14" fill="#64748b">ROOK'S RECOMMENDED CONTROL MODEL</text>
+</svg>

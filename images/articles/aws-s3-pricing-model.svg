@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">AWS S3 pricing model for one TiB of Standard storage</title>
+  <desc id="desc">An illustrative monthly US East model adds 1,024 billable gigabytes of S3 Standard storage, one million PUT requests and ten million GET requests. The modeled subtotal is 32 dollars and 55 cents before transfer and management charges.</desc>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">AWS S3 PRICING: THE $32.55 BASELINE</text>
+  <text x="948" y="41" font-family="Sora, Arial, sans-serif" font-size="24" font-weight="700" fill="#f8fafc">Build<tspan fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="116" font-family="Sora, Arial, sans-serif" font-size="21" font-weight="700" fill="#0f172a">US EAST (N. VIRGINIA) · S3 STANDARD · 1 TiB</text>
+  <text x="60" y="146" font-family="Montserrat, Arial, sans-serif" font-size="17" fill="#475569">1 TiB = 1,024 billable GB · one month · public example rates</text>
+  <g>
+    <rect x="60" y="180" width="250" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="60" y="180" width="250" height="12" rx="6" fill="#38bdf8"/>
+    <text x="82" y="230" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">STORAGE</text>
+    <text x="82" y="279" font-family="monospace" font-size="24" font-weight="700" fill="#0f172a">1,024 GB</text>
+    <text x="82" y="311" font-family="monospace" font-size="16" fill="#475569">× $0.023 / GB-month</text>
+    <line x1="82" y1="337" x2="288" y2="337" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="82" y="382" font-family="monospace" font-size="30" font-weight="700" fill="#0f172a">$23.55</text>
+  </g>
+  <g>
+    <rect x="330" y="180" width="250" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="330" y="180" width="250" height="12" rx="6" fill="#a3e635"/>
+    <text x="352" y="230" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">PUT REQUESTS</text>
+    <text x="352" y="279" font-family="monospace" font-size="24" font-weight="700" fill="#0f172a">1,000,000</text>
+    <text x="352" y="311" font-family="monospace" font-size="16" fill="#475569">÷ 1,000 × $0.005</text>
+    <line x1="352" y1="337" x2="558" y2="337" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="352" y="382" font-family="monospace" font-size="30" font-weight="700" fill="#0f172a">$5.00</text>
+  </g>
+  <g>
+    <rect x="600" y="180" width="250" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="600" y="180" width="250" height="12" rx="6" fill="#fb7185"/>
+    <text x="622" y="230" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">GET REQUESTS</text>
+    <text x="622" y="279" font-family="monospace" font-size="24" font-weight="700" fill="#0f172a">10,000,000</text>
+    <text x="622" y="311" font-family="monospace" font-size="16" fill="#475569">÷ 1,000 × $0.0004</text>
+    <line x1="622" y1="337" x2="828" y2="337" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="622" y="382" font-family="monospace" font-size="30" font-weight="700" fill="#0f172a">$4.00</text>
+  </g>
+  <g>
+    <rect x="870" y="180" width="250" height="230" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="870" y="180" width="250" height="12" rx="6" fill="#94a3b8"/>
+    <text x="892" y="230" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">RETRIEVAL</text>
+    <text x="892" y="279" font-family="monospace" font-size="24" font-weight="700" fill="#0f172a">0 GB</text>
+    <text x="892" y="311" font-family="monospace" font-size="16" fill="#475569">× entered rate</text>
+    <line x1="892" y1="337" x2="1098" y2="337" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="892" y="382" font-family="monospace" font-size="30" font-weight="700" fill="#0f172a">$0.00</text>
+  </g>
+  <rect x="60" y="446" width="1060" height="115" rx="12" fill="#0f172a"/>
+  <text x="90" y="490" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#cbd5e1">MODELED MONTHLY SUBTOTAL</text>
+  <text x="90" y="533" font-family="Montserrat, Arial, sans-serif" font-size="17" fill="#f8fafc">Storage + PUT + GET + retrieval</text>
+  <text x="1080" y="526" text-anchor="end" font-family="monospace" font-size="44" font-weight="700" fill="#a3e635">$32.55</text>
+  <text x="60" y="612" font-family="Montserrat, Arial, sans-serif" font-size="16" fill="#475569">Estimate only. Excludes transfer, management, replication, taxes, credits and account discounts.</text>
+  <text x="1110" y="650" text-anchor="end" font-family="monospace" font-size="14" fill="#64748b">BY IRA · DATA COST MODEL</text>
+</svg>

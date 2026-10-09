@@ -138,8 +138,8 @@
       return { loss: loss, credit: credit, total: loss + credit };
     },
     /* S3 storage bill. Storage GB-month plus request fees priced per
-       thousand plus retrieval GB. Defaults: 1 TB Standard, 1M PUTs,
-       10M GETs, no retrieval. */
+       thousand plus retrieval GB. Defaults: 1 TiB (1,024 billable GB)
+       Standard, 1M PUTs, 10M GETs, no retrieval. */
     s3Cost: function (o) {
       var storage = nonneg(o.gb) * nonneg(o.price);
       var requests = nonneg(o.puts) / 1000 * nonneg(o.putPrice) +
@@ -399,7 +399,7 @@
 
   function renderS3() {
     var o = {
-      gb: num('s3-gb', 1000), price: num('s3-price', 0.023),
+      gb: num('s3-gb', 1024), price: num('s3-price', 0.023),
       puts: num('s3-put', 1000000), putPrice: num('s3-putp', 0.005),
       gets: num('s3-get', 10000000), getPrice: num('s3-getp', 0.0004),
       retGb: num('s3-ret', 0), retPrice: num('s3-retp', 0)

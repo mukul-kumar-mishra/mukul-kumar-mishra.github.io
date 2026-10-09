@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">S3 small-object storage minimums</title>
+  <desc id="desc">A one kibibyte object is billed at its stored size in S3 Standard, but Standard-IA and One Zone-IA have a 128-kibibyte minimum billable object size and a 30-day minimum storage duration. Glacier Instant Retrieval has a 128-kibibyte minimum and a 90-day minimum. Glacier Flexible Retrieval and Deep Archive have 90- and 180-day minimums plus 40 KiB of metadata per object.</desc>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">S3 PRICING: THE SMALL-OBJECT CLASS TRAP</text>
+  <text x="948" y="41" font-family="Sora, Arial, sans-serif" font-size="24" font-weight="700" fill="#f8fafc">Build<tspan fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="120" font-family="Sora, Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">A lower per-GB rate does not guarantee a lower bill.</text>
+  <text x="60" y="153" font-family="Montserrat, Arial, sans-serif" font-size="17" fill="#475569">For small objects, billable size plus minimum duration can outweigh the storage discount.</text>
+  <g>
+    <rect x="60" y="194" width="330" height="290" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="60" y="194" width="330" height="12" rx="6" fill="#38bdf8"/>
+    <text x="86" y="247" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">S3 STANDARD</text>
+    <text x="86" y="306" font-family="monospace" font-size="25" font-weight="700" fill="#0f172a">1 KiB object</text>
+    <path d="M95 348 H345" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/>
+    <text x="86" y="403" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">1 KiB billable</text>
+    <text x="86" y="446" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#475569">No minimum object size or duration.</text>
+  </g>
+  <g>
+    <rect x="435" y="194" width="330" height="290" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="435" y="194" width="330" height="12" rx="6" fill="#fbbf24"/>
+    <text x="461" y="247" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">STANDARD-IA · ONE ZONE-IA</text>
+    <text x="461" y="306" font-family="monospace" font-size="25" font-weight="700" fill="#0f172a">1 KiB object</text>
+    <path d="M470 348 H720" stroke="#fbbf24" stroke-width="12" stroke-linecap="round"/>
+    <text x="461" y="403" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">128 KiB minimum</text>
+    <text x="461" y="446" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#475569">30-day minimum storage duration.</text>
+  </g>
+  <g>
+    <rect x="810" y="194" width="330" height="290" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="810" y="194" width="330" height="12" rx="6" fill="#fb7185"/>
+    <text x="836" y="247" font-family="Sora, Arial, sans-serif" font-size="17" font-weight="700" fill="#0f172a">GLACIER INSTANT RETRIEVAL</text>
+    <text x="836" y="306" font-family="monospace" font-size="25" font-weight="700" fill="#0f172a">1 KiB object</text>
+    <path d="M845 348 H1095" stroke="#fb7185" stroke-width="12" stroke-linecap="round"/>
+    <text x="836" y="403" font-family="Sora, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">128 KiB minimum</text>
+    <text x="836" y="446" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#475569">90-day minimum storage duration.</text>
+  </g>
+  <rect x="60" y="520" width="1080" height="82" rx="10" fill="#e2e8f0"/>
+  <text x="86" y="556" font-family="Sora, Arial, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Count objects. Count transitions. Count time.</text>
+  <text x="86" y="584" font-family="Montserrat, Arial, sans-serif" font-size="15" fill="#475569">Flexible: 90 days. Deep Archive: 180 days. Each adds 40 KiB of metadata.</text>
+  <text x="1110" y="650" text-anchor="end" font-family="monospace" font-size="14" fill="#64748b">BY IRA · DATA COST MODEL</text>
+</svg>

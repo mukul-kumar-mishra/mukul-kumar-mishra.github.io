@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
+  <meta name="author" content="Ira">
+  <link rel="canonical" href="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AWS S3 Pricing Model: Storage, Requests and Egress">
+  <meta property="og:description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
+  <meta property="og:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AWS S3 Pricing Model: Storage, Requests and Egress">
+  <meta name="twitter:description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
+  <meta name="twitter:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
+  <title>AWS S3 Pricing Model: Storage, Requests and Egress | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"AWS S3 Pricing Model: Storage, Requests and Egress",
+    "description":"A worked AWS S3 pricing model that separates storage, requests, retrieval, transfer, management, replication and retained versions, with estimates you can rerun in the S3 calculator.",
+    "author":{"@type":"Person","name":"Ira","url":"https://buildopsy.com/about.html#author-ira"},
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
+    "datePublished":"2026-10-09",
+    "dateModified":"2026-10-09",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/aws-s3-pricing-model.html"},
+    "keywords":"AWS S3 pricing, S3 cost model, S3 storage cost, PUT requests, GET requests, data transfer, S3 calculator",
+    "image":"https://buildopsy.com/images/articles/aws-s3-pricing-model.png"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost?","acceptedAnswer":{"@type":"Answer","text":"At the example US East rate of $0.023 per billable GB-month, 1,024 billable GB costs $23.55 for a full month of storage. Requests, retrieval, transfer and other charges are extra."}},
+      {"@type":"Question","name":"Does the Buildopsy S3 calculator include data transfer out?","acceptedAnswer":{"@type":"Answer","text":"No. It models storage, entered PUT and GET requests, plus entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account."}},
+      {"@type":"Question","name":"Why can a cheaper S3 storage class cost more overall?","acceptedAnswer":{"@type":"Answer","text":"Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Storage Cost Model</span><span class="chip">October 2026</span><span class="chip">14 min read</span><span class="chip">Ira</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS S3 Pricing Model: Storage, Requests and Egress</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">I start with the storage rate because it is the easiest line to quote. Then I price requests, retrieval, transfer, object size and retention as separate meters. This worked model uses 1 TiB in S3 Standard to show what one million PUTs and ten million GETs add.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> 1,024 billable GB plus one million PUTs and ten million GETs produce a $32.55 modeled monthly subtotal at the example US East rates. It excludes transfer, management features, replication, tax, account credits and negotiated pricing. Rerun the inputs in the <a href="../tools/aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a>.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Storage</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1,024 billable GB</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Write volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1M PUTs</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Read volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10M GETs</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Modeled subtotal</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$32.55 / month</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Ira · Data infrastructure cost model · Published October 9, 2026</p>
+      </header>
+
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope:</strong> General-purpose S3 Standard in US East (N. Virginia), public example rates, USD, a full billing month. This is a modeled estimate, not an AWS quote. AWS measures storage in binary GB. Here 1 TiB is represented as 1,024 billable GB. Check the <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">live S3 pricing page</a> before budgeting.</aside>
+
+      <article class="prose">
+        <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-s3-pricing-model.svg" alt="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges" width="1200" height="680"><figcaption>Figure 1. The same inputs used by the Buildopsy S3 calculator. The $32.55 subtotal excludes transfer and other enabled features.</figcaption></figure>
+
+        <section><h2>1. The Storage Rate Is Not the Bill</h2>
+          <p>S3 pricing is a sum of usage meters. AWS lists storage, requests, retrieval, transfer, management, replication, plus transform and query features as separate cost components. The right question is not “What does a gigabyte cost?” It is “How many billable bytes, operations and transfers does this workload create in each class?”</p>
+          <p>The model below uses a general-purpose bucket in S3 Standard in US East (N. Virginia). Its storage input is 1 TiB, or 1,024 billable GB. The calculator uses the example storage rate of $0.023 per billable GB-month. Public AWS prices vary by Region, class and volume. The rate is an input, not a permanent constant.</p>
+          <div class="callout"><strong>Boundary:</strong> S3 Standard has no per-GB retrieval fee. That does not make reads free. GET requests are billed by request count, then data leaving S3 can add a separate transfer charge.</div>
+        </section>
+
+        <section><h2>2. Rebuild the $32.55 Worked Model</h2>
+          <p>The existing <a href="../tools/aws-s3-storage-cost-calculator.html">S3 pricing calculator</a> starts with stored volume, PUT count, GET count and retrieval. At the example rates, the arithmetic is:</p>
+          <table class="claimtable">
+            <thead><tr><th>Line item</th><th>Calculation</th><th>Modeled charge</th></tr></thead>
+            <tbody>
+              <tr><td>S3 Standard storage</td><td>1,024 GB-month × $0.023</td><td>$23.55</td></tr>
+              <tr><td>PUT requests</td><td>1,000,000 ÷ 1,000 × $0.005</td><td>$5.00</td></tr>
+              <tr><td>GET requests</td><td>10,000,000 ÷ 1,000 × $0.0004</td><td>$4.00</td></tr>
+              <tr><td>Class retrieval</td><td>0 GB × entered rate</td><td>$0.00</td></tr>
+              <tr><td><strong>Modeled subtotal</strong></td><td>Storage + requests + retrieval</td><td><strong>$32.55</strong></td></tr>
+            </tbody>
+          </table>
+          <p>Storage uses $0.023 per billable GB-month for the example volume tier. The request inputs use the tool's editable US East example rates. The example is deliberately 1,024 billable GB, not 1,000 decimal gigabytes. AWS's S3 billing FAQ demonstrates the binary conversion from 4 GB to 4,294,967,296 bytes.</p>
+          <p>At these inputs, requests contribute $9.00. That is about 28 percent of the subtotal before any data leaves the bucket. Raising GET volume from 10 million to 100 million adds $36.00 at the same example rate. The 1 TiB storage line remains $23.55. Requests now contribute $45.00, almost twice the storage line. This is how a request-heavy workload can outgrow the number everyone quotes per gigabyte.</p>
+          <p>The model prices request counts, not payload size. One GET of a large object and one GET of a small object are each one request for this line item. Their transfer and storage consequences differ. So does a workload that repeatedly lists millions of keys. Browsing S3 in the console can also create billable GET, LIST and other requests.</p>
+        </section>
+
+        <section><h2>3. Object Size Can Reverse the Storage-Class Choice</h2>
+          <p>S3 Standard has no minimum billable object size. Standard-IA and One Zone-IA bill at least 128 KiB per object and impose a 30-day minimum duration. Glacier Instant Retrieval has a 128 KiB minimum and a 90-day minimum. Glacier Flexible Retrieval has a 90-day minimum. Deep Archive has a 180-day minimum. Both archive classes add 40 KiB of metadata per object: 8 KiB billed at S3 Standard rates plus 32 KiB billed at the applicable Glacier rate. These details matter when a pipeline creates millions of small records.</p>
+          <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/aws-s3-object-size-minimums.svg" alt="S3 Standard bills a 1 KiB object as 1 KiB. Standard-IA, One Zone-IA and Glacier Instant Retrieval bill 128 KiB, with 30- or 90-day minimums. Glacier Flexible and Deep Archive add 40 KiB metadata with 90- and 180-day minimums." width="1200" height="680"><figcaption>Figure 2. Documented object-size and retention minimums. The diagram is not a complete class bill.</figcaption></figure>
+          <p>For a 1 KiB object in Standard-IA, the 128 KiB floor represents 128 times the payload in billable storage units before the 30-day duration rule. A class can still win when data stays long enough and is read rarely. It can lose when a job writes tiny objects, transitions each one, then deletes or overwrites them early.</p>
+          <p>Intelligent-Tiering has a different constraint. Objects under 128 KiB are not monitored for automatic tiering and remain in Frequent Access. For Glacier Flexible Retrieval or Deep Archive, each archived object also carries the documented metadata overhead. Count objects and transitions, not only terabytes.</p>
+        </section>
+
+        <section><h2>4. A GET Request and a Retrieval Fee Are Different Meters</h2>
+          <p>Every class has request pricing. Some less-frequent and archive classes add per-GB retrieval pricing. Standard-IA, One Zone-IA and Glacier Instant Retrieval charge retrieval when data is read. Intelligent-Tiering has no retrieval fee for its standard and bulk retrieval paths, though its monitoring charge and optional accelerated archive retrieval have separate rules.</p>
+          <p>Restoring an object from Glacier Flexible Retrieval or Deep Archive is not the same as a normal Standard GET. A restore creates a temporary accessible copy for a chosen period. During that window, storage can be billed for both the archive and the restored Standard copy. The archive still has its minimum-duration rules.</p>
+          <p>Lifecycle is a request stream too. A rule that moves ten million objects can generate per-object transition requests. If objects are then expired before a class minimum has elapsed, the remaining minimum-duration charge can still apply.</p>
+        </section>
+
+        <section><h2>5. Transfer, Versioning and Features Sit Outside the Base</h2>
+          <p>Data transfer is a separate line. AWS lists a first 100 GB per month internet-transfer allowance aggregated across AWS services and Regions, with China and GovCloud exceptions. Same-Region transfers between S3 and AWS services plus transfers to CloudFront have stated exceptions. Cross-Region transfer, transfer acceleration and internet egress follow their own pricing.</p>
+          <p>This is why the S3 tool leaves transfer out. Use the <a href="../tools/cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> with the applicable billable volume and rate. Do not subtract a free allowance twice if other services in the account already used it.</p>
+          <p>Versioning changes retention. An overwrite creates a new full object version. The older version stays billable until a noncurrent-version lifecycle rule expires it or a version-specific permanent delete removes it. In a versioned bucket, a current-version expiration rule generally adds a delete marker rather than removing older versions. Cross-Region Replication creates destination storage plus request and transfer charges. S3 Inventory, Storage Lens, Object Tagging, Intelligent-Tiering monitoring, S3 Select, S3 Tables and S3 Vectors add distinct cost dimensions. They are outside the $32.55 example.</p>
+        </section>
+
+        <section><h2>6. Reconcile the Model With the Bill</h2>
+          <p>Use AWS Cost and Usage Reports for billed cost. S3 usage reports can break activity out by operation, usage type, Region, resource, request count and transfer volume. AWS lets you aggregate its S3 usage report hourly, daily or monthly. That is the bridge from application telemetry to the invoice.</p>
+          <p>For a data pipeline, retain four separate counters: average billable bytes by storage class, request counts by operation, bytes retrieved from charged classes and bytes transferred by destination. Add object counts for Intelligent-Tiering and archive workloads. Keep lifecycle transitions and retained noncurrent versions visible. A single “bucket size” metric cannot explain every line.</p>
+          <p>The Buildopsy calculator models storage, PUT requests, GET requests and entered retrieval. It accepts one editable rate for each line. It does not choose a class, apply volume tiers automatically, inspect an AWS bill, or add transfer. Enter your Region's rates, then model the omitted line items separately. For an account-specific estimate, use the <a href="https://calculator.aws/" target="_blank" rel="noopener noreferrer">AWS Pricing Calculator</a>.</p>
+        </section>
+
+        <section><h2>7. The Verdict: Price the Access Pattern</h2>
+          <p>The storage-class rate is a useful lower bound, not a workload estimate. A small-object archive can pay for unused minimum bytes. A hot bucket can pay more for operations or transfer than for storage. A versioned bucket can retain every overwritten byte until lifecycle rules remove it.</p>
+          <p>Start with the workload shape: object-size distribution, change rate, reads per object, retrieval volume, retention period and destination. Price each meter against the actual Region and class. Run the first four meters through the <a href="../tools/aws-s3-storage-cost-calculator.html">S3 calculator</a>, add transfer separately and reconcile the result against CUR line items. The bill hides in the boundary between stored bytes and the work required to use them.</p>
+          <p>For a disclosed data-lake architecture with an explicit modeled bill, see <a href="notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a>.</p>
+        </section>
+
+        <section><h2>Frequently Asked Questions</h2>
+          <h3>How much does 1 TiB of S3 Standard storage cost?</h3>
+          <p>At the example US East rate of $0.023 per billable GB-month, 1,024 billable GB costs $23.55 for a full month of storage. Requests, retrieval, transfer and other charges are extra.</p>
+          <h3>Does the Buildopsy S3 calculator include data transfer out?</h3>
+          <p>No. It models storage, entered PUT and GET requests, plus entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account.</p>
+          <h3>Why can a cheaper S3 storage class cost more overall?</h3>
+          <p>Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate.</p>
+        </section>
+
+        <section><h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The worked arithmetic uses the editable US East example values in the Buildopsy S3 calculator. AWS prices vary by Region, class, volume tier and enabled feature. The examples are estimates, not a customer invoice. AWS's live price card and billing documentation control for real budgets.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">AWS: Amazon S3 pricing</a></li>
+            <li><a href="https://www.devzero.io/blog/aws-s3-pricing" target="_blank" rel="noopener noreferrer">DevZero: US East rates fetched from the AWS Price List API (updated September 28, 2026)</a></li>
+            <li><a href="https://aws.amazon.com/s3/faqs/" target="_blank" rel="noopener noreferrer">AWS: S3 billing FAQ and binary storage-unit example</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-billing-reports.html" target="_blank" rel="noopener noreferrer">AWS: Billing reports for Amazon S3</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report.html" target="_blank" rel="noopener noreferrer">AWS: Usage reports for Amazon S3</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" rel="noopener noreferrer">AWS: Understanding S3 storage classes</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html" target="_blank" rel="noopener noreferrer">AWS: How S3 Versioning works</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-expire-general-considerations.html" target="_blank" rel="noopener noreferrer">AWS: Minimum storage duration charges</a></li>
+          </ul>
+        </section>
+      </article>
+
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Ira · Editorial profile</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
