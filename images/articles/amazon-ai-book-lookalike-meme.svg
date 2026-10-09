@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Amazon AI book copycat report and takedown, based on Cam Wilson's account</title>
+  <desc id="desc">A three-step evidence flow: journalist Cam Wilson found a suspicious lookalike listing, purchased and inspected the 89-page paperback, then reported it to Amazon, which removed the listing. The seller and generation method were not publicly identified.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#212b42"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#edf3fb}.muted{fill:#aabbd0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.title{font-size:30px;font-weight:700}.head{font-size:21px;font-weight:700}.body{font-size:16px}.small{font-size:14px}.card{fill:#192741;stroke:#405776;stroke-width:2}.warn{fill:#392d3a;stroke:#ed9b70;stroke-width:2}.safe{fill:#173c39;stroke:#7dd3c7;stroke-width:2}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.unknown{fill:#283751;stroke:#758ba6;stroke-width:2;stroke-dasharray:7 6}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">AI SLOP WATCH / CLAIM AUDIT</text>
+  <text x="58" y="106" class="title">A lookalike listing. A physical copy. A takedown.</text>
+  <text x="58" y="140" class="muted" font-size="18">What ABC reporter Cam Wilson documented—and what the public record leaves unknown.</text>
+
+  <rect x="60" y="202" width="310" height="244" rx="18" class="card"/>
+  <text x="88" y="244" class="kicker" font-size="14">1 / LISTING</text>
+  <rect x="91" y="270" width="104" height="136" rx="7" fill="#eee9db" stroke="#8e9bae" stroke-width="2"/>
+  <rect x="102" y="281" width="82" height="8" rx="4" fill="#31465f"/>
+  <rect x="102" y="299" width="67" height="5" rx="2" fill="#8191a7"/>
+  <rect x="102" y="312" width="76" height="5" rx="2" fill="#8191a7"/>
+  <text x="220" y="294" class="head">Lookalike title</text>
+  <text x="220" y="324" class="body muted">Unverified byline</text>
+  <text x="220" y="353" class="body muted">89-page paperback</text>
+  <text x="220" y="382" class="body muted">Comic Sans inside</text>
+
+  <path d="M377 323H427" class="line"/>
+  <rect x="435" y="202" width="310" height="244" rx="18" class="warn"/>
+  <text x="463" y="244" class="kicker" font-size="14" fill="#ffb36b">2 / REPORT</text>
+  <circle cx="518" cy="328" r="52" fill="#24334d" stroke="#ffb36b" stroke-width="3"/>
+  <path d="M489 329h58M518 300v58" stroke="#ffb36b" stroke-width="4" stroke-linecap="round"/>
+  <text x="590" y="306" class="head">Wilson bought</text>
+  <text x="590" y="337" class="body muted">and inspected it</text>
+  <text x="590" y="379" class="small muted">ABC News account</text>
+
+  <path d="M752 323H802" class="line"/>
+  <rect x="810" y="202" width="330" height="244" rx="18" class="safe"/>
+  <text x="838" y="244" class="kicker" font-size="14">3 / RESPONSE</text>
+  <circle cx="878" cy="328" r="42" fill="#213a4a" stroke="#7dd3c7" stroke-width="3"/>
+  <path d="m858 329 14 14 28-32" fill="none" stroke="#7dd3c7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="942" y="307" class="head">Amazon removed</text>
+  <text x="942" y="338" class="body muted">after Wilson reported it</text>
+  <text x="942" y="379" class="small muted">Similar listings remained</text>
+
+  <rect x="60" y="486" width="1080" height="105" rx="16" class="unknown"/>
+  <text x="88" y="526" class="kicker" font-size="14">PUBLIC RECORD LIMIT</text>
+  <text x="88" y="560" class="body">Seller identity and the specific generation method were not established in the reporting.</text>
+  <text x="58" y="634" class="small muted">Source: Cam Wilson, ABC News, October 10, 2026. The article separates observed events from inference.</text>
+  <text x="1023" y="634" class="kicker" font-size="13">BUILDOPSY</text>
+</svg>

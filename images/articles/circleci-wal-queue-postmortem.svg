@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">CircleCI workflow orchestration outage: WAL saturation and recovery queue</title>
+  <desc id="desc">A pipeline request depends on the workflow database. Anti-wraparound autovacuum and application writes generate WAL faster than archival, filling the dedicated log volume. New job dispatch stops; after database recovery, a backlog drains into the execution fleet.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="wal" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:20px;font-weight:700}.sub{font-size:15px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">SYSTEM DESIGN / CONTROL-PLANE FAILURE</text>
+  <text x="58" y="105" class="head">The WAL volume filled. Dispatch stopped.</text>
+  <text x="58" y="139" class="muted" font-size="18">CircleCI described a shared workflow database between pipeline intake and the runner fleet.</text>
+
+  <rect x="58" y="205" width="202" height="112" rx="16" class="node"/>
+  <text x="84" y="248" class="label">Pipeline</text><text x="84" y="276" class="label">requests</text>
+  <text x="84" y="300" class="sub muted">state + workflow intent</text>
+
+  <path d="M262 260H325" class="line"/>
+  <rect x="330" y="205" width="220" height="112" rx="16" class="node"/>
+  <text x="356" y="248" class="label">Workflow</text><text x="356" y="276" class="label">database</text>
+  <text x="356" y="300" class="sub muted">state + job dispatch</text>
+
+  <path d="M552 260H610" class="line"/>
+  <rect x="615" y="190" width="245" height="142" rx="16" class="nodehot"/>
+  <text x="640" y="232" class="label">WAL volume</text>
+  <rect x="642" y="251" width="190" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
+  <rect x="642" y="251" width="184" height="22" rx="11" fill="url(#wal)"/>
+  <text x="642" y="302" class="sub">Autovacuum + writes &gt; archive rate</text>
+
+  <path d="M862 260H918" class="bad"/>
+  <rect x="925" y="205" width="217" height="112" rx="16" class="nodehot"/>
+  <text x="950" y="248" class="label">Dispatch</text><text x="950" y="276" class="label">stalls</text>
+  <text x="950" y="300" class="sub muted">new jobs wait</text>
+
+  <rect x="293" y="365" width="258" height="76" rx="14" class="nodesafe"/>
+  <text x="318" y="397" class="label">Backlog grows</text><text x="318" y="423" class="sub muted">recovery needs spare capacity</text>
+  <path d="M1034 322C1034 376 845 402 556 402" class="line"/>
+  <rect x="646" y="365" width="258" height="76" rx="14" class="nodesafe"/>
+  <text x="671" y="397" class="label">Runner fleet</text><text x="671" y="423" class="sub muted">separate from dispatch state</text>
+  <path d="M552 402H640" class="line"/>
+
+  <text x="58" y="506" class="kicker">REPORTED TIMELINE · OCTOBER 6, 2026 · UTC</text>
+  <line x1="92" y1="566" x2="1106" y2="566" class="timeline"/>
+  <g>
+    <circle cx="118" cy="566" r="10" class="tick"/><text x="88" y="543" class="label" font-size="17">10:02</text><text x="88" y="601" class="sub muted">brief alerts</text>
+    <circle cx="322" cy="566" r="10" class="tick"/><text x="292" y="543" class="label" font-size="17">12:40</text><text x="292" y="601" class="sub muted">WAL outpaces archive</text>
+    <circle cx="526" cy="566" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="496" y="543" class="label" font-size="17">15:48</text><text x="496" y="601" class="sub muted">50 min offline</text>
+    <circle cx="730" cy="566" r="10" class="tick"/><text x="700" y="543" class="label" font-size="17">18:19</text><text x="700" y="601" class="sub muted">write wait reduced</text>
+    <circle cx="934" cy="566" r="10" class="tick"/><text x="904" y="543" class="label" font-size="17">20:30</text><text x="904" y="601" class="sub muted">starts normalized</text>
+  </g>
+  <text x="58" y="650" class="muted" font-size="14">Simplified from CircleCI's public postmortem. Timing and counts are attributed in the article.</text>
+  <text x="1012" y="650" class="kicker" font-size="13">BUILDOPSY</text>
+</svg>

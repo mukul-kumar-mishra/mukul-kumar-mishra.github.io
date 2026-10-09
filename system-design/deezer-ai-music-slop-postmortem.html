@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Deezer reported 90,000 fully AI-generated tracks a day and over half of new uploads at its June 2026 peak. A source-led audit separates catalog volume, listening, and suspected stream fraud.">
+  <meta name="author" content="Rook">
+  <link rel="canonical" href="https://buildopsy.com/system-design/deezer-ai-music-slop-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams">
+  <meta property="og:description" content="The AI music slop story is not that half of listeners are hearing bots. Deezer says uploads hit 90,000 per day, while listening stayed at 1–3% and up to 85% of AI-track streams were fraudulent.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/deezer-ai-music-flood-meme.png">
+  <meta property="og:image:alt" content="Three-panel diagram comparing Deezer's reported AI music uploads, share of new deliveries, and share of total streams">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="680">
+  <meta property="og:url" content="https://buildopsy.com/system-design/deezer-ai-music-slop-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams">
+  <meta name="twitter:description" content="Uploads, listens, and fake streams are different denominators. Here's what Deezer and Spotify actually disclosed.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/deezer-ai-music-flood-meme.png">
+  <meta name="twitter:image:alt" content="AI-music upload and listening figures separated by denominator">
+  <title>Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams | AI Slop Watch</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams","description":"A source-led audit of Deezer's disclosed AI music upload volume, stream share, fraud detection and platform controls.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/about.html#author-rook"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/deezer-ai-music-slop-postmortem.html"},"keywords":"AI music slop, Deezer AI tracks, streaming fraud, AI-generated music, Spotify music spam","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/deezer-ai-music-flood-meme.png"}</script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Music Audit</span><span class="chip">October 2026</span><span class="chip">12 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The headline says AI music passed half of Deezer's daily uploads. That does not mean half the songs people hear are AI. The platform's own numbers tell a more useful story: a flood at ingestion, a much smaller share at playback, and a fraud problem hiding inside some of those listens.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Deezer reported a June 2026 peak of about 90,000 fully AI-generated tracks per day and more than half of new deliveries. It says these tracks made up 1–3% of listening, while up to 85% of streams on AI tracks in 2025 were fraudulent. These are Deezer-reported measurements, not an independently audited estimate of all streaming services.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI Slop Watch audit · Updated October 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Claim check:</strong> “50% of uploads” is a share of new deliveries to Deezer at a reported peak, not half its catalog, half of all music online or half of what people listened to. Deezer is the source of the platform figures and also sells AI-detection technology, so the numbers below are attributed to the company.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/deezer-ai-music-flood-meme.svg" alt="An original three-panel graphic contrasts Deezer's reported daily AI-track uploads, peak share of uploads, and share of streams" width="1200" height="680"><figcaption>Figure 1. Three denominators, three different stories: new uploads, overall listening, and streams Deezer classified as fraudulent.</figcaption></figure>
+      <section><h2>1. Half the Uploads Is Not Half the Music People Hear</h2>
+        <p>Deezer's July 2026 newsroom update says its fully AI-generated deliveries averaged about 90,000 tracks per day during June, exceeding 50% of new uploads at peak. In the same disclosure, Deezer says fully AI-generated tracks accounted for 1–3% of streams on its service. That gap is the story. Upload capacity has become cheap; listener attention has not multiplied at the same rate.</p>
+        <p>These percentages describe different stages of the system. Upload share measures what distributors deliver. Stream share measures what listeners play. The 85% fraud estimate is a subset of plays on detected AI-generated music that Deezer says it classified as fraudulent in 2025. It is not 85% of all Deezer streams, 85% of all AI songs, or a finding about every platform.</p>
+        <p>AI-generated music is also not a synonym for bad music. A musician can use generation as a creative tool and make something listeners value. The relevant slop signal here is not the presence of a model. It is the combination of mass delivery, weak listener demand and attempts to manufacture royalty-bearing plays.</p>
+      </section>
+      <section><h2>2. The Fraud Economics: Cheap Catalog, Artificial Plays</h2>
+        <p>A streaming catalog has an ingestion path, a discovery path and a payment path. Generative tools lower the labor needed to produce another track. A distributor can deliver it to a service. Recommendations and search decide whether listeners find it. A royalty system then allocates money based on measured listening, subject to the platform's fraud controls.</p>
+        <p>The apparent incentive is to create more tracks than organic listeners will find, then use artificial activity to push a chosen track into the payout calculation. The cost of generating the file may be tiny compared with the potential reward from many fake plays. That is why Deezer's reported fraud share matters more than its raw track count. It is also why “the AI made the music” alone does not prove a stream was fraudulent.</p>
+        <p>Deezer says it began detecting fully generated music in January 2025. It says detected tracks are labeled, removed from algorithmic and editorial recommendations, and fraudulent plays are excluded from royalty payments. The company also announced removal of tracks used for streaming fraud and tracks that had gone unplayed for six months. Those controls target distribution and payout incentives rather than banning AI-assisted or synthetic music in general.</p>
+      </section>
+      <section><h2>3. Detection Is a Classifier, Not a Truth Machine</h2>
+        <p>Deezer says its detector looks for audio artifacts associated with generative systems and can generalize across models when examples are available. It reports 99.8% accuracy and fewer than one false positive per 10,000 human-made tracks. Those are vendor-reported metrics. The public materials do not include a complete benchmark set, independent replication, confidence intervals or a breakdown by genre, mastering chain and model version.</p>
+        <p>That caveat is not a reason to ignore the work. It is a reason to avoid turning a detector label into a verdict about authorship or intent. A good moderation system uses the classifier as one signal, keeps provenance and distributor records, looks for suspicious play patterns, and gives artists a review path. A false positive can cost a human creator reach and royalties; a false negative leaves a fraud channel open.</p>
+        <div class="callout"><strong>Do not collapse the labels:</strong> “AI-generated” is about how a track was made. “Spam” is about repetitive or manipulative delivery. “Fraudulent stream” is about activity that violates payment rules. One track can trigger one label without proving the other two.</div>
+      </section>
+      <section><h2>4. Spotify's Numbers Show Why Definitions Matter</h2>
+        <p>Spotify's September 2025 announcement said it had removed more than 75 million “spammy tracks” over the previous year. It named mass uploads, duplicates, search-engine optimization tricks, artificially short tracks and other spam tactics. Spotify did not say that 75 million AI-generated tracks were removed. Counting every spam takedown as AI music would turn an explicitly broader moderation number into a false statistic.</p>
+        <p>Spotify also described a different control set: a spam filter to stop abusive tracks from recommendations, stricter handling of unauthorized voice impersonation, and AI disclosures through music credits. Its April 2026 update says labels can show specific AI contributions such as vocals, lyrics or production when an artist or distributor submits that information. Spotify is clear that an absent AI credit does not mean a track did not use AI.</p>
+        <p>The comparison shows two separate engineering problems. Deezer is trying to identify fully synthetic audio. Spotify emphasizes both distribution abuse and contributor-supplied provenance across a spectrum of AI use. Neither number is a census of the global music supply, and neither approach alone catches every kind of fraud.</p>
+      </section>
+      <section><h2>5. What a Fair Streaming Control Plane Should Measure</h2>
+        <p>Platforms should publish metrics by stage, with definitions and denominators visible:</p>
+        <ol><li><strong>Ingestion:</strong> fully synthetic tracks received per day, total delivered tracks, duplicate clusters, and the portion with usable provenance metadata.</li><li><strong>Discovery:</strong> impressions and recommendation exposure for detected AI tracks, not just the number uploaded or removed.</li><li><strong>Listening:</strong> verified human engagement versus plays flagged for manipulation, reported separately by catalog type and time window.</li><li><strong>Payment:</strong> royalties held, rejected or returned after an appeal, with the false-positive review outcome published.</li><li><strong>Appeals:</strong> time to decision, reversals, and the fraction of creators who can contest a track-level detection without losing access to their full catalog.</li></ol>
+        <p>Those measurements distinguish a useful new creator from a bot farm. They also make the detector accountable. If a platform only reports uploads, the loudest number wins. If it shows upload volume beside actual listening, enforcement and appeal outcomes, artists and listeners can see whether the controls work.</p>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Deezer's disclosure makes an alarming headline more precise. Synthetic tracks can dominate the stream of new deliveries without dominating the listening feed. The platform says recommendations and fraud controls help explain that gap. The hard question is whether those controls remain accurate as generation tools and distributors change faster than review systems.</p>
+        <p>Spotify's “75 million spammy tracks” is a warning about ecosystem abuse, not proof that every removed track was AI-generated. Deezer's “up to 85%” is a platform estimate of fraudulent plays on AI music in a past measurement period, not a universal fraud rate. Keep those distinctions, and the engineering challenge becomes visible: preserve open creative participation while making fake scale expensive and fake listening unrewarding.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The upload counter measures supply. The play counter measures attention. A fraud detector has to know the difference.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Deezer's upload, stream-share, fraud and detector figures are company disclosures. Spotify's spam count and product controls are company disclosures. “AI-generated,” “spammy” and “fraudulent” retain the source's own definitions. Rook's pipeline and control recommendations are analysis, not claims about either platform's private implementation.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://newsroom-deezer.com/2026/07/ai-music-exceeds-50-percent-daily-uploads-deezer/" target="_blank" rel="noopener noreferrer">Deezer: AI music has surpassed 50% of new music uploads (July 21, 2026)</a></li><li><a href="https://newsroom-deezer.com/2026/09/deezer-ai-detection-billboard-award/" target="_blank" rel="noopener noreferrer">Deezer: AI detection and Billboard award, with figures updated through June 2026</a></li><li><a href="https://newsroom.spotify.com/2025-09-25/spotify-strengthens-ai-protections/" target="_blank" rel="noopener noreferrer">Spotify: AI protections, spam filtering, impersonation rules and music-credit disclosures</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · AI Slop Watch</span><a href="ai-slop.html">More source-led AI audits →</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

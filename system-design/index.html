@@ -54,7 +54,8 @@
       {"@type":"ListItem","position":23,"url":"https://buildopsy.com/system-design/figma-system-design.html","name":"Figma System Design: How Multiplayer Collaboration Actually Works"},
       {"@type":"ListItem","position":24,"url":"https://buildopsy.com/system-design/notion-architecture.html","name":"Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search"},
       {"@type":"ListItem","position":25,"url":"https://buildopsy.com/system-design/discord-messaging-system-design.html","name":"How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB"},
-      {"@type":"ListItem","position":26,"url":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html","name":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes"}
+      {"@type":"ListItem","position":26,"url":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html","name":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes"},
+      {"@type":"ListItem","position":27,"url":"https://buildopsy.com/system-design/circleci-wal-autovacuum-postmortem.html","name":"CircleCI Outage Postmortem: The Full WAL Volume That Stopped 3,500 Jobs"}
     ]
   }
   </script>
@@ -215,6 +216,7 @@
       var noBox = document.getElementById('noResults');
       var clearBtn = document.getElementById('clearSearchBtn');
       var embeddedArticles = [
+        {"title": "CircleCI Outage Postmortem: Full WAL Saturation Blocked 3,500 Job Starts", "url": "circleci-wal-autovacuum-postmortem.html", "tag": "CI/CD Infrastructure", "dateLabel": "October 2026", "readTime": "15 min read", "desc": "Anti-wraparound autovacuum saturated the orchestration database's WAL volume. The 50-minute outage became hours of queue recovery.", "tags": ["CircleCI", "PostgreSQL", "WAL", "CI/CD"]},
         {"title": "AWS S3 Pricing Model: Storage, Requests and Egress", "url": "aws-s3-pricing-model.html", "tag": "Cloud Storage Cost Model", "dateLabel": "October 2026", "readTime": "14 min read", "desc": "A 1 TiB Standard baseline broken into billable storage, PUT, GET and retrieval costs, with the S3 calculator plus transfer limits.", "tags": ["AWS S3", "Pricing", "Storage", "Costs"]},
         {"title": "JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness", "url": "jiohotstar-eks-ip-shortage-postmortem.html", "tag": "Live Streaming Infrastructure", "dateLabel": "October 2026", "readTime": "10 min read", "desc": "A pre-event EKS IP shortage limited one cluster near 350 nodes. Subnet headroom, CNI targets, legacy Endpoint limits plus later CDN QoS controls.", "tags": ["JioHotstar", "Kubernetes", "Streaming", "CDN"]},
         {"title": "WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users", "url": "whatsapp-system-design.html", "tag": "Messaging Infrastructure", "dateLabel": "October 2026", "readTime": "19 min read", "desc": "How WhatsApp routing works: Erlang density plus Signal E2E plus transient inbox plus group fan-out math plus priced relay model.", "tags": ["WhatsApp", "E2E", "Erlang", "Messaging"]},
