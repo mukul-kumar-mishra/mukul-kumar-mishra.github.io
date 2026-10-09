@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nineteen tools, no signup.">
+  <meta name="description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/calculators.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta property="og:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nineteen tools, no signup.">
+  <meta property="og:description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
   <meta property="og:url" content="https://buildopsy.com/calculators.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Free engineering calculators for cost, SLO and scaling">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta name="twitter:description" content="Free engineering calculators: AI token cost, error budget burn, HPA replicas, sampling, pool sizing and downtime cost. Nineteen tools, no signup.">
+  <meta name="twitter:description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
   <meta name="twitter:image:alt" content="Free engineering calculators for cost, SLO and scaling">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy</title>
@@ -73,7 +73,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free tools</span><span class="chip">Runs locally</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Free tools for AI inference, cloud costs, scaling and SRE. Change the inputs in your browser. No data leaves your device. Each calculator explains its assumptions.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Twenty-nine free tools for AI inference, cloud costs, storage, traffic capacity, scaling, and SRE. Change inputs in your browser; calculator values stay on your device. Each model explains its assumptions and limitations.</p>
       <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#quick-calculators">Quick calculators on this page</a> · <a href="#calculator-directory">All standalone tools</a>. Results are estimates, not provider quotes.</p>
       <p class="fl-desc" style="margin-top:12px;">Popular standalone estimates: <a href="tools/aws-s3-storage-cost-calculator.html">AWS S3 pricing calculator</a> · <a href="tools/ec2-compute-cost-calculator.html">EC2 cost calculator</a> · <a href="tools/serverless-function-cost-calculator.html">AWS Lambda cost calculator</a> · <a href="tools/cloud-egress-cost-calculator.html">Cloud egress cost calculator</a> · <a href="tools/kubernetes-cluster-cost-calculator.html">Kubernetes cluster cost calculator</a> · <a href="tools/data-warehouse-cost-calculator.html">Data warehouse cost calculator</a> · <a href="tools/downtime-cost-calculator.html">Downtime cost calculator</a>.</p>
     </header>
@@ -669,9 +669,9 @@
       <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
       <div class="calc-directory-search">
         <i data-lucide="search" aria-hidden="true"></i>
-        <input id="calculatorSearch" type="search" placeholder="Try AWS S3 pricing, EC2 cost or downtime" aria-label="Search all 19 calculators" autocomplete="off">
+        <input id="calculatorSearch" type="search" placeholder="Try AWS S3 pricing, EC2 cost or downtime" aria-label="Search all 29 calculators" autocomplete="off">
       </div>
-      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 8 of 19. Search or expand to see all.</p>
+      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 8 of 29. Search or expand to see all.</p>
       <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
         <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 pricing calculator s3 pricing aws storage pricing aws storage cost s3 cost calculator object storage bucket request get put retrieval gb">
           <span class="calc-directory-category">Cloud storage</span>
@@ -723,7 +723,7 @@
         </a>
       </div>
       <details class="calc-directory-more" id="calculatorDirectoryMore">
-        <summary>More calculators (11)</summary>
+        <summary>More calculators (21)</summary>
         <div class="calc-directory-grid calc-directory-grid-more">
           <a class="calc-directory-card" href="tools/managed-postgres-cost-calculator.html" data-calculator-card data-search="managed postgres database rds cloud sql aurora instance storage backup">
             <span class="calc-directory-category">Database</span>
@@ -791,10 +791,70 @@
             <p>Size concurrent connections from peak RPS and p99 latency.</p>
             <span class="calc-directory-open">Open calculator →</span>
           </a>
+          <a class="calc-directory-card" href="tools/queue-backlog-drain-calculator.html" data-calculator-card data-search="queue backlog drain time messages burst arrival service throughput recovery queue depth">
+            <span class="calc-directory-category">Queue capacity</span>
+            <h3>Queue Backlog and Drain Time Calculator</h3>
+            <p>Estimate burst backlog and recovery time at post-burst traffic rates.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/cache-hit-ratio-savings-calculator.html" data-calculator-card data-search="cache hit ratio savings break even origin request costs cache economics">
+            <span class="calc-directory-category">Caching economics</span>
+            <h3>Cache Hit Ratio Savings Calculator</h3>
+            <p>Compare avoided origin request spend with monthly cache costs.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/database-storage-growth-calculator.html" data-calculator-card data-search="database storage growth forecast capacity projection data gb month cost">
+            <span class="calc-directory-category">Database capacity</span>
+            <h3>Database Storage Growth Forecast</h3>
+            <p>Project stored data and end-of-horizon monthly storage cost.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/kafka-partition-capacity-calculator.html" data-calculator-card data-search="kafka partition capacity planner throughput consumer parallelism replication factor ingress">
+            <span class="calc-directory-category">Streaming systems</span>
+            <h3>Kafka Partition Capacity Planner</h3>
+            <p>Estimate partition count from tested throughput and consumer parallelism.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/replication-lag-catchup-calculator.html" data-calculator-card data-search="database replication lag catch up recovery apply throughput ongoing write rate replica">
+            <span class="calc-directory-category">Database reliability</span>
+            <h3>Replication Lag Catch-up Calculator</h3>
+            <p>Estimate replica recovery time after ongoing writes are accounted for.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/token-bucket-rate-limit-calculator.html" data-calculator-card data-search="token bucket rate limiter burst refill requests per second rate limit quota">
+            <span class="calc-directory-category">API capacity</span>
+            <h3>Token Bucket Rate Limit Calculator</h3>
+            <p>Model sustainable request rate, burst allowance, and admitted traffic.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/backup-retention-storage-calculator.html" data-calculator-card data-search="backup retention storage full incremental snapshots daily copies monthly storage cost">
+            <span class="calc-directory-category">Backup planning</span>
+            <h3>Backup Retention Storage Calculator</h3>
+            <p>Estimate retained full and incremental backup volume and storage run rate.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/load-balancer-target-capacity-calculator.html" data-calculator-card data-search="load balancer target count capacity rps instances fleet utilization redundancy">
+            <span class="calc-directory-category">Traffic capacity</span>
+            <h3>Load Balancer Target Capacity Calculator</h3>
+            <p>Size a target fleet from peak traffic and benchmarked target capacity.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/quorum-availability-calculator.html" data-calculator-card data-search="majority quorum availability replicas probability binomial independent failure distributed systems">
+            <span class="calc-directory-category">Distributed reliability</span>
+            <h3>Majority Quorum Availability Calculator</h3>
+            <p>Estimate majority availability with independent replica assumptions stated.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
+          <a class="calc-directory-card" href="tools/cloud-commitment-break-even-calculator.html" data-calculator-card data-search="cloud commitment break even reserved capacity utilization hourly rate savings pay as you go">
+            <span class="calc-directory-category">Cloud economics</span>
+            <h3>Cloud Commitment Break-Even Calculator</h3>
+            <p>Compare fixed commitment cost with on-demand spend at expected utilization.</p>
+            <span class="calc-directory-open">Open calculator →</span>
+          </a>
         </div>
       </details>
       <p class="fl-desc calc-directory-empty" id="calculatorDirectoryEmpty" role="status" hidden>No calculators match that search. Try a provider or task name. <button class="calc-directory-clear" id="calculatorDirectoryClear" type="button">Clear search</button></p>
-      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 19 standalone calculators.</p></noscript>
+      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 29 standalone calculators.</p></noscript>
     </section>
 
     <div class="ad-slot" data-ad-slot="calculators-below-tools" role="complementary" aria-label="Advertisement">

@@ -238,6 +238,148 @@
         storageGb: storageGb, storage: storage, compute: compute,
         monthly: compute + storage
       };
+    },
+    /* Queue buildup during a burst, then time to drain with the post-burst
+       arrival rate. Rates are messages/second and duration is in minutes. */
+    queueBacklog: function (o) {
+      var burstExcess = Math.max(0, nonneg(o.peakRate) - nonneg(o.serviceRate));
+      var backlog = Math.ceil(burstExcess * nonneg(o.durationMin) * 60);
+      var drainRate = nonneg(o.serviceRate) - nonneg(o.steadyRate);
+      return {
+        backlog: backlog, drainRate: drainRate,
+        drainSeconds: backlog === 0 ? 0 : (drainRate > 0 ? backlog / drainRate : Infinity)
+      };
+    },
+    /* Cache economics: origin spend avoided at the hit rate, less the
+       separately supplied monthly cache cost. Rates are per million reads. */
+    cacheSavings: function (o) {
+      var origin = nonneg(o.requestsM) * nonneg(o.originPriceM);
+      var hit = clamp(o.hitPct, 0, 100) / 100;
+      var avoided = origin * hit;
+      return {
+        origin: origin, avoided: avoided,
+        netSavings: avoided - nonneg(o.cacheMonthly),
+        breakEvenHitPct: origin > 0 ? nonneg(o.cacheMonthly) / origin * 100 : Infinity
+      };
+    },
+    /* Linear net-growth forecast; storage charges are a simple GB-month
+       estimate at the projected end size, not a time-weighted billing model. */
+    storageForecast: function (o) {
+      var current = nonneg(o.currentGb);
+      var growth = nonneg(o.growthGbDay) * nonneg(o.days);
+      var projected = current + growth;
+      var price = nonneg(o.priceGbMonth);
+      return {
+        growth: growth, projected: projected,
+        currentMonthly: current * price, projectedMonthly: projected * price
+      };
+    },
+    /* Partition planning using a user-supplied tested throughput per
+       partition, desired utilization ceiling, and consumer parallelism floor. */
+    kafkaPartitions: function (o) {
+      var peak = nonneg(o.peakMBps);
+      var perPartition = nonneg(o.partitionMBps);
+      var utilization = clamp(o.utilizationPct, 1, 100) / 100;
+      var throughputPartitions = perPartition > 0 ?
+        Math.ceil(peak / (perPartition * utilization)) : (peak > 0 ? Infinity : 1);
+      var consumers = Math.max(1, Math.floor(nonneg(o.consumers)));
+      var partitions = Math.max(1, throughputPartitions, consumers);
+      var maxCapacity = isFinite(partitions) ? partitions * perPartition : 0;
+      return {
+        partitions: partitions,
+        replicaCopies: isFinite(partitions) ? partitions * Math.max(1, Math.floor(nonneg(o.replicationFactor))) : Infinity,
+        maxCapacity: maxCapacity,
+        utilizationPct: maxCapacity > 0 ? peak / maxCapacity * 100 : (peak > 0 ? NaN : 0)
+      };
+    },
+    /* Lag clears only when replica apply throughput exceeds ongoing writes.
+       Uses decimal GB (1 GB = 1,000 MB) and assumes constant rates. */
+    replicaCatchup: function (o) {
+      var lagMb = nonneg(o.lagGb) * 1000;
+      var netMbPerSecond = nonneg(o.applyMBps) - nonneg(o.writeMBps);
+      return {
+        netMBps: netMbPerSecond,
+        seconds: lagMb === 0 ? 0 : (netMbPerSecond > 0 ? lagMb / netMbPerSecond : Infinity)
+      };
+    },
+    /* Fluid token-bucket estimate for constant demand starting with a full
+       bucket. It models one token cost per request (configurable). */
+    tokenBucket: function (o) {
+      var capacity = nonneg(o.capacity);
+      var refill = nonneg(o.refillPerSec);
+      var cost = nonneg(o.tokensPerRequest);
+      var requestsPerSec = nonneg(o.requestsPerSec);
+      var duration = nonneg(o.durationSec);
+      var offered = Math.floor(requestsPerSec * duration);
+      var availableTokens = capacity + refill * duration;
+      var admitted = cost > 0 ? Math.min(offered, Math.floor(availableTokens / cost)) : offered;
+      return {
+        sustainableRps: cost > 0 ? refill / cost : Infinity,
+        burstRequests: cost > 0 ? capacity / cost : Infinity,
+        offered: offered, admitted: admitted, rejected: Math.max(0, offered - admitted)
+      };
+    },
+    /* Simple retained-object estimate: full snapshots at the configured
+       cadence plus one daily incremental object throughout the retention. */
+    backupRetention: function (o) {
+      var days = Math.floor(nonneg(o.retentionDays));
+      var interval = Math.max(1, Math.floor(nonneg(o.fullEveryDays)));
+      var fullCopies = days > 0 ? Math.ceil(days / interval) : 0;
+      var fullGb = fullCopies * nonneg(o.fullGb);
+      var incrementalGb = days * nonneg(o.incrementalGbDay);
+      var totalGb = fullGb + incrementalGb;
+      return {
+        fullCopies: fullCopies, fullGb: fullGb, incrementalGb: incrementalGb,
+        totalGb: totalGb, monthlyCost: totalGb * nonneg(o.priceGbMonth)
+      };
+    },
+    /* Minimum load-balancer target count for a configured per-target tested
+       rate and maximum operating-utilization ceiling. */
+    targetCapacity: function (o) {
+      var peak = nonneg(o.peakRps);
+      var perTarget = nonneg(o.targetRps);
+      var utilization = clamp(o.utilizationPct, 1, 100) / 100;
+      var required = perTarget > 0 ? Math.ceil(peak / (perTarget * utilization)) :
+        (peak > 0 ? Infinity : 1);
+      var targets = Math.max(Math.max(1, Math.floor(nonneg(o.minimum))), required);
+      var safeCapacity = isFinite(targets) ? targets * perTarget * utilization : 0;
+      return {
+        targets: targets, safeCapacity: safeCapacity,
+        headroom: Math.max(0, safeCapacity - peak)
+      };
+    },
+    /* Availability of a majority quorum when each replica has the same
+       independent availability. Correlated failures are intentionally absent. */
+    quorumAvailability: function (o) {
+      var replicas = Math.max(1, Math.min(25, Math.floor(nonneg(o.replicas))));
+      var availability = clamp(o.nodeAvailabilityPct, 0, 100) / 100;
+      var quorum = Math.floor(replicas / 2) + 1;
+      var probability = 0;
+      for (var k = quorum; k <= replicas; k++) {
+        var combination = 1;
+        for (var i = 1; i <= k; i++) combination = combination * (replicas - i + 1) / i;
+        probability += combination * Math.pow(availability, k) *
+          Math.pow(1 - availability, replicas - k);
+      }
+      return {
+        replicas: replicas, quorum: quorum,
+        availabilityPct: probability * 100,
+        unavailabilityPct: (1 - probability) * 100
+      };
+    },
+    /* Compare pay-as-you-go spend for utilized hours with a fixed hourly
+       commitment that is paid for every hour in the month. */
+    commitmentBreakEven: function (o) {
+      var hours = nonneg(o.hours);
+      var onDemandRate = nonneg(o.onDemandRate);
+      var commitRate = nonneg(o.commitRate);
+      var utilization = clamp(o.utilizationPct, 0, 100) / 100;
+      var paygo = hours * onDemandRate * utilization;
+      var commitment = hours * commitRate;
+      return {
+        paygo: paygo, commitment: commitment, savings: paygo - commitment,
+        breakEvenUtilizationPct: onDemandRate > 0 ? commitRate / onDemandRate * 100 : Infinity
+      };
     }
   };
 
@@ -531,6 +673,115 @@
     donut('vec-donut', [[r.compute, CYAN], [r.storage, LIME]], pct(r.compute, r.monthly));
   }
 
+  function renderQueue() {
+    var r = Calcs.queueBacklog({
+      peakRate: num('qb-peak', 1500), serviceRate: num('qb-service', 1000),
+      durationMin: num('qb-duration', 10), steadyRate: num('qb-steady', 500)
+    });
+    set('qb-backlog', big(r.backlog, 0) + ' messages');
+    set('qb-excess', big(r.drainRate, 0) + ' messages / second');
+    set('qb-drain', isFinite(r.drainSeconds) ? big(r.drainSeconds / 60, 1) + ' minutes' : 'Cannot drain at these rates');
+  }
+
+  function renderCache() {
+    var r = Calcs.cacheSavings({
+      requestsM: num('cache-requests', 100), hitPct: num('cache-hit', 80),
+      originPriceM: num('cache-origin-price', 0.5), cacheMonthly: num('cache-monthly', 20000)
+    });
+    set('cache-avoided', money(r.avoided, 0));
+    set('cache-net', money(r.netSavings, 0));
+    set('cache-breakeven', isFinite(r.breakEvenHitPct) ? r.breakEvenHitPct.toFixed(1) + '% hit rate' : '—');
+  }
+
+  function renderStorageForecast() {
+    var r = Calcs.storageForecast({
+      currentGb: num('sf-current', 5000), growthGbDay: num('sf-growth', 25),
+      days: num('sf-days', 365), priceGbMonth: num('sf-price', 0.10)
+    });
+    set('sf-growth-total', big(r.growth, 0) + ' GB added');
+    set('sf-projected', big(r.projected, 0) + ' GB');
+    set('sf-monthly', money(r.projectedMonthly, 0) + ' / month');
+    set('sf-current-cost', money(r.currentMonthly, 0) + ' / month today');
+  }
+
+  function renderKafka() {
+    var r = Calcs.kafkaPartitions({
+      peakMBps: num('kp-peak', 80), partitionMBps: num('kp-partition', 10),
+      utilizationPct: num('kp-utilization', 70), consumers: num('kp-consumers', 12),
+      replicationFactor: num('kp-replication', 3)
+    });
+    set('kp-partitions', isFinite(r.partitions) ? big(r.partitions, 0) : 'No finite count: add throughput');
+    set('kp-replicas', isFinite(r.replicaCopies) ? big(r.replicaCopies, 0) + ' partition copies' : 'Set per-partition throughput');
+    set('kp-capacity', big(r.maxCapacity, 1) + ' MB/s aggregate');
+    set('kp-utilization-result', isFinite(r.utilizationPct) ? r.utilizationPct.toFixed(1) + '% of tested capacity' : 'Set nonzero tested throughput');
+  }
+
+  function renderReplicaCatchup() {
+    var r = Calcs.replicaCatchup({
+      lagGb: num('rc-lag', 120), writeMBps: num('rc-write', 40), applyMBps: num('rc-apply', 100)
+    });
+    set('rc-net', big(r.netMBps, 1) + ' MB/s net catch-up');
+    set('rc-time', isFinite(r.seconds) ? big(r.seconds / 3600, 2) + ' hours' : 'Lag will not clear');
+    set('rc-lag-size', big(num('rc-lag', 120), 1) + ' GB outstanding');
+  }
+
+  function renderTokenBucket() {
+    var r = Calcs.tokenBucket({
+      capacity: num('tb-capacity', 1000), refillPerSec: num('tb-refill', 100),
+      tokensPerRequest: num('tb-cost', 1), requestsPerSec: num('tb-rps', 250),
+      durationSec: num('tb-duration', 10)
+    });
+    set('tb-sustainable', isFinite(r.sustainableRps) ? big(r.sustainableRps, 1) + ' requests / second' : 'Unbounded at zero token cost');
+    set('tb-burst', isFinite(r.burstRequests) ? big(r.burstRequests, 0) + ' requests from a full bucket' : 'Unbounded at zero token cost');
+    set('tb-admitted', big(r.admitted, 0) + ' requests');
+    set('tb-rejected', big(r.rejected, 0) + ' requests');
+  }
+
+  function renderBackupRetention() {
+    var r = Calcs.backupRetention({
+      fullGb: num('br-full', 500), incrementalGbDay: num('br-incremental', 12),
+      retentionDays: num('br-days', 30), fullEveryDays: num('br-interval', 7),
+      priceGbMonth: num('br-price', 0.02)
+    });
+    set('br-full-total', big(r.fullGb, 0) + ' GB across ' + big(r.fullCopies, 0) + ' full copies');
+    set('br-incremental-total', big(r.incrementalGb, 0) + ' GB incrementals');
+    set('br-total', big(r.totalGb, 0) + ' GB retained');
+    set('br-monthly', money(r.monthlyCost, 0) + ' / month');
+  }
+
+  function renderTargetCapacity() {
+    var r = Calcs.targetCapacity({
+      peakRps: num('lt-peak', 12000), targetRps: num('lt-target', 1000),
+      utilizationPct: num('lt-utilization', 70), minimum: num('lt-minimum', 2)
+    });
+    set('lt-count', isFinite(r.targets) ? big(r.targets, 0) + ' targets' : 'No finite count: add target capacity');
+    set('lt-safe-capacity', isFinite(r.targets) ? big(r.safeCapacity, 0) + ' RPS at target utilization' : 'Set nonzero per-target capacity');
+    set('lt-headroom', isFinite(r.targets) ? big(r.headroom, 0) + ' RPS spare' : 'Unable to estimate headroom');
+  }
+
+  function renderQuorum() {
+    var r = Calcs.quorumAvailability({
+      replicas: num('qa-replicas', 3), nodeAvailabilityPct: num('qa-node', 99.9)
+    });
+    var requestedReplicas = Math.floor(nonneg(num('qa-replicas', 3)));
+    set('qa-quorum', big(r.quorum, 0) + ' needed from ' + big(r.replicas, 0) +
+      ' replicas' + (requestedReplicas > 25 ? ' (model capped at 25)' : ''));
+    set('qa-quorum-detail', 'Need ' + big(r.quorum, 0) + ' available');
+    set('qa-availability', r.availabilityPct.toFixed(6) + '%');
+    set('qa-unavailability', r.unavailabilityPct.toFixed(6) + '%');
+  }
+
+  function renderCommitment() {
+    var r = Calcs.commitmentBreakEven({
+      hours: num('cb-hours', 730), onDemandRate: num('cb-ondemand', 1),
+      commitRate: num('cb-commit', 0.65), utilizationPct: num('cb-utilization', 80)
+    });
+    set('cb-paygo', money(r.paygo, 2));
+    set('cb-cost', money(r.commitment, 2));
+    set('cb-savings', money(r.savings, 2));
+    set('cb-breakeven', isFinite(r.breakEvenUtilizationPct) ? r.breakEvenUtilizationPct.toFixed(1) + '% utilization' : '—');
+  }
+
   function renderAll() {
     renderToken();
     renderRps();
@@ -551,6 +802,16 @@
     renderCdn();
     renderObservability();
     renderVector();
+    renderQueue();
+    renderCache();
+    renderStorageForecast();
+    renderKafka();
+    renderReplicaCatchup();
+    renderTokenBucket();
+    renderBackupRetention();
+    renderTargetCapacity();
+    renderQuorum();
+    renderCommitment();
   }
 
   if (typeof window !== 'undefined') {
@@ -560,7 +821,9 @@
     var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly',
       'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total',
       's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly',
-      'dw-monthly', 'rds-monthly', 'lm-monthly', 'cdn-monthly', 'ob-monthly', 'vec-monthly'];
+      'dw-monthly', 'rds-monthly', 'lm-monthly', 'cdn-monthly', 'ob-monthly', 'vec-monthly',
+      'qb-backlog', 'cache-net', 'sf-projected', 'kp-partitions', 'rc-time', 'tb-admitted',
+      'br-total', 'lt-count', 'qa-availability', 'cb-savings'];
     var onToolPage = RESULT_IDS.some(function (id) { return !!document.getElementById(id); });
     if (onToolPage) {
       bind(['tk-in', 'tk-cache', 'tk-cachep', 'tk-freshp', 'tk-out', 'tk-outp', 'tk-turns'], renderToken);
@@ -582,6 +845,16 @@
       bind(['cdn-gb', 'cdn-gbp', 'cdn-req', 'cdn-reqp'], renderCdn);
       bind(['ob-hosts', 'ob-hostp', 'ob-loggb', 'ob-loggbp'], renderObservability);
       bind(['vec-count', 'vec-dim', 'vec-overhead', 'vec-storagep', 'vec-pods', 'vec-podp'], renderVector);
+      bind(['qb-peak', 'qb-service', 'qb-duration', 'qb-steady'], renderQueue);
+      bind(['cache-requests', 'cache-hit', 'cache-origin-price', 'cache-monthly'], renderCache);
+      bind(['sf-current', 'sf-growth', 'sf-days', 'sf-price'], renderStorageForecast);
+      bind(['kp-peak', 'kp-partition', 'kp-utilization', 'kp-consumers', 'kp-replication'], renderKafka);
+      bind(['rc-lag', 'rc-write', 'rc-apply'], renderReplicaCatchup);
+      bind(['tb-capacity', 'tb-refill', 'tb-cost', 'tb-rps', 'tb-duration'], renderTokenBucket);
+      bind(['br-full', 'br-incremental', 'br-days', 'br-interval', 'br-price'], renderBackupRetention);
+      bind(['lt-peak', 'lt-target', 'lt-utilization', 'lt-minimum'], renderTargetCapacity);
+      bind(['qa-replicas', 'qa-node'], renderQuorum);
+      bind(['cb-hours', 'cb-ondemand', 'cb-commit', 'cb-utilization'], renderCommitment);
       renderAll();
     }
     /* Preset pills: data-set="id:value;id:value" sets inputs and re-renders. */

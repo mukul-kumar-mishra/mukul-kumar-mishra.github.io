@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Estimate message queue buildup during a traffic burst and the time needed to drain it using arrival and processing rates.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/queue-backlog-drain-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Queue Backlog and Drain Time Calculator | Buildopsy">
+  <meta property="og:description" content="Estimate message queue buildup during a traffic burst and the time needed to drain it using arrival and processing rates.">
+  <meta property="og:url" content="https://buildopsy.com/tools/queue-backlog-drain-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Buildopsy engineering tools">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Queue Backlog and Drain Time Calculator | Buildopsy">
+  <meta name="twitter:description" content="Model burst backlog and recovery time from queue arrival and service rates.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Queue Backlog and Drain Time Calculator | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/radar.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"WebApplication","name":"Queue Backlog and Drain Time Calculator","url":"https://buildopsy.com/tools/queue-backlog-drain-calculator.html","applicationCategory":"BusinessApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"A client-side estimator for burst queue buildup and post-burst drain time.","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}},
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://buildopsy.com/"},{"@type":"ListItem","position":2,"name":"Engineering calculators","item":"https://buildopsy.com/calculators.html"},{"@type":"ListItem","position":3,"name":"Queue backlog calculator","item":"https://buildopsy.com/tools/queue-backlog-drain-calculator.html"}]},
+    {"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is queue backlog estimated?","acceptedAnswer":{"@type":"Answer","text":"The estimate is the positive difference between burst arrival rate and service rate, multiplied by burst duration in seconds. It assumes constant rates and an initially empty queue."}},{"@type":"Question","name":"When can a queue drain after a burst?","acceptedAnswer":{"@type":"Answer","text":"The queue drains only when post-burst service capacity exceeds continuing arrivals. Drain time is backlog divided by that net spare processing rate."}}]}
+  ]}
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap">
+    <a class="brand brand-logo" href="../index.html"><img class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+    <nav class="topnav" id="topnav"><a href="../system-design/index.html">System Design</a><a href="../system-design/ai-slop.html">AI Slop Watch</a><a href="../calculators.html" class="on">Calculators</a><a href="../system-design/course.html">Courses</a></nav>
+    <div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div>
+  </div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:16px;flex:1">
+    <nav aria-label="Breadcrumb" class="fl-desc"><a href="../calculators.html">Engineering calculators</a> / Queue backlog and drain time</nav>
+    <header style="padding:20px 0 28px;border-bottom:1px solid var(--line);margin-bottom:28px"><div class="fl-tag">Free engineering tool</div><h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading)">Queue Backlog and Drain Time Calculator</h1><p class="page-lede" style="font-family:var(--font-serif)">Estimate how many messages accumulate during a burst, then model recovery once the arrival rate falls. Use measured rates from the same queue and workload.</p><p class="fl-desc">Runs in your browser; inputs stay on this device. Maintained by <a href="../about.html">Buildopsy</a> · Updated <time datetime="2026-10-10">October 10, 2026</time>.</p></header>
+    <section class="sec" id="queue-backlog"><h2 class="sec-title">Queue scenario</h2><p class="fl-desc">Rates are messages per second. The burst is modeled from an empty queue, followed by a steady arrival rate.</p>
+      <div class="radar-card"><div class="radar-main"><div class="radar-hero-grid calc-top"><div class="radar-hero-left"><div class="calc-inputs">
+        <div><label class="field-label" for="qb-peak">Burst arrival rate (messages / second)</label><input class="field-input" type="number" id="qb-peak" min="0" step="any" value="1500"></div>
+        <div><label class="field-label" for="qb-service">Processing capacity during burst (messages / second)</label><input class="field-input" type="number" id="qb-service" min="0" step="any" value="1000"></div>
+        <div><label class="field-label" for="qb-duration">Burst duration (minutes)</label><input class="field-input" type="number" id="qb-duration" min="0" step="any" value="10"></div>
+        <div><label class="field-label" for="qb-steady">Post-burst arrival rate (messages / second)</label><input class="field-input" type="number" id="qb-steady" min="0" step="any" value="500"></div>
+      </div></div><div class="calc-side"><div class="calc-result-box"><div class="radar-trend-label">Backlog at burst end</div><div class="calc-result-value" id="qb-backlog" aria-live="polite">300,000 messages</div><div class="radar-count-description">messages accumulated</div></div></div></div>
+      <div class="radar-meta"><span class="radar-updated">Runs locally · No data sent</span><button class="radar-refresh" data-reset="queue-backlog" type="button">Reset</button></div>
+      <div class="radar-trend"><div class="radar-trend-block"><div class="radar-trend-label">Net drain capacity</div><div class="radar-trend-value" id="qb-excess">500 messages / second</div><div class="radar-trend-sub">service rate minus steady arrivals</div></div><div class="radar-trend-divider"></div><div class="radar-trend-block"><div class="radar-trend-label">Estimated recovery time</div><div class="radar-trend-value" id="qb-drain">10.0 minutes</div><div class="radar-trend-sub">after the burst ends</div></div></div></div></div>
+    </section>
+    <section class="sec"><h2 class="sec-title">Formula and assumptions</h2><p class="fl-desc"><code>Backlog = max(0, burst arrivals − service capacity) × burst seconds</code>. Recovery time is <code>backlog ÷ (post-burst service rate − steady arrivals)</code>.</p><p class="fl-desc">This fluid estimate assumes constant rates, an initially empty queue, no retries or message-size differences, and unchanged service capacity after the burst. A non-positive net drain rate means the queue cannot catch up under the entered steady load. Compare against queue metrics and load-test results before capacity decisions.</p></section>
+    <section class="sec"><h2 class="sec-title">Frequently asked questions</h2><h3>How is queue backlog estimated?</h3><p class="fl-desc">The positive excess of arrivals over processing, multiplied by burst seconds. It does not include backlog that existed before the burst.</p><h3>When can a queue drain after a burst?</h3><p class="fl-desc">Only when processing capacity is greater than the continuing arrival rate. The difference is spare capacity available to clear queued messages.</p></section>
+    <section class="sec"><h2 class="sec-title">Related calculators</h2><p class="fl-desc"><a href="../calculators.html">All engineering calculators</a> · <a href="connection-pool-calculator.html">Connection pool sizing</a> · <a href="error-budget-calculator.html">Error budget runway</a> · <a href="kubernetes-hpa-calculator.html">Kubernetes HPA replicas</a></p></section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;if(localStorage.getItem('pf-theme')==='dark')root.classList.add('dark');function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/calculators.js" defer></script><script src="../js/nav.js"></script>
+</body>
+</html>
