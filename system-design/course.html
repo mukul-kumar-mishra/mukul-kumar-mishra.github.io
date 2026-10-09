@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering courses from Buildopsy. System design plus data pipelines plus web performance plus AI agents plus AI evals plus Kubernetes plus RAG plus inference economics plus event streaming plus API design plus SRE plus AI security plus AI forensics plus Postgres plus interviews plus Docker plus Netflix, all live now with diagrams.">
+  <meta name="description" content="Twenty free self-guided engineering courses from Buildopsy, with original diagrams and practical lessons on system design, cloud infrastructure, data, reliability, search, and networking.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/course.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Courses | Buildopsy">
-  <meta property="og:description" content="Free engineering courses: seventeen live now with live diagrams plus calculators, from postmortems to production.">
+  <meta property="og:description" content="Twenty free self-guided engineering courses with original diagrams and practical lessons, built around production systems and explicit trade-offs.">
   <meta property="og:url" content="https://buildopsy.com/system-design/course.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Buildopsy courses">
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"ItemList",
     "name":"Buildopsy Courses",
-    "description":"Free engineering courses built from production postmortems.",
+    "description":"Twenty free engineering courses with original diagrams and practical lessons across production systems, search, and networking.",
     "url":"https://buildopsy.com/system-design/course.html",
     "itemListElement":[
       {"@type":"ListItem","position":1,"url":"https://buildopsy.com/system-design/learn-system-design.html","name":"System Design: 15 Lessons From Real Outages"},
@@ -53,7 +53,10 @@
       {"@type":"ListItem","position":14,"url":"https://buildopsy.com/system-design/learn-postgres-production.html","name":"Postgres in Production: 15 Lessons From the Write Path"},
       {"@type":"ListItem","position":15,"url":"https://buildopsy.com/system-design/learn-interview-bootcamp.html","name":"System Design Interview Bootcamp: 15 Rounds From the Whiteboard"},
       {"@type":"ListItem","position":16,"url":"https://buildopsy.com/system-design/learn-docker-containers.html","name":"Docker Containers in Production: 15 Lessons From the Layer Ledger"},
-      {"@type":"ListItem","position":17,"url":"https://buildopsy.com/system-design/learn-netflix-streaming.html","name":"Netflix in Production: 25 Lessons From the Stream"}
+      {"@type":"ListItem","position":17,"url":"https://buildopsy.com/system-design/learn-netflix-streaming.html","name":"Netflix in Production: 25 Lessons From the Stream"},
+      {"@type":"ListItem","position":18,"url":"https://buildopsy.com/system-design/learn-distributed-systems.html","name":"Distributed Systems: Truth Under Failure"},
+      {"@type":"ListItem","position":19,"url":"https://buildopsy.com/system-design/learn-search-systems.html","name":"Search Systems in Production: The Index Room"},
+      {"@type":"ListItem","position":20,"url":"https://buildopsy.com/system-design/learn-cloud-networking.html","name":"Cloud Networking: Every Millisecond Has a Route"}
     ]
   }
   </script>
@@ -92,7 +95,7 @@
     </a></p>
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Courses</span><span class="chip">Free</span><span class="chip">17 live</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Courses</span><span class="chip">Free</span><span class="chip">20 live</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Courses</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Full courses from the authors, built from production postmortems with diagrams plus calculators. Free, batch by batch, author by author.</p>
     </header>
@@ -217,6 +220,27 @@
           <p class="fl-desc">Open Connect, per-title encodes, Zuul, Hystrix, chaos, EVCache, Keystone, recommendations, Titus plus stream economics. The complete stream, priced.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span><span class="chip">Streaming</span></div>
           <p class="card-cta"><a class="btn btn-primary" href="learn-netflix-streaming.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">New</span><span class="badge badge-free">Free</span> <span class="chip">12 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-distributed-systems.html">Distributed Systems: Truth Under Failure</a></h3>
+          <p class="fl-desc">Causality, quorum, consensus, clocks, idempotency, retries, and recovery—with an incident worksheet for every design promise.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Mukul</span><span class="chip">Field guide</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-distributed-systems.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">New</span><span class="badge badge-free">Free</span> <span class="chip">12 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-search-systems.html">Search Systems in Production: The Index Room</a></h3>
+          <p class="fl-desc">A query-by-query lab for analyzers, inverted indexes, BM25, shards, hybrid retrieval, and relevance evaluation.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Ira</span><span class="chip">Query lab</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-search-systems.html">Start the course</a></p>
+        </article>
+        <article class="feature-link course-card is-free">
+          <div><span class="fl-tag">New</span><span class="badge badge-free">Free</span> <span class="chip">12 lessons</span></div>
+          <h3><a class="feature-link-title" href="learn-cloud-networking.html">Cloud Networking: Every Millisecond Has a Route</a></h3>
+          <p class="fl-desc">Packet diaries for DNS, BGP, TCP, TLS, load balancers, NAT, MTU, and phase-by-phase latency measurement.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Marta</span><span class="chip">Packet journal</span></div>
+          <p class="card-cta"><a class="btn btn-primary" href="learn-cloud-networking.html">Start the course</a></p>
         </article>
       </div>
     </section>

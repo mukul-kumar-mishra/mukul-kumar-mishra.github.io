@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Search systems: from words to ranked answers</title>
+  <desc id="desc">A search query is analyzed into tokens, looked up in an inverted index, ranked, and returned with relevance feedback; a compact posting-list matrix ties terms to documents.</desc>
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#f6f0df"/><stop offset="1" stop-color="#e9e1ce"/></linearGradient>
+    <pattern id="rule" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M0 31.5H32" stroke="#657a76" stroke-opacity=".12"/></pattern>
+    <linearGradient id="ink" x2="0" y2="1"><stop stop-color="#265d62"/><stop offset="1" stop-color="#203d4d"/></linearGradient>
+  </defs>
+  <rect width="1200" height="680" rx="34" fill="url(#paper)"/><rect width="1200" height="680" rx="34" fill="url(#rule)"/>
+  <rect x="44" y="44" width="1112" height="592" rx="22" fill="none" stroke="#284b4b" stroke-width="2"/>
+  <text x="78" y="93" fill="#a34e32" font-family="ui-monospace,monospace" font-size="16" letter-spacing="4">THE INDEX ROOM / SEARCH SYSTEMS</text>
+  <text x="76" y="161" fill="#172f3d" font-family="Georgia,serif" font-size="54">Make the right thing findable.</text>
+  <text x="80" y="199" fill="#526568" font-family="ui-monospace,monospace" font-size="17">query → analysis → postings → ranking → judged result</text>
+  <g transform="translate(78 250)" font-family="ui-monospace,monospace">
+    <rect width="250" height="258" rx="15" fill="#fffaf0" stroke="#8b9a89" stroke-width="2"/>
+    <text x="20" y="34" fill="#a34e32" font-size="14">01 / QUERY CARD</text><text x="20" y="77" fill="#172f3d" font-family="Georgia,serif" font-size="25">“blue running shoes”</text>
+    <path d="M20 100H226" stroke="#b9c0b0"/><text x="20" y="137" fill="#526568" font-size="15">blue → blue</text><text x="20" y="168" fill="#526568" font-size="15">running → run</text><text x="20" y="199" fill="#526568" font-size="15">shoes → shoe</text><text x="20" y="236" fill="#a34e32" font-size="13">same analyzer rules</text>
+    <path d="M250 128H295" stroke="#547572" stroke-width="3"/><path d="m285 120 12 8-12 8" fill="none" stroke="#547572" stroke-width="3"/>
+    <rect x="295" width="390" height="258" rx="15" fill="#f8f4e9" stroke="#547572" stroke-width="2"/>
+    <text x="319" y="34" fill="#a34e32" font-size="14">02 / INVERTED INDEX · POSTINGS</text>
+    <g font-size="15"><text x="320" y="80" fill="#172f3d">term</text><text x="437" y="80" fill="#172f3d">d-17</text><text x="525" y="80" fill="#172f3d">d-24</text><text x="613" y="80" fill="#172f3d">d-31</text></g>
+    <path d="M317 92H661M317 145H661M317 198H661" stroke="#c0c7b7"/>
+    <g font-size="16"><text x="320" y="127" fill="#265d62">blue</text><text x="437" y="127" fill="#265d62">●</text><text x="525" y="127" fill="#a34e32">—</text><text x="613" y="127" fill="#265d62">●</text><text x="320" y="180" fill="#265d62">run</text><text x="437" y="180" fill="#265d62">●</text><text x="525" y="180" fill="#265d62">●</text><text x="613" y="180" fill="#a34e32">—</text><text x="320" y="233" fill="#265d62">shoe</text><text x="437" y="233" fill="#265d62">●</text><text x="525" y="233" fill="#a34e32">—</text><text x="613" y="233" fill="#265d62">●</text></g>
+    <path d="M685 128H730" stroke="#547572" stroke-width="3"/><path d="m720 120 12 8-12 8" fill="none" stroke="#547572" stroke-width="3"/>
+    <rect x="730" width="220" height="258" rx="15" fill="url(#ink)"/>
+    <text x="752" y="35" fill="#d4e7c7" font-size="14">03 / TOP 3</text>
+    <text x="752" y="88" fill="#f6f0df" font-family="Georgia,serif" font-size="24">d-17</text><rect x="810" y="69" width="105" height="13" rx="6" fill="#d0e56f"/><text x="752" y="128" fill="#f6f0df" font-family="Georgia,serif" font-size="24">d-31</text><rect x="810" y="109" width="75" height="13" rx="6" fill="#65c8b4"/><text x="752" y="168" fill="#f6f0df" font-family="Georgia,serif" font-size="24">d-24</text><rect x="810" y="149" width="45" height="13" rx="6" fill="#d69b68"/><path d="M752 198H923" stroke="#78948a"/><text x="752" y="228" fill="#c5d1bc" font-size="13">rank ≠ truth</text><text x="752" y="247" fill="#c5d1bc" font-size="13">measure relevance</text>
+  </g>
+  <g transform="translate(83 564)" font-family="ui-monospace,monospace"><text fill="#526568" font-size="14">THE SEARCH ENGINE IS A MEASUREMENT LOOP</text><path d="M379 -6H915" stroke="#91a397" stroke-width="2"/><circle cx="450" cy="-6" r="7" fill="#a34e32"/><circle cx="645" cy="-6" r="7" fill="#265d62"/><circle cx="855" cy="-6" r="7" fill="#a34e32"/><text x="427" y="29" fill="#526568" font-size="13">query</text><text x="615" y="29" fill="#526568" font-size="13">rank</text><text x="815" y="29" fill="#526568" font-size="13">judgment</text></g>
+</svg>

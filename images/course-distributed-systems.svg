@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Distributed systems: agreement under failure</title>
+  <desc id="desc">Three replicas exchange a proposed log entry. One network link fails; a quorum commits the entry while a timeline shows suspicion, election, and recovery.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111a2c"/><stop offset="1" stop-color="#172b3c"/></linearGradient>
+    <linearGradient id="glow" x2="1"><stop stop-color="#b6f26b"/><stop offset="1" stop-color="#57d6cb"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#d8ebff" stroke-opacity=".055"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1200" height="680" rx="34" fill="url(#bg)"/><rect width="1200" height="680" rx="34" fill="url(#grid)"/>
+  <circle cx="916" cy="197" r="150" fill="#57d6cb" opacity=".1" filter="url(#soft)"/>
+  <text x="72" y="78" fill="#b6f26b" font-family="ui-monospace,monospace" font-size="17" letter-spacing="4">FIELD GUIDE 01 / DISTRIBUTED SYSTEMS</text>
+  <text x="70" y="153" fill="#f5f7f0" font-family="Georgia,serif" font-size="58">Agreement has a price.</text>
+  <text x="73" y="194" fill="#aebdce" font-family="ui-monospace,monospace" font-size="19">Three replicas · one partition · one defensible commit</text>
+  <g transform="translate(103 255)">
+    <path d="M250 75 493 0M250 102 493 280" fill="none" stroke="#82a2b5" stroke-width="4"/>
+    <path d="M260 75 460 12M260 105 460 265" fill="none" stroke="url(#glow)" stroke-width="4" stroke-dasharray="7 11"/>
+    <g fill="#182a3a" stroke="#57d6cb" stroke-width="3"><rect x="0" y="42" width="250" height="100" rx="18"/><rect x="493" y="-46" width="250" height="100" rx="18"/><rect x="493" y="230" width="250" height="100" rx="18"/></g>
+    <rect x="493" y="230" width="250" height="100" rx="18" fill="#382d37" stroke="#ff786f" stroke-width="3"/>
+    <g font-family="ui-monospace,monospace" text-anchor="middle"><text x="125" y="85" fill="#f5f7f0" font-size="20">replica A · leader</text><text x="125" y="116" fill="#aebdce" font-size="15">term 8 · op-204</text><text x="618" y="-3" fill="#f5f7f0" font-size="20">replica B</text><text x="618" y="27" fill="#b6f26b" font-size="15">ACK · durable</text><text x="618" y="273" fill="#f5f7f0" font-size="20">replica C</text><text x="618" y="303" fill="#ff9a90" font-size="15">LINK LOST</text></g>
+    <circle cx="353" cy="48" r="8" fill="#b6f26b"/><circle cx="363" cy="191" r="8" fill="#ff786f"/>
+    <text x="864" y="123" fill="#b6f26b" font-family="ui-monospace,monospace" font-size="20">2 / 3</text><text x="864" y="153" fill="#f5f7f0" font-family="ui-monospace,monospace" font-size="15">majority commits</text><text x="864" y="183" fill="#aebdce" font-family="ui-monospace,monospace" font-size="14">under this protocol's</text><text x="864" y="205" fill="#aebdce" font-family="ui-monospace,monospace" font-size="14">failure assumptions</text>
+  </g>
+  <g transform="translate(105 600)" font-family="ui-monospace,monospace" font-size="15"><text x="0" y="0" fill="#aebdce">TIME</text><path d="M72 -5H970" stroke="#607b8d" stroke-width="2"/><circle cx="150" cy="-5" r="8" fill="#57d6cb"/><circle cx="450" cy="-5" r="8" fill="#ff786f"/><circle cx="770" cy="-5" r="8" fill="#b6f26b"/><text x="122" y="34" fill="#aebdce">proposal</text><text x="400" y="34" fill="#ff9a90">suspect</text><text x="730" y="34" fill="#b6f26b">commit + reconcile</text></g>
+</svg>
