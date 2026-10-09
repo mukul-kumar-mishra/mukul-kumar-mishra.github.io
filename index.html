@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Buildopsy is an independent publication writing system design postmortems that price real architectures: distributed systems, AI infrastructure, telemetry pipelines and cloud bills, down to the cost per request.">
+  <meta name="description" content="Source-linked engineering case studies with explicit assumptions, runnable cost models, and free browser-based calculators for distributed systems, AI infrastructure, and cloud bills.">
   <link rel="canonical" href="https://buildopsy.com/">
   <meta name="author" content="Buildopsy">
   <meta name="robots" content="index, follow">
   <meta name="google-adsense-account" content="ca-pub-7342229167425946">
 
-  <meta property="og:title" content="Buildopsy — System Design Postmortems, Priced.">
-  <meta property="og:description" content="Forensic teardowns of production systems: distributed systems, AI infrastructure and cloud bills, with RPS math and cost models you can run.">
+  <meta property="og:title" content="Buildopsy — Engineering Case Studies With Cost Models">
+  <meta property="og:description" content="Source-linked engineering case studies with explicit assumptions and runnable cost models. Free calculators run in your browser.">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Buildopsy: system postmortems, priced.">
   <meta property="og:image:type" content="image/png">
@@ -21,12 +21,12 @@
   <meta property="og:site_name" content="Buildopsy">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Buildopsy — System Design Postmortems, Priced.">
-  <meta name="twitter:description" content="Forensic teardowns of production systems with RPS math and cost models you can run.">
+  <meta name="twitter:title" content="Buildopsy — Engineering Case Studies With Cost Models">
+  <meta name="twitter:description" content="Source-linked engineering case studies with explicit assumptions and runnable cost models. Free calculators run in your browser.">
   <meta name="twitter:image:alt" content="Buildopsy: system postmortems, priced.">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
 
-  <title>Buildopsy — System Design Postmortems, Priced.</title>
+  <title>Buildopsy — Engineering Case Studies With Cost Models</title>
   <link rel="icon" href="images/favicon.png" type="image/png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,9 +41,9 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Buildopsy",
-    "alternateName": "Buildopsy — System Postmortems, Priced.",
+    "alternateName": "Buildopsy — Engineering Case Studies With Cost Models",
     "url": "https://buildopsy.com/",
-    "description": "Independent publication writing system design postmortems that price real architectures, with RPS math and cost models.",
+    "description": "Independent engineering case studies that connect public evidence to explicit assumptions and runnable cost models.",
     "publisher": {
       "@type": "Organization",
       "name": "Buildopsy",
@@ -89,7 +89,7 @@
         
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="calculators.html">Calculators</a><a href="system-design/course.html">Courses</a>
+        <a href="calculators.html">Calculators</a><a href="system-design/course.html">Courses</a><a href="pricing.html">Pricing</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -109,12 +109,12 @@
     <header class="profile-hero">
       <div class="profile-hero-copy">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;">
-          <span class="tag">System postmortems, priced.</span>
-          <span style="font-size:0.78rem;font-family:var(--font-mono);color:var(--mist);">Independent · Research-led · Reader-supported</span>
+          <span class="tag">Engineering, priced to the unit.</span>
+          <span style="font-size:0.78rem;font-family:var(--font-mono);color:var(--mist);">Independent · Source-linked · Reproducible</span>
         </div>
         <h1 class="page-title" style="color:var(--heading);">Buildopsy</h1>
         <p class="page-lede" style="margin-top:14px;">
-          Forensic teardowns of production systems: distributed systems, AI infrastructure, telemetry pipelines and cloud bills, down to the cost per request. Every claim reconstructed from public disclosures, every model runnable in your browser.
+          Case studies connect what teams have publicly disclosed to what the architecture costs per request, task, or event. Facts, inference, and estimates stay distinct; models expose their assumptions so you can rerun them.
         </p>
         <div class="profile-hero-actions">
           <a class="btn btn-primary" href="system-design/index.html">
@@ -123,9 +123,10 @@
           <a class="btn btn-ghost" href="calculators.html">
             <i data-lucide="calculator"></i> Engineering Calculators
           </a>
+          <a class="btn btn-ghost" href="pricing.html">What’s free</a>
         </div>
-        <p class="fl-desc" style="margin-top:14px;">By <a href="about.html#author-mukul">Mukul Kumar Mishra</a> with <a href="about.html#author-rook">Rook</a> research desk · <a href="about.html">About the publication</a></p>
-        <p class="fl-desc" style="margin-top:6px;">Golang plus AWS at scale? Architecture reviews plus SRE audits → <a href="about.html#work-with-me">Work with Mukul</a></p>
+        <p class="fl-desc" style="margin-top:14px;">By <a href="about.html#author-mukul">Mukul Kumar Mishra</a> with the Buildopsy research desk · <a href="about.html">About the publication</a></p>
+        <p class="fl-desc" style="margin-top:6px;">Need a Go or AWS architecture review? <a href="about.html#work-with-me">Work with Mukul</a> · <a href="pricing.html#services">How service pricing works</a></p>
       </div>
     </header>
 
@@ -133,9 +134,21 @@
     <section class="sec">
       <div class="grid3">
         <div class="stat"><div class="num">50+ Teardowns</div><div class="lbl">Postmortems &amp; RFCs</div></div>
-        <div class="stat"><div class="num">19 Tools</div><div class="lbl">Standalone calculators</div></div>
-        <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Cost Models at Scale</div></div>
+        <div class="stat"><div class="num">30 Tools</div><div class="lbl">Free browser calculators</div></div>
+        <div class="stat"><div class="num">$0</div><div class="lbl">Articles, courses, and tools</div></div>
       </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <h2 class="sec-title"><i data-lucide="scan-search"></i> The Buildopsy method</h2>
+      </div>
+      <div class="grid3">
+        <article class="feature-link"><span class="fl-tag">Evidence</span><h3>Show what is known</h3><p class="fl-desc">Start with public disclosures and link the sources. Mark what is inferred instead of presenting a reconstruction as insider knowledge.</p></article>
+        <article class="feature-link"><span class="fl-tag">Economics</span><h3>Price the boundary</h3><p class="fl-desc">Make the unit, rates, workload, and exclusions visible. Follow cost through retries, storage, transfer, and failure—not just the headline service.</p></article>
+        <article class="feature-link"><span class="fl-tag">Reproducibility</span><h3>Let readers rerun it</h3><p class="fl-desc">Change assumptions in free calculators that run in your browser. No signup and no calculator inputs sent to Buildopsy.</p></article>
+      </div>
+      <p class="fl-desc" style="margin-top:14px;"><a href="tools/unit-economics-calculator.html">Start with cost per successful request →</a></p>
     </section>
 
     <!-- Featured -->
@@ -207,7 +220,7 @@
             <span class="fl-tag">Agent Infrastructure</span><span class="chip">September 2026</span>
           </div>
           <h3>AI Sandbox Escape System Design: Proxy Bypass, Egress Gates plus Containment Cost</h3>
-          <p class="fl-desc">Proxy bypass first plus containment second. How tail-matched exceptions fail plus what identity-bound egress costs, modeled from the wiki swarm.</p>
+          <p class="fl-desc">How proxy exceptions fail and what identity-bound egress controls cost under an explicit workload model.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Sandbox</span><span class="chip">Proxy</span><span class="chip">Egress</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
@@ -396,8 +409,8 @@
       <div class="newsletter-band">
         <div style="min-width:0;">
           <span class="fl-tag">Newsletter</span>
-          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> One teardown a week</h2>
-          <p class="fl-desc" style="margin:0;">Postmortems plus cost math, monthly. No spam, unsubscribe anytime.</p>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> Research notes by email</h2>
+          <p class="fl-desc" style="margin:0;">New case studies and tools when they’re ready. No fixed schedule; unsubscribe anytime.</p>
         </div>
         <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
           <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
@@ -411,7 +424,7 @@
   <footer class="footer">
     <div class="wrap">
       <span>&copy; <span id="year"></span> Buildopsy</span>
-      <span><a href="about.html">About</a> · <a href="about.html#work-with-me">Contact</a> · <a href="privacy.html">Privacy</a></span>
+      <span><a href="about.html">About</a> · <a href="pricing.html">Pricing</a> · <a href="about.html#work-with-me">Contact</a> · <a href="privacy.html">Privacy</a></span>
     </div>
   </footer>
 

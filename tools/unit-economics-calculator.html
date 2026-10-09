@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Model monthly spend and cost per million successful requests from traffic, attempt cost, retries, success rate, and fixed infrastructure. Runs locally for free.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/tools/unit-economics-calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cost per Successful Request Calculator | Buildopsy">
+  <meta property="og:description" content="Connect traffic, retries, reliability, and fixed spend in one editable unit-economics model. Free and local-first.">
+  <meta property="og:url" content="https://buildopsy.com/tools/unit-economics-calculator.html">
+  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
+  <meta property="og:image:alt" content="Buildopsy cost per successful request calculator">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2078">
+  <meta property="og:image:height" content="757">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cost per Successful Request Calculator | Buildopsy">
+  <meta name="twitter:description" content="Model monthly spend and cost per million successful requests, including retry spend and a target scenario.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <title>Cost per Successful Request Calculator | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Cost per Successful Request Calculator",
+    "url":"https://buildopsy.com/tools/unit-economics-calculator.html",
+    "applicationCategory":"DeveloperApplication",
+    "operatingSystem":"Any",
+    "isAccessibleForFree":true,
+    "description":"A local-first model for monthly spend, retries, success rate, and cost per million successful requests.",
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"}
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="../system-design/index.html">System Design</a>
+        <a href="../system-design/ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html" class="on">Calculators</a>
+        <a href="../system-design/course.html">Courses</a>
+        <a href="../pricing.html">Pricing</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:44px;padding-bottom:40px;flex:1;">
+    <p style="margin:0 0 18px;"><a href="../calculators.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> All calculators</a></p>
+    <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free tool</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Cost per Successful Request Calculator</h1>
+      <p class="page-lede" style="font-family:var(--font-serif);">Put traffic, retries, success rate, and fixed platform spend on the same ledger. Compare your current unit cost with an explicit target scenario.</p>
+    </header>
+
+    <section class="sec" id="unit-economics">
+      <div class="sec-head"><h2 class="sec-title"><i data-lucide="scale"></i> Workload inputs</h2><span class="chip">USD · 30-day month</span></div>
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div><label class="field-label" for="ue-rps">Logical requests per second</label><input type="number" id="ue-rps" value="1000" min="0" step="any" class="field-input"></div>
+          <div><label class="field-label" for="ue-attempt-cost">Cost per attempt ($)</label><input type="number" id="ue-attempt-cost" value="0.0004" min="0" step="any" class="field-input"></div>
+          <div><label class="field-label" for="ue-retries">Additional retries per request</label><input type="number" id="ue-retries" value="0.12" min="0" step="any" class="field-input"><small>For example, 0.12 means 12 additional attempts per 100 logical requests.</small></div>
+          <div><label class="field-label" for="ue-success">End-to-end successful requests (%)</label><input type="number" id="ue-success" value="99.9" min="0" max="100" step="any" class="field-input"></div>
+          <div><label class="field-label" for="ue-fixed">Fixed platform spend ($ / month)</label><input type="number" id="ue-fixed" value="25000" min="0" step="any" class="field-input"></div>
+          <hr>
+          <div><label class="field-label" for="ue-target-retries">Target additional retries per request</label><input type="number" id="ue-target-retries" value="0.05" min="0" step="any" class="field-input"></div>
+          <div><label class="field-label" for="ue-target-success">Target successful requests (%)</label><input type="number" id="ue-target-success" value="99.95" min="0" max="100" step="any" class="field-input"></div>
+        </div>
+        <div class="calc-results" aria-live="polite">
+          <div class="calc-results-label">Current workload</div>
+          <div class="grid2">
+            <div class="stat"><div class="num" id="ue-monthly">$1,186,216</div><div class="lbl">Total monthly spend</div></div>
+            <div class="stat"><div class="num" id="ue-unit">$458.10</div><div class="lbl">Per million successful requests</div></div>
+            <div class="stat"><div class="num" id="ue-retry-spend">$124,416</div><div class="lbl">Retry spend per month</div></div>
+          </div>
+          <div class="calc-results-label" style="margin-top:24px;">Target scenario</div>
+          <div class="grid2">
+            <div class="stat"><div class="num" id="ue-target-monthly">$1,113,640</div><div class="lbl">Target monthly spend</div></div>
+            <div class="stat"><div class="num" id="ue-target-unit">$429.86</div><div class="lbl">Per million successful requests</div></div>
+            <div class="stat"><div class="num" id="ue-savings">$72,576</div><div class="lbl">Monthly spend avoided</div></div>
+          </div>
+          <div class="radar-meta"><div class="radar-updated">Calculations stay in this browser</div><button class="radar-refresh" data-reset="unit-economics" type="button"><i data-lucide="refresh-cw" width="14" height="14"></i>Reset</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec prose">
+      <h2>Formula and limits</h2>
+      <p>Monthly spend = fixed monthly spend + monthly logical requests × (1 + additional retries per request) × cost per attempt. Cost per million successful requests = monthly spend ÷ (monthly logical requests × end-to-end success rate) × 1,000,000.</p>
+      <p>The model assumes every attempt has the same cost, the retry average applies across the workload, and the entered success rate describes final logical outcomes. It uses a 30-day month. It does not model traffic peaks, different retry costs, revenue impact, provider discounts, or correlated failures. Use measured telemetry and current rates; this is an estimate, not a provider quote.</p>
+    </section>
+
+    <section class="sec"><p class="fl-desc">Pair this model with the <a href="agent-retry-cost-calculator.html">Agent Retry Cost Calculator</a>, <a href="error-budget-calculator.html">Error Budget Calculator</a>, and <a href="edge-request-cost-calculator.html">RPS Envelope Estimator</a>. Read the <a href="../system-design/llm-inference-cost-per-task-postmortem.html">per-task inference cost model</a> for an example of tracing unit economics end to end.</p></section>
+  </main>
+
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../pricing.html">Pricing</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    var saved = localStorage.getItem('pf-theme');
+    if (saved === 'dark') root.classList.add('dark');
+    function syncIcons() {
+      var dark = root.classList.contains('dark');
+      document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
+      document.querySelector('.ic-moon').style.display = dark ? '' : 'none';
+    }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+    (window.lucide ? lucide.createIcons() : document.addEventListener('DOMContentLoaded', function () { window.lucide && lucide.createIcons(); }));
+  </script>
+  <script src="../js/calculators.js" defer></script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

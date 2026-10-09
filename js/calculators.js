@@ -137,6 +137,35 @@
       var credit = nonneg(o.bill) * (nonneg(o.creditPct) / 100);
       return { loss: loss, credit: credit, total: loss + credit };
     },
+    /* Cost per successful logical request. Each request consumes one initial
+       attempt plus the observed average retries. Fixed costs are amortized
+       across successful requests. The target changes retries and success rate
+       while holding traffic, attempt cost, and fixed spend constant. */
+    unitEconomics: function (o) {
+      var requests = nonneg(o.rps) * 2592000;
+      var attemptCost = nonneg(o.attemptCost);
+      var fixed = nonneg(o.fixedMonthly);
+      var retries = nonneg(o.retries);
+      var successRate = clamp(o.successPct, 0, 100) / 100;
+      var targetRetries = nonneg(o.targetRetries);
+      var targetSuccessRate = clamp(o.targetSuccessPct, 0, 100) / 100;
+      var attempts = requests * (1 + retries);
+      var retrySpend = requests * retries * attemptCost;
+      var total = fixed + attempts * attemptCost;
+      var successful = requests * successRate;
+      var targetTotal = fixed + requests * (1 + targetRetries) * attemptCost;
+      var targetSuccessful = requests * targetSuccessRate;
+      return {
+        requests: requests,
+        monthly: total,
+        retrySpend: retrySpend,
+        successful: successful,
+        costPerMillion: successful > 0 ? total / successful * 1e6 : NaN,
+        targetMonthly: targetTotal,
+        targetCostPerMillion: targetSuccessful > 0 ? targetTotal / targetSuccessful * 1e6 : NaN,
+        savings: total - targetTotal
+      };
+    },
     /* S3 storage bill. Storage GB-month plus request fees priced per
        thousand plus retrieval GB. Defaults: 1 TiB (1,024 billable GB)
        Standard, 1M PUTs, 10M GETs, no retrieval. */
@@ -247,7 +276,8 @@
       var drainRate = nonneg(o.serviceRate) - nonneg(o.steadyRate);
       return {
         backlog: backlog, drainRate: drainRate,
-        drainSeconds: backlog === 0 ? 0 : (drainRate > 0 ? backlog / drainRate : Infinity)
+        drainSeconds: backlog === 0 && drainRate >= 0 ? 0 :
+          (drainRate > 0 ? backlog / drainRate : Infinity)
       };
     },
     /* Cache economics: origin spend avoided at the hit rate, less the
@@ -539,6 +569,24 @@
     donut('dt-donut', [[r.loss, ROSE], [r.credit, CYAN]], pct(r.loss, r.total));
   }
 
+  function renderUnitEconomics() {
+    var r = Calcs.unitEconomics({
+      rps: num('ue-rps', 1000),
+      attemptCost: num('ue-attempt-cost', 0.0004),
+      retries: num('ue-retries', 0.12),
+      successPct: num('ue-success', 99.9),
+      fixedMonthly: num('ue-fixed', 25000),
+      targetRetries: num('ue-target-retries', 0.05),
+      targetSuccessPct: num('ue-target-success', 99.95)
+    });
+    set('ue-monthly', money(r.monthly, 0));
+    set('ue-unit', isFinite(r.costPerMillion) ? money(r.costPerMillion, 2) : '—');
+    set('ue-retry-spend', money(r.retrySpend, 0));
+    set('ue-target-monthly', money(r.targetMonthly, 0));
+    set('ue-target-unit', isFinite(r.targetCostPerMillion) ? money(r.targetCostPerMillion, 2) : '—');
+    set('ue-savings', (r.savings >= 0 ? '' : '−') + money(Math.abs(r.savings), 0));
+  }
+
   function renderS3() {
     var o = {
       gb: num('s3-gb', 1024), price: num('s3-price', 0.023),
@@ -792,6 +840,7 @@
     renderObs();
     renderPool();
     renderDowntime();
+    renderUnitEconomics();
     renderS3();
     renderEgress();
     renderCompute();
@@ -818,7 +867,7 @@
     window.Calcs = Calcs;
     /* Boot on whichever tool the page carries: the hub hosts all nine, each
        /tools/ page hosts exactly one. Missing ids are skipped by bind/set. */
-    var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly',
+    var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly', 'ue-monthly',
       'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total',
       's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly',
       'dw-monthly', 'rds-monthly', 'lm-monthly', 'cdn-monthly', 'ob-monthly', 'vec-monthly',
@@ -835,6 +884,8 @@
       bind(['obs-rps', 'obs-bytes', 'obs-price', 'obs-budget'], renderObs);
       bind(['pool-rps', 'pool-lat', 'pool-safety', 'pool-pods'], renderPool);
       bind(['dt-rev', 'dt-mins', 'dt-bill', 'dt-credit'], renderDowntime);
+      bind(['ue-rps', 'ue-attempt-cost', 'ue-retries', 'ue-success', 'ue-fixed',
+        'ue-target-retries', 'ue-target-success'], renderUnitEconomics);
       bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp'], renderS3);
       bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
       bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-running', 'ec2-disc'], renderCompute);
@@ -872,23 +923,22 @@
         renderAll();
       });
     });
-    /* Reset buttons: data-reset="section-id" empties that card's inputs
-       and returns its result, mix headline and chart to the idle state. */
+    /* Reset buttons restore declared HTML defaults, then repaint the models. */
     Array.prototype.forEach.call(document.querySelectorAll('[data-reset]'), function (b) {
       b.addEventListener('click', function () {
         var sec = document.getElementById(b.getAttribute('data-reset'));
         if (!sec) return;
         Array.prototype.forEach.call(sec.querySelectorAll('input'),
-          function (el) { el.value = ''; });
-        Array.prototype.forEach.call(sec.querySelectorAll('.radar-filter'),
-          function (x) { x.classList.remove('active'); });
-        Array.prototype.forEach.call(
-          sec.querySelectorAll('.calc-result-value, .radar-trend-value'),
-          function (el) { el.textContent = '-'; });
-        Array.prototype.forEach.call(sec.querySelectorAll('.calc-donut'),
-          function (el) { el.style.background = ''; });
-        var mix = sec.querySelector('.calc-donut-center span');
-        if (mix) mix.textContent = '-';
+          function (el) { el.value = el.defaultValue; });
+        Array.prototype.forEach.call(sec.querySelectorAll('.radar-filter'), function (button) {
+          var pairs = button.getAttribute('data-set').split(';');
+          var matchesDefaults = pairs.every(function (pair) {
+            var kv = pair.split(':'), input = document.getElementById(kv[0]);
+            return input && input.value === kv[1];
+          });
+          button.classList.toggle('active', matchesDefaults);
+        });
+        renderAll();
       });
     });
     var tabBtns = (typeof document !== 'undefined' && document.querySelectorAll) ?

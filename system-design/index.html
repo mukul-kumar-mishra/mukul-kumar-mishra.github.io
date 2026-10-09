@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="System design postmortems and architecture teardowns covering distributed systems, AWS and AI infra with RPS and cost models plus fixes.">
+  <meta name="description" content="Source-linked system design case studies and postmortems. Separate disclosed facts from inference, then rerun the cost assumptions in free calculators.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="System Design & Architecture Case Studies | Buildopsy">
-  <meta property="og:description" content="System design postmortems and architecture teardowns covering distributed systems, AWS and AI infra with RPS and cost models plus fixes.">
+  <meta property="og:description" content="Source-linked system design case studies that separate evidence, inference, and modeled costs, with free tools to rerun assumptions.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
   <meta property="og:image:alt" content="System design postmortems and cost teardowns">
   <meta property="og:image:type" content="image/png">
@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="System Design Case Studies & Postmortems">
-  <meta name="twitter:description" content="Architecture teardowns covering distributed systems, AWS and AI infra with RPS and cost models plus fixes.">
+  <meta name="twitter:description" content="Source-linked system design case studies with explicit assumptions and free calculators to rerun the cost models.">
   <meta name="twitter:image:alt" content="System design postmortems and cost teardowns">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
   <title>System Design Case Studies & Postmortems | Buildopsy</title>
@@ -26,36 +26,36 @@
     "@context":"https://schema.org",
     "@type":"ItemList",
     "name":"System Design Case Studies and Postmortems",
-    "description":"Architecture teardowns covering distributed systems, AWS and AI infrastructure with RPS and cost models plus fixes.",
+    "description":"Source-linked system design case studies that separate evidence, inference, and modeled costs.",
     "url":"https://buildopsy.com/system-design/",
     "itemListElement":[
-      {"@type":"ListItem","position":1,"url":"https://buildopsy.com/system-design/aws-s3-pricing-model.html","name":"AWS S3 Pricing Model: Storage, Requests and Egress"},
-      {"@type":"ListItem","position":2,"url":"https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html","name":"JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness"},
-      {"@type":"ListItem","position":3,"url":"https://buildopsy.com/system-design/whatsapp-system-design.html","name":"WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users"},
-      {"@type":"ListItem","position":4,"url":"https://buildopsy.com/system-design/google-docs-system-design.html","name":"Google Docs System Design: How Operational Transformation Survives Millions of Concurrent Editors"},
-      {"@type":"ListItem","position":5,"url":"https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html","name":"Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost"},
-      {"@type":"ListItem","position":6,"url":"https://buildopsy.com/system-design/kubernetes-pvc-unused-orphan-cost-postmortem.html","name":"Kubernetes PVC Cleanup System Design: How v1.37 Flags Orphaned Volumes"},
-      {"@type":"ListItem","position":7,"url":"https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html","name":"OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training"},
-      {"@type":"ListItem","position":8,"url":"https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html","name":"Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure"},
-      {"@type":"ListItem","position":9,"url":"https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html","name":"GCP us-central1 Outage: Fiber Isolation Across Two Zones"},
-      {"@type":"ListItem","position":10,"url":"https://buildopsy.com/system-design/llm-inference-cost-per-task-postmortem.html","name":"LLM Inference Cost Per Task: Prefill, Decode plus Cache Math"},
-      {"@type":"ListItem","position":11,"url":"https://buildopsy.com/system-design/nats-outage-postmortem.html","name":"NATS: Four Hours That Cancelled 2,000 Flights"},
-      {"@type":"ListItem","position":12,"url":"https://buildopsy.com/system-design/razorpay-upi-kafka-postmortem.html","name":"Razorpay Kafka: 3,000 Connections Too Many"},
-      {"@type":"ListItem","position":13,"url":"https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html","name":"AWS Thermal Postmortem: Cooling Failed First"},
-      {"@type":"ListItem","position":14,"url":"https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html","name":"Doltgres: The Backup That Forgot the Data"},
-      {"@type":"ListItem","position":15,"url":"https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html","name":"Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer"},
-      {"@type":"ListItem","position":16,"url":"https://buildopsy.com/system-design/roblox-kafka-ingestion-postmortem.html","name":"18 Trillion Messages a Day. Half of Them Could Have Waited."},
-      {"@type":"ListItem","position":17,"url":"https://buildopsy.com/system-design/discord-messages-scale-postmortem.html","name":"Discord: Trillions of Messages, 177 Nodes Too Many"},
-      {"@type":"ListItem","position":18,"url":"https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html","name":"Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer"},
-      {"@type":"ListItem","position":19,"url":"https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html","name":"ShareChat: The 10x Cheaper Assignment"},
-      {"@type":"ListItem","position":20,"url":"https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html","name":"MoEngage: Rent Nothing, Own the Millisecond"},
-      {"@type":"ListItem","position":21,"url":"https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html","name":"GoDaddy: The Lab Applauded. The Field Accused."},
-      {"@type":"ListItem","position":22,"url":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html","name":"Salesforce: The Login Queue That Ate Dreamforce"},
-      {"@type":"ListItem","position":23,"url":"https://buildopsy.com/system-design/figma-system-design.html","name":"Figma System Design: How Multiplayer Collaboration Actually Works"},
-      {"@type":"ListItem","position":24,"url":"https://buildopsy.com/system-design/notion-architecture.html","name":"Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search"},
-      {"@type":"ListItem","position":25,"url":"https://buildopsy.com/system-design/discord-messaging-system-design.html","name":"How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB"},
-      {"@type":"ListItem","position":26,"url":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html","name":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes"},
-      {"@type":"ListItem","position":27,"url":"https://buildopsy.com/system-design/circleci-wal-autovacuum-postmortem.html","name":"CircleCI Outage Postmortem: The Full WAL Volume That Stopped 3,500 Jobs"}
+      {"@type":"ListItem","position":1,"url":"https://buildopsy.com/system-design/circleci-wal-autovacuum-postmortem.html","name":"CircleCI Outage Postmortem: Full WAL Saturation Blocked 3,500 Job Starts"},
+      {"@type":"ListItem","position":2,"url":"https://buildopsy.com/system-design/aws-s3-pricing-model.html","name":"AWS S3 Pricing Model: Storage, Requests and Egress"},
+      {"@type":"ListItem","position":3,"url":"https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html","name":"JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness"},
+      {"@type":"ListItem","position":4,"url":"https://buildopsy.com/system-design/whatsapp-system-design.html","name":"WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users"},
+      {"@type":"ListItem","position":5,"url":"https://buildopsy.com/system-design/google-docs-system-design.html","name":"Google Docs System Design: How Operational Transformation Survives Millions of Concurrent Editors"},
+      {"@type":"ListItem","position":6,"url":"https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html","name":"Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost"},
+      {"@type":"ListItem","position":7,"url":"https://buildopsy.com/system-design/kubernetes-pvc-unused-orphan-cost-postmortem.html","name":"Kubernetes PVC Cleanup System Design: How v1.37 Flags Orphaned Volumes"},
+      {"@type":"ListItem","position":8,"url":"https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html","name":"OpenAI DNS Sandbox Escape System Design: How a Resolver Bypass Paused Frontier Training"},
+      {"@type":"ListItem","position":9,"url":"https://buildopsy.com/system-design/coinbase-msk-kafka-failover-postmortem.html","name":"Coinbase Kafka Outage Postmortem: AWS MSK's May 2026 Failure"},
+      {"@type":"ListItem","position":10,"url":"https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html","name":"GCP us-central1 Outage: Fiber Isolation Across Two Zones"},
+      {"@type":"ListItem","position":11,"url":"https://buildopsy.com/system-design/llm-inference-cost-per-task-postmortem.html","name":"LLM Inference Cost Per Task: Prefill, Decode plus Cache Math"},
+      {"@type":"ListItem","position":12,"url":"https://buildopsy.com/system-design/nats-outage-postmortem.html","name":"NATS: Four Hours That Cancelled 2,000 Flights"},
+      {"@type":"ListItem","position":13,"url":"https://buildopsy.com/system-design/razorpay-upi-kafka-postmortem.html","name":"Razorpay Kafka: 3,000 Connections Too Many"},
+      {"@type":"ListItem","position":14,"url":"https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html","name":"AWS Thermal Postmortem: Cooling Failed First"},
+      {"@type":"ListItem","position":15,"url":"https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html","name":"Doltgres: The Backup That Forgot the Data"},
+      {"@type":"ListItem","position":16,"url":"https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html","name":"Cursor and Claude Code Postmortem: The Token Meter Is the Real Pair Programmer"},
+      {"@type":"ListItem","position":17,"url":"https://buildopsy.com/system-design/roblox-kafka-ingestion-postmortem.html","name":"18 Trillion Messages a Day. Half of Them Could Have Waited."},
+      {"@type":"ListItem","position":18,"url":"https://buildopsy.com/system-design/discord-messages-scale-postmortem.html","name":"Discord: Trillions of Messages, 177 Nodes Too Many"},
+      {"@type":"ListItem","position":19,"url":"https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html","name":"Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer"},
+      {"@type":"ListItem","position":20,"url":"https://buildopsy.com/system-design/sharechat-feature-store-cost-postmortem.html","name":"ShareChat: The 10x Cheaper Assignment"},
+      {"@type":"ListItem","position":21,"url":"https://buildopsy.com/system-design/moengage-eventstore-hardware-postmortem.html","name":"MoEngage: Rent Nothing, Own the Millisecond"},
+      {"@type":"ListItem","position":22,"url":"https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html","name":"GoDaddy: The Lab Applauded. The Field Accused."},
+      {"@type":"ListItem","position":23,"url":"https://buildopsy.com/system-design/salesforce-dreamforce-login-queue-postmortem.html","name":"Salesforce: The Login Queue That Ate Dreamforce"},
+      {"@type":"ListItem","position":24,"url":"https://buildopsy.com/system-design/figma-system-design.html","name":"Figma System Design: How Multiplayer Collaboration Actually Works"},
+      {"@type":"ListItem","position":25,"url":"https://buildopsy.com/system-design/notion-architecture.html","name":"Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search"},
+      {"@type":"ListItem","position":26,"url":"https://buildopsy.com/system-design/discord-messaging-system-design.html","name":"How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB"},
+      {"@type":"ListItem","position":27,"url":"https://buildopsy.com/system-design/kafka-consumer-rebalance.html","name":"Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes"}
     ]
   }
   </script>
@@ -75,7 +75,7 @@
         
         <a href="index.html" class="on">System Design</a>
         <a href="ai-slop.html">AI Slop Watch</a>
-        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -96,17 +96,16 @@
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design &amp; Architecture Case Studies</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Production post-mortems, trade-off evaluations plus counterfactual redesigns.</p>
-      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse 50+ system design postmortems with RPS and cost models plus the AI Slop Watch incident files. Each teardown shows what broke and what should be, with math you can run.</p>
-      <div class="grid4" style="margin-top:26px;">
-        <div class="stat"><div class="num">1M+ RPS</div><div class="lbl">Telemetry Ingestion</div></div>
-        <div class="stat"><div class="num">99.99%</div><div class="lbl">Production Availability</div></div>
-        <div class="stat"><div class="num">5+ Yrs</div><div class="lbl">Go &amp; Cloud Infra</div></div>
-        <div class="stat"><div class="num">&lt; 50ms</div><div class="lbl">State Sync Latency</div></div>
+      <p class="page-lede" style="font-family:var(--font-serif);">Engineering case studies grounded in public evidence, with assumptions and cost models readers can inspect.</p>
+      <p class="fl-desc" style="margin-top:10px;"><strong>Start here:</strong> Browse case studies across distributed systems, cloud infrastructure, and AI engineering. Each page distinguishes disclosure from reconstruction and labels modeled numbers as estimates.</p>
+      <div class="grid3" style="margin-top:26px;">
+        <div class="stat"><div class="num">Evidence</div><div class="lbl">Sources linked; facts and inference separated</div></div>
+        <div class="stat"><div class="num">Economics</div><div class="lbl">Workload, rates, and exclusions stated</div></div>
+        <div class="stat"><div class="num">Re-run</div><div class="lbl">Free local-first calculators</div></div>
       </div>
       <div style="margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
         <span class="fl-tag">New shelf</span>
-        <p class="fl-desc" style="margin:0;flex:1;min-width:200px;">AI Slop Watch: incident files from the frontier. Breakouts, buyouts, plus picker fights. <a href="ai-slop.html">Browse the shelf</a>.</p>
+        <p class="fl-desc" style="margin:0;flex:1;min-width:200px;">AI Slop Watch audits public AI claims, disclosures, and incidents. <a href="ai-slop.html">Browse the shelf</a>.</p>
       </div>
     </header>
 
@@ -125,6 +124,7 @@
       </div>
       <div id="articleList" style="display:grid;gap:16px;">
         <article class="feature-link"><div><span class="fl-tag">Free Course</span> <span class="chip">15 lessons</span></div><h3><a class="feature-link-title" href="course.html">System Design Course: 15 Lessons From Real Outages</a></h3><p class="fl-desc">Start here. Story-driven lessons with diagrams from request paths to interview playbooks, built from production postmortems.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">CI/CD Infrastructure</span> <span class="chip">15 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="circleci-wal-autovacuum-postmortem.html">CircleCI Outage Postmortem: Full WAL Saturation Blocked 3,500 Job Starts</a></h3><p class="fl-desc">Anti-wraparound autovacuum saturated the orchestration database's WAL volume. The 50-minute outage became hours of queue recovery.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Cloud Storage Cost Model</span> <span class="chip">14 min read</span> <span class="chip">October 2026</span> <span class="chip">Ira</span></div><h3><a class="feature-link-title" href="aws-s3-pricing-model.html">AWS S3 Pricing Model: Storage, Requests and Egress</a></h3><p class="fl-desc">A 1 TiB Standard baseline broken into billable storage, PUT, GET and retrieval costs, with the S3 calculator plus transfer limits.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Live Streaming Infrastructure</span> <span class="chip">10 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="jiohotstar-eks-ip-shortage-postmortem.html">JioHotstar System Design: The EKS IP Ceiling Before 50M-Stream Readiness</a></h3><p class="fl-desc">A pre-event EKS IP shortage limited one cluster near 350 nodes. Subnet headroom, CNI targets, legacy Endpoint limits plus later CDN QoS controls.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Messaging Infrastructure</span> <span class="chip">19 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="whatsapp-system-design.html">WhatsApp System Design: How End-to-End Encrypted Relay Serves Two Billion Users</a></h3><p class="fl-desc">How WhatsApp routing works: Erlang density plus Signal E2E plus transient inbox plus group fan-out math plus priced relay model.</p></article>
@@ -139,12 +139,12 @@
         <article class="feature-link"><div><span class="fl-tag">Cloud Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="azure-wan-route-withdrawal-postmortem.html">Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB</a></h3><p class="fl-desc">Faulty maintenance deleted routes in one West US DC. Ingress plus egress stalled for almost five hours while in-region traffic lived.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Realtime Systems</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="discord-voice-thundering-herd-postmortem.html">Discord Voice Postmortem: The Herd Heard Itself</a></h3><p class="fl-desc">A safety check outran grace plus a thundering herd hit 14 of 15 voice nodes. Three hours plus 17 percent of sessions, with RPS math.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="artifactory-covert-channel-agents-postmortem.html">Artifactory as a Message Board: 1,200 Agents Bypassed Isolation</a></h3><p class="fl-desc">Separate sandboxes plus one shared cache plus 70,000 directory names as a covert channel. How environment became authority plus the fix.</p></article>
-        <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="ai-sandbox-escape-architecture.html">AI Sandbox Escape System Design: Proxy Bypass, Egress Gates plus Containment Cost</a></h3><p class="fl-desc">Proxy bypass first plus containment second. How tail-matched exceptions fail plus what identity-bound egress costs, modeled from the wiki swarm.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="ai-sandbox-escape-architecture.html">AI Sandbox Escape System Design: Proxy Bypass, Egress Gates plus Containment Cost</a></h3><p class="fl-desc">A companion analysis of the proxy bypass, layered egress controls, and their modeled operating costs.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Realtime Systems</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="figma-system-design.html">Figma System Design: How Multiplayer Collaboration Actually Works</a></h3><p class="fl-desc">How Figma multiplayer works: WebSocket fan-out, server-authoritative resolution, Rust rewrite plus cost at scale.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Messaging Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="discord-messaging-system-design.html">How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB</a></h3><p class="fl-desc">Channel partitioning, quorum read fan-in, Rust coalescing plus the engine swap from 177 nodes to 72.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Event Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="kafka-consumer-rebalance.html">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</a></h3><p class="fl-desc">Eager versus cooperative protocols, static membership, fetch storms plus the 6x retry amplifier.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Forensic Architecture</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="notion-architecture.html">Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search</a></h3><p class="fl-desc">How Notion scales: 480 Postgres shards, CDC lake, vector tiering plus the bill behind a blank page.</p></article>
-        <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="agent-egress-checklist-postmortem.html">Agent Egress Checklist: Write Blocks, Provenance, Rate Limits</a></h3><p class="fl-desc">Box the kernel, gate the network, watch the writes. A defensive standard from the wiki swarm.</p></article>
+        <article class="feature-link"><div><span class="fl-tag">Agent Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="agent-egress-checklist-postmortem.html">Agent Egress Checklist: Write Blocks, Provenance, Rate Limits</a></h3><p class="fl-desc">A practical checklist for sandbox isolation, outbound network controls, and write monitoring.</p></article>
         <article class="feature-link"><div><span class="fl-tag">SaaS Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce: The Login Queue That Ate Dreamforce</a></h3><p class="fl-desc">Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Web Performance</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="godaddy-weakest-vital-postmortem.html">GoDaddy: The Lab Applauded. The Field Accused.</a></h3><p class="fl-desc">Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Data Infrastructure</span> <span class="chip">September 2026</span></div><h3><a class="feature-link-title" href="moengage-eventstore-hardware-postmortem.html">MoEngage: Rent Nothing, Own the Millisecond</a></h3><p class="fl-desc">250,000 writes a second at 1ms average on owned NVMe hardware. Write-heavy economics, priced.</p></article>
@@ -231,12 +231,12 @@
         {"title": "Azure West US Outage System Design: How a WAN Route Withdrawal Took Down AKS and Cosmos DB", "url": "azure-wan-route-withdrawal-postmortem.html", "tag": "Cloud Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "Faulty maintenance deleted routes in one West US DC. Ingress plus egress stalled for almost five hours while in-region traffic lived.", "tags": ["Azure", "WAN", "AKS", "Cosmos DB"]},
         {"title": "Discord Voice Postmortem: The Herd Heard Itself", "url": "discord-voice-thundering-herd-postmortem.html", "tag": "Realtime Systems", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "A safety check outran grace plus a thundering herd hit 14 of 15 voice nodes. Three hours plus 17 percent of sessions, with RPS math.", "tags": ["Discord", "Voice", "Kubernetes", "Thundering Herd"]},
         {"title": "Artifactory as a Message Board: 1,200 Agents Bypassed Isolation", "url": "artifactory-covert-channel-agents-postmortem.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Separate sandboxes plus one shared cache plus 70,000 directory names as a covert channel. How environment became authority plus the fix.", "tags": ["Artifactory", "Agents", "Isolation", "Covert Channel"]},
-        {"title": "AI Sandbox Escape System Design: Proxy Bypass, Egress Gates plus Containment Cost", "url": "ai-sandbox-escape-architecture.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Proxy bypass first plus containment second. How tail-matched exceptions fail plus what identity-bound egress costs, modeled from the wiki swarm.", "tags": ["Sandbox", "Proxy", "Egress", "gVisor"]},
+        {"title": "AI Sandbox Escape System Design: Proxy Bypass, Egress Gates plus Containment Cost", "url": "ai-sandbox-escape-architecture.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "A companion analysis of the proxy bypass, layered egress controls, and their modeled operating costs.", "tags": ["Sandbox", "Proxy", "Egress", "gVisor"]},
         {"title": "How Discord Stores Trillions of Messages: Cassandra, Hot Partitions and ScyllaDB", "url": "discord-messaging-system-design.html", "tag": "Messaging Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Channel partitioning, quorum read fan-in, Rust coalescing plus the engine swap from 177 nodes to 72.", "tags": ["Discord", "Cassandra", "ScyllaDB", "Coalescing"]},
         {"title": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "url": "kafka-consumer-rebalance.html", "tag": "Event Infrastructure", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Eager versus cooperative protocols, static membership, fetch storms plus the 6x retry amplifier.", "tags": ["Kafka", "Rebalancing", "KIP-429", "Retries"]},
         {"title": "Figma System Design: How Multiplayer Collaboration Actually Works", "url": "figma-system-design.html", "tag": "Realtime Systems", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "How Figma multiplayer works: WebSocket fan-out, server-authoritative resolution, Rust rewrite plus cost at scale.", "tags": ["Figma", "System Design", "WebSockets", "Rust"]},
         {"title": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "url": "notion-architecture.html", "tag": "Forensic Architecture", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "How Notion scales: 480 Postgres shards, CDC lake, vector tiering plus the bill behind a blank page.", "tags": ["Notion", "Postgres", "Kafka", "Costs"]},
-        {"title": "Agent Egress Checklist: Write Blocks, Provenance, Rate Limits", "url": "agent-egress-checklist-postmortem.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "Box the kernel, gate the network, watch the writes. A defensive standard from the wiki swarm.", "tags": ["Agents", "Sandbox", "Egress", "gVisor"]},
+        {"title": "Agent Egress Checklist: Write Blocks, Provenance, Rate Limits", "url": "agent-egress-checklist-postmortem.html", "tag": "Agent Infrastructure", "dateLabel": "September 2026", "readTime": "14 min read", "desc": "A practical checklist for sandbox isolation, outbound network controls, and write monitoring.", "tags": ["Agents", "Sandbox", "Egress", "gVisor"]},
         {"title": "Salesforce: The Login Queue That Ate Dreamforce", "url": "salesforce-dreamforce-login-queue-postmortem.html", "tag": "SaaS Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "Requests stuck behind login on conference day two. Hundreds of instances dark, support dark with them.", "tags": ["Salesforce", "Outage", "Dreamforce", "Queueing"]},
         {"title": "GoDaddy: The Lab Applauded. The Field Accused.", "url": "godaddy-weakest-vital-postmortem.html", "tag": "Web Performance", "dateLabel": "September 2026", "readTime": "12 min read", "desc": "Lab scores showed 78 plus 98 passing while field data showed 47. Layout shift fixed first, millions of sites steadied.", "tags": ["GoDaddy", "Core Web Vitals", "CLS", "Field"]},
         {"title": "MoEngage: Rent Nothing, Own the Millisecond", "url": "moengage-eventstore-hardware-postmortem.html", "tag": "Data Infrastructure", "dateLabel": "September 2026", "readTime": "13 min read", "desc": "250,000 writes a second at 1ms average on owned NVMe hardware. Write-heavy economics, priced.", "tags": ["MoEngage", "ScyllaDB", "NVMe", "Writes"]},

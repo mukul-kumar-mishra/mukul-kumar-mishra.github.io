@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
+  <meta name="description" content="Free engineering calculators for AI token cost, reliability, scaling, storage, traffic, and cloud spend. Thirty browser-based tools with transparent assumptions.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/calculators.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta property="og:description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
+  <meta property="og:description" content="Thirty free browser-based calculators for unit economics, AI cost, reliability, scaling, storage, and cloud spend. No signup; assumptions are explained.">
   <meta property="og:url" content="https://buildopsy.com/calculators.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Free engineering calculators for cost, SLO and scaling">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy">
-  <meta name="twitter:description" content="Free engineering calculators for AI infrastructure, reliability, cloud costs, storage, and capacity planning. Twenty-nine browser-based tools with formulas and assumptions.">
+  <meta name="twitter:description" content="Thirty free browser-based calculators for unit economics, AI cost, reliability, scaling, storage, and cloud spend. No signup; assumptions are explained.">
   <meta name="twitter:image:alt" content="Free engineering calculators for cost, SLO and scaling">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Free Engineering Calculators: Cost, SLO, Scaling | Buildopsy</title>
@@ -51,7 +51,7 @@
         
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
-        <a href="calculators.html" class="on">Calculators</a><a href="system-design/course.html">Courses</a>
+        <a href="calculators.html" class="on">Calculators</a><a href="system-design/course.html">Courses</a><a href="pricing.html">Pricing</a>
       </nav>
       <div class="topbar-actions">
         <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
@@ -73,9 +73,9 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free tools</span><span class="chip">Runs locally</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Free Engineering Calculators</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Twenty-nine free tools for AI inference, cloud costs, storage, traffic capacity, scaling, and SRE. Change inputs in your browser; calculator values stay on your device. Each model explains its assumptions and limitations.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Thirty free tools for AI inference, cloud costs, storage, traffic capacity, scaling, and SRE. Change inputs in your browser; calculator values stay on your device. Each model explains its assumptions and limitations.</p>
       <p class="fl-desc" style="margin-top:12px;">Jump to <a href="#quick-calculators">Quick calculators on this page</a> · <a href="#calculator-directory">All standalone tools</a>. Results are estimates, not provider quotes.</p>
-      <p class="fl-desc" style="margin-top:12px;">Popular standalone estimates: <a href="tools/aws-s3-storage-cost-calculator.html">AWS S3 pricing calculator</a> · <a href="tools/ec2-compute-cost-calculator.html">EC2 cost calculator</a> · <a href="tools/serverless-function-cost-calculator.html">AWS Lambda cost calculator</a> · <a href="tools/cloud-egress-cost-calculator.html">Cloud egress cost calculator</a> · <a href="tools/kubernetes-cluster-cost-calculator.html">Kubernetes cluster cost calculator</a> · <a href="tools/data-warehouse-cost-calculator.html">Data warehouse cost calculator</a> · <a href="tools/downtime-cost-calculator.html">Downtime cost calculator</a>.</p>
+      <p class="fl-desc" style="margin-top:12px;">Start with <a href="tools/unit-economics-calculator.html">cost per successful request</a>, or model <a href="tools/aws-s3-storage-cost-calculator.html">AWS S3</a>, <a href="tools/ec2-compute-cost-calculator.html">EC2</a>, <a href="tools/serverless-function-cost-calculator.html">Lambda</a>, <a href="tools/cloud-egress-cost-calculator.html">egress</a>, <a href="tools/kubernetes-cluster-cost-calculator.html">Kubernetes</a>, and <a href="tools/downtime-cost-calculator.html">downtime</a>.</p>
     </header>
 
     <details class="calc-quick-tools" id="quick-calculators" open>
@@ -669,10 +669,16 @@
       <label class="calc-directory-label" for="calculatorSearch">Search by calculator, provider or task</label>
       <div class="calc-directory-search">
         <i data-lucide="search" aria-hidden="true"></i>
-        <input id="calculatorSearch" type="search" placeholder="Try AWS S3 pricing, EC2 cost or downtime" aria-label="Search all 29 calculators" autocomplete="off">
+        <input id="calculatorSearch" type="search" placeholder="Try unit economics, AWS S3, EC2 cost or downtime" aria-label="Search all 30 calculators" autocomplete="off">
       </div>
-      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 8 of 29. Search or expand to see all.</p>
+      <p class="fl-desc" id="calculatorDirectoryStatus" role="status" aria-live="polite">Showing 9 of 30. Search or expand to see all.</p>
       <div class="calc-directory-grid" id="calculatorDirectoryFeatured">
+        <a class="calc-directory-card" href="tools/unit-economics-calculator.html" data-calculator-card data-search="cost per successful request unit economics per successful operation retry tax availability reliability monthly spend">
+          <span class="calc-directory-category">Unit economics</span>
+          <h3>Cost per Successful Request Calculator</h3>
+          <p>Connect traffic, retry spend, success rate, and fixed costs in one scenario model.</p>
+          <span class="calc-directory-open">Open calculator →</span>
+        </a>
         <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 pricing calculator s3 pricing aws storage pricing aws storage cost s3 cost calculator object storage bucket request get put retrieval gb">
           <span class="calc-directory-category">Cloud storage</span>
           <h3>AWS S3 Storage Cost Calculator</h3>
@@ -854,7 +860,7 @@
         </div>
       </details>
       <p class="fl-desc calc-directory-empty" id="calculatorDirectoryEmpty" role="status" hidden>No calculators match that search. Try a provider or task name. <button class="calc-directory-clear" id="calculatorDirectoryClear" type="button">Clear search</button></p>
-      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 29 standalone calculators.</p></noscript>
+      <noscript><p class="fl-desc">Calculator search needs JavaScript. Expand the list above to browse all 30 standalone calculators.</p></noscript>
     </section>
 
     <div class="ad-slot" data-ad-slot="calculators-below-tools" role="complementary" aria-label="Advertisement">
@@ -867,7 +873,7 @@
   <footer class="footer">
     <div class="wrap">
       <span>&copy; <span id="year"></span> Buildopsy</span>
-      <span><a href="about.html">About</a> · <a href="about.html#work-with-me">Contact</a> · <a href="privacy.html">Privacy</a></span>
+      <span><a href="about.html">About</a> · <a href="pricing.html">Pricing</a> · <a href="about.html#work-with-me">Contact</a> · <a href="privacy.html">Privacy</a></span>
     </div>
   </footer>
 
