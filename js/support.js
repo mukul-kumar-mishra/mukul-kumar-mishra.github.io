@@ -1,6 +1,6 @@
 (function () {
   // Add the verified Buy Me a Coffee creator-page URL here after payout setup.
-  var SUPPORT_URL = '';
+  var SUPPORT_URL = 'https://buymeacoffee.com/buildopsy';
   var validSupportUrl = /^https:\/\/(?:www\.)?buymeacoffee\.com\/[A-Za-z0-9_-]+\/?$/i;
   if (!validSupportUrl.test(SUPPORT_URL)) return;
 
