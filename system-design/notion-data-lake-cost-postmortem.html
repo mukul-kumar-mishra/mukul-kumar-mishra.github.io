@@ -10,7 +10,7 @@
   <meta property="og:title" content="The Workspace That Ate the Warehouse: Notion's Data Architecture">
   <meta property="og:description" content="Notion scaled to 200 billion blocks on 480 Postgres shards. Postmortem of CDC, Kafka, Hudi and the warehouse cost hiding in a blank page.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png">
-  <meta property="og:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
+  <meta property="og:image:alt" content="Notion data flow from block edits through sharded Postgres and Kafka CDC to the lake, search and vector tier">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
   <meta name="twitter:title" content="The Workspace That Ate the Warehouse">
   <meta name="twitter:description" content="Notion's 200B-block data architecture, modeled RPS, cloud-cost teardown and practical ways to cut the bill.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png">
-  <meta name="twitter:image:alt" content="Notion data lake system design postmortem architecture and cost illustration">
+  <meta name="twitter:image:alt" content="Notion data flow from block edits through sharded Postgres and Kafka CDC to the lake, search and vector tier">
   <title>Notion: The Workspace That Ate the Warehouse | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion: The Workspace That Ate the Warehouse", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-08-31", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion: The Workspace That Ate the Warehouse", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-10-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -80,7 +80,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated August 31, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 10, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;">
@@ -89,8 +89,8 @@
 
       <article class="prose">
         <figure class="article-figure">
-          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-data-lake-cost-postmortem.png" alt="Illustration of Notion data lake architecture with ingest, process, store, serve, monitoring and cost layers">
-          <figcaption>Figure 1. The quiet workspace on the left becomes a high-throughput data platform on the right.</figcaption>
+          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-architecture-guide.svg" alt="Aligned Notion architecture diagram showing browser clients, API authorization, 480 Postgres shards, Kafka CDC, Hudi on S3, search and vector retrieval" width="1200" height="680">
+          <figcaption>Figure 1. The online write path and the specialized lake, search and vector workloads it feeds.</figcaption>
         </figure>
         <section>
           <h2>1. The Blank Page Is a Trap</h2>
@@ -154,7 +154,7 @@
           <h2>5. The Bill: What Could This Cost?</h2>
 
           <p>Here is the uncomfortable part: public user counts do not reveal the invoice. A company can serve huge traffic cheaply with cache hits, or burn cash on a small workload with poor locality. The estimate below is therefore an envelope for the modeled workload, not Notion's reported spend.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/notion-flood-meme.svg" alt="Two hundred billion blocks in one diagram. Every block is cheap. The flood is not." width="1200" height="680"><figcaption>Figure 2. Two hundred billion blocks in one diagram, created for this article. Every block is cheap. The flood is not.</figcaption></figure>
+         <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/notion-flood-meme.svg" alt="A block mutation moving through the editor, permissions, Postgres and Kafka before fanning out to lake, search and vector systems" width="1200" height="630"><figcaption>Figure 2. Each canonical block change feeds several read and replay systems.</figcaption></figure>
           <p><strong>Database layer.</strong> Notion publicly describes 96 physical instances and 480 logical shards. If we model four database instances per physical host for writer, reader, failover and operational headroom, that is 384 instances. At a rough $1.40 per hour effective price for a memory-optimized managed PostgreSQL class, compute alone is about $393,000 per month. Storage, I/O, backups, cross-zone transfer and monitoring can take that to roughly <strong>$500,000-$700,000 per month</strong>. A smaller instance mix could cut it sharply. A larger high-memory mix could exceed it.</p>
           <p><strong>Data lake and batch compute.</strong> Two hundred billion blocks are not automatically 200 terabytes. Rows carry metadata, indexes, versions, permissions and replication overhead. Assume 300 TB of compressed lake data across raw, processed and historical datasets. S3 storage may be only a few thousand dollars per month, but Spark/EMR reprocessing, Kafka, EKS, shuffle storage and scheduled backfills are the real bill. A plausible operating envelope is <strong>$100,000-$250,000 per month</strong>, depending on how often large jobs run and how much spot capacity is used.</p>
           <p><strong>Search and vector infrastructure.</strong> Notion's own vector-search post says the old architecture reached a cost run rate of millions per year and that the first storage-compute decoupling cut peak cost by 50 percent. Before the later 90 percent reduction, a reasonable modeled range is <strong>$150,000-$350,000 per month</strong> for vector storage, indexing, embeddings, EMR and serving. This is exactly where idle capacity becomes a villain: a rarely queried workspace can still occupy index capacity if storage and compute are welded together.</p>
