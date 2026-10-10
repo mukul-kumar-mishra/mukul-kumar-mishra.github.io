@@ -1,45 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
-  <title id="title">DigitalOcean BLR1: upstream path loss saturates the last remaining link</title>
-  <desc id="desc">Multiple upstream provider paths including redundant ones fail in BLR1 Bengaluru. Traffic concentrates on one remaining link that lacks capacity, saturating connectivity for App Platform, Databases, Spaces, Load Balancers and more.</desc>
-  <defs>
-    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
-    <linearGradient id="hot" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
-    <style>
-      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:29px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:19px;font-weight:700}.sub{font-size:14px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.dead{fill:none;stroke:#5a6b84;stroke-width:3;stroke-dasharray:6 7}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
-    </style>
-  </defs>
-  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
-  <text x="58" y="60" class="kicker">EDGE NETWORK / UPSTREAM REDUNDANCY · BLR1 BENGALURU · OCT 3, 2026</text>
-  <text x="58" y="105" class="head">Redundant paths failed together. One link drowned.</text>
-  <text x="58" y="139" class="muted" font-size="18">Upstream losses incl. backup paths forced full regional load onto one under-sized link.</text>
-  <rect x="58" y="200" width="210" height="110" rx="16" class="node"/>
-  <text x="84" y="243" class="label">BLR1 traffic</text>
-  <text x="84" y="270" class="sub muted">apps + DBs + Spaces + LB</text>
-  <path d="M270 228H360" class="dead"/>
-  <rect x="365" y="185" width="215" height="76" rx="14" class="node"/>
-  <text x="390" y="216" class="label">Upstream A ✕</text><text x="390" y="242" class="sub muted">path unavailable</text>
-  <path d="M270 282H360" class="dead"/>
-  <rect x="365" y="268" width="215" height="76" rx="14" class="node"/>
-  <text x="390" y="299" class="label">Upstream B ✕</text><text x="390" y="325" class="sub muted">redundant path also down</text>
-  <path d="M585 255H650" class="line"/>
-  <rect x="655" y="185" width="235" height="142" rx="16" class="nodehot"/>
-  <text x="680" y="227" class="label">Last link</text>
-  <rect x="682" y="246" width="182" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
-  <rect x="682" y="246" width="176" height="22" rx="11" fill="url(#hot)"/>
-  <text x="682" y="296" class="sub">saturated · latency + errors</text>
-  <path d="M892 255H942" class="bad"/>
-  <rect x="948" y="200" width="194" height="110" rx="16" class="nodehot"/>
-  <text x="972" y="243" class="label">BLR1 products</text>
-  <text x="972" y="270" class="sub muted">11:59–13:02 UTC degraded</text>
-  <rect x="58" y="390" width="500" height="76" rx="14" class="node"/>
-  <text x="83" y="422" class="label">Monitoring · Functions · Control Panel also hit</text><text x="83" y="448" class="sub muted">one network fault, seven product symptoms</text>
-  <rect x="580" y="390" width="562" height="76" rx="14" class="nodesafe"/>
-  <text x="605" y="422" class="label">Recovery: upstream routing restored</text><text x="605" y="448" class="sub muted">no customer-side workaround posted</text>
-  <text x="58" y="520" class="kicker">REPORTED WINDOW · UTC OCT 3</text>
-  <line x1="92" y1="580" x2="1106" y2="580" class="timeline"/>
-  <circle cx="200" cy="580" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="170" y="558" class="label" font-size="16">11:59</text><text x="170" y="614" class="sub muted">disruption starts</text>
-  <circle cx="620" cy="580" r="10" class="tick"/><text x="585" y="558" class="label" font-size="16">~12:30</text><text x="585" y="614" class="sub muted">saturation peak</text>
-  <circle cx="990" cy="580" r="10" class="tick"/><text x="960" y="558" class="label" font-size="16">13:02</text><text x="960" y="614" class="sub muted">resolved</text>
-  <text x="58" y="650" class="muted" font-size="14">Simplified from DigitalOcean's status report. Upstream provider identities were not disclosed.</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
+<title id="img-title">Redundant paths failed together. One link drowned.</title>
+<desc id="img-desc">DigitalOcean BLR1: upstream losses incl. backup paths forced full regional load onto one under-sized link.. 1 / LOSS, Upstream paths go dark, Multiple provider paths down · Redundant paths included. 2 / SATURATION, Last link overflows, Traffic exceeds link capacity · Latency climbs, packets drop. 3 / BLAST, Seven product lines degrade, Apps, DBs, Spaces, LB + more · 11:59–13:02 UTC, 63 minutes</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
+<rect width="1200" height="680" fill="#101a2c"/>
+<rect width="1200" height="78" fill="#0b1423"/>
+<image x="40" y="9" width="174" height="60" preserveAspectRatio="xMinYMid meet" href="../logo.png"/>
+<text x="244.0" y="48.0" font-size="15" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="2"><tspan x="244.0" dy="0">EDGE NETWORK / UPSTREAM REDUNDANCY</tspan></text>
+<text x="54.0" y="137.0" font-size="31" font-weight="750" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="54.0" dy="0">Redundant paths failed together. One link drowned.</tspan></text>
+<text x="56.0" y="177.0" font-size="17" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">DigitalOcean BLR1: upstream losses incl. backup paths forced full regional load onto one under-sized link.</tspan></text>
+<path d="M54 202H1146" stroke="#405776" stroke-width="1" opacity="0.7"/>
+<rect x="54.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
+<rect x="54.0" y="250" width="6" height="218" rx="3" fill="#67d5cb"/>
+<text x="78.0" y="284.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="78.0" dy="0">1 / LOSS</tspan></text>
+<text x="78.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Upstream paths go dark</tspan></text>
+<text x="78.0" y="365.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Multiple provider paths down ·</tspan><tspan x="78.0" dy="20.0">Redundant paths included</tspan></text>
+<path d="M401.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="428.0" y="250" width="344.0" height="218" rx="16" fill="#202e46" stroke="#405776" stroke-width="2"/>
+<rect x="428.0" y="250" width="6" height="218" rx="3" fill="#ffb36b"/>
+<text x="452.0" y="284.0" font-size="13" font-weight="700" fill="#ffb36b" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="452.0" dy="0">2 / SATURATION</tspan></text>
+<text x="452.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Last link overflows</tspan></text>
+<text x="452.0" y="365.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Traffic exceeds link capacity ·</tspan><tspan x="452.0" dy="20.0">Latency climbs, packets drop</tspan></text>
+<path d="M775.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="802.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
+<rect x="802.0" y="250" width="6" height="218" rx="3" fill="#ffb36b"/>
+<text x="826.0" y="284.0" font-size="13" font-weight="700" fill="#ffb36b" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="826.0" dy="0">3 / BLAST</tspan></text>
+<text x="826.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Seven product lines</tspan><tspan x="826.0" dy="24.0">degrade</tspan></text>
+<text x="826.0" y="389.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Apps, DBs, Spaces, LB + more ·</tspan><tspan x="826.0" dy="20.0">11:59–13:02 UTC, 63 minutes</tspan></text>
+<rect x="54" y="496" width="1092" height="90" rx="14" fill="#283751" stroke="#405776" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="78.0" y="527.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.4"><tspan x="78.0" dy="0">PUBLIC RECORD LIMIT</tspan></text>
+<text x="78.0" y="558.0" font-size="16" font-weight="600" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Provider identities, link capacities, and the trigger behind the path loss were not disclosed in the status report.</tspan></text>
+<text x="56.0" y="632.0" font-size="12" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Source: DigitalOcean Status, incident 6z6dt3t1bhb9, Oct 3, 2026.</tspan></text>
 </svg>

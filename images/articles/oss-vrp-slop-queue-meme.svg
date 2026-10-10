@@ -1,42 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
-  <title id="title">Google OSS VRP pause: invalid AI-driven reports overwhelm the triage queue</title>
-  <desc id="desc">Product vulnerability reports flow into Google's Open Source VRP triage. A flood of invalid AI-generated filings buries maintainers, product intake pauses October 1 while supply-chain reports and pre-October filings continue.</desc>
-  <defs>
-    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
-    <linearGradient id="hot" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
-    <style>
-      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:29px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:19px;font-weight:700}.sub{font-size:14px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
-    </style>
-  </defs>
-  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
-  <text x="58" y="60" class="kicker">AI SLOP WATCH / DISCLOSURE PIPELINE · OSS VRP · OCT 1, 2026</text>
-  <text x="58" y="105" class="head">The queue filled with almost-vulnerabilities.</text>
-  <text x="58" y="139" class="muted" font-size="18">Google paused product intake over invalid AI-driven reports. Supply-chain lane stayed open.</text>
-  <rect x="58" y="200" width="215" height="112" rx="16" class="node"/>
-  <text x="84" y="243" class="label">Report flood</text><text x="84" y="271" class="label">arrives</text>
-  <text x="84" y="295" class="sub muted">hallucinated bugs + non-issues</text>
-  <path d="M275 256H335" class="line"/>
-  <rect x="340" y="185" width="260" height="142" rx="16" class="nodehot"/>
-  <text x="365" y="227" class="label">Triage queue</text>
-  <rect x="367" y="246" width="206" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
-  <rect x="367" y="246" width="198" height="22" rx="11" fill="url(#hot)"/>
-  <text x="367" y="296" class="sub">manual validation burns hours</text>
-  <path d="M602 256H662" class="bad"/>
-  <rect x="667" y="200" width="220" height="112" rx="16" class="nodehot"/>
-  <text x="692" y="243" class="label">Product lane</text><text x="692" y="271" class="label">PAUSED Oct 1</text>
-  <text x="692" y="295" class="sub muted">restart update due Q1 2027</text>
-  <rect x="905" y="200" width="237" height="112" rx="16" class="nodesafe"/>
-  <text x="930" y="243" class="label">Supply-chain</text><text x="930" y="271" class="label">STAYS OPEN</text>
-  <text x="930" y="295" class="sub muted">pre-Oct 1 filings processed</text>
-  <rect x="58" y="380" width="540" height="76" rx="14" class="node"/>
-  <text x="83" y="412" class="label">Real bugs compete with slop for reviewer time</text><text x="83" y="438" class="sub muted">triage cost, not bounty cost, broke first</text>
-  <rect x="620" y="380" width="522" height="76" rx="14" class="node"/>
-  <text x="645" y="412" class="label">Researchers rerouted: Cloud VRP / vendor-direct</text><text x="645" y="438" class="sub muted">per secondary reporting of Google notice</text>
-  <text x="58" y="510" class="kicker">WHAT THE RECORD SHOWS</text>
-  <line x1="92" y1="570" x2="1106" y2="570" class="timeline"/>
-  <circle cx="180" cy="570" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="150" y="548" class="label" font-size="16">Oct 1</text><text x="150" y="604" class="sub muted">pause effective</text>
-  <circle cx="600" cy="570" r="10" class="tick"/><text x="565" y="548" class="label" font-size="16">Oct 4–5</text><text x="565" y="604" class="sub muted">press coverage</text>
-  <circle cx="990" cy="570" r="10" class="tick"/><text x="955" y="548" class="label" font-size="16">Q1 2027</text><text x="955" y="604" class="sub muted">update expected</text>
-  <text x="58" y="646" class="muted" font-size="14">Audit framing: pause and scope are reported; per-report AI attribution is not publicly verifiable.</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
+<title id="img-title">The queue filled with almost-vulnerabilities.</title>
+<desc id="img-desc">Google paused OSS VRP product intake Oct 1 over invalid AI-driven reports. The supply-chain lane stayed open.. 1 / FLOOD, Plausible filings arrive, Hallucinated bugs · Non-security coding errors. 2 / JAM, Triage burns reviewer hours, Each false claim needs proof · Real bugs queue behind fiction. 3 / PAUSE, Product lane closes Oct 1, Supply chain stays open · Restart update due Q1 2027</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
+<rect width="1200" height="680" fill="#101a2c"/>
+<rect width="1200" height="78" fill="#0b1423"/>
+<image x="40" y="9" width="174" height="60" preserveAspectRatio="xMinYMid meet" href="../logo.png"/>
+<text x="244.0" y="48.0" font-size="15" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="2"><tspan x="244.0" dy="0">AI SLOP WATCH / DISCLOSURE PIPELINE</tspan></text>
+<text x="54.0" y="137.0" font-size="31" font-weight="750" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="54.0" dy="0">The queue filled with almost-vulnerabilities.</tspan></text>
+<text x="56.0" y="177.0" font-size="17" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Google paused OSS VRP product intake Oct 1 over invalid AI-driven reports. The supply-chain lane stayed open.</tspan></text>
+<path d="M54 202H1146" stroke="#405776" stroke-width="1" opacity="0.7"/>
+<rect x="54.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
+<rect x="54.0" y="250" width="6" height="218" rx="3" fill="#67d5cb"/>
+<text x="78.0" y="284.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="78.0" dy="0">1 / FLOOD</tspan></text>
+<text x="78.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Plausible filings arrive</tspan></text>
+<text x="78.0" y="365.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Hallucinated bugs · Non-security</tspan><tspan x="78.0" dy="20.0">coding errors</tspan></text>
+<path d="M401.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="428.0" y="250" width="344.0" height="218" rx="16" fill="#202e46" stroke="#405776" stroke-width="2"/>
+<rect x="428.0" y="250" width="6" height="218" rx="3" fill="#ffb36b"/>
+<text x="452.0" y="284.0" font-size="13" font-weight="700" fill="#ffb36b" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="452.0" dy="0">2 / JAM</tspan></text>
+<text x="452.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Triage burns reviewer</tspan><tspan x="452.0" dy="24.0">hours</tspan></text>
+<text x="452.0" y="389.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Each false claim needs proof · Real</tspan><tspan x="452.0" dy="20.0">bugs queue behind fiction</tspan></text>
+<path d="M775.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="802.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
+<rect x="802.0" y="250" width="6" height="218" rx="3" fill="#81d4c5"/>
+<text x="826.0" y="284.0" font-size="13" font-weight="700" fill="#81d4c5" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="826.0" dy="0">3 / PAUSE</tspan></text>
+<text x="826.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Product lane closes Oct 1</tspan></text>
+<text x="826.0" y="365.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Supply chain stays open · Restart</tspan><tspan x="826.0" dy="20.0">update due Q1 2027</tspan></text>
+<rect x="54" y="496" width="1092" height="90" rx="14" fill="#283751" stroke="#405776" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="78.0" y="527.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.4"><tspan x="78.0" dy="0">AUDIT LIMIT</tspan></text>
+<text x="78.0" y="558.0" font-size="16" font-weight="600" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Report counts and per-report AI attribution are not public. This audit assigns no individual filing to AI.</tspan></text>
+<text x="56.0" y="632.0" font-size="12" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Source: Secondary reporting of Google's OSS VRP notice, Oct 4–5, 2026.</tspan></text>
 </svg>
