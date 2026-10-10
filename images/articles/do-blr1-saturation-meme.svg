@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
 <title id="img-title">Redundant paths failed together. One link drowned.</title>
-<desc id="img-desc">DigitalOcean BLR1: upstream losses incl. backup paths forced full regional load onto one under-sized link.. 1 / LOSS, Upstream paths go dark, Multiple provider paths down · Redundant paths included. 2 / SATURATION, Last link overflows, Traffic exceeds link capacity · Latency climbs, packets drop. 3 / BLAST, Seven product lines degrade, Apps, DBs, Spaces, LB + more · 11:59–13:02 UTC, 63 minutes</desc>
+<desc id="img-desc">DigitalOcean BLR1: upstream losses incl. backup paths forced full regional load onto one under-sized link. 1 / LOSS, Upstream paths go dark, Multiple provider paths down · Redundant paths included. 2 / SATURATION, Last link overflows, Traffic exceeds link capacity · Latency climbs, packets drop. 3 / BLAST, Seven product lines degrade, Apps, DBs, Spaces, LB + more · 11:59–13:02 UTC, 63 minutes</desc>
 <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
 <rect width="1200" height="680" fill="#101a2c"/>
 <rect width="1200" height="78" fill="#0b1423"/>

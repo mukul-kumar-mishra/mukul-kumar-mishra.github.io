@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Amodei asked the industry to pace the frontier. Altman plus Musk agreed within hours. Sanders demanded brakes. Moscow will accelerate. Rook audits what was actually committed.">
+  <meta name="description" content="Amodei proposed a three-step plan to pace frontier AI development. This audit separates Anthropic's unilateral evaluator commitment from endorsements and proposals still awaiting details.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/slow-down-pact-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Three CEOs Agreed to Slow Down. Nobody Slowed Down.">
-  <meta property="og:description" content="Evaluator badges, two-word endorsements, plus a treaty proposal. Rook separates the signatures from the brakes.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/pace-trio-meme.png">
-  <meta property="og:image:alt" content="Three AI CEOs signing a slowdown pact with no brakes">
+  <meta property="og:title" content="Three CEOs Endorsed Pacing. What Was Actually Proposed?">
+  <meta property="og:description" content="One unilateral evaluator commitment, an OpenAI pledge awaiting details, and broader proposals that remained unresolved as of September 13, 2026.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/pace-evaluator-meme.png">
+  <meta property="og:image:alt" content="A diagram of the proposed embedded third-party evaluator commitment">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/slow-down-pact-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Three CEOs Agreed to Slow Down. Nobody Slowed Down.">
-  <meta name="twitter:description" content="One essay, two endorsements, one treaty proposal, zero paused training runs.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/pace-trio-meme.png">
-  <meta name="twitter:image:alt" content="Three AI CEOs signing a slowdown pact with no brakes">
-  <title>Three CEOs Agreed to Slow Down. Nobody Slowed Down. | Rook</title>
+  <meta name="twitter:title" content="Three CEOs Endorsed Pacing. What Was Actually Proposed?">
+  <meta name="twitter:description" content="One unilateral evaluator commitment, an OpenAI pledge awaiting details, and proposals still unresolved as of September 13, 2026.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/pace-evaluator-meme.png">
+  <meta name="twitter:image:alt" content="A diagram of the proposed embedded third-party evaluator commitment">
+  <title>Three CEOs Endorsed Pacing. What Was Actually Proposed? | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,36 +29,35 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Three CEOs Agreed to Slow Down. Nobody Slowed Down.", "description": "A Rook audit of the September 2026 pace-the-frontier pact: Amodei essay, Altman plus Musk endorsements, Sanders treaty call, plus the China footnote.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-13", "dateModified": "2026-09-13", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/slow-down-pact-postmortem.html"}, "keywords": "pace the frontier, Amodei, Altman, Musk, Sanders, superintelligence", "image": "https://buildopsy.com/images/articles/pace-trio-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Three CEOs Endorsed Pacing. What Was Actually Proposed?", "description": "An audit of the September 2026 pace-the-frontier proposal, distinguishing Anthropic's unilateral evaluator commitment from endorsements and unimplemented proposals. Public status is assessed through September 13, 2026.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-13", "dateModified": "2026-10-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/slow-down-pact-postmortem.html"}, "keywords": "pace the frontier, Amodei, Altman, Musk, Sanders, embedded evaluators", "image": "https://buildopsy.com/images/articles/pace-evaluator-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Policy Incident</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Three CEOs Agreed to Slow Down. Nobody Slowed Down.</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On Saturday the man who sells the fastest model asked everyone to drive slower. His two biggest rivals agreed within hours. A senator demanded a full stop. Moscow declined to attend. Rook read the essay so you can skip the applause plus keep the receipts.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Amodei proposed pacing plus embedded evaluators. Altman pledged the same access. Musk wrote three words. Sanders called for a Trump-Xi treaty. No training run has been shown to stop.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 13, 2026</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Policy Proposal Audit</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Three CEOs Endorsed Pacing. What Was Actually Proposed?</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 12, 2026, Dario Amodei proposed a three-step plan to pace frontier AI development. Sam Altman endorsed third-party evaluator access and said OpenAI would share more; Elon Musk posted, “Dario is right.” This audit separates the proposal, the commitments, and what remained unresolved.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Anthropic made the sole unilateral commitment in the essay: invite embedded evaluators with employee-like access. OpenAI's matching pledge lacked public terms at the time. Musk endorsed the idea without specifying an xAI action. The status snapshot in this audit ends September 13, 2026.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI policy proposal audit · Status assessed through September 13, 2026 · Updated October 10, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Amodei published We Must Pace the Frontier on September 12 2026. Altman plus Musk endorsed it the same day. Sanders answered on September 13. Update on the evening of September 13: Trump dismissed the slowdown calls as negative forces. Altman said OpenAI will skip a 2026 public listing over safety concerns. Evaluator access is committed by one lab. A treaty does not exist.</aside>
+     <aside class="tip" style="margin-bottom:30px;"><strong>Status snapshot (through September 13, 2026):</strong> Amodei said pacing does not mean halting model training or technical progress. Anthropic announced a unilateral commitment to invite embedded evaluators, with the invitation still described as forthcoming; Altman endorsed evaluator access but had not published matching terms in the sources reviewed; Musk offered an endorsement without an xAI commitment. This article does not establish what happened after that date.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/pace-trio-meme.svg" alt="The pact in one diagram. Amodei wrote the essay. Altman pledged the badges. Musk wrote three words. Training runs continued." width="1200" height="680"><figcaption>Figure 1. The pact in one diagram. Amodei wrote the essay. Altman pledged the badges. Musk wrote three words. Training runs continued.</figcaption></figure>
       <section><h2>1. Saturday in 90 Seconds</h2>
         <p>September 9. Researcher Jacob Coxon quit Anthropic after three years pretraining models at OpenAI plus Anthropic. His charge: both labs race toward self-improving superintelligence while gambling with our lives. His forecast: dead by decade end, possibly. Rook grades the forecast later. The resignation is documented.</p>
         <p>September 12. Amodei published We Must Pace the Frontier on his personal site. Core sentence, quoted exactly: We must slow the pace at which we improve the capabilities of AI models. Plan: permanent employee-level access for third-party evaluators, common safety standards across democratic labs, plus limits on unchecked progress. Anthropic adopts step one unilaterally.</p>
         <p>Hours later Altman answered on X, quoted exactly: I agree with Dario that we need to pace the frontier. He pledged OpenAI would grant evaluators the same access. Musk answered with three words, quoted exactly: Dario is right. He then reshared his older warning that AI risk runs significantly higher than nuclear weapons.</p>
         <p>September 13. Sanders called the CEO statements a start, not enough. His words: When you are racing towards a cliff, you don't just ease up on the gas pedal. You hit the brakes. His proposal: Trump plus Xi negotiate a treaty freezing superintelligent AI. No such negotiation exists.</p>
-        <div class="callout"><strong>The pattern that matters:</strong> Altman floated deceleration in July. Amodei essayed it in September. The industry keeps agreeing. The agreement keeps shipping nothing.</div>
+        <div class="callout"><strong>The distinction that matters:</strong> An endorsement is not an implementation. The essay describes pacing as a way to slow capability advancement while continuing training, and only Anthropic announced a unilateral evaluator commitment in the sources reviewed for this September 13 snapshot.</div>
       </section>
       <section><h2>2. The Scoreboard: Signed, Pledged, Vibe</h2>
-        <p><strong>Committed unilaterally: evaluator badges at Anthropic.</strong> Real access, real desks, no veto on ship dates. Independent evaluators get employee-level visibility into training plus safety adherence. That is the first structural oversight win in years. Figure 2 shows the badge.</p>
+        <p><strong>Announced unilateral commitment: invite embedded evaluators.</strong> Amodei described ongoing, employee-like access to workspaces and tools, plus the ability to publish key findings subject to narrow redactions. The essay said Anthropic intended to invite a team in the near future; actual access was not independently confirmed in this September 13 snapshot. The essay does not specify a formal evaluator veto over release decisions.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/pace-evaluator-meme.svg" alt="The commitment in one diagram. Permanent desks for third-party evaluators. Real access. No vote on ship dates." width="1200" height="680"><figcaption>Figure 2. The commitment in one diagram. Permanent desks for third-party evaluators. Real access. No vote on ship dates.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/pace-evaluator-meme.svg" alt="Diagram of the proposed embedded third-party evaluator commitment; access terms and implementation remained pending in this snapshot." width="1200" height="680"><figcaption>Figure 1. The proposal: employee-like evaluator access and public findings, with the team's invitation and operating terms still pending in this September 13 snapshot.</figcaption></figure>
       <section>
         <p><strong>Pledged: Altman matching evaluator access.</strong> Status: a post plus a promise of more to share soon. Shipment pending. Rook counts pledges when they ship.</p>
-        <p><strong>Vibe: Musk.</strong> Three words plus a reshare. Cost to Musk: zero dollars. Effect on xAI training: unobserved. The man who demanded a pause in 2023 now endorses pacing in three words while running a lab at full speed. Consistency was never the product.</p>
+        <p><strong>Endorsement: Musk.</strong> Three words plus a reshare. No xAI implementation, timetable, or evaluator-access terms were specified in the cited statement, so the operational effect is unknown.</p>
         <p><strong>Signatures without force: the 1,000-employee petition</strong> asking Washington to pace automated AI development. Admirable. Nonbinding. Governments file petitions under reading material.</p>
         <div class="tip"><strong>Rook's rule:</strong> A commitment is a shipped control. Everything else is a post.</div>
       </section>
@@ -83,10 +82,9 @@
         <p>Between accelerate, brake, plus veto sits the pact: voluntary, contingent, plus missing its largest skeptics. One commands sovereign models. One commands headlines. One commands the regulatory weather. None commands a training cluster in California, which is where the frontier actually lives.</p>
       </section>
       <section><h2>6. The Verdict</h2>
-        <p>Credit where due. Embedded evaluators with badge access is the first structural oversight win in years. Altman matching it doubles the surface. Coxon quitting cost a career, which is more than anyone else paid this week.</p>
-        <p>Now the bill. Three CEOs agree speed is scary while operating the three fastest labs on Earth. No paused run was announced. No ship date moved. The essay asks democracies to coordinate limits while insisting America keep its lead, which is coordination with a finish line.</p>
-        <p>The world is scared, per the assignment. Fear is rational when builders forecast doom by decade end. Fear is also the oldest marketing in technology. Rook separates them with one test: watch training compute, not press releases. When a frontier run pauses for safety, that is news. Until then the pact is three signatures plus zero brakes.</p>
-        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Three signatures. Zero brakes. Full speed.</strong></p>
+        <p>Credit where due: embedded evaluators could give an external team access to training pipelines and safety processes, a step Amodei described as Anthropic's unilateral commitment. At the snapshot date, OpenAI had expressed agreement but had not published comparable access terms in the cited sources.</p>
+        <p>The unresolved issue is verification: evaluator scope, publication rights, implementation timing, and how other labs or governments would participate. Amodei's proposal was to pace capability gains while continuing training, not to announce an immediate halt. The cited evidence therefore supports an early proposal and limited commitments—not a binding industry agreement or proof that every lab changed its development pace.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>One unilateral commitment. Other endorsements awaiting implementation details.</strong></p>
       </section>
       <section><h2>Sources and Method</h2>
         <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Related file on this site: <a href="openai-swarm-legal-fallout-postmortem.html">700 Agents Walked Out. 16 Attorneys General Walked In.</a> This audit follows Amodei September 12 essay, same-day X endorsements, Sanders September 13 treaty call, plus coverage from TechCrunch, France 24, DW, Bloomberg. Quotes are verbatim from published posts plus reported remarks. Forecasts are labeled as forecasts. No training internals are claimed.</p>

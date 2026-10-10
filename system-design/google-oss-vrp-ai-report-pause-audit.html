@@ -29,22 +29,6 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      {"@type":"Question","name":"What did Google pause in the OSS VRP on Oct 1, 2026?","acceptedAnswer":{"@type":"Answer","text":"New product-vulnerability reports under the Open Source Software Vulnerability Reward Program. Supply-chain disclosures stayed open and pre-October filings are still processed, with a program update expected by Q1 2027."}},
-      {"@type":"Question","name":"What is a VRP product lane versus a supply-chain lane?","acceptedAnswer":{"@type":"Answer","text":"The product lane takes reports of flaws in open-source products; the supply-chain lane takes reports of compromised build pipelines and tampered packages. Google paused only the former."}},
-      {"@type":"Question","name":"Why did invalid AI-driven reports force a pause?","acceptedAnswer":{"@type":"Answer","text":"Plausible-looking filings that dissolve into hallucinations or non-security errors still cost nearly as much reviewer time as real bugs. When invalid volume outruns reviewer capacity, real disclosures queue behind fiction."}},
-      {"@type":"Question","name":"Where should researchers send product bugs now?","acceptedAnswer":{"@type":"Answer","text":"Per the reporting, Cloud VRP for some Google Cloud repos or vendor-direct channels. Attach an executable proof-of-concept regardless of program — proof is becoming the price of triage attention."}},
-      {"@type":"Question","name":"What is a proof-of-concept exploit in a bug report?","acceptedAnswer":{"@type":"Answer","text":"A runnable demonstration that the claimed flaw is real and reachable — a script, test case, or replay that a reviewer can execute. Prose-only claims are triage requests, not disclosures."}},
-      {"@type":"Question","name":"Did Google publish how many reports were AI-generated?","acceptedAnswer":{"@type":"Answer","text":"No. Counts, tooling, and per-report classifications are not public. This audit assigns no individual filing to AI and treats broader Linux and Intel comparisons in the coverage as reported context, not findings."}},
-      {"@type":"Question","name":"What would a white-hat bounty restart require?","acceptedAnswer":{"@type":"Answer","text":"Executable proof per report, reputation-weighted intake, machine-checkable pre-screening, published disposition metrics, and an appeal path for falsely rejected reports."}},
-      {"@type":"Question","name":"Why does this matter beyond Google?","acceptedAnswer":{"@type":"Answer","text":"It is the first mainstream bounty to publicly crack under AI-generated report volume. Whatever proof gates Google demands on restart, other programs are likely to copy within a quarter."}}
-    ]
-  }
-  </script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause","description":"A source-led audit of Google's Oct 1, 2026 OSS VRP product-intake pause over invalid AI-driven reports: scope, surviving lanes, and triage economics.","author":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/google-oss-vrp-ai-report-pause-audit.html"},"keywords":"Google OSS VRP, bug bounty pause, AI-generated vulnerability reports, supply chain disclosures, triage","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/oss-vrp-slop-queue-meme.png"}</script>
 </head>
 <body class="site">
@@ -135,7 +119,7 @@
         <div class="callout"><strong>The memo's single sentence:</strong> make proof profitable, make floods expensive to file, and publish the numbers that prove both. Pipelines that do this survive any generator; pipelines that do not will be back here within two years.</div>
       </section>
       <section><h2>7. The Verdict</h2>
-        <p>The public record supports a narrow, serious claim: Google paused one intake lane because validation economics failed under reported AI-driven invalid volume, while keeping the lanes that protect the build itself. It does not support broad claims about which reports were AI-made, how many there were, or whether sibling program pauses share the same cause. Watch the Q1 2027 restart terms — proof requirements, reputation gates, machine pre-checks — because whatever Google demands, the rest of the bounty ecosystem will copy within a quarter.</p>
+        <p>The public record supports a narrow, serious claim: Google paused one intake lane after reporting invalid AI-driven submissions, while keeping supply-chain disclosures open. It does not establish which reports were AI-made, how many there were, or whether sibling program pauses share the same cause. Watch the Q1 2027 restart terms — proof requirements, intake controls, and disposition metrics — then check whether other programs choose similar changes. Their response is not yet known.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);">The bugs were free to file and the truth was expensive to check. What to watch next: the Q1 2027 restart terms graded against Appendix D's memo, the first program that copies Google's proof gates (watch for "quality improvements" language), and your own intake economics — if your project accepts prose-only security claims today, its triage queue already carries this flood's shape. The generators are not slowing down; the only variable is whether validation gets priced before the next pause.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The bugs were free to file. The truth was expensive to check.</strong></p>
       </section>

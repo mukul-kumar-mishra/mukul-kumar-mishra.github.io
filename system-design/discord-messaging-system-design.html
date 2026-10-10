@@ -82,8 +82,6 @@
         <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the overkill math plus the operator rules: <a href="discord-messages-scale-postmortem.html">Discord: Trillions of Messages, 177 Nodes Too Many</a>. This postmortem answers how the storage works, why reads broke plus what fixed them.</aside>
-
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Node counts, latencies plus migration steps follow Discord Engineering publications plus ScyllaDB case coverage. Cost framing is modeled from public cloud list prices. Replace my assumptions with your telemetry wherever they differ.</aside>
 
       <article class="prose">
@@ -113,7 +111,7 @@
 
       <section><h2>5. What It Costs</h2>
         <p>Model fleet cost from public cloud list prices for memory-heavy database machines plus attached SSDs and the 105 retired nodes land in the low millions per year, before counting the eliminated firefighting toil. The overkill was compound interest on a schema plus an engine plus an operating model, priced monthly.</p>
-        <p>Price your own read path with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>: a few million chat events per second at a blended price, sustained all month, dwarfs the database line. Every duplicate read eliminated upstream deletes its share of that envelope. The full overkill math lives in the <a href="discord-messages-scale-postmortem.html">deep postmortem</a>.</p>
+        <p>Price your own read path with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>: a few million chat events per second at a blended price, sustained all month, dwarfs the database line. Every duplicate read eliminated upstream deletes its share of that envelope.</p>
       </section>
 
       <section><h2>6. The Verdict: What to Steal</h2>
@@ -135,7 +133,7 @@
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Storage facts follow Discord Engineering publications plus ScyllaDB case coverage. Node counts, latencies plus migration steps come from the published accounts. Cost framing is modeled from public cloud list prices. For the complete analysis, see <a href="discord-messages-scale-postmortem.html">the full postmortem</a>.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Storage facts follow Discord Engineering publications plus ScyllaDB case coverage. Node counts, latencies plus migration steps come from the published accounts. Cost framing is modeled from public cloud list prices.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://discord.com/blog/how-discord-stores-trillions-of-messages" target="_blank" rel="noopener noreferrer">Discord Engineering: How Discord Stores Trillions of Messages</a></li>
           <li><a href="https://www.scylladb.com/tech-talk/how-discord-migrated-trillions-of-messages-from-cassandra-to-scylladb" target="_blank" rel="noopener noreferrer">ScyllaDB: How Discord Migrated Trillions of Messages (Jun 2026)</a></li>

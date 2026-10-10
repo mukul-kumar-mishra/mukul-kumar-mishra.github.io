@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
 <title id="img-title">The sorter meant to relieve nodes starved them.</title>
-<desc id="img-desc">Google's preliminary report: a relief optimization plus a metadata fault behind 12.5 hours of us-central1 write errors.. 1 / TRIGGER, Sorting optimization ships, Meant to relieve local hotspots · Ran on us-central1 backend nodes. 2 / EXHAUSTION, Nodes run out of resources, Ingestion services time out · Writes routed there fail. 3 / OUTCOME, Regional 503s for 12.5 hours, WriteObject 503s + timeouts · Reads wobble; other regions green</desc>
+<desc id="img-desc">Google's preliminary report: a relief optimization plus a metadata fault behind 12.5 hours of us-central1 write errors. 1 / TRIGGER, Sorting optimization ships, Meant to relieve local hotspots · Ran on us-central1 backend nodes. 2 / EXHAUSTION, Nodes run out of resources, Ingestion services time out · Writes routed there fail. 3 / OUTCOME, Regional 503s for 12.5 hours, WriteObject 503s + timeouts · Reads wobble; other regions green</desc>
 <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
 <rect width="1200" height="680" fill="#101a2c"/>
 <rect width="1200" height="78" fill="#0b1423"/>
