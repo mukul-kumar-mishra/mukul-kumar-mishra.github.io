@@ -1,4 +1,12 @@
 (function () {
+  var navScript = document.currentScript;
+  if (navScript && navScript.src) {
+    var supportScript = document.createElement('script');
+    supportScript.async = true;
+    supportScript.src = navScript.src.replace(/nav\.js(?:\?.*)?$/, 'support.js');
+    document.head.appendChild(supportScript);
+  }
+
   // ---- Auto lazy-load: eager for logo + first content image (LCP), lazy for the rest ----
   try {
     var imgs = document.querySelectorAll('img:not([loading])');

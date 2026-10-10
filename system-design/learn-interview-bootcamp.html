@@ -10,17 +10,17 @@
   <meta property="og:title" content="System Design Interview Bootcamp: 15 Rounds From the Whiteboard">
   <meta property="og:description" content="Clarify plus boxes plus RPS math rehearsed. Fifteen interview rounds with live diagrams plus verdict math from the whiteboard.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-interview-bootcamp-meme.png">
-  <meta property="og:image:alt" content="Three panels showing whiteboard boxes plus spoken math plus verdict">
+  <meta property="og:image:alt" content="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:height" content="680">
   <meta property="og:url" content="https://buildopsy.com/system-design/learn-interview-bootcamp.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="System Design Interview Bootcamp: 15 Rounds From the Whiteboard">
   <meta name="twitter:description" content="Clarify plus boxes plus RPS math rehearsed. Fifteen interview rounds with live diagrams plus verdict math from the whiteboard.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-interview-bootcamp-meme.png">
-  <meta name="twitter:image:alt" content="Three panels showing whiteboard boxes plus spoken math plus verdict">
+  <meta name="twitter:image:alt" content="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide">
   <title>System Design Interview Bootcamp: 15 Rounds From the Whiteboard | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
     "description":"A free system design interview course in 15 forensic rounds covering clarification, diagramming, RPS math, storage, caching, queues, sharding, consistency, failure drills, cost closes, API design, deep dives, behavioral proof, mock loops plus offer week.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-10",
     "syllabusSections":[{"@type":"Syllabus","name":"Clarify First"},{"@type":"Syllabus","name":"Boxes Before Arrows"},{"@type":"Syllabus","name":"Numbers Out Loud"},{"@type":"Syllabus","name":"Storage Choices"},{"@type":"Syllabus","name":"Cache Math"},{"@type":"Syllabus","name":"Queue Versus Sync"},{"@type":"Syllabus","name":"Sharding Keys"},{"@type":"Syllabus","name":"Consistency Tradeoffs"},{"@type":"Syllabus","name":"Failure Drills"},{"@type":"Syllabus","name":"Cost Close"},{"@type":"Syllabus","name":"API Round"},{"@type":"Syllabus","name":"Deep Dive Round"},{"@type":"Syllabus","name":"Behavioral With Receipts"},{"@type":"Syllabus","name":"Mock Loop"},{"@type":"Syllabus","name":"Offer Week"}]}
   </script>
   <script type="application/ld+json">
@@ -64,8 +64,11 @@
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
     .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
-    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram text.lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path.arr { fill: none; stroke: var(--mist); stroke-width: 2; stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .dot { fill: var(--cyan); stroke: var(--panel); stroke-width: 3; }
     .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
     .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
     @keyframes dashmove { to { stroke-dashoffset: -28; } }
@@ -102,10 +105,10 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Interview Bootcamp: 15 Rounds From the Whiteboard</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of interviews from both sides of the table taught me one discipline: clarify first, draw second, speak math aloud plus close with a bill. Each round rehearses on a real production postmortem with numbers you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen interview rounds with live diagrams, from clarification to RPS math plus failure drills plus cost closes. Built from production postmortems with verdict math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated September 30, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated October 10, 2026</p>
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch boxes become numbers, then speak them aloud.</aside>
-    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-interview-bootcamp-meme.svg" alt="Three panels showing whiteboard boxes plus spoken math plus verdict" width="1200" height="680"><figcaption>Course cover. Boxes drawn plus math spoken plus verdicts delivered with numbers.</figcaption></figure>
+    <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-interview-bootcamp-meme.svg" alt="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide" width="1200" height="680"><figcaption class="fl-desc">A strong answer is a visible chain: clear assumptions, a readable request path, measured scale, tested failure, and a defended decision.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">

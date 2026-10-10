@@ -10,17 +10,17 @@
   <meta property="og:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
   <meta property="og:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
-  <meta property="og:image:alt" content="Three panels showing image layers plus registry push plus scan verdict">
+  <meta property="og:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:height" content="680">
   <meta property="og:url" content="https://buildopsy.com/system-design/learn-docker-containers.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
   <meta name="twitter:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
-  <meta name="twitter:image:alt" content="Three panels showing image layers plus registry push plus scan verdict">
+  <meta name="twitter:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
   <title>Docker Containers in Production: 15 Lessons From the Layer Ledger | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
     "description":"A free Docker course in 15 forensic lessons covering image layers, Dockerfile ordering, multi-stage builds, registry economics, tag pinning, CVE scanning, secrets, volumes, networks, logging, healthchecks, resource limits, Compose parity, Kubernetes handoff plus a capstone ship.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-10",
     "syllabusSections":[{"@type":"Syllabus","name":"Image Layers"},{"@type":"Syllabus","name":"Dockerfile Order"},{"@type":"Syllabus","name":"Multi-Stage Builds"},{"@type":"Syllabus","name":"Registry Bills"},{"@type":"Syllabus","name":"Tags Versus Pins"},{"@type":"Syllabus","name":"CVE Scans"},{"@type":"Syllabus","name":"Secrets Discipline"},{"@type":"Syllabus","name":"Volumes"},{"@type":"Syllabus","name":"Networks"},{"@type":"Syllabus","name":"Log Discipline"},{"@type":"Syllabus","name":"Healthchecks"},{"@type":"Syllabus","name":"Resource Limits"},{"@type":"Syllabus","name":"Compose Parity"},{"@type":"Syllabus","name":"Kubernetes Handoff"},{"@type":"Syllabus","name":"Ship One Container"}]}
   </script>
   <script type="application/ld+json">
@@ -64,8 +64,11 @@
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
+    .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
     .cdiagram text { font-family: ui-monospace, monospace; fill: var(--paper); }
-    .cdiagram line, .cdiagram path.arr { stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram text.lbl { fill: var(--mist); }
+    .cdiagram line, .cdiagram path.arr { fill: none; stroke: var(--mist); stroke-width: 2; stroke-dasharray: 7 7; animation: dashmove 1.1s linear infinite; }
+    .cdiagram .dot { fill: var(--cyan); stroke: var(--panel); stroke-width: 3; }
     .cdiagram .pkt { fill: var(--lime); opacity: 0.9; }
     .cdiagram .blink { animation: blink 1.6s ease-in-out infinite; }
     @keyframes dashmove { to { stroke-dashoffset: -28; } }
@@ -102,10 +105,10 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Docker Containers in Production: 15 Lessons From the Layer Ledger</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of containers under deploy pressure taught me one discipline: layers cached, bytes billed, plus verdicts per push. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen Docker lessons with live diagrams, from layers to registries plus scans plus the Kubernetes handoff. Built from production postmortems with registry math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated September 30, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated October 10, 2026</p>
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Incident details in this course follow published Buildopsy postmortems linked under each lesson. Traffic plus cost figures are explicitly modeled estimates with assumptions stated per lesson. Diagrams below are live: watch bytes travel the layer ledger, then design so they cost less.</aside>
-    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Three panels showing image layers plus registry push plus scan verdict" width="1200" height="680"><figcaption>Course cover. Layers cached plus registry billed plus scans priced per push.</figcaption></figure>
+    <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment" width="1200" height="680"><figcaption class="fl-desc">A reproducible container release starts with stable layers, scans the pinned artifact, and deploys the same image everywhere.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
