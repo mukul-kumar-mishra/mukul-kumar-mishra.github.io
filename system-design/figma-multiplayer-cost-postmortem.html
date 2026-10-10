@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Figma multiplayer system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/figma-multiplayer-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
@@ -105,7 +105,7 @@
           <h2>4. Conflict Resolution: No, Figma Is Not Just CRDTs</h2>
 
           <p>Internet discussions love calling every collaborative editor “CRDT-based.” It is a useful shortcut and often an inaccurate one. Figma's system is centralized. The server is the authority. It tracks the latest value sent for a property on an object. If two clients change unrelated properties, both changes survive. If they change the same property, the operation that arrives later wins according to server order.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/figma-referee-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching two fighting cursors over one rectangle" width="1200" height="680"><figcaption>Figure 2. Conflict resolution in one cartoon, drawn for this postmortem. Two cursors fight. The server picks Ana.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/figma-referee-meme.svg" alt="Conflict resolution in one diagram. Two cursors fight. The server picks Ana." width="1200" height="680"><figcaption>Figure 2. Conflict resolution in one diagram, created for this article. Two cursors fight. The server picks Ana.</figcaption></figure>
           <p>That is not a moral failure. It is a product decision. In a design tool, two users rarely edit the exact same property at the exact same moment. If they do, one result must win. Figma accepts that a text property changed concurrently may end as either value rather than interleaving characters like a text editor. The product optimizes for spatial design operations, not collaborative novel writing.</p>
           <p>Tree structure is harder. A user can reparent an object and two concurrent reparent operations can try to create a cycle. Figma's server validates the tree and rejects operations that would make the document invalid. On the client, a temporary weird state may exist while the rejection travels back. It is not perfect. It is bounded, understandable and preferable to a mathematically elegant document that has parent A under B under A forever.</p>
           <p>For ordering, Figma uses fractional indexing: each child has a position between zero and one and inserting between two children means choosing a fraction between their positions. The implementation uses arbitrary-precision fractions to avoid running out of space after repeated insertions.</p>

@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Three stat panels showing maintenance start plus outage end plus total duration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -50,7 +50,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Timeline plus affected services plus route cause come from the Azure preliminary review plus press reporting. RPS plus cost numbers are a labeled scenario model. The incident is factual. The spreadsheet is illustrative.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/azure-wan-route-meme.svg" alt="Three stat panels showing maintenance start plus outage end plus total duration" width="1200" height="680"><figcaption>Figure 1. The evening in one cartoon. Maintenance at 14:44 plus recovery near 19:41 plus almost five hours of churn.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/azure-wan-route-meme.svg" alt="Three stat panels showing maintenance start plus outage end plus total duration" width="1200" height="680"><figcaption>Figure 1. The evening in one diagram. Maintenance at 14:44 plus recovery near 19:41 plus almost five hours of churn.</figcaption></figure>
       <section><h2>1. The Maintenance That Deleted the Map</h2>
         <p>Every large cloud runs a wide area network that carries customer traffic between regions plus between the cloud plus the public internet. Routers in each data center advertise which address ranges live behind them. Neighbors trust those advertisements. Packets follow the map.</p>
         <p>On July 23 the map lost pages. Device maintenance in one West US data center triggered a faulty automation that removed critical routes instead of draining them gracefully. Neighboring routers saw withdrawals. They recomputed paths. Some paths flapped as withdrawals propagated in waves. Microsoft described the early signal as large scale route churn in the WAN. That phrase matters. It means the control plane kept changing its mind while the data plane kept dropping packets.</p>
@@ -62,7 +62,7 @@
         <p>AKS adds a second coupling. The Kubernetes control plane talks to nodes over the same network fabric. Image pulls stall. Admission webhooks time out. Pod scheduling slows exactly when operators want to reschedule away from trouble. Cosmos DB replication between West US plus paired regions stalls for the same reason. Postgres flexible servers lose monitor heartbeats so the control plane marks healthy instances as unknown.</p>
         <p>Monitor failing at the same time removes the flashlight during the fire. Telemetry that must leave the region to reach central collectors never arrives. Dashboards show gaps instead of errors. Operators debug blind until in-region collectors buffer plus forward after recovery. The outage degraded the observer plus the observed through one shared path.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-wan-churn-flow.svg" alt="Flow diagram from route delete to WAN churn to dark edge" width="1200" height="680"><figcaption>Figure 2. The mechanism in one cartoon. One route table withdrawn plus WAN churn plus edge dark for ingress.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-wan-churn-flow.svg" alt="Flow diagram from route delete to WAN churn to dark edge" width="1200" height="680"><figcaption>Figure 2. The mechanism in one diagram. One route table withdrawn plus WAN churn plus edge dark for ingress.</figcaption></figure>
       <section><h2>3. The RPS Model</h2>
         <p>Assume West US normally serves 900,000 ingress RPS across edge plus API plus app tiers at the affected hour. Model the failure as a capacity cliff. Usable ingress falls to 25 percent within 10 minutes as routes flap. Offered load stays constant because clients retry. Effective goodput falls to roughly 225,000 RPS while offered load climbs toward 1.4 million RPS with retries.</p>
         <p>Retry amplification does the rest. Take a baseline retry rate of 5 percent. Under timeout storms clients escalate to 3 attempts per logical request. Offered load multiplies by nearly 2.9 times. Edge queues that drain in milliseconds now drain in seconds. Latency p99 crosses client timeouts. More requests qualify as failed. More retries spawn. The WAN fault starts the fire. The retry policy pours fuel.</p>
@@ -75,7 +75,7 @@
         </tbody></table>
         <div class="tip"><strong>Load test tip:</strong> Test route withdrawal before you test instance failure. Kill one availability zone in staging plus watch ingress goodput. The border fails differently from the building.</div>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-blast-donut.svg" alt="Donut chart splitting Azure West US traffic into stalled ingress plus degraded control plus healthy in-region" width="1200" height="680"><figcaption>Figure 3. The radius in one cartoon. Ingress stalled plus control degraded plus in-region traffic healthy.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-blast-donut.svg" alt="Donut chart splitting Azure West US traffic into stalled ingress plus degraded control plus healthy in-region" width="1200" height="680"><figcaption>Figure 3. The radius in one diagram. Ingress stalled plus control degraded plus in-region traffic healthy.</figcaption></figure>
       <section><h2>4. What Went Wrong in the Design</h2>
         <p><strong>Maintenance automation could delete production routes without a canary.</strong> A job that removes routes should first withdraw one prefix plus watch churn rate plus error budget for a fixed window. The incident timeline shows disruption starting within a minute of maintenance begin. That speed fits an unguarded global push, not a staged rollout.</p>
         <p><strong>One logical map carried all services with no bulkhead.</strong> Edge plus control plus replication plus telemetry shared fate through the same advertisements. Bulkheads that isolate compute mean little when the network map is shared. The map needs cells too, with per-service route sets that fail independently.</p>
@@ -103,7 +103,7 @@
         <p>The fix travels beyond Azure. Every cloud has a WAN map with the same power. Canary every route change. Cell the map per service. Shed load at the edge early. Keep an out-of-band path to push the fix. Or schedule the same evening under a different region name. The packets will wait. Customers will not.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Four hours fifty seven minutes of churn. One deleted map. The interior lived while the border died.</strong></p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-failover-cost-chart.svg" alt="Bar chart comparing single region cost against paired region cost" width="1200" height="680"><figcaption>Figure 4. The invoice in one cartoon. Single region cheap plus paired region near double plus backlog modeled larger.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/azure-failover-cost-chart.svg" alt="Bar chart comparing single region cost against paired region cost" width="1200" height="680"><figcaption>Figure 4. The invoice in one diagram. Single region cheap plus paired region near double plus backlog modeled larger.</figcaption></figure>
       <section><h2>Sources and Method</h2>
         <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline plus affected services plus route churn cause follow the Azure preliminary review as reported in press plus the Azure reliability docs. RPS plus cost numbers are a labeled scenario model. Architecture advice is at system level, not a reproduction guide.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">

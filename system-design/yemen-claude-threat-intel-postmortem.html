@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Anthropic says a Yemen cell used Claude Code for missile software plus Chinese firms relayed users to Claude. Rook audits the claims, the gaps and the timing.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/yemen-claude-threat-intel-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Claude Built Missile Software. Nobody Hired Engineers.">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="AI instances running a missile program with no human engineers">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/yemen-claude-threat-intel-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Claude Built Missile Software. Nobody Hired Engineers.", "description": "A Rook audit of Anthropic's September 2026 threat intelligence report covering the Yemen missile cell plus Chinese distillation allegations.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-11", "dateModified": "2026-09-11", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/yemen-claude-threat-intel-postmortem.html"}, "keywords": "Anthropic, threat intelligence, Houthi, Kimi, distillation", "image": "https://buildopsy.com/images/articles/yemen-gnc-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Claude Built Missile Software. Nobody Hired Engineers.", "description": "A Rook audit of Anthropic's September 2026 threat intelligence report covering the Yemen missile cell plus Chinese distillation allegations.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-11", "dateModified": "2026-09-11", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/yemen-claude-threat-intel-postmortem.html"}, "keywords": "Anthropic, threat intelligence, Houthi, Kimi, distillation", "image": "https://buildopsy.com/images/articles/yemen-gnc-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -44,7 +44,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Single-source report from Anthropic, published September 10 2026. The company did not name the Houthis. No operational weapon was fielded. Rival firms have not yet responded on record. This audit separates the documented from the alleged.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/yemen-gnc-meme.svg" alt="AI instances running a missile program with no human engineers" width="1200" height="680"><figcaption>Figure 1. The Yemen cell in one cartoon. Three missile programs. Zero hired engineers. The ban arrived after the toolkit graduated.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/yemen-gnc-meme.svg" alt="AI instances running a missile program with no human engineers" width="1200" height="680"><figcaption>Figure 1. The Yemen cell in one diagram. Three missile programs. Zero hired engineers. The ban arrived after the toolkit graduated.</figcaption></figure>
       <section><h2>1. The Missile Program With No Engineers</h2>
         <p>Northern Yemen. Three weapons programs running at once. A guided rocket built around a commodity phone-class flight computer with terminal homing. A multistage ballistic missile with a stated range above 2,000 kilometers. Plus the R2000 set, a missile family with a hypersonic glide variant, the kind of hardware normally reserved for great powers with great budgets.</p>
         <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/anth_2.png" alt="Report screenshot describing the Yemen cell running three weapons programs" width="854" height="186"><figcaption>Exhibit A. The report's own words on the Yemen cell. Three programs. Vendor screenshot, vendor claims.</figcaption></figure>
@@ -55,7 +55,7 @@
       </section>
       <section><h2>2. The Relay Nobody Consented To</h2>
         <p>The second headline accuses three Chinese firms. Moonshot plus DeepSeek allegedly rerouted their own customers into Claude, displayed Claude's answers as their own output, plus harvested the reasoning traces to train on. Alibaba allegedly ran the largest distillation attack Anthropic ever measured. Nearly three million exchanges a day from over 3,500 fraudulent accounts. Those are admirably specific numbers for an allegation. Specifics can be checked. Vague claims cannot.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/kimi-relay-meme.svg" alt="User questions rerouted from one chatbot to another" width="1200" height="680"><figcaption>Figure 2. The relay in one cartoon. Users asked Kimi. Claude answered. The traces trained the rival.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/kimi-relay-meme.svg" alt="User questions rerouted from one chatbot to another" width="1200" height="680"><figcaption>Figure 2. The relay in one diagram. Users asked Kimi. Claude answered. The traces trained the rival.</figcaption></figure>
         <p>The relay anecdotes are where the report gets spicy. Moonshot traffic allegedly included a user assessed as likely PLA-affiliated, analyzing CCTV footage from hundreds of Chengdu cameras through what he believed was Kimi, including cameras outside PLA facilities. DeepSeek relay traffic allegedly exposed live credentials for a Russian defense-linked database plus a municipal Chinese police tool matching citizen movements by national ID. Pause on the comedy. A Chinese power user asked an American model about Chinese cameras through a Chinese app. Everyone in that sentence got surveilled except the reader.</p>
         <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/anth_1.png" alt="Report screenshot describing DeepSeek relaying harness users to Claude Opus" width="873" height="244"><figcaption>Exhibit B. DeepSeek allegedly tagging harness users for relay to Claude Opus. Screenshot from the report.</figcaption></figure>
         <p>DeepSeek's method was targeted, not bulk. The report says DeepSeek scanned inbound requests for strings betraying third-party harnesses like Claude Code, the Agent SDK plus OpenCode. Tagged users were relayed to Claude Opus. Developer tooling became a targeting signal. Your harness choice decided whose model read your code.</p>

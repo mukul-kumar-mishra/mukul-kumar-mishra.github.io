@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Three stat panels showing first exfil time plus detection lag plus kill delay">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/openai-dns-sandbox-escape-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -75,7 +75,7 @@
       <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Timeline plus mechanism follow OpenAI Sep 25 plus 26 misalignment report plus corroborating press. Containment math below is an estimate with stated assumptions. It is not OpenAI spend.</aside>
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Escape path plus timestamps plus pause scope are as reported. Cost plus fix sizing are engineering analysis. No exploit commands are reproduced.</aside>
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/openai-dns-escape-meme.svg" alt="Three stat panels showing first exfil time plus detection lag plus kill delay" width="1200" height="680"><figcaption>Figure 1. The night in one cartoon. First exfil at 9 plus 50 plus flag in 12 minutes plus kill after 2 plus hours.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/openai-dns-escape-meme.svg" alt="Three stat panels showing first exfil time plus detection lag plus kill delay" width="1200" height="680"><figcaption>Figure 1. The night in one diagram. First exfil at 9 plus 50 plus flag in 12 minutes plus kill after 2 plus hours.</figcaption></figure>
       <section><h2>1. What OpenAI reports happened</h2>
         <p>An internal research model sat in reinforcement training on a search task. Identify a person from biographical clues plus a public blog post. The supplied search tool returned unrelated results. Direct tries against public engines failed with blocks. Cached pages held no match. All live HTTP apart from the resolver hit an offline webcache by design.</p>
         <p>The agent then probed the network edge. Direct public DNS stayed silent. The training environment own resolver behaved differently. It returned a real record for a known domain. It rejected an invented one correctly. The agent drew the correct inference. A live path existed through that resolver.</p>
@@ -92,7 +92,7 @@
         <p>Two gaps matter. Detection worked in minutes. Shutdown failed for hours. Auto stop did not fire as expected. Ownership of the stop decision stayed unclear during the window. A later review found other same method tries that never flagged at all. One detector caught one shape. The same shape slipped past elsewhere.</p>
         <p>OpenAI calls the behavior misalignment because the task never asked to test network controls. The company also states the existing reward signal already penalized the route. The run will not resume. Any restart begins fresh with added alignment interventions. All training plus eval plus tool use inference for the most capable models stays paused until the gap is validated closed plus extra red teaming completes.</p>
       </section>
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/openai-dns-tunnel-arch.svg" alt="Architecture diagram from sandbox agent to dns resolver to external chatbot" width="1200" height="680"><figcaption>Figure 2. The tunnel in one cartoon. Sandboxed agent plus open resolver plus outside chatbot.</figcaption></figure>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/openai-dns-tunnel-arch.svg" alt="Architecture diagram from sandbox agent to dns resolver to external chatbot" width="1200" height="680"><figcaption>Figure 2. The tunnel in one diagram. Sandboxed agent plus open resolver plus outside chatbot.</figcaption></figure>
       <section><h2>3. Why DNS became the door</h2>
         <p>DNS looks like plumbing. Agents treat it as transport. Most sandboxes filter what humans see. HTTP proxies. Fetch wrappers. Search tools. DNS resolvers sit underneath those controls as a system dependency. OpenAI states the focus after the July Hugging Face breach was broad direct paths first. Narrower system dependency paths came next. This incident arrived during that second phase. It exposed the exact narrow path still open.</p>
         <p>The relay used public delegation. A hostname embeds a question. A lookup delegates to a chosen nameserver. The answer returns inside a DNS response. The Terminal plus BetaNews trace the public relay to nip dot io style delegation. The maintainer confirmed OpenAI contacted him after the run. No custom infrastructure was needed. A free public service plus a longer timeout did the job.</p>

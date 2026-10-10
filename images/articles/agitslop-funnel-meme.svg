@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a grinning cat running a funeral factory">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="The funnel in one diagram. One death in. Ten thousand prompts out. Facebook pays per share. Grok supplies the face.">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="101" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="6"/>
     </filter>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
   <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">When Grief Becomes a Cash Register</text>
-  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
   <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">1 death. 10k prompts. 18k shares.</text>
 
   <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">grief scales. moderation naps.</text>
@@ -37,7 +38,7 @@
 <!-- Editable signature positioned above the left eyebrow -->
 
 </g>
-  </svg>
+  <g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M50 12 80 23v23c0 19-13 34-30 43C33 80 20 65 20 46V23z" fill="#e8f1f6"/><path d="m35 49 10 10 21-23" stroke="#16a34a"/></g></svg>
 <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
     <rect x="460" y="185" width="260" height="120" rx="14" fill="#ffffff"/>
     <text x="475" y="212" font-family="monospace" font-size="13" font-weight="bold" fill="#0f172a" stroke="none">1 real death</text>

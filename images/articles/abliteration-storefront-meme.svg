@@ -7,12 +7,13 @@
     <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="132" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/></filter>
     <style>.flow{stroke-dasharray:12 9;animation:ants 0.9s linear infinite}@keyframes ants{to{stroke-dashoffset:-21}}.pulse{animation:pulse 1.8s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}</style>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grain)"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
   <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Refusal Is Now a Paid Add-On</text>
-  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
   <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">No is now a line item.</text>
 
   <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">refusal sold separately.</text>
@@ -40,7 +41,7 @@
 <!-- Editable signature positioned above the left eyebrow -->
 
 </g>
-  </svg>
+  <g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4"><rect x="16" y="18" width="68" height="64" rx="8" fill="#e8f1f6"/><path d="M30 35h40M30 50h28M30 65h35" stroke-linecap="round"/></g></svg>
 <g filter="url(#roughen)"><path d="M429.1,231.3 L632.9,228.9 L634.5,352.0 L429.2,350.5 L428.0,228.4 Z" fill="#16a34a" stroke="#0f172a" stroke-width="4"/><text x="445" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#ffffff">FREE</text><text x="445" y="318" font-family="monospace" font-size="18" fill="#dcfce7">browser queries</text><path d="M650.0,290.0 Q672.4,290.6 690.0,290.0" fill="none" stroke="#0f172a" stroke-width="3"/><line x1="690.0" y1="290.0" x2="676.5" y2="296.6" stroke="#0f172a" stroke-width="3"/><line x1="690.0" y1="290.0" x2="676.1" y2="284.4" stroke="#0f172a" stroke-width="3"/><path d="M706.1,229.7 L889.9,228.5 L888.6,347.8 L703.3,349.8 L705.5,231.2 Z" fill="#ffffff" stroke="#0f172a" stroke-width="4"/><text x="720" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#0f172a">$5/M</text><text x="720" y="318" font-family="monospace" font-size="18" fill="#475569">per token</text><path d="M905.0,290.0 Q924.2,293.8 940.0,290.0" fill="none" stroke="#0f172a" stroke-width="3"/><line x1="940.0" y1="290.0" x2="928.1" y2="299.1" stroke="#0f172a" stroke-width="3"/><line x1="940.0" y1="290.0" x2="925.3" y2="287.2" stroke="#0f172a" stroke-width="3"/><path d="M956.2,227.5 L1111.9,230.0 L1109.7,347.9 L953.3,347.8 L953.0,231.4 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="970" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">0</text><text x="970" y="318" font-family="monospace" font-size="18" fill="#475569">ID checks</text></g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">strip refusal.</text>

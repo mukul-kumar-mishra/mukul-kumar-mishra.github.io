@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="AI coding token exhaustion postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
@@ -113,7 +113,7 @@
           <div class="incident-step"><span class="step-no">05</span><strong>Capped</strong><small>Weekly or session window ends the run.</small></div>
         </div>
         <p>The cruelest stage is the third one. Research on long context agents keeps finding the same pattern. Recall quality falls as windows fill, well before any hard cap. One large study measured active useful context at a few thousand tokens no matter whether the window held 39K or 645K. Everything beyond that is mostly inert weight you pay to reprocess. Adding tokens past the useful frontier does not add understanding. It adds distraction at full price.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cursor-goldfish-meme.svg" alt="Pen sketched cartoon of a grinning cat meeting a goldfish that holds the session memory" width="1200" height="680"><figcaption>Figure 2. Session memory in one cartoon, drawn for this postmortem. The agent meets your auth module like a stranger, then bills you for introductions.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cursor-goldfish-meme.svg" alt="Session memory in one diagram. The agent meets your auth module like a stranger, then bills you for introductions." width="1200" height="680"><figcaption>Figure 2. Session memory in one diagram, created for this article. The agent meets your auth module like a stranger, then bills you for introductions.</figcaption></figure>
       </section>
 
       <section><h2>5. Postmortem: Why the Architecture Burns Context</h2>
@@ -123,7 +123,7 @@
         <p>This is the same prefill tax I dissected in my <a href="perplexity-answer-engine-postmortem.html">Perplexity postmortem</a>. Every turn reprocesses the full pile before generating anything new. Long context does not just risk quality. It taxes every future step with the weight of every past step. And the retry storms should look familiar too. My <a href="replit-agent-runtime-postmortem.html">Replit teardown</a> showed agents repeating failed tool work because task state was not idempotent. Same religion, smaller church.</p>
         <div class="tip"><strong>Session tip:</strong> Run slash clear between tasks and slash compact inside long ones. A plan costs hundreds of tokens. A wrong diff costs thousands twice. Ask the agent to list files and actions before touching anything once the task spans more than three files.</div>
 
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cursor-compaction-meme.svg" alt="Cartoon of a compaction event crushing a large context window into a tiny summary while the agent forgets the codebase" width="1200" height="680"><figcaption>Figure 3. Compaction in one cartoon, drawn for this postmortem. 575K tokens walk in. A two-line summary walks out. The agent meets your codebase like a stranger, at full price.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cursor-compaction-meme.svg" alt="Diagram of a compaction event shrinking a large context window to a short summary" width="1200" height="680"><figcaption>Figure 3. Compaction in one diagram, created for this article. 575K tokens walk in. A two-line summary walks out. The agent meets your codebase like a stranger, at full price.</figcaption></figure>
       </section>
 
       <section id="cost-model"><h2>6. The 1M Turn Cost Test</h2>

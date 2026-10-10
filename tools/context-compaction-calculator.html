@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much context survives a compaction?","acceptedAnswer":{"@type":"Answer","text":"Summary tokens equal window tokens times the survival rate. At the measured median a 575,000-token window compacted to 0.75 percent leaves about 4,313 tokens and discards 99.25 percent of the context."}},
+      {"@type":"Question","name":"How much context survives a compaction?","acceptedAnswer":{"@type":"Answer","text":"Summary tokens equal window tokens times the survival rate. In the illustrative default scenario, a 575,000-token window at a 0.75 percent survival rate leaves about 4,313 tokens. The defaults are editable assumptions, not a measured industry median."}},
       {"@type":"Question","name":"Why does compaction cost money twice?","acceptedAnswer":{"@type":"Answer","text":"The model pays to summarize the window, then pays again to re-read what it dropped. At 28 re-read steps of $0.074 each that rebuild costs $2.07 per compaction on these defaults."}}
     ]
   }
@@ -76,7 +76,7 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. Default results remain visible above and below. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="compaction">
-      <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. Defaults mirror the measured median: 575k crushed to about 4.3k, then roughly 28 steps of re-reading.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">A context window goes in, a summary comes out. See what survives and what the re-read bill looks like. The 575k-token window, 0.75% survival rate, and 28 reread steps are illustrative defaults—not a measured median. Replace them with observations from your own workload.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">

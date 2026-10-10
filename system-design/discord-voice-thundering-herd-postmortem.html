@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Three stat panels showing pods dead, simultaneous reconnects and voice instances lost">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -50,7 +50,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Session loss, duration plus recovery steps come from public incident summary. RPS, connection burst plus cost numbers are a labeled scenario model. The incident is factual. The spreadsheet is illustrative.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/discord-voice-thundering-meme.svg" alt="Three stat panels showing pods dead, simultaneous reconnects and voice instances lost" width="1200" height="680"><figcaption>Figure 1. The herd in one cartoon. Safety check ran past termination grace. Millions reconnected at once. Fourteen of fifteen voice instances dropped.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/discord-voice-thundering-meme.svg" alt="Diagram summarizing a delayed termination check followed by a reconnect burst across voice instances" width="1200" height="680"><figcaption>Figure 1. The herd in one diagram. Safety check ran past termination grace. Millions reconnected at once. Fourteen of fifteen voice instances dropped.</figcaption></figure>
       <section><h2>1. The Scaling That Scaled the Wrong Thing</h2>
         <p>Discord voice is a long-lived session service on Erlang, fronted by Kubernetes. The intent was vertical scaling for headroom. The tool was a safety check before terminating old pods. The check read state that grew with history. The duration grew with state. At some width the check outlived <code>terminationGracePeriodSeconds</code>.</p>
         <p>Kubernetes then stops waiting. SIGKILL arrives. The pod is dead regardless of whether the check promised to finish. When many pods share the same rollout, the same overdue check fires together. Many pods die together. That is the thunder. The herd is the clients that notice.</p>
@@ -73,7 +73,7 @@
         </tbody></table>
         <div class="tip"><strong>Load test tip:</strong> Test grace overflow before you test scale. A pod that cannot drain within its grace never scales safely. It fails equally on the way up plus on the way down.</div>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/discord-voice-rate-limit-flow.svg" alt="Flow diagram from rate limit to back pressure to cluster survival" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Aggressive rate limits plus doubled cluster plus health check inside grace. Herd thinned before memory burned.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/discord-voice-rate-limit-flow.svg" alt="Flow diagram from rate limit to back pressure to cluster survival" width="1200" height="680"><figcaption>Figure 2. The fix in one diagram. Aggressive rate limits plus doubled cluster plus health check inside grace. Herd thinned before memory burned.</figcaption></figure>
       <section><h2>4. The Fix That Actually Fixed It</h2>
         <p>The recovery that worked applied back pressure before capacity. Aggressive rate limits at the edge thinned the herd. Only then did doubling the cluster help, because the doubled cluster no longer met the full thunder at once. Order mattered. Scale without limits replays the incident faster. Limits without scale prolongs degraded service. Together they converge.</p>
         <p>The durable fix moves the safety check inside the grace or outside the critical path. Split the check into a pre-check that is bounded by time plus a post-check that can run after drain. Set the grace to exceed the p99 of the bounded check by at least two times. Alert when any check exceeds 70 percent of grace for three consecutive rolls.</p>

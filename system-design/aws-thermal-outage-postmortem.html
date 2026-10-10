@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="An overheating AWS data center zone with impaired instances">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     </header>
      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> AWS Health reports the affected service list and recovery guidance. Coinbase's first-party postmortem documents its own customer impact. Architecture recommendations below are analysis, not AWS or Coinbase operational telemetry.</aside>
     <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-thermal-meme.svg" alt="An overheating AWS data center zone with impaired instances" width="1200" height="680"><figcaption>Figure 1. The thermal event in one cartoon. Cooling failed first. Power followed. Snapshots became the recovery plan.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-thermal-meme.svg" alt="An overheating AWS data center zone with impaired instances" width="1200" height="680"><figcaption>Figure 1. The thermal event in one diagram. Cooling failed first. Power followed. Snapshots became the recovery plan.</figcaption></figure>
       <section><h2>1. The Hottest Zone in Virginia</h2>
          <p>On May 7, 2026, a thermal event caused a loss of power at one facility in AWS's US-EAST-1 use1-az4 Availability Zone. AWS reported impaired EC2 instances and degraded EBS volumes. This was a facility-level event inside a single Availability Zone, not a claim that every resource in the zone or region failed.</p>
          <p>AWS listed nine impacted services: EC2, EBS, Redshift, SageMaker, ElastiCache, IoT Core, EKS, NAT Gateway and OpenSearch. The AWS Health event records a staged recovery. Coinbase's June 1 postmortem says its trading disruption and recovery extended well beyond the initial provider event because its matching engine and Kafka infrastructure had separate recovery problems.</p>
@@ -62,7 +62,7 @@
          <p><strong>Service-level labels did not replace dependency mapping.</strong> AWS listed nine affected services. Customers still need to know whether a particular resource, control path or workload depends on the affected facility. Managed-service placement and recovery behavior vary by product.</p>
         <p><strong>Failover needed humans at machine speed.</strong> Guidance said relaunch in healthy zones. Relaunching stateful systems means promotion decisions, DNS changes, plus consistency checks. Manual failover during an active incident is slow plus error-prone. Automation rehearsed quarterly beats heroics performed never.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/aws-restore-meme.svg" alt="Pen sketched cartoon of a grinning cat racing snapshot restores against fresh launches" width="1200" height="680"><figcaption>Figure 2. The recovery race in one cartoon, drawn for this postmortem. Snapshots restore while fresh instances boot. The runbook decides the winner.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/aws-restore-meme.svg" alt="The recovery race in one diagram. Snapshots restore while fresh instances boot. The runbook decides the winner." width="1200" height="680"><figcaption>Figure 2. The recovery race in one diagram, created for this article. Snapshots restore while fresh instances boot. The runbook decides the winner.</figcaption></figure>
       <section><h2>5. What Should Happen Instead</h2>
          <p>First, identify the failure domains of critical resources and choose an alternate-zone design that matches their recovery objectives. Active-active can reduce cold-start dependence, but it still needs tested state replication, traffic steering and capacity headroom. Active-passive needs a measured promotion path. Neither is a universal cost answer.</p>
          <p>Second, drill snapshot restores on a schedule. Restore a representative data tier into an isolated environment. Measure time to useful service, block-warmup behavior and application consistency under representative queries. Record the recovery-time objective and actual restore cost.</p>

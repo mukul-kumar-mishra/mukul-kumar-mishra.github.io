@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a grinning cat pressing retry forever beside a coffee cup">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Attempt 48 in one diagram. The package has not changed. The meter has.">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="33" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
     </filter>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
   <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">The Dashboard That Deployed Itself</text>
-  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
   <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">ONE MORE RETRY. FOREVER.</text>
   <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">attempt 48. the package has not changed.</text>
   <svg x="140" y="240" width="260" height="260" viewBox="0 0 100 100"><g transform="translate(8.35,-2.08) scale(0.0831)" fill="#0f172a"><g transform="translate(8.35,-2.08) scale(0.0831)"><g id="cat-art" fill="#000" fill-rule="evenodd">
@@ -34,7 +35,7 @@
 </g>
 <!-- Editable signature positioned above the left eyebrow -->
 
-</g></g></svg>
+</g></g><g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="18" width="22" height="18" rx="3" fill="#e8f1f6"/><rect x="39" y="18" width="22" height="18" rx="3" fill="#e8f1f6"/><rect x="66" y="18" width="22" height="18" rx="3" fill="#e8f1f6"/><path d="M23 39v14h54V39M50 53v12M35 65h30M42 75h16"/><circle cx="50" cy="81" r="5" fill="#16a34a" stroke="none"/></g></svg>
   <g filter="url(#roughen)" stroke="#0f172a" stroke-width="4" stroke-linecap="round" fill="none">
     <rect x="620" y="230" width="120" height="130" fill="#ffffff"/>
     <text x="640" y="275" font-family="monospace" font-size="19" fill="#0f172a" stroke="none">RETRY</text>

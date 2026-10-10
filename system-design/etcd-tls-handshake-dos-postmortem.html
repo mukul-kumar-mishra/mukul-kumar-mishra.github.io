@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Silent network connections piling up against an etcd server with no handshake deadline">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/etcd-tls-handshake-dos-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the NVD record, the Go vulnerability database, plus the etcd security advisory. Mechanism details come from the published descriptions. Memory figures are modeled from Go runtime behavior, labeled as estimates throughout.</aside>
     <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/etcd-handshake-meme.svg" alt="Pen sketched cartoon of a grinning cat holding silent network connections that never complete TLS" width="1200" height="680"><figcaption>Figure 1. The attack in one cartoon. Thousands of TCP connections, zero handshakes, one goroutine each, forever.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/etcd-handshake-meme.svg" alt="Diagram of incomplete TLS handshakes retaining connections and consuming server resources" width="1200" height="680"><figcaption>Figure 1. The attack in one diagram. Thousands of TCP connections, zero handshakes, one goroutine each, forever.</figcaption></figure>
       <section><h2>1. The Listener That Trusts Silence</h2>
         <p>etcd is the memory of Kubernetes. Every deployment, every secret reference, every lease lives in its key-value store. Lose etcd plus the API server loses its brain. Scheduling stops. Controllers stop. The workloads keep running blind while nobody can steer them. That centrality is why a denial-of-service flaw in etcd reads less like a bug plus more like a blueprint.</p>
         <p>The flaw sits in the TLS accept loop in the transport package. Accept a TCP connection, spawn a goroutine, block inside the TLS handshake waiting for a ClientHello that never arrives. Track the pending connection in a map. No deadline on the wait. No cap on the map. The code trusts every new connection to eventually speak. An attacker simply never speaks. Each silent socket costs the attacker one file descriptor plus costs the server a goroutine, kernel buffers, TLS state, plus a map entry, accumulating without bound until the process exhausts memory plus the operating system intervenes.</p>
@@ -60,7 +60,7 @@
         <p>This is CWE-770 wearing work boots: allocation of resources without limits or throttling. The goroutine plus the map entry are allocated per connection with no ceiling, no eviction, plus no accounting visible to operators. Resource exhaustion flaws hide well because every individual allocation looks reasonable. One goroutine is nothing. One map entry is nothing. A million nothings is an outage. Reviewers see the single case. Attackers see the loop.</p>
         <p>The exposure question matters as much as the code. Kubernetes itself does not use etcd built-in auth, so typical managed clusters keep etcd off public networks by construction. Self-managed clusters, development clusters with port forwards left open, plus etcd running outside Kubernetes for service discovery or locking face the reachable-listener case directly. The advisory says it plainly: a network attacker who can reach the listener. Reachability is the vulnerability second half. Harden either half plus the chain breaks.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/etcd-watchdog-meme.svg" alt="Pen sketched cartoon of a skeptical cat holding a stopwatch over a network socket" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Five seconds to say hello, then the socket dies. The map stays small.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/etcd-watchdog-meme.svg" alt="Diagram showing a handshake timeout that closes connections which fail to complete TLS" width="1200" height="680"><figcaption>Figure 2. The fix in one diagram. Five seconds to say hello, then the socket dies. The map stays small.</figcaption></figure>
       <section><h2>4. What Went Wrong in the Design</h2>
         <p><strong>Acceptance preceded authentication.</strong> The server spent memory before verifying anything about the peer. Costly work should follow cheap proof, not precede it. A ClientHello is cheap to demand. Waiting forever for one is expensive to offer.</p>
         <p><strong>The pending map was a leak with a data structure.</strong> Tracking unfinished handshakes is correct bookkeeping. Tracking them without expiry turns bookkeeping into accumulation. Every cache needs an eviction story. This one had a map plus hope.</p>

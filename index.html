@@ -11,11 +11,11 @@
 
   <meta property="og:title" content="Buildopsy — Engineering Case Studies With Cost Models">
   <meta property="og:description" content="Source-linked engineering case studies with explicit assumptions and runnable cost models. Free calculators run in your browser.">
-  <meta property="og:image" content="https://buildopsy.com/images/logo.png">
-  <meta property="og:image:alt" content="Buildopsy: system postmortems, priced.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/buildopsy-publication-overview.png">
+  <meta property="og:image:alt" content="Buildopsy publishes source-linked engineering case studies, explicit cost models, and free browser calculators.">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="2078">
-  <meta property="og:image:height" content="757">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Buildopsy">
@@ -23,8 +23,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Buildopsy — Engineering Case Studies With Cost Models">
   <meta name="twitter:description" content="Source-linked engineering case studies with explicit assumptions and runnable cost models. Free calculators run in your browser.">
-  <meta name="twitter:image:alt" content="Buildopsy: system postmortems, priced.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
+  <meta name="twitter:image:alt" content="Buildopsy publishes source-linked engineering case studies, explicit cost models, and free browser calculators.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/buildopsy-publication-overview.png">
 
   <title>Buildopsy — Engineering Case Studies With Cost Models</title>
   <link rel="icon" href="images/favicon.png" type="image/png">
@@ -125,8 +125,7 @@
           </a>
           <a class="btn btn-ghost" href="pricing.html">What’s free</a>
         </div>
-        <p class="fl-desc" style="margin-top:14px;">By <a href="about.html#author-mukul">Mukul Kumar Mishra</a> with the Buildopsy research desk · <a href="about.html">About the publication</a></p>
-        <p class="fl-desc" style="margin-top:6px;">Need a Go or AWS architecture review? <a href="about.html#work-with-me">Work with Mukul</a> · <a href="pricing.html#services">How service pricing works</a></p>
+        <p class="fl-desc" style="margin-top:14px;"><a href="about.html#editorial-policy">Editorial standards and accountability</a> · <a href="about.html">About Buildopsy</a></p>
       </div>
     </header>
 
@@ -157,21 +156,21 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> Featured System Architecture</h2>
         <a class="sec-link" href="system-design/index.html">View All RFCs <i data-lucide="chevron-right"></i></a>
       </div>
-      <a class="feature-link article-card featured-article" href="system-design/figma-multiplayer-cost-postmortem.html">
-        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/figma-multiplayer-cost-postmortem.png" alt="Figma multiplayer system design postmortem architecture illustration" onerror="this.style.display='none'">
+      <a class="feature-link article-card featured-article" href="system-design/figma-system-design.html">
+        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/figma-home-architecture.png" alt="Architecture diagram showing browser edits routed through a WebSocket edge to a single document owner and durable revision log" width="1200" height="630" onerror="this.style.display='none'">
         <div class="article-card-body">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-tag">Featured Postmortem</span>
+          <span class="fl-tag">Featured Architecture</span>
           <span class="chip">Realtime Systems</span>
         </div>
-        <h3>Figma's Multiplayer Editor: The Server That Decides Who Wins</h3>
+        <h3>Figma System Design: How Multiplayer Collaboration Actually Works</h3>
         <p class="fl-desc">
-          A practical teardown of WebSocket collaboration, Rust isolation, conflict resolution plus the hidden price of an always-live canvas.
+          How document ownership orders edits, WebSockets fan out changes, and cursor presence stays on a separate path.
         </p>
         <div style="display:flex;gap:8px;margin-top:14px;">
           <span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">Realtime</span>
         </div>
-        <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
+        <span class="article-read">Read the system design <span aria-hidden="true">→</span></span>
         </div>
       </a>
     </section>
@@ -184,7 +183,7 @@
       </div>
       <div class="article-grid" id="articleGrid">
         <a class="feature-link article-card" data-article-card href="system-design/circleci-wal-autovacuum-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/circleci-wal-queue-postmortem.svg" alt="CircleCI workflow orchestration stalled by a full PostgreSQL WAL volume" width="1200" height="680" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/circleci-wal-queue-postmortem.png" alt="CircleCI workflow database WAL saturation stopping dispatch and creating a runner backlog" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">CI/CD Infrastructure</span><span class="chip">October 2026</span></div>
           <h3>CircleCI Outage Postmortem: Full WAL Saturation Blocked 3,500 Job Starts</h3>
@@ -194,7 +193,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/deezer-ai-music-slop-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/deezer-ai-music-flood-meme.svg" alt="Deezer-reported AI music upload and listening shares" width="1200" height="680" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/deezer-ai-music-flood-meme.png" alt="Comparison of Deezer-reported synthetic track upload share and listener stream share" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Music Audit</span><span class="chip">October 2026</span></div>
           <h3>Deezer's AI Music Flood: 90,000 Tracks a Day, Only 1–3% of Streams</h3>
@@ -204,7 +203,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/amazon-ai-book-slop-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/amazon-ai-book-lookalike-meme.svg" alt="A suspicious lookalike book is reported by an author and removed from a marketplace" width="1200" height="680" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/amazon-ai-book-lookalike-meme.png" alt="Reported sequence: suspicious lookalike book listing, author purchase and report, marketplace removal" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Book Slop Audit</span><span class="chip">October 2026</span></div>
           <h3>Amazon's AI Book Slop Problem: The Copycat Beside the Real Book</h3>
@@ -214,7 +213,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/ai-sandbox-escape-architecture.html">
-          <img loading="lazy" decoding="async" src="images/articles/sandbox-proxy-meme.svg" alt="Sandbox proxy bypass containment architecture diagram" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/agent-egress-controls.png" alt="Reference architecture showing an agent workload behind a kernel isolation boundary and host-controlled default-deny egress gateway, with write-event monitoring" width="1200" height="630">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Agent Infrastructure</span><span class="chip">September 2026</span>
@@ -226,7 +225,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/discord-messaging-system-design.html">
-          <img loading="lazy" decoding="async" src="images/articles/discord-messaging-guide.svg" alt="Discord message storage architecture diagram" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/discord-messaging-guide.png" alt="Discord message path through channel partitions, request coalescing, and the storage layer" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Messaging Infrastructure</span><span class="chip">September 2026</span>
@@ -238,7 +237,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/kafka-consumer-rebalance.html">
-          <img loading="lazy" decoding="async" src="images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer rebalance storm diagram" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/kafka-rebalance-guide.png" alt="Kafka consumer-group rebalance sequence during a rolling deployment" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span>
@@ -249,20 +248,8 @@
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>
         </a>
-        <a class="feature-link article-card" data-article-card href="system-design/figma-system-design.html">
-          <img loading="lazy" decoding="async" src="images/articles/figma-system-design-guide.svg" alt="Figma multiplayer system design architecture diagram" onerror="this.style.display='none'">
-          <div class="article-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-            <span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span>
-          </div>
-          <h3>Figma System Design: How Multiplayer Collaboration Actually Works</h3>
-          <p class="fl-desc">How Figma multiplayer works: WebSocket fan-out, server-authoritative resolution, Rust rewrite plus cost at scale.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Figma</span><span class="chip">WebSockets</span><span class="chip">Rust</span></div>
-          <span class="article-read">Read article <span aria-hidden="true">→</span></span>
-          </div>
-        </a>
         <a class="feature-link article-card" data-article-card href="system-design/notion-architecture.html">
-          <img loading="lazy" decoding="async" src="images/articles/notion-architecture-guide.svg" alt="Notion system design architecture diagram" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/notion-architecture-guide.png" alt="Notion request path through API authorization, PostgreSQL shards, change-data capture, the data lake, and search" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Forensic Architecture</span><span class="chip">September 2026</span>
@@ -274,7 +261,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/perplexity-answer-engine-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/perplexity-answer-engine-postmortem.png" alt="Perplexity answer engine system design postmortem architecture illustration" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/perplexity-answer-engine-postmortem.png" alt="Inference cost path from retrieval through reranking, prompt prefill, and answer generation" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">AI Infrastructure</span><span class="chip">September 2026</span>
@@ -286,7 +273,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/replit-agent-runtime-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/replit-agent-runtime-postmortem.png" alt="Replit Agent system design postmortem architecture illustration" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/replit-agent-runtime-postmortem.png" alt="Diagram of repeated agent install attempts producing separate billed runs" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Agent Runtime</span><span class="chip">September 2026</span>
@@ -298,7 +285,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/vercel-fluid-compute-cost-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/vercel-fluid-compute-cost-postmortem.png" alt="Vercel Fluid Compute system design postmortem architecture illustration">
+          <img loading="lazy" decoding="async" src="images/articles/vercel-wait-billing.png" alt="Vercel AI Gateway runtime model comparing active CPU work with time waiting on providers" width="1200" height="630">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span>
@@ -310,7 +297,7 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/figma-multiplayer-cost-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/figma-multiplayer-cost-postmortem.png" alt="Figma multiplayer system design postmortem architecture illustration">
+          <img loading="lazy" decoding="async" src="images/articles/figma-referee-meme.png" alt="Two collaborators make conflicting edits while one document owner orders the resulting change" width="1200" height="630">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span>
@@ -353,7 +340,7 @@
     <!-- Free courses -->
     <section class="sec">
       <div class="sec-head">
-        <h2 class="sec-title"><i data-lucide="book-open"></i> Free Courses</h2>
+        <h2 class="sec-title"><i data-lucide="book-open"></i> Courses</h2>
         <a class="sec-link" href="system-design/course.html">Browse all courses <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="grid3">

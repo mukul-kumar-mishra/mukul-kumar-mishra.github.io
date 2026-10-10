@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Google paused product reports to its Open Source VRP on Oct 1, 2026 over invalid AI-driven filings. Rook audits what the record proves: pause scope, supply-chain lane, and the triage math.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/system-design/google-oss-vrp-ai-report-pause-audit.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause">
+  <meta property="og:description" content="Invalid AI-driven reports buried triage. Google paused product intake Oct 1; supply chain stayed open. What the record does and doesn't prove.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/oss-vrp-slop-queue-meme.png">
+  <meta property="og:image:alt" content="Diagram of AI-generated reports overwhelming a vulnerability triage queue while supply-chain intake stays open">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/google-oss-vrp-ai-report-pause-audit.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause">
+  <meta name="twitter:description" content="The queue filled with almost-vulnerabilities. Triage cost broke before bounty cost.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/oss-vrp-slop-queue-meme.png">
+  <meta name="twitter:image:alt" content="Vulnerability triage queue flooded by invalid AI-driven reports">
+  <title>When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause | AI Slop Watch</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause","description":"A source-led audit of Google's Oct 1, 2026 OSS VRP product-intake pause over invalid AI-driven reports: scope, surviving lanes, and triage economics.","author":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/google-oss-vrp-ai-report-pause-audit.html"},"keywords":"Google OSS VRP, bug bounty pause, AI-generated vulnerability reports, supply chain disclosures, triage","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/oss-vrp-slop-queue-meme.png"}</script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Disclosure Pipeline Audit</span><span class="chip">October 2026</span><span class="chip">12 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">When AI Slop Floods the Bug Queue: Google's OSS Bounty Pause</h1>
+       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The reports looked like vulnerabilities. They read like vulnerabilities. Google cited invalid AI-driven submissions — hallucinations and coding errors without security impact, according to coverage — and each one still took reviewer time.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Google stopped accepting new product-vulnerability reports under its Open Source Software Vulnerability Reward Program effective Oct 1, 2026, citing an influx of invalid AI-driven reports. Filings from before Oct 1 are still processed; supply-chain disclosures stay open; researchers were pointed at other VRP lanes. An update on the program's future is expected by Q1 2027. Per-report AI attribution is not publicly verifiable.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI Slop Watch audit · Updated October 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Claim discipline:</strong> The pause, its date, its scope, and the stated reason come from secondary reporting of Google's notice (announced on X and the program site). Rook has not seen Google's internal report counts or per-report classifications. "AI-driven" here is Google's stated characterization as reported — not an independently verified label on any individual filing. Broader claims about Linux and Intel in the same coverage are reported context, not findings of this audit.</aside>
+    <article class="prose">
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/oss-vrp-slop-queue-meme.svg" alt="Buildopsy diagram of invalid AI-driven reports overwhelming vulnerability triage while supply-chain intake stays open" width="1200" height="680"><figcaption>Figure 1. The reported shape: product lane paused, supply-chain lane open, triage cost as the binding constraint.</figcaption></figure>
+      <section><h2>1. What Google Reportedly Paused — and What Survived</h2>
+        <p>Three boundaries matter, and the coverage agrees on all three. First, the pause covers <em>product</em> vulnerability reports under the OSS VRP — flaws in Google's open-source products. Second, <em>supply-chain</em> submissions (compromised pipelines, tampered packages) remain open. Third, valid product submissions filed before Oct 1 continue to be processed. Researchers with product bugs were redirected toward other active bounty lanes, including Cloud VRP for some Google Cloud repos.</p>
+        <p>That shape is deliberate. Supply-chain disclosures protect the build itself; freezing them would blind the ecosystem. Product bugs, by contrast, can be rerouted to vendor-direct or adjacent programs while the intake machinery is rebuilt. The pause is a triage intervention, not a withdrawal from open-source security.</p>
+      </section>
+      <section><h2>2. The Failure Mode: Almost-Vulnerabilities at Machine Speed</h2>
+        <p>The reported mechanism deserves precision. These were not crude spam ("buy crypto"). They were plausible-looking filings — claimed bugs that dissolved on manual validation into hallucinations or non-security coding errors. Each one demanded what real reports demand: reproduction, code review, severity judgment. The cost of a false report is not zero; it is most of the cost of a true one, paid before the verdict.</p>
+        <p>That is why triage broke before bounties did. Payouts gate on validity; reviewer hours do not. When invalid volume rises faster than reviewer capacity, real disclosures queue behind fiction. Maintainers spend their days disproving bugs instead of fixing them. A pause that stops the inflow is, from the triage side, the only lever that works in days rather than quarters.</p>
+        <div class="callout"><strong>Claimed versus established:</strong> that invalid AI-assisted volume overwhelmed maintainers is Google's stated reason as reported. How many filings were AI-assisted, which tools produced them, and what share were truly invalid are not public. This audit does not assign any individual report to AI.</div>
+      </section>
+      <section><h2>3. The Disclosure Pipeline Is a Queueing System</h2>
+        <p>Think of the VRP as three stages: intake, validation, remediation. Intake is cheap and parallel. Remediation is expensive but rare — only valid, severe bugs reach it. Validation is the bottleneck: skilled, serial, and irreducible without proof standards. AI report generators attack exactly that bottleneck, because generating a plausible claim costs pennies while falsifying it costs hours.</p>
+        <p>The standard defenses all live at validation's door: mandatory proof-of-concept exploits, reproducible environments, researcher reputation thresholds, and structured report schemas that force falsifiable claims. Google reportedly plans to spend the hiatus redesigning its reporting framework — the right layer. Paying more per bug would not fix this; demanding more proof per bug might.</p>
+        <p>Security teams that used the OSS VRP product lane as a disclosure path should act now, not in Q1 2027: reroute product bugs to Cloud VRP or vendor-direct channels, keep supply-chain disclosures flowing through the surviving lane, and attach executable PoCs to every filing regardless of program. Proof is becoming the price of attention.</p>
+      </section>
+      <section><h2>4. What a White-Hat Restart Looks Like</h2>
+        <p>Rook grades bounty redesigns on five controls:</p>
+        <ol><li><strong>Executable proof required.</strong> Reports without a runnable PoC or a failing test go to the back of the queue. Prose-only claims about memory safety or injection are triage requests, not disclosures.</li><li><strong>Reputation-weighted intake.</strong> Proven researchers skip the line; unknown submitters face stricter proof gates. Forgiving the person while hardening the proof preserves openness without preserving the flood.</li><li><strong>Machine-checkable first pass.</strong> Fuzzing harnesses, static-analysis gates, and sandbox replays should reject the obviously invalid before a human reads a word.</li><li><strong>Transparent disposition metrics.</strong> Publish intake volume, invalid share, median time-to-verdict, and time-to-fix separately. "Overwhelmed" is a feeling; the four numbers are a fact.</li><li><strong>Appeal paths for the falsely rejected.</strong> Stricter gates will bounce some real bugs from unfamiliar researchers. Every rejection needs evidence, a reason code, and a second look.</li></ol>
+        <p>The adjacent shelf to study is supply-chain defense: the <a href="slopsquatting-ai-package-hallucination-postmortem.html">slopsquatting teardown</a> shows what happens when AI invents the package you install, and the <a href="rubygems-prequel-postmortem.html">RubyGems prequel</a> traces a registry flood that preceded this bounty flood. Different pipes, same pressure: machine-generated plausibility overwhelming human verification. The <a href="learn-ai-slop-forensics.html">AI Slop Forensics course</a> teaches the verification discipline directly.</p>
+      </section>
+      <section><h2>5. The Verdict</h2>
+        <p>The public record supports a narrow, serious claim: Google paused one intake lane because validation economics failed under reported AI-driven invalid volume, while keeping the lanes that protect the build itself. It does not support broad claims about which reports were AI-made, how many there were, or whether sibling program pauses share the same cause. Watch the Q1 2027 restart terms — proof requirements, reputation gates, machine pre-checks — because whatever Google demands, the rest of the bounty ecosystem will copy within a quarter.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The bugs were free to file. The truth was expensive to check.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Pause date, scope, surviving lanes, stated reason, and Q1 2027 update expectation are attributed to secondary reporting of Google's notice. Rook did not access Google's internal counts, the X announcement directly, or any individual report. Linux and Intel context is reported context from the same coverage, not independently verified here.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/google-suspends-part-of-the-oss-vrp-bug-bounty-program-due-to-an-influx-of-invalid-ai-submissions-product-vulnerability-submissions-ended-october-1" target="_blank" rel="noopener noreferrer">Tom's Hardware: Google freezes product submissions to the OSS VRP after invalid AI-driven reports (Oct 3, 2026)</a></li><li><a href="https://www.opensourceforu.com/2026/10/ai-slop-forces-google-to-suspend-open-source-bug-bounty-programme/" target="_blank" rel="noopener noreferrer">Open Source For You: AI Slop Forces Google to Suspend Open Source Bug Bounty Programme (Oct 5, 2026)</a></li><li><a href="https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html">Buildopsy: Slopsquatting companion</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · AI Slop Watch</span><a href="ai-slop.html">More source-led AI audits →</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

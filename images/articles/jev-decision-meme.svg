@@ -7,12 +7,13 @@
     <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="92" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/></filter>
     <style>.flow{stroke-dasharray:12 9;animation:ants 0.9s linear infinite}@keyframes ants{to{stroke-dashoffset:-21}}.pulse{animation:pulse 1.8s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}</style>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grain)"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
   <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">JEV AUDIT: TYPESAFE SYSTEM ONE</text>
-  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
   <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Decisions outrun prose.</text>
 
   <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">typed calls with confidence attached.</text>
@@ -40,10 +41,10 @@
 <!-- Editable signature positioned above the left eyebrow -->
 
 </g>
-  </svg>
+  <g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4"><rect x="16" y="18" width="68" height="64" rx="8" fill="#e8f1f6"/><path d="M30 35h40M30 50h28M30 65h35" stroke-linecap="round"/></g></svg>
 <g filter="url(#roughen)"><rect x="230" y="190" width="600" height="200" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="9 6" rx="12"/><text x="244" y="182" font-family="monospace" font-size="11" font-weight="bold" fill="#475569">COST PER CASE VENDOR MATH</text><line x1="250" y1="350" x2="810" y2="350" stroke="#0f172a" stroke-width="3"/><rect x="250.0" y="344.0" width="169.3" height="6.0" fill="#16a34a" stroke="#0f172a" stroke-width="3"/><text x="250.0" y="332.0" font-family="monospace" font-size="13" font-weight="bold" fill="#0f172a">4</text><text x="250.0" y="370.0" font-family="monospace" font-size="12" fill="#475569">jev</text><rect x="445.3" y="330.0" width="169.3" height="20.0" fill="#38bdf8" stroke="#0f172a" stroke-width="3"/><text x="445.3" y="318.0" font-family="monospace" font-size="13" font-weight="bold" fill="#0f172a">304</text><text x="445.3" y="370.0" font-family="monospace" font-size="12" fill="#475569">terra</text><rect x="640.7" y="234.0" width="169.3" height="116.0" fill="#e11d48" stroke="#0f172a" stroke-width="3"/><text x="640.7" y="222.0" font-family="monospace" font-size="13" font-weight="bold" fill="#0f172a">1761</text><text x="640.7" y="370.0" font-family="monospace" font-size="12" fill="#475569">opus</text><g transform="rotate(-8 870 185)"><rect x="870" y="185" width="162" height="36" fill="none" stroke="#e11d48" stroke-width="3"/><text x="885" y="210" font-family="monospace" font-size="20" font-weight="bold" fill="#e11d48" letter-spacing="2">VENDOR MATH</text></g><text x="870" y="280" font-family="monospace" font-size="13" fill="#0f172a">01  67.8 pct on 4 flows</text><text x="870" y="302" font-family="monospace" font-size="13" fill="#0f172a">02  0.4s vs 10 to 38s</text><text x="870" y="324" font-family="monospace" font-size="13" fill="#0f172a">03  price 0.042 per M in</text><text x="870" y="380" font-family="monospace" font-size="13" fill="#0f172a">01  no text out</text><text x="870" y="402" font-family="monospace" font-size="13" fill="#0f172a">02  typed choice in</text><text x="870" y="424" font-family="monospace" font-size="13" fill="#0f172a">03  prob score attached</text></g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">claims are vendor math.</text>
   <text x="480" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">proof ships later.</text>
-  <text x="1110" y="591" text-anchor="end" font-family="monospace" font-size="16" fill="#f8fafc">BY ROOK</text>
+<image x="990" y="555" width="156" height="57" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
 </svg>

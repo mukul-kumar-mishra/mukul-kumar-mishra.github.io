@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="OpenAI says a system stronger than GPT-6 Astra produced a Navier-Stokes singularity proof with 10,000 agents and Lean. Rook audits the math and claim.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="OpenAI Says It Solved Navier-Stokes. Here Is the Footnote.">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="OpenAI Astra agents solving a Navier Stokes vortex with Lean verification">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "OpenAI Says It Solved Navier-Stokes. Here Is the Footnote.", "description": "A skeptical technical audit of OpenAI's Navier-Stokes claim, its Lean certificate, multi-agent search and IPO context.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html"}, "keywords": "Navier-Stokes, Astra, Lean, AI mathematics, OpenAI IPO", "image": "https://buildopsy.com/images/articles/navier-stokes-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "OpenAI Says It Solved Navier-Stokes. Here Is the Footnote.", "description": "A skeptical technical audit of OpenAI's Navier-Stokes claim, its Lean certificate, multi-agent search and IPO context.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html"}, "keywords": "Navier-Stokes, Astra, Lean, AI mathematics, OpenAI IPO", "image": "https://buildopsy.com/images/articles/navier-stokes-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -84,7 +84,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Evidence status:</strong> OpenAI published a paper and Lean repository. The claim is not a Clay Prize award. Independent mathematicians still need to check the statement, novelty, proof and significance. Those are four separate jobs. A green compiler is only one of them.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/navier-stokes-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching Astra agents solve a Navier Stokes vortex problem" width="1200" height="680"><figcaption>Figure 1. The claim in one cartoon, drawn for this postmortem. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/navier-stokes-meme.svg" alt="The claim in one diagram. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process." width="1200" height="680"><figcaption>Figure 1. The claim in one diagram, created for this article. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.</figcaption></figure>
 
       <section><h2>1. What OpenAI Actually Claimed</h2>
         <p>The September 8 announcement says an internal system produced a solution to the Navier-Stokes existence and smoothness problem. More precisely, it claims a construction where initially smooth three-dimensional incompressible flow develops a singularity in finite time. OpenAI says the fluid begins at rest, receives a smooth external force and keeps finite total energy while velocity becomes unbounded in a shrinking vortex.</p>
@@ -100,7 +100,7 @@
         <p>The terms have physical jobs. The first term is time change. The nonlinear term transports velocity through itself. Pressure enforces incompressibility. Viscosity ν smooths gradients through the Laplacian. The divergence condition says fluid does not compress or expand.</p>
         <p>The problem is not solving a nice numerical simulation. Numerical simulations already work extremely well for bounded times and practical flows. The problem asks whether every smooth initial condition remains smooth forever in three dimensions. Or whether some perfectly smooth start creates a finite-time singularity where velocity or a derivative becomes unbounded.</p>
         <p>Energy estimates make the trap obvious. Multiply the equation by u and integrate over space. The nonlinear transport term largely cancels under incompressibility. Viscosity dissipates energy. One gets a useful bound on total kinetic energy. But total energy can stay finite while velocity concentrates into a smaller region. A fast narrow vortex can hide unbounded pointwise behavior inside a finite global budget. The accountant is happy. The fluid is not.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/navier-stokes-pipeline-meme.svg" alt="Pen sketched cartoon of a grinning cat running thousands of math agents into Lean proof checking" width="1200" height="680"><figcaption>Figure 2. The production line in one cartoon, drawn for this postmortem. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/navier-stokes-pipeline-meme.svg" alt="The production line in one diagram. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens." width="1200" height="680"><figcaption>Figure 2. The production line in one diagram, created for this article. Agents argue, Codex consolidates, Lean checks. The IPO deck counts the tokens.</figcaption></figure>
       </section>
 
       <section><h2>3. Why This Stayed Unsolved for 90 Years</h2>

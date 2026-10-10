@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Replit Agent system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/replit-agent-runtime-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
         <p><strong>The database can become the agent's scratchpad.</strong> Generated applications often use a database for everything because it is convenient. Replit should give projects sane defaults for connection pooling, migrations, backups and idle suspension. A project with three users should not keep a large database fleet warm forever because its generated ORM opened a pool of 100 connections.</p>
         <p><strong>The model can be correct and the system can still be wrong.</strong> The agent may generate valid code that violates tenant policy, leaks a secret in a log, or creates an expensive polling loop. Verification must include behavior, security, resource usage and cost. Compile success is not a production readiness signal.</p>
         <div class="tip"><strong>Production tip:</strong> Add a cost test to the agent's acceptance loop. Reject a build that passes functional tests but exceeds its request, memory, query, or egress budget. “It works” is not a sufficient definition of done when the platform pays for every experiment.</div>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/replit-retry-meme.svg" alt="Cartoon of an agent pressing retry on a failed install while the meter spins" width="1200" height="680"><figcaption>Figure 2. The retry machine in one cartoon, drawn for this postmortem. Same error. Same install. Fresh bill.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/replit-retry-meme.svg" alt="Diagram of an agent retrying a failed install and incurring another billed attempt" width="1200" height="680"><figcaption>Figure 2. The retry machine in one diagram, created for this article. Same error. Same install. Fresh bill.</figcaption></figure>
       </section>
 
       <section><h2>8. The Verdict</h2>
@@ -155,7 +155,7 @@
         <p>The winning architecture cannot treat the agent as a chatbot. It has to treat the agent as an untrusted workflow engine with a budget, capabilities, checkpoints and an audit trail. Sandboxes contain code. Queues contain bursts. Content-addressed caches contain repeated work. Region-aware scheduling contains latency and transfer cost. A real deployment gate contains optimism.</p>
         <p>At 1M events per second, the difference between the current-shaped design and the proposed shape is about $5.59M per month in this model. That difference comes from classification, reuse, batching and refusing to make ephemeral work durable. The platform gets cheaper when it knows what not to remember.</p>
         <p>That is the cliff edge for prompt-to-production software. The demo says anyone can build. Production asks who is allowed to run it, where it can connect, how long it may live, what it may change and who pays when the agent gets curious.</p>
-        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/replit-coffee-meme.svg" alt="Pen sketched cartoon of a grinning cat pressing retry forever beside a coffee cup" width="1200" height="680"><figcaption>Figure 3. Attempt 48 in one cartoon, drawn for this postmortem. The package has not changed. The meter has.</figcaption></figure>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/replit-coffee-meme.svg" alt="Attempt 48 in one diagram. The package has not changed. The meter has." width="1200" height="680"><figcaption>Figure 3. Attempt 48 in one diagram, created for this article. The package has not changed. The meter has.</figcaption></figure>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The agent can write the application in seconds. The infrastructure still has to survive the user's imagination.</strong></p>
       </section>
 

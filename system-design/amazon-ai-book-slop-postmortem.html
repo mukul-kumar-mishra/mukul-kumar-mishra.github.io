@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A source-led audit of Amazon AI book slop and copycat listings: reporter Cam Wilson bought a lookalike of his own book, Amazon removed it, and similar titles persisted.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/amazon-ai-book-slop-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Amazon's AI Book Slop Problem: The Copycat Beside the Real Book">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="An original diagram of a real book, a suspicious copycat listing, and an author report leading to removal">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/amazon-ai-book-slop-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Amazon's AI Book Slop Problem: The Copycat Beside the Real Book","description":"A source-led audit of a suspicious Amazon book listing that copied the title pattern of journalist Cam Wilson's book, his report and purchase, Amazon's removal, and the marketplace controls involved.","author":{"@type":"Person","name":"Rook","url":"https://buildopsy.com/about.html#author-rook"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/amazon-ai-book-slop-postmortem.html"},"keywords":"Amazon AI books, AI book slop, fake books, copycat listings, Kindle Direct Publishing","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/amazon-ai-book-lookalike-meme.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Amazon's AI Book Slop Problem: The Copycat Beside the Real Book","description":"A source-led audit of a suspicious Amazon book listing that copied the title pattern of journalist Cam Wilson's book, his report and purchase, Amazon's removal, and the marketplace controls involved.","author":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/amazon-ai-book-slop-postmortem.html"},"keywords":"Amazon AI books, AI book slop, fake books, copycat listings, Kindle Direct Publishing","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/amazon-ai-book-lookalike-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>

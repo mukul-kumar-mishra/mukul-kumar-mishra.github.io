@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">GCS us-central1 write outage: sorting optimization exhausts storage backend nodes</title>
+  <desc id="desc">Client writes enter Google Cloud Storage in us-central1. A traffic sorting optimization overloads specific backend ingestion nodes, metadata errors add pressure, writes return 503s while other regions stay healthy.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="hot" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:29px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:19px;font-weight:700}.sub{font-size:14px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">CLOUD STORAGE / WRITE-PATH FAILURE · US-CENTRAL1 · OCT 8, 2026</text>
+  <text x="58" y="105" class="head">The sorter meant to relieve nodes starved them.</text>
+  <text x="58" y="139" class="muted" font-size="18">Google describes a traffic-sorting optimization plus a separate metadata fault behind 12.5h of write errors.</text>
+  <rect x="58" y="200" width="200" height="112" rx="16" class="node"/>
+  <text x="84" y="243" class="label">WriteObject</text><text x="84" y="271" class="label">traffic</text>
+  <text x="84" y="295" class="sub muted">uploads + writes</text>
+  <path d="M260 256H322" class="line"/>
+  <rect x="327" y="200" width="230" height="112" rx="16" class="node"/>
+  <text x="352" y="243" class="label">Sorting</text><text x="352" y="271" class="label">optimization</text>
+  <text x="352" y="295" class="sub muted">intended relief</text>
+  <path d="M559 256H615" class="line"/>
+  <rect x="620" y="185" width="250" height="142" rx="16" class="nodehot"/>
+  <text x="645" y="227" class="label">Backend nodes</text>
+  <rect x="647" y="246" width="196" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
+  <rect x="647" y="246" width="188" height="22" rx="11" fill="url(#hot)"/>
+  <text x="647" y="296" class="sub">resource exhaustion + timeouts</text>
+  <path d="M872 256H922" class="bad"/>
+  <rect x="928" y="200" width="214" height="112" rx="16" class="nodehot"/>
+  <text x="952" y="243" class="label">503s +</text><text x="952" y="271" class="label">timeouts</text>
+  <text x="952" y="295" class="sub muted">writes fail, reads wobble</text>
+  <rect x="58" y="360" width="330" height="76" rx="14" class="node"/>
+  <text x="83" y="392" class="label">Metadata DB fault</text><text x="83" y="418" class="sub muted">separate issue, rolled back</text>
+  <path d="M392 398C470 398 540 340 640 330" class="line"/>
+  <rect x="58" y="460" width="330" height="76" rx="14" class="nodesafe"/>
+  <text x="83" y="492" class="label">Other regions</text><text x="83" y="518" class="sub muted">unaffected · fault stayed regional</text>
+  <rect x="420" y="460" width="330" height="76" rx="14" class="nodesafe"/>
+  <text x="445" y="492" class="label">Fix: drain + disable</text><text x="445" y="518" class="sub muted">sorter off, nodes restored</text>
+  <text x="58" y="580" class="kicker">PRELIMINARY WINDOW · US/PACIFIC OCT 8</text>
+  <line x1="92" y1="622" x2="1106" y2="622" class="timeline"/>
+  <circle cx="150" cy="622" r="10" class="tick"/><text x="120" y="600" class="label" font-size="16">04:00</text><text x="120" y="656" class="sub muted">errors start</text>
+  <circle cx="560" cy="622" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="520" y="600" class="label" font-size="16">05:19</text><text x="520" y="656" class="sub muted">dashboard posts</text>
+  <circle cx="970" cy="622" r="10" class="tick"/><text x="940" y="600" class="label" font-size="16">16:30</text><text x="940" y="656" class="sub muted">recovered</text>
+</svg>

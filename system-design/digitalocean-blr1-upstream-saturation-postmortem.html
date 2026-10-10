@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DigitalOcean BLR1 degraded for 63 minutes on Oct 3, 2026 when multiple upstream paths including redundant ones failed. Traffic crowded one undersized link. Postmortem of failover capacity that wasn't.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/digitalocean-blr1-upstream-saturation-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="DigitalOcean BLR1 Postmortem: When the Backup Link Couldn't Carry the Region">
+  <meta property="og:description" content="Upstream paths failed together in Bengaluru. One remaining link saturated. Seven product lines degraded for 63 minutes.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/do-blr1-saturation-meme.png">
+  <meta property="og:image:alt" content="Diagram of BLR1 traffic saturating a single remaining upstream link after redundant paths fail">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/digitalocean-blr1-upstream-saturation-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DigitalOcean BLR1 Postmortem: When the Backup Link Couldn't Carry the Region">
+  <meta name="twitter:description" content="Redundant upstream paths failed together. The survivor link drowned in 63 minutes of saturation.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/do-blr1-saturation-meme.png">
+  <meta name="twitter:image:alt" content="BLR1 upstream path loss and link saturation diagram">
+  <title>DigitalOcean BLR1 Postmortem: When the Backup Link Couldn't Carry the Region | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DigitalOcean BLR1 Postmortem: When the Backup Link Couldn't Carry the Region","description":"A source-led teardown of DigitalOcean's Oct 3, 2026 BLR1 network disruption: upstream path loss, redundant-path failure, single-link saturation, and multi-product impact.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/digitalocean-blr1-upstream-saturation-postmortem.html"},"keywords":"DigitalOcean outage, BLR1 Bengaluru, upstream network, link saturation, redundancy failure, Mukul Kumar Mishra","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/do-blr1-saturation-meme.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How long did the DigitalOcean BLR1 disruption last?","acceptedAnswer":{"@type":"Answer","text":"DigitalOcean reports 11:59 to 13:02 UTC on Oct 3, 2026 — 63 minutes — affecting Monitoring, App Platform, Managed Databases, Functions, Load Balancers, Spaces, and the Cloud Control Panel."}},
+      {"@type":"Question","name":"What caused the BLR1 degradation?","acceptedAnswer":{"@type":"Answer","text":"Multiple network paths run by upstream connectivity providers were unavailable, including redundant paths. Traffic shifted to a remaining link without enough capacity, causing saturation."}},
+      {"@type":"Question","name":"Were DigitalOcean's own routers the root cause?","acceptedAnswer":{"@type":"Answer","text":"The public report attributes the loss to upstream provider paths, not to DigitalOcean's own router config. Provider identities and the trigger for the path loss were not disclosed."}},
+      {"@type":"Question","name":"What should multi-product region owners take away?","acceptedAnswer":{"@type":"Answer","text":"Failover is only real at the capacity you can actually carry. Redundant paths must be sized, tested, and monitored for joint failure — otherwise one link inherits the whole region."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Edge &amp; Network Infrastructure</span><span class="chip">October 2026</span><span class="chip">12 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">DigitalOcean BLR1 Postmortem: When the Backup Link Couldn't Carry the Region</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The backups failed with the primaries. Sixty-three minutes in Bengaluru proved that redundancy on paper is not capacity in practice.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> From 11:59 to 13:02 UTC on Oct 3, 2026, BLR1 degraded across seven product lines. Multiple upstream paths — including paths meant to survive exactly this — were unavailable. Remaining traffic saturated one undersized link. DigitalOcean restored normal routing with its providers. No customer workaround was posted.</p>
+      <div class="grid4" style="margin-top:24px;"><div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">63 min</div></div><div class="stat" style="padding:14px;"><div class="lbl">Region</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">BLR1</div></div><div class="stat" style="padding:14px;"><div class="lbl">Products hit</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">7 lines</div></div><div class="stat" style="padding:14px;"><div class="lbl">Cause layer</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Upstream</div></div></div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Evidence-led system design postmortem · Updated October 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Evidence boundary:</strong> Window, product list, symptoms, upstream-path cause, and saturation mechanism come from DigitalOcean's status report. Link capacities, traffic volumes, provider names, and the trigger behind the path loss were not disclosed. Capacity math below is a labeled scenario model.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/do-blr1-saturation-meme.svg" alt="Buildopsy diagram of BLR1 traffic crowding one remaining link after upstream and redundant paths fail" width="1200" height="680"><figcaption>Figure 1. The failure in one diagram: joint upstream loss, one survivor link, seven product symptoms.</figcaption></figure>
+      <section><h2>1. Seven Products, One Wire</h2>
+        <p>The affected list is the story. Monitoring, App Platform, Managed Databases, Functions, Load Balancers, Spaces, and the Cloud Control Panel all degraded together between 11:59 and 13:02 UTC. Customers saw degraded connectivity, increased latency, or intermittent errors reaching resources in the region. When the control panel degrades alongside the data plane, operators lose both the workload and the window they watch it through.</p>
+        <p>Single-region, multi-product correlation like this almost always points below the products — at shared network, power, or identity. DigitalOcean's report points at the network: multiple paths operated by upstream connectivity providers were unavailable, including redundant paths intended to maintain connectivity during a disruption.</p>
+        <div class="callout"><strong>The uncomfortable truth:</strong> the product boundary held nowhere because the network boundary held nowhere. Seven blast radii were really one.</div>
+      </section>
+      <section><h2>2. The Architecture: Why One Link Inherited Everything</h2>
+        <p>A region like BLR1 reaches the internet and interconnects through several upstream paths: direct provider links plus backup paths engineered to carry load when a primary drops. Under normal conditions each path carries a share. Under a single-path failure, the survivors absorb the orphaned share — provided they were sized for it.</p>
+        <p>DigitalOcean describes the bad case: enough paths failed at once that the remainder could not carry the total. Traffic shifted to a remaining link with insufficient capacity, producing saturation — full buffers, rising latency, drops, retries. Saturation is democratic suffering: every product sharing the link degrades together, and retries from every product add offered load to the same wire.</p>
+        <p>The critical phrase is "including redundant paths." Redundancy that shares a fate — same provider, same fiber bundle, same maintenance window, same software push — is duplication, not diversity. The report does not name the providers or the shared trigger, so the joint-failure mechanism stays an open question.</p>
+      </section>
+      <section><h2>3. The Saturation Math</h2>
+        <p>Model the region's egress-plus-interconnect demand as D gigabits per second across three upstream paths sized at C1, C2, C3. Healthy, D &lt; C1+C2+C3 with headroom. Lose two paths and the survivor must carry D alone. If D = 60 Gbps and the survivor offers C = 25 Gbps, utilization hits 240%. Queues fill in seconds, tail latency explodes, and goodput collapses well below 25 Gbps as retransmissions crowd out fresh traffic.</p>
+        <p>The recovery math is equally brutal. Even after paths return, every product's retry backlog arrives at once — Functions re-invoking, Spaces clients resuming, database pools reconnecting, the control panel polling. Offered load briefly exceeds steady-state D, so the "recovered" network can re-saturate unless reconnection is staggered. DigitalOcean reports services returned to normal after routing was restored with providers; no staged-reconnect advisory was posted, which suggests the backlog drained within the 63-minute window rather than needing customer action.</p>
+        <div class="tip"><strong>Size your own survivor:</strong> sum peak egress across products, then test one-link survival with the <a href="../tools/cloud-egress-cost-calculator.html">egress calculator</a> for the cost side and the <a href="../tools/load-balancer-target-capacity-calculator.html">target capacity calculator</a> for per-target load. If the survivor cannot carry peak plus retry storm, it is a hope, not a plan.</div>
+      </section>
+      <section><h2>4. What the Report Changes — and What I Would Add</h2>
+        <p>DigitalOcean's disclosure names the layer, the mechanism, and the recovery owner honestly. What it omits — provider identities, path capacities, the joint-failure trigger — limits how much any outsider can verify. That is normal for a 63-minute upstream event; the fixes below do not need those details:</p>
+        <ol><li><strong>Prove N-1, then N-2, at peak plus storm.</strong> Load-test the region with each upstream drained in turn, then with the two largest drained together. Measure goodput, not just link state. A path that is "up" at 240% utilization is down for customers.</li><li><strong>Diversify fate, not just names.</strong> Two providers sharing a duct, a metro fiber ring, or a maintenance calendar fail together. Demand disjoint physical paths and disjoint change windows, in writing.</li><li><strong>Shed by product priority, automatically.</strong> When saturation starts, control-panel reads and health checks should keep a reserved lane while bulk transfer backs off. Seven products degrading equally means no triage policy fired.</li><li><strong>Stagger the reconnect storm.</strong> After upstream recovery, ramp Functions concurrency, pool reconnects, and client retries with jittered backoff ceilings so the survivor link is not re-drowned by its own rescue.</li><li><strong>Publish the survivor capacity.</strong> Customers sizing multi-AZ or multi-region failover need to know what one link can actually carry. "Redundant paths exist" without capacities is marketing; "survivor carries X Gbps at p99 Y ms" is engineering.</li></ol>
+        <p>Read this alongside the <a href="azure-wan-route-withdrawal-postmortem.html">Azure WAN route-withdrawal teardown</a> — same moral through the opposite organ. Azure lost its map; BLR1 lost its roads. In both cases the paths into the region failed independently of the servers inside it.</p>
+      </section>
+      <section><h2>5. The Cost Model</h2>
+        <p>Sixty-three minutes is short enough to dismiss and long enough to bill. Take a team running 200 Droplets plus managed databases plus Spaces in BLR1 at a modeled $18,000 per month in regional spend — roughly $25 per hour. Direct burn during the window is trivial. The exposure sits in failed deploys, timed-out functions billed per invocation, retried egress, and engineer hours: five engineers at a modeled $80 per hour for two hours of response and verification adds $800 against $26 of idle infrastructure. Model your own with the <a href="../tools/downtime-cost-calculator.html">downtime cost calculator</a>; the ratio, not the plug numbers, is the point.</p>
+        <div class="callout"><strong>The lesson that bills:</strong> the outage cost almost nothing in server-hours and nearly everything in human-hours. Redundancy you never load-tested bills you in on-call time.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>DigitalOcean's report is short, specific, and admirably blunt about redundant paths failing. The design gap is equally blunt: the region's survival depended on a link that could not carry the region. Until survivor capacity is sized, diversified, and rehearsed at storm load, every multi-product region carries this same 63-minute shape inside it.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Two backups. One wire. Sixty-three minutes of proof.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Window, product list, symptoms, upstream cause, and saturation mechanism are attributed to DigitalOcean's status report for incident 6z6dt3t1bhb9. Capacity and cost figures are Buildopsy's labeled scenario models. Provider identities and path-loss trigger were not disclosed.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://status.digitalocean.com/incidents/6z6dt3t1bhb9" target="_blank" rel="noopener noreferrer">DigitalOcean Status: A Network Disruption in BLR1 Region Impacted Multiple Products (Oct 3, 2026)</a></li><li><a href="https://buildopsy.com/system-design/azure-wan-route-withdrawal-postmortem.html">Buildopsy: Azure West US route withdrawal companion</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

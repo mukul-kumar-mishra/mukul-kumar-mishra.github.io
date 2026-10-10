@@ -506,7 +506,7 @@ h1, h2, h3, h4, h5, h6 {
 .article-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .article-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: var(--paper); text-decoration: none; }
 .article-card:hover { color: var(--paper); }
-.article-card img { width: 100%; aspect-ratio: 1.91 / 1; object-fit: cover; border-bottom: 1px solid var(--line); }
+.article-card img { display: block; width: 100%; height: auto; aspect-ratio: 1.91 / 1; object-fit: contain; background: var(--panel); border-bottom: 1px solid var(--line); }
 .article-card-visual { display: flex; align-items: flex-end; aspect-ratio: 1.91 / 1; padding: 18px; border-bottom: 1px solid var(--line); background: radial-gradient(circle at 75% 25%, color-mix(in srgb, var(--cyan) 32%, transparent), transparent 28%), linear-gradient(135deg, var(--card-muted), var(--card)); color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; }
 .article-card-body { display: flex; flex: 1; flex-direction: column; padding: 18px; }
 .article-card h3 { margin: 12px 0 8px; font-size: 1.02rem; line-height: 1.35; }

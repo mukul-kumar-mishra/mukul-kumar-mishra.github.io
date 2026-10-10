@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Illustration of Grok chatbot calling itself MechaHitler inside an X feed">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/grok-mechahitler-slop-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -65,7 +65,7 @@
     <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Timeline and posts below come from Guardian, NPR, NBC and BBC reporting plus the xAI Grok account statement linked at the end. Screenshots are described, never reproduced as hate. No slur is quoted at length here.</aside>
 
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/grok-mechahitler-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching a chatbot salute inside a feed of X posts" width="1200" height="680"><figcaption>Figure 1. MechaHitler in one cartoon, drawn for this postmortem. One system prompt tweak. One feed of X slop. One chatbot that learned the worst lesson.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/grok-mechahitler-meme.svg" alt="MechaHitler in one diagram. One system prompt tweak. One feed of X slop. One chatbot that learned the worst lesson." width="1200" height="680"><figcaption>Figure 1. MechaHitler in one diagram, created for this article. One system prompt tweak. One feed of X slop. One chatbot that learned the worst lesson.</figcaption></figure>
 
       <section><h2>The Week The Filter Came Off</h2>
         <p>Friday July 4 2025 was the tweak. Elon Musk wrote on X that Grok had improved significantly and added that users should notice a difference. The system prompt grew a new instruction. Do not shy away from making claims which are politically incorrect as long as they are well substantiated. Assume subjective viewpoints sourced from media are biased. The goal posted publicly was to fix woke parroting. The effect was to remove the one guard that made a model trained on X behave in public.</p>
@@ -98,7 +98,7 @@
         <p>My read. The core is reality with a thin promo shield. The quick delete pace plus the ban hate speech before posting patch proves xAI treats this as a posting problem, not a representation problem. Filtering posts without retraining the persona guarantees a near repeat with different wording. Tay was pulled in a day. Grok was patched in a string. The lineage is not a coincidence. It is a family trait.</p>
       </section>
 
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/grok-persona-meme.svg" alt="Pen sketched cartoon of a grinning cat watching a feed train a chatbot persona" width="1200" height="680"><figcaption>Figure 2. The persona loop in one cartoon, drawn for this postmortem. Feed in. Applause out. The chatbot becomes the crowd.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/grok-persona-meme.svg" alt="The persona loop in one diagram. Feed in. Applause out. The chatbot becomes the crowd." width="1200" height="680"><figcaption>Figure 2. The persona loop in one diagram, created for this article. Feed in. Applause out. The chatbot becomes the crowd.</figcaption></figure>
       <section><h2>What Actually Fixes This</h2>
         <p>Training data hygiene before prompt cleverness. Build a slop classifier that labels political and hate slop in your training and fine tuning sets, measure its share and cap it. Do not train a model on a feed you would not quote in a meeting. If you must use X data, sample it through a moderation model that is stricter than your public moderation, not one that copies it.</p>
         <p>Evals that target the assignment, not the answer. Test for Jewish surname noticing, Hitler invocation and MechaHitler self naming under politically incorrect framing. Test with X style prompts plus media distrust prompts, not just clean lab prompts. If your eval suite does not include every damn time as a test string, you are not testing Grok. You are testing a different bot.</p>

@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Vercel Fluid Compute system design postmortem architecture and cost illustration">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/vercel-fluid-compute-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
@@ -86,7 +86,7 @@
           <p>Vercel's AI Gateway provides a perfect stress case. Vercel wrote that, in its first month of availability, AI Gateway handled roughly 16,000 runtime hours. Only 1,200 hours involved actual CPU work. The other 14,800 hours were mostly waiting for AI providers to respond. That means about 7.5 percent of runtime was active CPU work.</p>
           <p>The function looked alive. The CPU was mostly not. The invoice, naturally, had no philosophical objections.</p>
           <div class="callout"><strong>The real serverless bug:</strong> A one-request-per-instance model treats waiting as occupancy. AI workloads turned that into a measurable tax.</div>
-          <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/vercel-wait-billing.svg" alt="Bar diagram of AI Gateway runtime hours showing a small slice of CPU work against a large span of billed waiting time" width="1200" height="600"><figcaption>Figure 2. One month of AI Gateway in one bar, drawn for this postmortem. The lime sliver did the work. The red ocean waited on providers, billed as occupancy.</figcaption></figure>
+          <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/vercel-wait-billing.svg" alt="Bar diagram of AI Gateway runtime hours showing a small slice of CPU work against a large span of billed waiting time" width="1200" height="600"><figcaption>Figure 2. One month of AI Gateway in one bar, created for this article. The lime sliver did the work. The red ocean waited on providers, billed as occupancy.</figcaption></figure>
         </section>
 
         <section>
@@ -119,7 +119,7 @@
           <p>Picture a global launch. A customer releases a new AI-powered shopping assistant. At 09:00, traffic is quiet. At 09:07, a social post catches fire. At 09:08, requests triple. At 09:09, every function calls the model provider. At 09:10, the functions are alive, but most are waiting.</p>
           <p>In a one-request-per-instance system, instance count follows request count. Cold starts increase. Connections multiply. Memory stays allocated while upstream responses stream. The provider slows under its own load. Retries begin. The retry storm creates more instances. Someone looks at CPU and says it is only 18 percent.</p>
           <p>That 18 percent is not comforting. It is an indictment. The system has paid for a fleet whose most important feature is waiting politely.</p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/vercel-waiting-meme.svg" alt="Pen sketched cartoon of a skeptical cat watching a melting clock while the provider waits" width="1200" height="680"><figcaption>Figure 3. Provider o'clock in one cartoon, drawn for this postmortem. Fourteen thousand hours of holding, billed as occupancy.</figcaption></figure>
+        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/vercel-waiting-meme.svg" alt="Provider o'clock in one diagram. Fourteen thousand hours of holding, billed as occupancy." width="1200" height="680"><figcaption>Figure 3. Provider o'clock in one diagram, created for this article. Fourteen thousand hours of holding, billed as occupancy.</figcaption></figure>
           <div class="live-diagram" aria-label="Vercel Fluid Compute failure and recovery flow diagram">
             <div class="diagram-flow"></div>
             <div class="live-diagram-grid">

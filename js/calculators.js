@@ -73,8 +73,8 @@
         perRequest: rps > 0 ? monthly / (rps * 2592000) : 0
       };
     },
-    /* Compaction survival. Defaults mirror the measured median: a 575k
-       window compacted to ~4.3k (0.75%), followed by ~28 re-read steps. */
+    /* Compaction survival. UI values are an illustrative scenario, not a
+       measured population median; users should enter workload observations. */
     compaction: function (o) {
       var surv = clamp(o.survPct, 0, 100) / 100;
       var summary = nonneg(o.windowTk) * surv;

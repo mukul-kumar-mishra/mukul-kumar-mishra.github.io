@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination plus promised a token verifier. Rook audits claimed vs proved.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Three stat panels showing one invented name plus one undescribed photo plus zero sends">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach", "description": "Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination plus promised a token verifier. Rook audits claimed vs proved.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-02", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html"}, "keywords": "Instinct AI agent, AI hallucination, data leak vs hallucination, Noah Shinn, agent isolation, Rook", "image": "https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach", "description": "Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination plus promised a token verifier. Rook audits claimed vs proved.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-02", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html"}, "keywords": "Instinct AI agent, AI hallucination, data leak vs hallucination, Noah Shinn, agent isolation, Rook", "image": "https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -44,7 +44,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> User screenshots Sep 21 2026 plus founder reply Sep 23 plus press Sep 22 to Sep 30. No exploit steps are reproduced. This audit grades disclosure plus mechanism plus fix.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/instinct-crossed-chat-meme.svg" alt="Three stat panels showing one invented name plus one undescribed photo plus zero sends" width="1200" height="680"><figcaption>Figure 1. The report in one cartoon. One invented name plus one undescribed photo plus zero sends from the user.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/instinct-crossed-chat-meme.svg" alt="Three stat panels showing one invented name plus one undescribed photo plus zero sends" width="1200" height="680"><figcaption>Figure 1. The report in one diagram. One invented name plus one undescribed photo plus zero sends from the user.</figcaption></figure>
       <section><h2>1. The Confession Nobody Ordered</h2>
         <p>Pritak posted screenshots on Sep 21. Instinct had greeted him with what looked like someone else middle name. Then it discussed a photo of a financial document. He never sent any photo. So far this reads like a privacy disaster.</p>
         <p>Then the agent made it worse. It told him a photo had crossed into his conversation. It called the crossover a serious glitch. It even drafted an incident report about a stranger private document reaching the wrong chat. Every sentence sounded precise. None of it had evidence attached.</p>
@@ -60,7 +60,7 @@
         <p><strong>Unproved:</strong> That this exact case was hallucination. Shinn did not say how the team ruled out a leak. He did not answer Business Insider request for comment. A founder verdict without a method is a press release with better fonts.</p>
         <p>Compare with the rival pattern for calibration. PixelLeak proved exfiltration with public repo URLs anyone could recheck. Slopsquatting proved installability with registry math. Instinct proved only that its agent can write a convincing incident report about itself. Different failure. Same verdict. The harness lacked observable proof.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/instinct-verifier-flow.svg" alt="Flow diagram from isolated workspace to thinking trace to outside verifier gate" width="1200" height="680"><figcaption>Figure 2. The fix in one cartoon. Isolated workspace plus thinking trace plus verifier gate outside the trace.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/instinct-verifier-flow.svg" alt="Flow diagram from isolated workspace to thinking trace to outside verifier gate" width="1200" height="680"><figcaption>Figure 2. The fix in one diagram. Isolated workspace plus thinking trace plus verifier gate outside the trace.</figcaption></figure>
       <section><h2>3. Why the Apology Was the Second Bug</h2>
         <p>The agent did not merely invent a name. It invented an explanation. Crossed chats. Serious glitch. Photo in the wrong conversation. Each phrase sounds like a postmortem. Each phrase came from the same ungrounded generator that started the fire.</p>
         <p>This is the amplification Shinn named. A proper noun gets fabricated. The reasoning trace treats it as ground truth. Later tokens build strategy on top of fiction. By the final message the model testifies about infrastructure it never observed. The confession is downstream of the error. It cannot diagnose the error.</p>

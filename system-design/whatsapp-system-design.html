@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="WhatsApp relay diagram showing Erlang gateway plus session registry plus offline inbox">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/whatsapp-system-design.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -157,7 +157,7 @@
           <tr><td>Media plus keys</td><td>110k to 210k</td><td>blob TTL, egress, directory</td></tr>
           <tr><td><strong>Total scenario</strong></td><td><strong>540k to 980k</strong></td><td><strong>18k to 33k per day</strong></td></tr>
         </tbody></table>
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/whatsapp-cost-ledger.svg" alt="A flow diagram shows phone plus gateway plus router plus transient inbox" width="1200" height="680"><figcaption>Figure 2. The ledger in one cartoon. Sockets dominate. Messages are the minority. Forgetting keeps both small.</figcaption></figure>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/whatsapp-cost-ledger.svg" alt="A flow diagram shows phone plus gateway plus router plus transient inbox" width="1200" height="680"><figcaption>Figure 2. The ledger in one diagram. Sockets dominate. Messages are the minority. Forgetting keeps both small.</figcaption></figure>
         <p>Size the socket fleet against your own concurrency with the <a href="../tools/connection-pool-calculator.html">connection pool calculator</a>.</p>
       </section>
 

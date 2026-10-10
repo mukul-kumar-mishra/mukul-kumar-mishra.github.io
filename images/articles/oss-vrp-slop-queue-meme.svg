@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Google OSS VRP pause: invalid AI-driven reports overwhelm the triage queue</title>
+  <desc id="desc">Product vulnerability reports flow into Google's Open Source VRP triage. A flood of invalid AI-generated filings buries maintainers, product intake pauses October 1 while supply-chain reports and pre-October filings continue.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="hot" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:29px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:19px;font-weight:700}.sub{font-size:14px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">AI SLOP WATCH / DISCLOSURE PIPELINE · OSS VRP · OCT 1, 2026</text>
+  <text x="58" y="105" class="head">The queue filled with almost-vulnerabilities.</text>
+  <text x="58" y="139" class="muted" font-size="18">Google paused product intake over invalid AI-driven reports. Supply-chain lane stayed open.</text>
+  <rect x="58" y="200" width="215" height="112" rx="16" class="node"/>
+  <text x="84" y="243" class="label">Report flood</text><text x="84" y="271" class="label">arrives</text>
+  <text x="84" y="295" class="sub muted">hallucinated bugs + non-issues</text>
+  <path d="M275 256H335" class="line"/>
+  <rect x="340" y="185" width="260" height="142" rx="16" class="nodehot"/>
+  <text x="365" y="227" class="label">Triage queue</text>
+  <rect x="367" y="246" width="206" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
+  <rect x="367" y="246" width="198" height="22" rx="11" fill="url(#hot)"/>
+  <text x="367" y="296" class="sub">manual validation burns hours</text>
+  <path d="M602 256H662" class="bad"/>
+  <rect x="667" y="200" width="220" height="112" rx="16" class="nodehot"/>
+  <text x="692" y="243" class="label">Product lane</text><text x="692" y="271" class="label">PAUSED Oct 1</text>
+  <text x="692" y="295" class="sub muted">restart update due Q1 2027</text>
+  <rect x="905" y="200" width="237" height="112" rx="16" class="nodesafe"/>
+  <text x="930" y="243" class="label">Supply-chain</text><text x="930" y="271" class="label">STAYS OPEN</text>
+  <text x="930" y="295" class="sub muted">pre-Oct 1 filings processed</text>
+  <rect x="58" y="380" width="540" height="76" rx="14" class="node"/>
+  <text x="83" y="412" class="label">Real bugs compete with slop for reviewer time</text><text x="83" y="438" class="sub muted">triage cost, not bounty cost, broke first</text>
+  <rect x="620" y="380" width="522" height="76" rx="14" class="node"/>
+  <text x="645" y="412" class="label">Researchers rerouted: Cloud VRP / vendor-direct</text><text x="645" y="438" class="sub muted">per secondary reporting of Google notice</text>
+  <text x="58" y="510" class="kicker">WHAT THE RECORD SHOWS</text>
+  <line x1="92" y1="570" x2="1106" y2="570" class="timeline"/>
+  <circle cx="180" cy="570" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="150" y="548" class="label" font-size="16">Oct 1</text><text x="150" y="604" class="sub muted">pause effective</text>
+  <circle cx="600" cy="570" r="10" class="tick"/><text x="565" y="548" class="label" font-size="16">Oct 4–5</text><text x="565" y="604" class="sub muted">press coverage</text>
+  <circle cx="990" cy="570" r="10" class="tick"/><text x="955" y="548" class="label" font-size="16">Q1 2027</text><text x="955" y="604" class="sub muted">update expected</text>
+  <text x="58" y="646" class="muted" font-size="14">Audit framing: pause and scope are reported; per-report AI attribution is not publicly verifiable.</text>
+</svg>

@@ -7,6 +7,7 @@
     <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="143" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/></filter>
     <style>.flow{stroke-dasharray:12 9;animation:ants 0.9s linear infinite}@keyframes ants{to{stroke-dashoffset:-21}}.pulse{animation:pulse 1.8s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}</style>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grain)"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
@@ -40,10 +41,10 @@
 <!-- Editable signature positioned above the left eyebrow -->
 
 </g>
-  </svg>
+  <g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M50 12 80 23v23c0 19-13 34-30 43C33 80 20 65 20 46V23z" fill="#e8f1f6"/><path d="m35 49 10 10 21-23" stroke="#16a34a"/></g></svg>
 <g filter="url(#roughen)"><path d="M440.4,230.9 L639.9,229.9 L639.2,351.7 L438.8,348.0 L438.4,230.3 Z" fill="#ffffff" stroke="#0f172a" stroke-width="4"/><text x="455" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#0f172a">AI SAYS</text><text x="455" y="318" font-family="monospace" font-size="18" fill="#475569"> hallucinated name</text><path d="M660.0,290.0 Q680.0,290.0 700.0,290.0" fill="none" stroke="#e11d48" stroke-width="4" class="flow"/><line x1="700.0" y1="290.0" x2="686.3" y2="296.1" stroke="#e11d48" stroke-width="4"/><line x1="700.0" y1="290.0" x2="686.3" y2="283.9" stroke="#e11d48" stroke-width="4"/><path d="M721.8,230.2 L917.7,228.7 L918.0,349.1 L719.1,352.0 L719.9,231.6 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="735" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">SQUAT</text><text x="735" y="318" font-family="monospace" font-size="18" fill="#475569">attacker registers</text><path d="M940.0,290.0 Q957.5,290.0 975.0,290.0" fill="none" stroke="#38bdf8" stroke-width="4" class="flow"/><line x1="975.0" y1="290.0" x2="961.3" y2="296.1" stroke="#38bdf8" stroke-width="4"/><line x1="975.0" y1="290.0" x2="961.3" y2="283.9" stroke="#38bdf8" stroke-width="4"/><path d="M996.5,228.1 L1123.2,232.2 L1122.5,349.7 L996.5,348.7 L996.3,231.9 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="1010" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">INSTALL</text><text x="1010" y="318" font-family="monospace" font-size="18" fill="#475569">no check</text></g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">hallucinate first.</text>
   <text x="360" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">squat second.</text>
-  <text x="1110" y="591" text-anchor="end" font-family="monospace" font-size="16" fill="#f8fafc">BY ROOK</text>
+<image x="990" y="555" width="156" height="57" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
 </svg>

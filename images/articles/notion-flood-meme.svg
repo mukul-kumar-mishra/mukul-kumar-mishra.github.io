@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen sketched meme of a grinning cat drowning in a flood of document blocks">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Two hundred billion blocks in one diagram. Every block is cheap. The flood is not.">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="113" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
     </filter>
   </defs>
+  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
   <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">The Workspace That Ate the Warehouse</text>
-  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
   <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">JUST ONE MORE BLOCK</text>
   <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">said 100 million users. nightly.</text>
   <g filter="url(#roughen)" stroke="#0369a1" stroke-width="4" stroke-linecap="round" fill="none">
@@ -38,7 +39,7 @@
 </g>
 <!-- Editable signature positioned above the left eyebrow -->
 
-</g></g></svg>
+</g></g><g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4"><ellipse cx="50" cy="23" rx="31" ry="11" fill="#e8f1f6"/><path d="M19 23v49c0 14 62 14 62 0V23M19 39c0 14 62 14 62 0M19 55c0 14 62 14 62 0"/></g></svg>
   <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" font-family="monospace" font-size="16" fill="#1e293b">
     <rect x="620" y="200" width="130" height="80" fill="#ffffff" transform="rotate(-7 685 240)"/>
     <text x="638" y="246" transform="rotate(-7 685 240)" stroke="none">block</text>

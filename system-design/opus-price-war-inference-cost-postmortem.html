@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Bar chart comparing input price per million tokens across four frontier models">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -75,7 +75,7 @@
       <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> List prices plus benchmarks follow Anthropic plus OpenAI announcements plus independent tracking Sep 22 to 29. Per-task math below is an estimate with stated assumptions. It is not any vendor invoice.</aside>
       <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Prices plus dates plus scores are as published. Effective bill modeling plus routing advice are engineering analysis. No API keys are involved.</aside>
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/opus-price-war-meme.svg" alt="Bar chart comparing input price per million tokens across four frontier models" width="1200" height="680"><figcaption>Figure 1. The price list in one cartoon. Luna at ten cents plus Sol at two dollars plus Opus at four plus Fable at ten.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/opus-price-war-meme.svg" alt="Bar chart comparing input price per million tokens across four frontier models" width="1200" height="680"><figcaption>Figure 1. The price list in one diagram. Luna at ten cents plus Sol at two dollars plus Opus at four plus Fable at ten.</figcaption></figure>
       <section><h2>1. What happened on September 22</h2>
         <p>Anthropic opened with Claude Opus 5.5, first of the 5.5 family plus first release since the pace-the-frontier call. Input $4 per million plus output $20, down from $5 plus $25. Cache reads $0.20, down from $0.50. Terminal-Bench 4.0 at 66.4 percent against 52.3 for Opus 5. GDPval at 1846 Elo. Output over 30 percent faster. Context one million plus max output 128K unchanged. Thinking stays always on with effort as the only control.</p>
         <p>About an hour later OpenAI answered with GPT-6 Sol at $2 plus $10 plus GPT-6 Luna at $0.10 plus $0.50. Both roughly half their GPT-5.6 equivalents. GPT-5.6 carries a scheduled 25 percent hike in November, which makes the GPT-6 cut deeper than half against future prices. Grok 4.7 had priced at $2 plus $6 the previous day, an undercut that survived barely twenty four hours before matching Sol on input.</p>
@@ -92,7 +92,7 @@
         <p>Two details hide in the rows. Opus 5.5 fast mode bills double at $8 plus $40 for faster output, down from $10 plus $50 on Opus 5. It runs only on the Anthropic provider with no batch combination. Cache writes cost $5 for five minutes plus $8 for one hour. LiteLLM shipped day-zero support with cost tracking, which tells you how fast proxies had to move. Pricing landed in a config reload, not a migration.</p>
         <p>Benchmarks frame the value, with the usual vendor caution. Opus 5.5 leads Terminal-Bench 4.0 plus FrontierCode plus OSWorld computer use. Astra answers on Terminal-Bench-Science at 64.6 against 58.7. Anthropic itself warns that margins at this capability level guide less than they appear to. Scores rent attention. Bills arrive monthly regardless.</p>
       </section>
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/opus-cache-flow.svg" alt="Flow diagram from list price to cached share to effective task bill" width="1200" height="680"><figcaption>Figure 2. The invoice in one cartoon. List price in plus cached share applied plus task bill out.</figcaption></figure>
+      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/opus-cache-flow.svg" alt="Flow diagram from list price to cached share to effective task bill" width="1200" height="680"><figcaption>Figure 2. The invoice in one diagram. List price in plus cached share applied plus task bill out.</figcaption></figure>
       <section><h2>3. Why cache reads decide the bill</h2>
         <p>Long agentic conversations process 90 percent plus of input tokens at cached rates. System prompts plus repo context plus tool schemas repeat every turn. Only the newest tokens bill at list. A twenty percent list cut applied to ten percent of tokens moves the total two percent. A sixty percent cache read cut applied to ninety percent moves it fifty four. The second number is the story. The first is the headline.</p>
         <p>Opus 5.5 compounds the cut with fewer tokens per task. Anthropic reports roughly 40 percent lower run cost against Opus 5 after both effects. That matches independent tracking. Day-zero proxy docs confirm the shape. Faster output plus leaner traces plus cheaper cache reads multiply instead of adding.</p>

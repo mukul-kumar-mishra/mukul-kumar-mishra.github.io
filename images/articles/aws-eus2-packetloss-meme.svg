@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">AWS EU-SOUTH-2: one AZ packet loss fans out to regional API errors</title>
+  <desc id="desc">A networking configuration change causes packet loss in eus2-az1 Spain. One Availability Zone fault elevates API latency and error rates across EC2, VPC, ELB, DynamoDB, ECS, EKS and more until the change is reverted.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="hot" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:29px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:19px;font-weight:700}.sub{font-size:14px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.bad{fill:none;stroke:#ef7970;stroke-width:4;stroke-dasharray:9 8}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">CLOUD NETWORK / CONFIG CHANGE · EU-SOUTH-2 SPAIN · OCT 4, 2026</text>
+  <text x="58" y="105" class="head">One zone lost packets. The region felt it.</text>
+  <text x="58" y="139" class="muted" font-size="18">AWS traced eus2-az1 loss to a networking change and reverted it: 08:48–11:28 PDT.</text>
+  <rect x="58" y="200" width="225" height="112" rx="16" class="node"/>
+  <text x="84" y="243" class="label">Config change</text><text x="84" y="271" class="label">deployed</text>
+  <text x="84" y="295" class="sub muted">networking plane</text>
+  <path d="M285 256H345" class="line"/>
+  <rect x="350" y="185" width="245" height="142" rx="16" class="nodehot"/>
+  <text x="375" y="227" class="label">eus2-az1 loss</text>
+  <rect x="377" y="246" width="192" height="22" rx="11" fill="#19243a" stroke="#a76954"/>
+  <rect x="377" y="246" width="180" height="22" rx="11" fill="url(#hot)"/>
+  <text x="377" y="296" class="sub">packet loss + retries</text>
+  <path d="M597 256H657" class="bad"/>
+  <rect x="662" y="185" width="250" height="142" rx="16" class="nodehot"/>
+  <text x="687" y="227" class="label">Regional APIs</text>
+  <text x="687" y="255" class="sub">EC2 · VPC · ELB · DynamoDB</text>
+  <text x="687" y="277" class="sub">ECS · EKS · Fargate · EFS · FSx</text>
+  <text x="687" y="299" class="sub muted">latency + error rates up</text>
+  <rect x="928" y="200" width="214" height="112" rx="16" class="nodesafe"/>
+  <text x="953" y="243" class="label">Revert at</text><text x="953" y="271" class="label">10:38 PDT</text>
+  <text x="953" y="295" class="sub muted">full recovery 11:28</text>
+  <rect x="58" y="380" width="540" height="76" rx="14" class="node"/>
+  <text x="83" y="412" class="label">Auto-alert 08:54 · improvement by 10:00</text><text x="83" y="438" class="sub muted">parallel mitigation paths, per AWS timeline</text>
+  <rect x="620" y="380" width="522" height="76" rx="14" class="node"/>
+  <text x="645" y="412" class="label">Redshift · SageMaker · Cognito · Step Fn</text><text x="645" y="438" class="sub muted">blast radius crossed compute + data + ML</text>
+  <text x="58" y="510" class="kicker">AWS HEALTH TIMELINE · PDT OCT 4</text>
+  <line x1="92" y1="570" x2="1106" y2="570" class="timeline"/>
+  <circle cx="140" cy="570" r="10" fill="#ed9b55" stroke="#132139" stroke-width="4"/><text x="110" y="548" class="label" font-size="16">08:48</text><text x="110" y="604" class="sub muted">loss starts</text>
+  <circle cx="470" cy="570" r="10" class="tick"/><text x="440" y="548" class="label" font-size="16">10:00</text><text x="440" y="604" class="sub muted">improving</text>
+  <circle cx="760" cy="570" r="10" class="tick"/><text x="730" y="548" class="label" font-size="16">10:38</text><text x="730" y="604" class="sub muted">revert</text>
+  <circle cx="1010" cy="570" r="10" class="tick"/><text x="980" y="548" class="label" font-size="16">11:28</text><text x="980" y="604" class="sub muted">resolved</text>
+  <text x="58" y="646" class="muted" font-size="14">Simplified from the AWS Health Dashboard timeline. Change contents were not disclosed.</text>
+</svg>

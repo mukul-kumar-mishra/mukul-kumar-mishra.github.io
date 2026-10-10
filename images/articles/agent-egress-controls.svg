@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Defense in depth for agent sandbox egress</title>
+  <desc id="desc">An agent workload is isolated below the guest kernel, sends outbound traffic through a host-controlled default-deny egress gateway with destination and DNS policy, and produces write and policy-decision telemetry for response.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10z" fill="#55718a"/></marker>
+    <style>
+      text{font-family:Inter,Arial,sans-serif;fill:#152c3c}.eyebrow{font-size:15px;font-weight:700;letter-spacing:2px;fill:#387d75}.title{font-size:34px;font-weight:700}.sub{font-size:17px;fill:#526779}.box{fill:#fff;stroke:#a8bac5;stroke-width:2}.workload{fill:#edf3f7;stroke:#8099aa;stroke-width:2}.control{fill:#e7f3f0;stroke:#559286;stroke-width:2}.gate{fill:#fff4e7;stroke:#bf7440;stroke-width:3}.label{font-size:19px;font-weight:700}.small{font-size:15px;fill:#526779}.flow{fill:none;stroke:#55718a;stroke-width:3;marker-end:url(#arrow)}.dash{stroke-dasharray:7 6}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="20" fill="#f5f7f8"/>
+  <text x="54" y="57" class="eyebrow">AGENT RUNTIME · DEFENSIVE REFERENCE ARCHITECTURE</text>
+  <text x="54" y="111" class="title">Put policy outside the workload it constrains</text>
+  <text x="54" y="145" class="sub">Isolation, outbound authorization, and response are separate controls with separate failure modes.</text>
+
+  <rect x="54" y="214" width="226" height="156" rx="14" class="workload"/>
+  <text x="78" y="253" class="eyebrow">UNTRUSTED TASK</text>
+  <text x="78" y="292" class="label">Agent process</text>
+  <text x="78" y="322" class="small">Ephemeral credentials</text>
+  <text x="78" y="345" class="small">Explicit writable paths</text>
+
+  <rect x="342" y="214" width="226" height="156" rx="14" class="box"/>
+  <text x="366" y="253" class="eyebrow">ISOLATION</text>
+  <text x="366" y="292" class="label">Kernel boundary</text>
+  <text x="366" y="322" class="small">Container is not a VM</text>
+  <text x="366" y="345" class="small">Select by threat model</text>
+
+  <rect x="630" y="214" width="268" height="156" rx="14" class="gate"/>
+  <text x="654" y="253" class="eyebrow" style="fill:#9b4f2e">HOST-CONTROLLED POLICY</text>
+  <text x="654" y="292" class="label">Default-deny egress</text>
+  <text x="654" y="322" class="small">Destination identity · DNS policy</text>
+  <text x="654" y="345" class="small">Rate limits · explicit exceptions</text>
+
+  <rect x="960" y="214" width="186" height="156" rx="14" class="control"/>
+  <text x="984" y="253" class="eyebrow">ALLOWED</text>
+  <text x="984" y="292" class="label">Named service</text>
+  <text x="984" y="322" class="small">Auth at destination</text>
+  <text x="984" y="345" class="small">No ambient access</text>
+
+  <path d="M280 292h48" class="flow"/><path d="M568 292h48" class="flow"/><path d="M898 292h50" class="flow"/>
+
+  <rect x="342" y="435" width="804" height="112" rx="14" class="control"/>
+  <text x="370" y="474" class="eyebrow">OBSERVE AND RESPOND</text>
+  <text x="370" y="505" class="label">Log principal, destination, and policy decision.</text>
+  <text x="370" y="529" class="small">Alert on unexpected writes; stop the run under your response policy.</text>
+  <path d="M764 370v52" class="flow dash"/>
+  <text x="54" y="622" class="small">Design guidance, not a claim that any single control guarantees containment.</text>
+  <image x="982" y="598" width="164" height="60" preserveAspectRatio="xMaxYMid meet" href="../logo-white.png"/>
+</svg>

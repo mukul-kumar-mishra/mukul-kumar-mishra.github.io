@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="One in five AI suggested packages never existed. Attackers squat the hallucinated names plus developers install them. Rook audits the slopsquatting supply chain that turns a model guess into a breach.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Slopsquatting: When AI Invents the Package You Install">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Bar chart showing one in five AI suggested packages is hallucinated">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Slopsquatting: When AI Invents the Package You Install", "description": "One in five AI suggested packages never existed. Attackers squat the hallucinated names plus the install becomes the intrusion. A Rook audit of the slopsquatting supply chain.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html"}, "keywords": "slopsquatting, AI hallucination, supply chain, npm, package registry, TechTarget", "image": "https://buildopsy.com/images/articles/slopsquatting-hallucination-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Slopsquatting: When AI Invents the Package You Install", "description": "One in five AI suggested packages never existed. Attackers squat the hallucinated names plus the install becomes the intrusion. A Rook audit of the slopsquatting supply chain.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/slopsquatting-ai-package-hallucination-postmortem.html"}, "keywords": "slopsquatting, AI hallucination, supply chain, npm, package registry, TechTarget", "image": "https://buildopsy.com/images/articles/slopsquatting-hallucination-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -44,7 +44,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Reported September 2026 by TechTarget from Aikido Security research plus industry interviews, with hallucination rate near one in five plus recurrence across identical prompts. This audit marks disclosed numbers plus denies vendor forbearance.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/slopsquatting-hallucination-meme.svg" alt="Bar chart showing one in five AI suggested packages is hallucinated" width="1200" height="680"><figcaption>Figure 1. The hallucination in one cartoon. One in five AI suggested packages never existed. One prompt repeat makes the fake predictable.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/slopsquatting-hallucination-meme.svg" alt="Bar chart showing one in five AI suggested packages is hallucinated" width="1200" height="680"><figcaption>Figure 1. The hallucination in one diagram. One in five AI suggested packages never existed. One prompt repeat makes the fake predictable.</figcaption></figure>
       <section><h2>1. The Hallucination</h2>
         <p>AI coding assistants suggest packages as helpfully as any teammate. The suggestion looks plausible. It matches naming conventions. It fits the stack. Sometimes the package is real. Roughly one in five times it is not. Research traced by TechTarget puts the hallucination rate near twenty percent, with the same fake name reappearing across identical prompts. Repeatability turns a random failure into an address defenders can predict plus attackers can claim.</p>
         <p>The recurrence is the hinge. Non-existent names that recur can be harvested in bulk. Probe a model with common prompts. Collect the ghosts it invents. Register those ghosts before anyone notices they are ghosts. The model does the naming. The attacker does the filing.</p>
@@ -55,7 +55,7 @@
         <p>One documented case traced by Aikido Security involved a hallucinated package name variant `react-code-shift`. The timeline is blunt. The model suggests. The attacker registers. The payload waits. The developer who runs the suggested install promotes the payload to production dependency. The privileged step in the supply chain was delegated to a system that invents names that do not exist.</p>
         <p>Registries are built for speed, not for skepticism. First claim wins. There is no check that a package was hallucinated. There is no flag that a name appeared in model output before it appeared in the registry. The registry sees a normal publish. The context is elsewhere.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/slopsquatting-supply-chain-flow.svg" alt="Flow diagram from AI suggestion to registry squat to silent install" width="1200" height="680"><figcaption>Figure 2. The supply chain in one cartoon. AI suggests, attacker squats, developer installs. The registry has no memory of intent.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/slopsquatting-supply-chain-flow.svg" alt="Flow diagram from AI suggestion to registry squat to silent install" width="1200" height="680"><figcaption>Figure 2. The supply chain in one diagram. AI suggests, attacker squats, developer installs. The registry has no memory of intent.</figcaption></figure>
       <section><h2>3. Why Verification Fails</h2>
         <p><strong>Trust is mispriced.</strong> Developers treat assistant output as review. Assistants generate output that looks reviewed. The mismatch is felt only after the install.</p>
         <p><strong>Scanners look backward.</strong> Traditional supply chain tools flag known malicious packages or known typos. Slopsquatting registers new names that have no reputation. The novelty that makes the tactic reliable is the same novelty that makes retrospective scanners blind.</p>

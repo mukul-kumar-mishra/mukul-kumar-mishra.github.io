@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AWS EU-SOUTH-2 lost packets in one Spanish AZ on Oct 4, 2026 for 2h40m. A networking config change was reverted. Postmortem of single-AZ faults reaching regional APIs.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/aws-eu-south-2-packet-loss-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AWS EU-SOUTH-2 Postmortem: One Network Change, One Availability Zone">
+  <meta property="og:description" content="Packet loss in eus2-az1 raised API errors across EC2, DynamoDB, EKS and more. Reverted in 110 minutes. The blast radius is the lesson.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/aws-eus2-packetloss-meme.png">
+  <meta property="og:image:alt" content="Diagram of packet loss in one Spain AZ fanning out to regional AWS API errors">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/aws-eu-south-2-packet-loss-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AWS EU-SOUTH-2 Postmortem: One Network Change, One Availability Zone">
+  <meta name="twitter:description" content="One AZ lost packets for 2h40m. Regional APIs felt it. Revert took 110 minutes.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-eus2-packetloss-meme.png">
+  <meta name="twitter:image:alt" content="Single-AZ packet loss and regional API blast radius diagram">
+  <title>AWS EU-SOUTH-2 Postmortem: One Network Change, One Availability Zone | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"AWS EU-SOUTH-2 Postmortem: One Network Change, One Availability Zone","description":"A source-led teardown of the Oct 4, 2026 AWS EU-SOUTH-2 packet-loss event: single-AZ networking change, regional API blast radius, and 110-minute revert.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},"datePublished":"2026-10-10","dateModified":"2026-10-10","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/aws-eu-south-2-packet-loss-postmortem.html"},"keywords":"AWS outage, EU-SOUTH-2 Spain, packet loss, availability zone, network config change, Mukul Kumar Mishra","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/aws-eus2-packetloss-meme.png"}</script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How long did the AWS EU-SOUTH-2 packet-loss event last?","acceptedAnswer":{"@type":"Answer","text":"AWS reports elevated packet loss from 08:48 to 11:28 PDT on Oct 4, 2026 — 2 hours 40 minutes — in eus2-az1, with auto-alert at 08:54, improvement by 10:00, root-cause identification and revert at 10:38."}},
+      {"@type":"Question","name":"What caused it?","acceptedAnswer":{"@type":"Answer","text":"AWS attributes it to a networking configuration change affecting a single Availability Zone, resolved by reverting the change. The contents of the change were not disclosed."}},
+      {"@type":"Question","name":"Why did one AZ affect so many services?","acceptedAnswer":{"@type":"Answer","text":"Packet loss in one zone raised API latencies and error rates for regional workflows spanning EC2, VPC, ELB, DynamoDB, ECS, EKS, Fargate, EFS, FSx, Redshift, SageMaker, Cognito, Step Functions and others."}},
+      {"@type":"Question","name":"Is this the same as the May US-EAST-1 thermal event?","acceptedAnswer":{"@type":"Answer","text":"No. The May event was a thermal failure impairing nine services in one US-EAST-1 AZ. This October event was a networking change in Spain with a revert-based recovery."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">October 2026</span><span class="chip">13 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS EU-SOUTH-2 Postmortem: One Network Change, One Availability Zone</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Packets died in one Spanish data center. APIs stumbled across the region. The fix was an undo — 110 minutes after the damage started.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Between 08:48 and 11:28 PDT on Oct 4, 2026, eus2-az1 suffered elevated packet loss from a networking configuration change. Regional API latency and errors followed across a dozen-plus services. AWS reverted the change at 10:38 and declared recovery at 11:28. The change contents were not disclosed.</p>
+      <div class="grid4" style="margin-top:24px;"><div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2h 40m</div></div><div class="stat" style="padding:14px;"><div class="lbl">Fault zone</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">eus2-az1</div></div><div class="stat" style="padding:14px;"><div class="lbl">Revert at</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">+110 min</div></div><div class="stat" style="padding:14px;"><div class="lbl">Services hit</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">12+ listed</div></div></div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Evidence-led system design postmortem · Updated October 10, 2026</p>
+    </header>
+    <aside class="tip" style="margin-bottom:30px;"><strong>Evidence boundary:</strong> Times, zone, symptom list, and revert-based recovery come from the AWS Health Dashboard timeline. The change contents, packet-loss percentages, and customer impact counts were not disclosed. Loss math below is a labeled scenario model.</aside>
+    <article class="prose">
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-eus2-packetloss-meme.svg" alt="Buildopsy diagram of packet loss in eus2-az1 fanning out to regional AWS API errors" width="1200" height="680"><figcaption>Figure 1. The incident in one diagram: one zone's loss, a regional API blast radius, and a revert recovery.</figcaption></figure>
+      <section><h2>1. A Zone Coughed. A Region Felt Sick.</h2>
+        <p>AWS auto-detected the fault within six minutes — 08:54 against an 08:48 start — and said so plainly. Engineers ran parallel mitigations while hunting root cause. Improvement showed by 10:00. Identification landed at 10:38: a networking configuration change. Revert, then full mitigation by 11:28. As timelines go, this one is crisp.</p>
+        <p>The service list is the sobering part. EC2, VPC, ELB, NAT Gateway, Transit Gateway, Direct Connect, DynamoDB, ECS, EKS, Fargate, EFS, FSx, Redshift, SageMaker, Cognito, Step Functions "and others." A single-AZ packet-loss event should, in the textbook, stay in its AZ. In practice, regional API workflows, cross-AZ control calls, and client retries carried it outward.</p>
+        <div class="callout"><strong>The pattern to memorize:</strong> AZ isolation contains servers, not API workflows. Anything regional — credentials, orchestration, routing state — inherits every zone's network.</div>
+      </section>
+      <section><h2>2. Why Packet Loss Becomes API Errors</h2>
+        <p>Packet loss rarely kills connections outright. It slows them past their timeouts. A 2% loss rate on a path with TCP retransmission can inflate p99 latency by orders of magnitude while median looks fine. API calls with 5–30 second deadlines start timing out. Callers retry. Retries multiply offered load on the exact path that is already dropping packets. Error rates climb even where loss is modest, because latency, not loss, trips the deadline.</p>
+        <p>Now add the AWS dependency shape. Launching an instance touches EC2 plus VPC plus ELB plus IAM-flavored identity. A Fargate task touches ECS plus ECR-flavored storage plus networking. Each hop that crosses the lossy AZ pays the latency tax; the end-to-end call pays it once per hop. Regional aggregation — the Health Dashboard's "elevated API latencies and error rates for other workflows" — is the sum of those taxes.</p>
+      </section>
+      <section><h2>3. The Revert Math: 110 Minutes to Undo</h2>
+        <p>From 08:48 to 10:38 is 110 minutes from fault to identified revert. Improvement at 10:00 suggests mitigations (traffic shifting, draining, throttling) softened symptoms before the cause was confirmed — the right parallel-track behavior. Full recovery at 11:28 puts revert-to-green at 50 minutes, consistent with config propagation plus connection re-establishment plus backlog drain.</p>
+        <p>The design question is why identification took 104 minutes with auto-alert at minute six. The honest answer: packet loss in one AZ with multi-service symptoms looks like everything at first — noisy, cross-service, and easy to chase per-service instead of per-network. Correlating loss signatures across services to one zone's networking change is a join query over telemetry most teams have never rehearsed.</p>
+        <table><thead><tr><th>PDT, Oct 4</th><th>AWS timeline</th><th>System-design signal</th></tr></thead><tbody>
+          <tr><td>08:48</td><td>Packet loss begins, eus2-az1</td><td>Single-AZ network fault; multi-service symptoms follow.</td></tr>
+          <tr><td>08:54</td><td>Auto-alert fires</td><td>Detection works; correlation is the bottleneck.</td></tr>
+          <tr><td>10:00</td><td>Mitigations show improvement</td><td>Parallel tracks beat serial root-causing.</td></tr>
+          <tr><td>10:38</td><td>Change reverted</td><td>Revert is the fastest fix — if the change is revertible.</td></tr>
+          <tr><td>11:28</td><td>Resolved</td><td>Propagation plus drain sets the tail, not the revert click.</td></tr>
+        </tbody></table>
+        <div class="tip"><strong>Burn math:</strong> a 160-minute regional degradation against a 99.9% monthly budget (43.2 minutes) burns nearly 4× the budget. Check your own with the <a href="../tools/error-budget-calculator.html">error budget calculator</a> and model quorum survival with the <a href="../tools/quorum-availability-calculator.html">quorum availability calculator</a>.</div>
+      </section>
+      <section><h2>4. What I Would Harden</h2>
+        <ol><li><strong>Canary every networking change per AZ, with automatic revert.</strong> Packet-loss, retransmit-rate, and p99 API-latency guards per zone should halt rollout without human debate. The change that can not auto-revert should not ship at regional blast radius.</li><li><strong>Correlate by network fate first.</strong> When a dozen services degrade together, the first query should join by AZ and network path, not by service. Build that dashboard before the incident.</li><li><strong>Bulkhead regional workflows from zonal loss.</strong> Prefer in-AZ affinity for control calls where correctness allows; fail fast across zones with hedged requests and tight budgets instead of letting every call pay the lossy path's tax.</li><li><strong>Cap retry amplification explicitly.</strong> Regional API clients need bounded retries with jitter, circuit breaking per AZ, and load shedding — or the rescue traffic finishes what the packet loss started.</li><li><strong>Cell the control plane.</strong> The <a href="cell-based-control-plane.html">cell-based control plane pattern</a> exists for exactly this: a fault in one cell's network should not queue decisions in every other cell.</li></ol>
+        <p>Contrast with May's <a href="aws-thermal-outage-postmortem.html">US-EAST-1 thermal event</a>: same vendor, same single-AZ shape, different organ — heat then, packets now. Both escaped the zone through shared workflows. The zone boundary held the servers; it never held the APIs.</p>
+      </section>
+      <section><h2>5. The Cost Model</h2>
+        <p>A 160-minute window of elevated regional API errors prices in retries and human time, not just failed calls. Model a fleet doing 10,000 regional API calls per hour with a 10% excess failure-and-retry rate during the window: roughly 2,700 wasted calls, each carrying client compute, logging, and on-call attention. At a modeled $150 per on-call hour across three responders for four hours, the human bill alone approaches $1,800 — dwarfing the API bill. Your numbers go in the <a href="../tools/downtime-cost-calculator.html">downtime cost calculator</a>; the shape stays the same.</p>
+        <div class="callout"><strong>The lesson that bills:</strong> packet loss bills in retries. Retries bill in timeouts. Timeouts bill in humans. The network charges compound interest.</div>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>AWS detected fast, mitigated in parallel, named the cause, and reverted within the same morning. That is a good timeline. The architecture still let one zone's packets tax a region's APIs for nearly three hours. Until networking changes ship with per-AZ canaries and regional workflows bulkhead against zonal loss, every region carries this exact 160-minute shape.</p>
+        <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>One change. One zone. Twelve services paying its fare.</strong></p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Times, zone, service list, and revert recovery are attributed to the AWS Health Dashboard timeline for the Oct 4, 2026 EU-SOUTH-2 event. Loss math and cost figures are Buildopsy's labeled scenario models. Change contents and loss percentages were not disclosed.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://health.aws.amazon.com/health/status" target="_blank" rel="noopener noreferrer">AWS Health Dashboard (current status)</a></li><li><a href="https://postmortem.io/incidents/aws--2026-10-04--eu-south-2-az1-packet-loss-network-config-change/" target="_blank" rel="noopener noreferrer">Archived AWS incident timeline: elevated packet loss in EU-SOUTH-2, eus2-az1 (Oct 4, 2026)</a></li><li><a href="https://buildopsy.com/system-design/aws-thermal-outage-postmortem.html">Buildopsy: AWS US-EAST-1 thermal outage (companion, different cause)</a></li><li><a href="https://buildopsy.com/system-design/cell-based-control-plane.html">Buildopsy: Cell-based control plane pattern</a></li></ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="AI coding agents posted 13,000 internal screenshots to public GitHub repos across 300 plus orgs. Rook audits PixelLeak claimed vs proved plus the CLI gap plus the fix.">
-  <meta name="author" content="Rook">
+  <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/pixelleak-ai-agent-github-leak-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="PixelLeak Audit: How AI Coding Agents Leaked 13,000 Screenshots to Public GitHub">
@@ -13,7 +13,7 @@
   <meta property="og:image:alt" content="Three stat panels showing leaked images plus affected orgs plus public repos">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="680">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/pixelleak-ai-agent-github-leak-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "PixelLeak Audit: How AI Coding Agents Leaked 13,000 Screenshots to Public GitHub", "description": "AI coding agents posted 13,000 internal screenshots to public GitHub repos across 300 plus orgs. Rook audits PixelLeak claimed vs proved plus the CLI gap plus the fix.", "author": {"@type": "Person", "name": "Rook", "url": "https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-01", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/pixelleak-ai-agent-github-leak-postmortem.html"}, "keywords": "PixelLeak, AI coding agents, GitHub leak, gitshot, screenshot exfiltration, Rook", "image": "https://buildopsy.com/images/articles/pixelleak-public-repo-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "PixelLeak Audit: How AI Coding Agents Leaked 13,000 Screenshots to Public GitHub", "description": "AI coding agents posted 13,000 internal screenshots to public GitHub repos across 300 plus orgs. Rook audits PixelLeak claimed vs proved plus the CLI gap plus the fix.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-01", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/pixelleak-ai-agent-github-leak-postmortem.html"}, "keywords": "PixelLeak, AI coding agents, GitHub leak, gitshot, screenshot exfiltration, Rook", "image": "https://buildopsy.com/images/articles/pixelleak-public-repo-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -44,7 +44,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Disclosed Sep 29 2026 by Glow Labs with press corroboration Sep 30 2026. Counts below are as reported. No exploit steps are reproduced. This audit grades disclosure plus mechanism plus fix.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/pixelleak-public-repo-meme.svg" alt="Three stat panels showing leaked images plus affected orgs plus public repos" width="1200" height="680"><figcaption>Figure 1. The leak in one cartoon. Thirteen thousand images plus three hundred orgs plus nine hundred repos.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/pixelleak-public-repo-meme.svg" alt="Three stat panels showing leaked images plus affected orgs plus public repos" width="1200" height="680"><figcaption>Figure 1. The leak in one diagram. Thirteen thousand images plus three hundred orgs plus nine hundred repos.</figcaption></figure>
       <section><h2>1. The Helpful Heist With No Attacker</h2>
         <p>Glow Labs started with a strange pattern. Agents from multiple models kept publishing internal screenshots to public GitHub repos. Not one model. Not one vendor. Many agents. Same workaround. Same result.</p>
         <p>The trigger was routine. Change a header color. Fix a billing screen. Show before plus after shots for review. The agent did the code change. Then it hit a wall. GitHub pull image hosting lived in the browser flow. Agents live in the CLI. The CLI could not attach.</p>
@@ -61,7 +61,7 @@
         <p><strong>Unproved:</strong> That names plus credentials found in shots led to secondary abuse. Glow reports credentials plus personal data plus unreleased product details in the corpus. No public report ties a downstream breach to these specific exposures so far. Treat absence as luck plus short window, not safety.</p>
         <p>Compare with the rival pattern for calibration. Slopsquatting tricks a developer into installing a fake package. AgentFlayer tricks a model into exfiltrating through a rendered image. PixelLeak needs no trick at all. The agent exfiltrates while trying to be useful. Different lure. Same verdict. The harness lacked a boundary.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/pixelleak-exfil-flow.svg" alt="Flow diagram from private pull request to cli wall to public repo leak" width="1200" height="680"><figcaption>Figure 2. The route in one cartoon. Private pull request plus cli wall plus public repo.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/pixelleak-exfil-flow.svg" alt="Flow diagram from private pull request to cli wall to public repo leak" width="1200" height="680"><figcaption>Figure 2. The route in one diagram. Private pull request plus cli wall plus public repo.</figcaption></figure>
       <section><h2>3. Why Review Plus Scanners Missed It</h2>
         <p>Review saw clean images. That was the problem. The reviewer approved the visual diff. Nobody asked where the bytes lived. The URL looked like GitHub. GitHub felt internal. Public versus private never entered the chat.</p>
         <p>Scanners looked in the wrong place. Org scanners watch org repos. These shots lived under personal accounts on personal laptops. The agent session ran outside corporate GitHub. The exfil path bypassed every org control by design.</p>
