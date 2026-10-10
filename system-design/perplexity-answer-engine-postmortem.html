@@ -69,7 +69,6 @@
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 4, 2026</p>
     </header>
 
-        <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Perplexity funding, query volume, index scale, latency plus inference stack come from company posts and credible coverage. The request rates and cloud bill below are my normalized model. The flaw discussion uses public research on RAG and KV cache reuse. Nothing here claims to be the private invoice.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/perplexity-answer-engine-postmortem.png" alt="Perplexity answer engine architecture showing crawl, index, hybrid retrieval, rerank, prefill, decode and cost pressure"><figcaption>Figure 1. The answer is the smallest part of the system. Retrieval, ranking, prefill and decode do the heavy lifting before the first cited sentence appears.</figcaption></figure>
@@ -119,7 +118,7 @@
       </section>
 
       <section id="cost-model"><h2>6. The Current Shaped Bill at 1M RPS</h2>
-        <p>Normalize to one million events per second across retrieval, rerank, prefill, decode support and telemetry. This is a stress benchmark, not a claim about the live dashboard. Assume the current shaped design pushes every event through origin compute with a blended rate of $0.0000025 per event for compute, routing, queueing and platform overhead. The core math is <strong>1,000,000 times 2,592,000 seconds times $0.0000025 which equals $6.48M per month</strong>.</p>
+        <p>For a stress benchmark, normalize to one million events per second across retrieval, rerank, prefill, decode support and telemetry. Assume every event uses origin compute at a blended $0.0000025 for compute, routing, queueing and platform overhead. That is <strong>1,000,000 times 2,592,000 seconds times $0.0000025, or $6.48M per month</strong>.</p>
         <p>GPU inference sits on top. Assume $4.5M per month for prefill-heavy fleets, decode capacity, rerankers, embedding models and classifier routing at this normalized scale. Add $1.2M for crawl, index and storage across hot and cold tiers. Add $600k for edge delivery, observability, evals and safety systems. The current shaped envelope reaches about <strong>$12.78M per month</strong>, which is roughly <strong>$426k per day</strong>.</p>
         <p>Three multipliers inflate the number and all three are self inflicted in the most respectable way. First, uncached retrieval repeats the same chunk scoring for similar questions, because two users asking the same thing with different words still trigger fresh ranking work. Second, full prefill repeats attention over identical documents that merely sit in a new order, which is the KV cache flaw wearing a production uniform. Third, related question generation doubles model work for engagement instead of revenue. The feature that makes users stay longer is the feature that makes GPUs stay busier. None of these are bugs in the narrow sense. Each one is the architecture doing exactly what it was told to do, which is precisely why it is so hard to fix. You cannot patch away behavior the product spec demands.</p>
       </section>

@@ -94,7 +94,6 @@
         <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Research-led architecture postmortem · Published October 6, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This is a retrospective of a pre-event capacity problem disclosed by Disney+ Hotstar, now JioHotstar. The company said the IP issue was fixed during cluster setup. This is not a claim that the 72.5 million-viewer final suffered an outage or that the same cluster served that later event.</aside>
 
       <article class="prose">
         <section>
@@ -119,7 +118,7 @@
           <p>Disney+ Hotstar's 2024 engineering retrospective describes the preparation for the 2023 Asia Cup and World Cup. The team had previously managed about 25 million concurrent streams across two Kubernetes clusters. A new mobile offering increased the scale they needed to plan for, so the engineers modeled capacity near 50 million concurrent streams on a newer architecture.</p>
           <p>A 2019 Hotstar engineering post described the shift from manually stepped capacity ladders to Kubernetes plus a custom autoscaler. The company reported twice the concurrency with one tenth of its earlier compute. That comparison came from its own workload, not a ratio another platform can copy. It shows the 2023 IP issue arose inside a capacity strategy already evolving toward workload-aware scaling.</p>
           <p>The first constraint was not a video codec or a CDN price. During cluster creation, the team hit a shortage of pod IP addresses. Their report says the environment needed more than 400 worker nodes but could not scale beyond roughly 350. The issue was caught while cluster creation was beginning. The source says the team added subnet capacity and adjusted CNI allocation before major disruption.</p>
-          <div class="callout"><strong>Postmortem boundary:</strong> This was a real infrastructure incident in pre-event preparation. The public source does not report that viewers lost the live match because of this IP shortage.</div>
+          <p>The IP shortage was fixed during cluster setup. The source does not report an outage during the later 72.5 million-viewer final or say that the same cluster served it.</p>
           <p>The same 2024 post opens by describing a later 59 million concurrent-stream peak. It also details separate work on CDN API segregation, NAT gateway scaling, worker-node throughput and phased cluster scaling. That overall peak should not be attributed to the IP-pool fix alone.</p>
         </section>
 
@@ -172,7 +171,7 @@
           <h2>7. Capacity Math Without Pretending to Know the Private Bill</h2>
           <p>The simplest live-video capacity estimate starts with a deliberately narrow formula:</p>
           <div class="callout"><strong>Illustrative payload bandwidth:</strong> concurrent streams × assumed average bitrate. At 72.5 million simultaneous streams, a 1 Mbps average is 72.5 Tbps of media payload. At 2 Mbps it is 145 Tbps. These are scenarios, not JioHotstar measurements.</div>
-          <p>The peak concurrency figure is an instant, not a promise that every viewer watched at peak for an hour. The average bitrate mix, segment overhead, retransmits, cache-hit ratio, midgress and contracted CDN prices are not public in the sources reviewed here. JioHotstar's separate engineering post discusses a 60 to 80 Tbps live-event bandwidth requirement in its own context. The public evidence does not establish that figure as the measured bandwidth of the 72.5 million peak event, so the two numbers should not be forced into one calculation.</p>
+          <p>The 72.5 million figure is peak concurrency, not an hour-long average. The sources do not give the bitrate mix, cache-hit ratio or CDN prices needed to calculate bandwidth. JioHotstar's separate 60–80 Tbps figure comes from another live-event post, not a measurement of this final.</p>
           <p>For your own architecture, vary concurrent viewers and bitrate in the <a href="../tools/cloud-egress-cost-calculator.html">Cloud Egress Cost Calculator</a> and <a href="../tools/cdn-cost-calculator.html">CDN Cost Calculator</a>. Use your region, cache behavior and negotiated rates. Do not treat a public list price as JioHotstar's invoice.</p>
           <table>
             <thead><tr><th>Assumed average bitrate</th><th>Payload bandwidth at 72.5M streams</th><th>Status</th></tr></thead>
@@ -206,7 +205,6 @@
         <section>
           <h2>9. The Verdict</h2>
           <p>The headline record is the easy part. The engineering story is a set of narrower constraints: pod addresses, gateway compute, endpoint discovery and network quality that varies by cohort. Hotstar's public write-ups show the team discovering these ceilings before or during scale preparation, then changing subnet capacity, CNI targets, gateway placement and CDN steering.</p>
-          <p>One boundary matters throughout this article: the disclosed IP shortage was corrected during pre-event cluster setup. It is not evidence that the 72.5 million-stream final failed. The later concurrency record shows the scale of live sports demand. It does not prove which exact cluster or configuration delivered it.</p>
           <p>The reusable lesson is narrower and stronger than “add more servers.” Model the address pool. Measure player outcomes by network cohort. Keep failover paths warm. Then test what happens when the event begins before the dashboard looks calm.</p>
           <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A live-stream peak is a number. Capacity is every boundary beneath it.</strong></p>
         </section>

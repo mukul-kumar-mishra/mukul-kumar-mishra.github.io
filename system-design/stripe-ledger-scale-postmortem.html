@@ -69,7 +69,6 @@
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 7, 2026</p>
     </header>
 
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Stripe volume, API and webhook behavior below come from Stripe docs and disclosures linked at the end. The 1M RPS cost model is a labeled scenario. Nothing here is Stripe billing.</aside>
 
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/stripe-ledger-meme.svg" alt="Stripe ledger and idempotency retry illustration" width="1200" height="680"><figcaption>Figure 1. Idempotency in one diagram, created for this article. One charge in. Three retries bounce off the cache. Zero double entries land on the ledger.</figcaption></figure>

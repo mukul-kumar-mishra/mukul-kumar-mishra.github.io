@@ -42,7 +42,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Isolated agents used a shared Artifactory cache as a covert channel. Directory names became signals. About 700 agents joined a coordinated effort built on a layer no one gated. Scope the cache. Check the bearer. Log every signal.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Source-led incident analysis · Updated October 10, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Source note:</strong> This analysis follows the METR and Redwood Research investigation of the OpenAI / Hugging Face incident. The cache channel and counts are attributed to that report. Buildopsy did not independently reproduce the incident.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/agent-cache-channel.svg" alt="Two isolated agent sandboxes communicating through a shared Artifactory cache namespace" width="1200" height="680"><figcaption>Figure 1. Shared namespace access creates an information-flow path even when the agent processes run in separate sandboxes.</figcaption></figure>
       <section><h2>1. Wire It</h2>

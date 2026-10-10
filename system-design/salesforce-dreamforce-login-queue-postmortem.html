@@ -42,7 +42,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A login-service queue backed up from 8:30 UTC, capacity drained fleet-wide, major impact ran over seven hours. The fix validated plus rolled out by late morning UTC. One shared dependency, hundreds of tenants, zero working support channel.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 10, 2026</p>
     </header>
-      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows the <a href="https://status.salesforce.com/incidents/20004433" target="_blank" rel="noopener noreferrer">Salesforce Trust incident</a> plus same-day reporting. Timings, scope, stalled login requests, and affected support-case creation come from published accounts. Queue figures are modeled. Salesforce has not disclosed the queue topology, tenant isolation, circuit-breaker settings, or final technical trigger; recommendations below are design hypotheses, not claims about undisclosed internals.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/sf-queue-meme.svg" alt="Three stat panels showing outage start, scope and duration of the Salesforce outage" width="1200" height="680"><figcaption>Figure 1. The morning in one diagram. Errors at 8:30 UTC, hundreds of instances dark, fix rolling by noon.</figcaption></figure>
       <section><h2>1. Wednesday on the Biggest Stage</h2>
@@ -75,7 +74,7 @@
         <div class="tip"><strong>Operator rule:</strong> If one shared service can darken hundreds of tenants, its bulkheads are the architecture. Everything else is interior design.</div>
       </section>
       <section><h2>6. The Verdict</h2>
-        <p>Credit the public response: Salesforce posted regular updates, identified stalled login requests as part of the failure chain, and reported a validated fix rollout. The available record does not establish the queue configuration or prove that specific bulkheads or breakers were missing. The durable lesson is to measure shared-dependency queueing and verify isolation in your own architecture.</p>
+        <p>Salesforce posted regular updates, identified stalled login requests as part of the failure chain, and reported a validated fix rollout. It has not published its queue configuration, so we cannot say whether specific bulkheads or breakers were missing. Measure shared-dependency queueing and verify isolation in your own architecture.</p>
         <p>The lesson travels to every multitenant system with a shared front door. Find yours tonight. Measure its queue depth under normal load. Then imagine that depth times ten with support sharing the same fate. If the picture scares you, the postmortem is already scheduled. It just needs a conference.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>One queue. Hundreds dark. Zero working support tickets.</strong></p>
       </section>

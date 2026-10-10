@@ -42,7 +42,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Razorpay rebuilt UPI payments around Kafka and learned that partitions tax brokers, connectors route poorly, plus IAM caps connections at 3,000 per broker. Swapping the client library cut publish latency from 250ms to 10ms.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 11, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows Razorpay Engineering's September 2026 five-year retrospective. Architecture details plus numbers come from the published account. Cost figures are modeled from public AWS pricing.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/razorpay-kafka-meme.svg" alt="Kafka partitions exploding past a connection cap at Razorpay scale" width="1200" height="680"><figcaption>Figure 1. The Switch in one diagram. SQS to Serverless to provisioned. One client swap cut latency 25x.</figcaption></figure>
       <section><h2>1. The Switch That Outgrew Every Queue</h2>

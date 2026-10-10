@@ -80,9 +80,7 @@
         <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 1, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Google's final report describes network isolation in specific clusters in two zones. The affected area was not the whole us-central1 region. Numbers and the timeline below come from the primary incident report unless explicitly marked as analysis.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Incident facts follow Google's September 10 incident report and September 29 addendum. Recommendations are engineering analysis. Google does not publish queue-depth or retry-amplification measurements for this event, so this article does not assign it modeled incident telemetry or financial loss.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Summary of Google's GCP outage report: two affected zones, a 4 hour 11 minute incident window and fiber paths disconnected during maintenance" width="1200" height="680"><figcaption>Figure 1. Google's report records fiber isolation in parts of two zones, with an incident window of 4 hours 11 minutes.</figcaption></figure>
@@ -108,7 +106,7 @@
           <li><strong>09:19:</strong> diversion actions were removed as network capacity recovered.</li>
           <li><strong>11:52:</strong> Google confirmed recovery across nearly all affected services and long-running operations.</li>
         </ul>
-        <p>The 4-hour-11-minute figure is Google's incident window, not a claim that every listed product was continuously unavailable for that entire period. The report describes different impact windows by product and workload.</p>
+        <p>Google's 4-hour-11-minute figure is the incident window. Individual products and workloads had different impact periods.</p>
       </section>
 
       <section><h2>4. Resilience lessons supported by the evidence</h2>
@@ -119,7 +117,7 @@
       </section>
 
       <section><h2>5. The verdict: make maintenance stoppable</h2>
-        <p>This incident was not evidence that multi-zone design failed everywhere. Google's report says unaffected zones allowed many multi-zonal workloads to continue. It was evidence that routine maintenance can defeat physical redundancy when a procedure permits multiple paths to be removed before verification.</p>
+        <p>Google reported that workloads in unaffected zones continued to run. The incident shows how routine maintenance can defeat redundancy when a procedure removes multiple paths before checking the result.</p>
         <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
         <p>For comparison, see the distinct storage event in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>. Its failure mechanism and reported scope differ from this network-maintenance incident.</p>
       </section>

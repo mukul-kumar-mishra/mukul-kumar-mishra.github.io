@@ -69,7 +69,6 @@
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 4, 2026</p>
     </header>
 
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Cursor pricing, Claude Code limits, context windows and caching behavior below come from official docs and help centers linked at the end. The productivity math and the 1M turn cost model are mine. Nothing here claims to be a vendor invoice.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/cursor-claude-token-exhaustion-postmortem.png" alt="Cursor versus Claude Code token exhaustion showing prompt, tool outputs, context window stages, compaction, cache TTL and cost per task" width="1736" height="906"><figcaption>Figure 1. The session lifecycle in one image. Fresh context bloats, rots, gets compacted into a fragment and meets the cap while cost per task climbs.</figcaption></figure>
@@ -142,7 +141,7 @@
 
       <section><h2>7. Proof of Work: Runnable Cost Model</h2>
         <p>Here is the exact cost model used in section 6. Copy paste run in any Python 3 environment and verify the 1M turn totals match the table.</p>
-        <script type="text/javascript">
+        <pre><code class="language-python">
           // cost model: 1M turns current vs proposed
           // each turn: 80K input tokens, 70K cache at $0.30/mi, 10K fresh at $3/mi, 1.5K output at $15/mi
           // cache read cost: 70K/1M * 0.30 = 0.021
@@ -160,7 +159,7 @@
           print(f"Current: ${current_total:,.0f} per month")
           print(f"Proposed: ${proposed_total:,.0f} per month")
           print(f"Savings: ${savings:,.0f} per month")
-        </script>
+        </code></pre>
         <p>The script above produces the same numbers as the table. If your run produces different values the arithmetic basis is in the comments and you can adjust the per turn constants.</p>
       </section>
 
@@ -189,7 +188,7 @@
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Pricing, limits, context windows, caching and compaction behavior come from official docs and help centers linked below. Productivity rates and the 1M turn model are my normalized scenario math, not vendor invoices. Research findings on compaction and context rot are summarized from public studies.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Product limits, pricing and context behavior are drawn from the official docs linked below. Cost figures model one million turns using the assumptions in the analysis; research on compaction and context rot is linked separately.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://cursor.com/docs/models-and-pricing" target="_blank" rel="noopener noreferrer">Cursor Docs: Models and Pricing</a></li>
           <li><a href="https://cursor.com/pricing" target="_blank" rel="noopener noreferrer">Cursor: Pricing Plans</a></li>

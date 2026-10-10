@@ -84,7 +84,6 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the cascade analysis plus the coordinator math: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>. This postmortem answers how the protocol works, why it cascades plus how to configure it.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Protocol behavior follows Apache Kafka documentation plus KIPs. Scenario numbers illustrate a labeled model from the companion teardown, not a claimed company incident. Replace my assumptions with your telemetry wherever they differ.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer group rebalance diagram showing rolling deploy, coordinator, eager versus cooperative assignment" width="1200" height="680"><figcaption>Figure 1. One restart in, every partition reassigned. The protocol is correct. The defaults are not.</figcaption></figure>
@@ -138,7 +137,7 @@
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Protocol facts come from Apache Kafka documentation plus KIPs. Scenario numbers illustrate the labeled model from the companion teardown, not a claimed company incident. For the complete cascade analysis, see <a href="kafka-rebalance-storm-postmortem.html">the full postmortem</a>.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Protocol details come from Apache Kafka documentation and KIPs. The scenario model is explained in <a href="kafka-rebalance-storm-postmortem.html">the companion teardown</a>.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://kafka.apache.org/documentation/#consumerconfigs" target="_blank" rel="noopener noreferrer">Apache Kafka documentation: consumer configuration (session timeouts, poll interval, static membership)</a></li>
           <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-429%3A+Kafka+Consumer+Incremental+Rebalance+Protocol" target="_blank" rel="noopener noreferrer">KIP-429: Kafka Consumer Incremental Rebalance Protocol</a></li>

@@ -84,7 +84,6 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete RPS tables plus the 1M RPS thought experiment: <a href="figma-multiplayer-cost-postmortem.html">Figma's Multiplayer Editor: The Server That Decides Who Wins</a>. This postmortem answers how the system works, what each part costs plus what to steal.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Figma's protocol plus infrastructure decisions come from its engineering posts and public filings. RPS and cost figures are a labeled scenario model from the companion teardown. Replace my assumptions with your telemetry wherever they differ.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/figma-home-architecture.svg" alt="High-resolution Figma multiplayer architecture: browser clients send edits through WebSockets to one document owner, which orders mutations and records durable revisions" width="2400" height="1260"><figcaption>Figure 1. One document owner orders accepted edits and persists the shared state; presence updates remain transient.</figcaption></figure>

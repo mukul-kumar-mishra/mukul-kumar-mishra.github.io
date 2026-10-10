@@ -43,7 +43,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A wrong feature file propagated network-wide and spiked errors across Cloudflare infrastructure. Storage shared the proxy's fate until engineers cut it loose. Decouple data paths from control paths.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 11, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows Cloudflare's published incident account plus independent reporting. Tracker tallies are attributed to their publishers. Cost figures are modeled from public pricing.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/cloudflare-edge-meme.svg" alt="One bad config file taking down a global edge network" width="1200" height="680"><figcaption>Figure 1. The edge in one diagram. One wrong file loaded everywhere. Storage fell with the proxy. The bypass became the architecture.</figcaption></figure>
       <section><h2>1. November: Every Server, Same Mistake</h2>

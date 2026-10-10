@@ -84,7 +84,6 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete workload tables plus the 1M RPS test: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>. This postmortem answers how the system works, where the money goes plus what to steal.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact and what is math?</strong> Block counts, shard layout plus vector costs come from Notion engineering plus company posts. Workload and bill figures are a labeled scenario model from the companion teardown. Replace my assumptions with your telemetry wherever they differ.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-architecture-guide.svg" alt="Notion system design diagram showing clients, API, Postgres shards, Kafka CDC, lake, search plus vector tiers" width="1200" height="680"><figcaption>Figure 1. One block in, six workloads out. The art of Notion architecture is giving each workload its own home.</figcaption></figure>

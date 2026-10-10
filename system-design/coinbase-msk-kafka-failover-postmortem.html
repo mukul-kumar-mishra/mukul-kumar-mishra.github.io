@@ -82,7 +82,6 @@
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> compare the managed-service failure with the consumer deployment cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>. The mechanisms differ: this incident concerns AWS MSK's control plane, not a consumer rebalance storm.</aside>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>What is fact plus what is analysis?</strong> Timeline and failure details come from Coinbase's June 1 postmortem. This revision removes broker, replication and loss figures that the primary account does not establish. Recommendations are engineering analysis, not Coinbase telemetry.</aside>
 
       <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/coinbase-msk-failover-meme.svg" alt="Three sourced Coinbase outage facts: three of five matching-engine nodes lost, two MSK clusters stuck healing and trading resumed at 3:49 AM ET" width="1200" height="680"><figcaption>Figure 1. The provider event and two separate recovery failures, using figures in Coinbase's incident postmortem.</figcaption></figure>
@@ -113,7 +112,7 @@
       </section>
 
       <section><h2>5. The verdict: rehearse both control planes</h2>
-        <p>Coinbase's postmortem describes a compound incident, not proof that adding a third Availability Zone guarantees failover. Matching-engine recovery required a new quorum path. Kafka recovery required AWS MSK control-plane recovery plus manual partition movement. The two-zone Kafka configuration increased impact, while the defect also affected three-zone clusters.</p>
+        <p>Coinbase's postmortem describes a compound incident; adding a third Availability Zone alone would not guarantee failover. Matching-engine recovery required a new quorum path. Kafka recovery required AWS MSK control-plane recovery plus manual partition movement. The two-zone Kafka configuration increased impact, while the defect also affected three-zone clusters.</p>
         <p>For an architecture review, ask for a timed matching-engine failover exercise and a separate managed-Kafka stuck-healing drill. Verify producer behavior, downstream queue limits, consumer catch-up and customer recovery independently. Compare with the consumer-side cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> and the broader <a href="learn-event-streaming.html">Event Streaming course</a>.</p>
       </section>
 

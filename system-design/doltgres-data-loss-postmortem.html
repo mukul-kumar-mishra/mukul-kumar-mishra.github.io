@@ -61,7 +61,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Doltgres lost values when old out-of-band metadata was missing from backup and garbage collection removed the remaining references. The fix is integrity checking, fail-safe backup and no destructive GC until restore has proved the data.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 10, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows DoltHub's public postmortem. The affected customer and data volume are not identified. The failure path and remediation are drawn from the published account.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/doltgres-loss-meme.svg" alt="Diagram showing backup data without the metadata needed to reconstruct encoded values" width="1200" height="680"><figcaption>Figure 1. The Doltgres loss in one diagram. The backup copied the row. The missing metadata copied the disaster.</figcaption></figure>
       <section><h2>1. The Backup Completed. That Was the Problem.</h2>

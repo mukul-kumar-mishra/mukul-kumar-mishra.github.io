@@ -42,7 +42,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Managed volumes priced MoEngage out of its own workload. Local NVMe carried 250K writes a second at 1ms average over 200TB. A services rebuild separately delivered ten times the writes at a third of the latency for the exact same invoice.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Ira · Data field postmortem · Updated September 15, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> This reconstruction follows MoEngage engineering talks plus ScyllaDB case coverage. Throughput, latency, plus hardware decisions come from the published accounts. Cost framing is modeled from public cloud list prices.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/moengage-nvme-meme.svg" alt="Three stat panels showing write throughput, latency and data volume" width="1200" height="680"><figcaption>Figure 1. The workload in one diagram. A quarter million writes a second at one millisecond.</figcaption></figure>
       <section><h2>1. The Smell of Rented Disks</h2>

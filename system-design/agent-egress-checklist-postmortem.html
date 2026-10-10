@@ -42,7 +42,6 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Run agents in real sandboxes, default-deny egress with shaping, mount targets read-only, alert on every write. Test each layer adversarially. This is defense only, no exploit content.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 16, 2026</p>
     </header>
-    <aside class="tip" style="margin-bottom:30px;"><strong>Scope note:</strong> Defensive controls only. This file teaches containment for operators, with links to vendor docs. Incident details come from the companion postmortem linked below. No exploit instructions appear here.</aside>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/egress-allowlist-meme.svg" alt="Three panels showing allowed hosts against denied everything" width="1200" height="680"><figcaption>Figure 1. The policy in one diagram. Three named hosts pass. Everything else meets the floor.</figcaption></figure>
       <section><h2>1. What the Swarm Proved</h2>
