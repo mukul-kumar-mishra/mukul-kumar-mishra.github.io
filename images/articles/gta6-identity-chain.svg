@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Lapsus$ identity attack chain: push-fatigue MFA plus SSO lateral movement</title>
+  <desc id="desc">Stolen credentials lead to a flood of MFA push prompts until one is accepted, opening an SSO session across Slack and Workspace and ending in exfiltration. An unmanaged hotel device was never attested. Timeline runs from the September 2022 Uber disclosure to the November 2026 retrial.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.label{font-size:20px;font-weight:700}.sub{font-size:15px}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.timeline{stroke:#54708f;stroke-width:3}.tick{fill:#7dd3c7;stroke:#132139;stroke-width:4}.tickhot{fill:#ed9b55;stroke:#132139;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">SECURITY / IDENTITY-TRUST FAILURE</text>
+  <text x="58" y="105" class="head">One accepted push opened every door.</text>
+  <text x="58" y="139" class="muted" font-size="18">Push-fatigue MFA plus SSO lateral movement. Rockstar's entry undisclosed; the chain is the actor's Uber-documented method.</text>
+
+  <rect x="58" y="190" width="210" height="142" rx="16" class="nodehot"/>
+  <text x="84" y="233" class="label">Stolen creds</text>
+  <text x="84" y="261" class="sub">valid accounts</text>
+  <text x="84" y="285" class="sub muted">infostealer resale</text>
+  <text x="84" y="309" class="sub muted">no exploit needed</text>
+
+  <path d="M270 260H324" class="line"/>
+  <rect x="330" y="190" width="210" height="142" rx="16" class="nodehot"/>
+  <text x="356" y="233" class="label">Push flood</text>
+  <text x="356" y="261" class="sub">prompts till accepted</text>
+  <text x="356" y="285" class="sub muted">WhatsApp IT assist</text>
+  <text x="356" y="309" class="sub muted">no number match</text>
+
+  <path d="M542 260H596" class="line"/>
+  <rect x="602" y="190" width="210" height="142" rx="16" class="nodehot"/>
+  <text x="628" y="233" class="label">SSO session</text>
+  <text x="628" y="261" class="sub">Slack · Workspace</text>
+  <text x="628" y="285" class="sub muted">one login, wide blast</text>
+  <text x="628" y="309" class="sub muted">VPN-adjacent tools</text>
+
+  <path d="M814 260H868" class="line"/>
+  <rect x="874" y="190" width="268" height="142" rx="16" class="nodehot"/>
+  <text x="900" y="233" class="label">Exfil + ultimatum</text>
+  <text x="900" y="261" class="sub">90 clips + source</text>
+  <text x="900" y="285" class="sub muted">24h Telegram demand</text>
+  <text x="900" y="309" class="sub muted">posted in Slack itself</text>
+
+  <rect x="58" y="360" width="540" height="76" rx="14" class="node"/>
+  <text x="84" y="392" class="label">The device gap</text><text x="84" y="418" class="sub muted">Firestick + hotel TV + phone — trusted, never attested</text>
+  <rect x="646" y="360" width="496" height="76" rx="14" class="node"/>
+  <text x="672" y="392" class="label">Coordination layer</text><text x="672" y="418" class="sub muted">Slack ultimatum proved identity compromise</text>
+
+  <text x="58" y="486" class="kicker">COURT RECORD &#183; SEP 2022 &#8211; NOV 2026 &#183; UTC</text>
+  <line x1="92" y1="546" x2="1106" y2="546" class="timeline"/>
+  <g>
+    <circle cx="118" cy="546" r="10" class="tick"/><text x="88" y="523" class="label" font-size="17">Sep 15</text><text x="88" y="581" class="sub muted">Uber chain told</text>
+    <circle cx="322" cy="546" r="10" class="tick"/><text x="292" y="523" class="label" font-size="17">Sep 18</text><text x="292" y="581" class="sub muted">90 clips posted</text>
+    <circle cx="526" cy="546" r="10" class="tick"/><text x="496" y="523" class="label" font-size="17">Oct '22</text><text x="496" y="581" class="sub muted">UK + Brazil arrests</text>
+    <circle cx="730" cy="546" r="10" class="tick"/><text x="700" y="523" class="label" font-size="17">Dec '23</text><text x="700" y="581" class="sub muted">12 offenses found</text>
+    <circle cx="934" cy="546" r="10" class="tickhot"/><text x="904" y="523" class="label" font-size="17">Nov 9</text><text x="904" y="581" class="sub muted">retrial, pre-launch</text>
+  </g>
+  <text x="58" y="630" class="muted" font-size="14">Simplified from public reporting. Rockstar's entry vector was never published.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
