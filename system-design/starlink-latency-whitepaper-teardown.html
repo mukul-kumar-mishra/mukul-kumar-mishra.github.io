@@ -49,7 +49,7 @@
         <p>Vendor latency claims usually arrive as a single best case. This paper is better than that. SpaceX reports distributions (median and p99), names the measurement window (peak hours, 6–9 PM local), and names the instrument (anonymized samples from millions of routers, averaged every 15 seconds). A claim with a denominator, a percentile, and a clock time can be checked. A bare "20ms!" cannot.</p>
         <table><thead><tr><th>Figure (SpaceX-reported)</th><th>Before</th><th>After</th><th>Cut</th></tr></thead><tbody>
           <tr><td>US peak-hour median</td><td>48.5ms</td><td>33ms</td><td>Over 30%</td></tr>
-          <tr><td>US peak-hour p99</td><td>Over 150ms</td><td>Under 65ms</td><td>Over 60%</td></tr>
+          <tr><td>US peak-hour p99</td><td>Over 150ms</td><td>Under 65ms</td><td>Over 55%</td></tr>
           <tr><td>Non-US median</td><td>Baseline undisclosed</td><td>Down up to 25%</td><td>Relative only</td></tr>
           <tr><td>Non-US worst case</td><td>Baseline undisclosed</td><td>Down up to 35%</td><td>Relative only</td></tr>
         </tbody></table>
@@ -136,7 +136,7 @@
         <div class="tip"><strong>Separate the WiFi:</strong> repeat one hour over the Starlink router's WiFi with a bulk download running alongside. The gap between wired-quiet and WiFi-loaded p99 is your household's personal bufferbloat number — and the fq_codel dividend, measured.</div>
       </section>
       <section><h2>8. The Verdict</h2>
-        <p>SpaceX's paper proves the composition, not just the improvement: a 48.5ms peak median built on a sub-10ms floor, cut to 33ms overwhelmingly through ground layout, scheduling, and queue hygiene, with the p99's 60% collapse fingering the buffers. Independent measurement — 19.2M samples, IETF decks, the 15-second scheduler — corroborates the geometry while differing on absolute numbers, exactly as different eras should. What remains open is everything the paper declines to split: per-fix shares, non-US baselines, and whether the 20ms goal survived the network's more than doubling since.</p>
+        <p>SpaceX's paper proves the composition, not just the improvement: a 48.5ms peak median built on a sub-10ms floor, cut to 33ms overwhelmingly through ground layout, scheduling, and queue hygiene, with the p99's sharper collapse fingering the buffers. Independent measurement — 19.2M samples, IETF decks, the 15-second scheduler — corroborates the geometry while differing on absolute numbers, exactly as different eras should. What remains open is everything the paper declines to split: per-fix shares, non-US baselines, and whether the 20ms goal survived the network's more than doubling since.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Fifteen and a half milliseconds. Zero from physics. All from decisions.</strong></p>
         <p>What to watch next: whether SpaceX refreshes the paper with current-era numbers, whether PoP allocation keeps pace with user growth in new markets like India, and whether your own latency budget separates the floor you cannot move from the overhead you simply have not billed yet. The speed of light is not negotiable. Everything above it is.</p>
       </section>
