@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
+<title id="img-title">48.5 to 33 milliseconds. The dumb stuff went first.</title>
+<desc id="img-desc">SpaceX latency whitepaper teardown: US peak-hour median latency cut from 48.5 to 33 milliseconds and p99 from over 150 to under 65, against a sub-10 millisecond speed-of-light floor, using buffer, queue, WiFi and PoP fixes.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
+<rect width="1200" height="680" fill="#0b2032"/>
+<rect width="1200" height="78" fill="#071727"/>
+<image x="40" y="9" width="174" height="60" preserveAspectRatio="xMinYMid meet" href="../logo.png"/>
+<text x="244.0" y="48.0" font-size="15" font-weight="700" fill="#6ddbd0" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="2"><tspan x="244.0" dy="0">SATELLITE NETWORK / VENDOR WHITEPAPER TEARDOWN</tspan></text>
+<text x="54.0" y="137.0" font-size="31" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="54.0" dy="0">48.5 to 33ms. The dumb stuff went first.</tspan></text>
+<text x="56.0" y="177.0" font-size="17" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">SpaceX latency whitepaper: US peak median down over 30%, p99 down over 60% — mostly non-physics fixes.</tspan></text>
+<path d="M54 202H1146" stroke="#37617a" stroke-width="1" opacity="0.7"/>
+<path d="M0 118H1200M0 458H1200M150 78V680M1050 78V680" stroke="#43728a" stroke-width="1" opacity="0.12"/>
+<rect x="54.0" y="250" width="344.0" height="218" rx="16" fill="#102b41" stroke="#37617a" stroke-width="2"/>
+<rect x="54.0" y="250" width="6" height="218" rx="3" fill="#91e2c5"/>
+<text x="78.0" y="284.0" font-size="13" font-weight="700" fill="#91e2c5" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="78.0" dy="0">1 / MEASURED</tspan></text>
+<text x="78.0" y="340.0" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">48.5-33</tspan></text>
+<text x="78.0" y="375.0" font-size="16" font-weight="700" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">US peak median, ms</tspan></text>
+<text x="78.0" y="414.0" font-size="14" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">p99 150 to under 65 · Millions</tspan><tspan x="78.0" dy="20.0">of routers, 15-sec samples</tspan></text>
+<path d="M401.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="428.0" y="250" width="344.0" height="218" rx="16" fill="#15364d" stroke="#37617a" stroke-width="2"/>
+<rect x="428.0" y="250" width="6" height="218" rx="3" fill="#ffc078"/>
+<text x="452.0" y="284.0" font-size="13" font-weight="700" fill="#ffc078" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="452.0" dy="0">2 / PHYSICS</tspan></text>
+<text x="452.0" y="340.0" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">&lt;10ms</tspan></text>
+<text x="452.0" y="375.0" font-size="16" font-weight="700" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Speed-of-light floor</tspan></text>
+<text x="452.0" y="414.0" font-size="14" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">1.8-3.6ms per leg · Laser</tspan><tspan x="452.0" dy="20.0">paths cost extra</tspan></text>
+<path d="M775.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="802.0" y="250" width="344.0" height="218" rx="16" fill="#102b41" stroke="#37617a" stroke-width="2"/>
+<rect x="802.0" y="250" width="6" height="218" rx="3" fill="#91e2c5"/>
+<text x="826.0" y="284.0" font-size="13" font-weight="700" fill="#91e2c5" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="826.0" dy="0">3 / FIXED</tspan></text>
+<text x="826.0" y="340.0" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">4 levers</tspan></text>
+<text x="826.0" y="375.0" font-size="16" font-weight="700" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Buffers, queues, WiFi, PoPs</tspan></text>
+<text x="826.0" y="414.0" font-size="14" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">fq_codel routers · 6 new US PoPs ·</tspan><tspan x="826.0" dy="20.0">Right-sized buffers</tspan></text>
+<rect x="54" y="496" width="1092" height="90" rx="14" fill="#15364d" stroke="#37617a" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="78.0" y="527.0" font-size="13" font-weight="700" fill="#6ddbd0" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.4"><tspan x="78.0" dy="0">PUBLIC RECORD LIMIT</tspan></text>
+<text x="78.0" y="558.0" font-size="16" font-weight="600" fill="#eff8ff" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Early-2024 vintage paper (2.6M customers cited). SpaceX attributes no exact share to any single fix.</tspan></text>
+<text x="56.0" y="632.0" font-size="12" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Source: SpaceX, Improving Starlink's Latency (public whitepaper, starlink.com).</tspan></text>
+</svg>
