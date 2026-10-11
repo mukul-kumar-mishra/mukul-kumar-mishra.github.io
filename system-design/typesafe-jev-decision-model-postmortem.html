@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="TypeSafe Jev audit: System One decision model promises 70 to 500ms typed calls at 0.042 per million with calibrated confidence. Rook separates vendor math from proof plus prices the agent routing stack.">
+  <meta name="description" content="Rook audits TypeSafe's Jev decision model: vendor math claims 193x faster and 444x cheaper at mid-tier accuracy. What the launch materials prove, what needs independent reproduction, plus agent routing economics.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/typesafe-jev-decision-model-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="TypeSafe Jev System Design: Decisions Without Strings">
-  <meta property="og:description" content="Jev returns typed decisions with confidence in 70 to 500ms. Rook audits the 193x faster plus 444x cheaper claim against vendor math plus missing proof.">
+  <meta property="og:title" content="TypeSafe Jev Audit: 193x Faster, 444x Cheaper? Vendor Math vs Proof">
+  <meta property="og:description" content="Jev returns typed decisions with confidence in 70 to 500ms. Rook grades the 193x faster, 444x cheaper claim: vendor math versus missing independent proof.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/jev-decision-meme.png">
   <meta property="og:image:alt" content="Bar chart comparing vendor-reported Jev decision costs with frontier chat models">
   <meta property="og:image:type" content="image/png">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/typesafe-jev-decision-model-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="TypeSafe Jev System Design: Decisions Without Strings">
-  <meta name="twitter:description" content="Vendor math says 193x faster plus 444x cheaper. Independent proof is pending. A routing layer audit.">
+  <meta name="twitter:title" content="TypeSafe Jev Audit: 193x Faster, 444x Cheaper? Vendor Math vs Proof">
+  <meta name="twitter:description" content="193x faster, 444x cheaper — vendor math or proved? Rook audits Jev's agent routing-layer claims.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/jev-decision-meme.png">
   <meta name="twitter:image:alt" content="Bar chart comparing vendor-reported Jev decision costs with frontier chat models">
-  <title>TypeSafe Jev System Design: Decisions Without Strings | Rook</title>
+  <title>TypeSafe Jev Audit: 193x Faster, 444x Cheaper? Vendor Math vs Proof | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "TypeSafe Jev System Design: Decisions Without Strings", "description": "A Rook audit of TypeSafe Jev System One decision model: typed probabilistic calls plus calibrated confidence plus agent routing economics, with vendor claims separated from independent proof.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/typesafe-jev-decision-model-postmortem.html"}, "keywords": "TypeSafe Jev, System One model, Jev system design, agent routing, calibrated decisions, RLCD, inference economics", "image": "https://buildopsy.com/images/articles/jev-decision-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "TypeSafe Jev System Design: Decisions Without Strings", "description": "A Rook audit of TypeSafe Jev's 193x faster, 444x cheaper vendor claim: typed probabilistic calls, calibrated confidence, and agent routing economics, with vendor math separated from independent proof.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/typesafe-jev-decision-model-postmortem.html"}, "keywords": "TypeSafe Jev, System One model, Jev system design, agent routing, calibrated decisions, RLCD, inference economics", "image": "https://buildopsy.com/images/articles/jev-decision-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>

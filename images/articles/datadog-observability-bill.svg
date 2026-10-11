@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Datadog observability bill: three meters behind one invoice</title>
+  <desc id="desc">Host fleet, log ingest, and indexed events each bill separately at Datadog list prices. Their sum is the monthly meter. Coinbase's 65 million dollar 2021 bill shows where unchecked metering ends.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="meter" x2="1"><stop stop-color="#57d6cb"/><stop offset="1" stop-color="#b6f26b"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodeacc{fill:#173b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:20px;font-weight:700}.sub{font-size:15px}.big{font-size:26px;font-weight:700}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}.timeline{stroke:#54708f;stroke-width:3}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">OBSERVABILITY / METERED BILLING</text>
+  <text x="58" y="105" class="head">Three meters. One invoice.</text>
+  <text x="58" y="139" class="muted" font-size="18">Datadog list prices, annual billing. Hosts plus ingest plus indexed events.</text>
+
+  <rect x="58" y="205" width="228" height="112" rx="16" class="node"/>
+  <text x="84" y="248" class="label">Host fleet</text>
+  <text x="84" y="276" class="sub">hosts &#215; $23 / mo</text>
+  <text x="84" y="300" class="sub muted">Pro $15 · Enterprise $23</text>
+
+  <path d="M288 260H348" class="line"/>
+  <rect x="353" y="205" width="228" height="112" rx="16" class="node"/>
+  <text x="379" y="248" class="label">Log ingest</text>
+  <text x="379" y="276" class="sub">GB &#215; $0.10</text>
+  <text x="379" y="300" class="sub muted">uncompressed GB in</text>
+
+  <path d="M583 260H643" class="line"/>
+  <rect x="648" y="205" width="228" height="112" rx="16" class="node"/>
+  <text x="674" y="248" class="label">Indexed events</text>
+  <text x="674" y="276" class="sub">M events &#215; $1.70</text>
+  <text x="674" y="300" class="sub muted">15-day retention</text>
+
+  <path d="M878 260H918" class="line"/>
+  <rect x="925" y="205" width="217" height="112" rx="16" class="nodeacc"/>
+  <text x="950" y="248" class="label">Monthly bill</text>
+  <rect x="950" y="262" width="167" height="20" rx="10" fill="#19243a" stroke="#3e6b66"/>
+  <rect x="950" y="262" width="118" height="20" rx="10" fill="url(#meter)"/>
+  <text x="950" y="306" class="sub muted">sum of the three meters</text>
+
+  <text x="58" y="392" class="kicker">SCALE CHECK &#183; COINBASE 2021</text>
+  <rect x="58" y="412" width="1084" height="120" rx="16" class="nodeacc"/>
+  <text x="88" y="460" class="big">$65M &#8776; 235,000 host-years at $23 / mo</text>
+  <text x="88" y="496" class="sub">2021 spend, settled Q1 2022. Renegotiated lower; current spend undisclosed.</text>
+
+  <text x="58" y="590" class="muted" font-size="14">Simplified from public reporting. Prices are Datadog list rates; figures attributed in the article.</text>
+  <text x="58" y="616" class="muted" font-size="14">A 20-host, 1,000-GB model bills $560 / mo. The gap between the model and the invoice is the lesson.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
