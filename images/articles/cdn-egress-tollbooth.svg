@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Cloud egress tollbooth: per-gigabyte AWS pricing against capacity-priced transit and zero-egress R2</title>
+  <desc id="desc">AWS bills $0.09 per gigabyte out while R2 bills nothing. Providers buy transit by peak capacity and sell it by volume. One terabyte costs $90 out of S3 and $0 out of R2.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="toll" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <linearGradient id="free" x2="1"><stop stop-color="#57d6cb"/><stop offset="1" stop-color="#b6f26b"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:20px;font-weight:700}.sub{font-size:15px}.big{font-size:26px;font-weight:700}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">CLOUD INFRASTRUCTURE / TRANSFER PRICING</text>
+  <text x="58" y="105" class="head">Storage is the receipt. Egress is the bill.</text>
+  <text x="58" y="139" class="muted" font-size="18">Providers buy transit by capacity. They sell it to you by the gigabyte.</text>
+
+  <rect x="58" y="205" width="300" height="140" rx="16" class="nodehot"/>
+  <text x="84" y="248" class="label">AWS egress</text>
+  <text x="84" y="282" class="big" fill="url(#toll)">$0.09 / GB</text>
+  <text x="84" y="310" class="sub muted">first 10 TB / mo out</text>
+  <text x="84" y="332" class="sub muted">1 TB out = $90</text>
+
+  <path d="M360 275H420" class="line"/>
+  <rect x="425" y="205" width="300" height="140" rx="16" class="nodesafe"/>
+  <text x="451" y="248" class="label">R2 egress</text>
+  <text x="451" y="282" class="big" fill="url(#free)">$0 / GB</text>
+  <text x="451" y="310" class="sub muted">zero since 2021</text>
+  <text x="451" y="332" class="sub muted">1 TB out = $0</text>
+
+  <path d="M727 275H787" class="line"/>
+  <rect x="792" y="205" width="350" height="140" rx="16" class="node"/>
+  <text x="818" y="248" class="label">Underneath</text>
+  <text x="818" y="282" class="big">$/Mbps peak</text>
+  <text x="818" y="310" class="sub muted">capacity, not volume</text>
+  <text x="818" y="332" class="sub muted">claimed markup 80x+</text>
+
+  <text x="58" y="420" class="kicker">THE MIGRATION TAX</text>
+  <rect x="58" y="440" width="1084" height="100" rx="16" class="node"/>
+  <text x="88" y="482" class="label" font-size="22">Leaving pays the toll once: 1 TB via proxy costs ~$128 the first month, ~$27.50 after.</text>
+  <text x="88" y="514" class="sub muted">Copy-on-request spreads the exit invoice across months instead of one bill.</text>
+
+  <text x="58" y="590" class="kicker">MODEL &#183; 10 TB AT $0.09</text>
+  <text x="58" y="622" class="label" font-size="22">9,900 billable GB &#215; $0.09 = $891 / mo. The toll ticks at $30 a day.</text>
+  <text x="58" y="656" class="muted" font-size="14">Simplified from vendor disclosures and independent analysis. Re-check live rates before budgeting.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
