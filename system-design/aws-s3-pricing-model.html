@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
-  <meta name="author" content="Buildopsy">
+  <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="AWS S3 Pricing Model: Storage, Requests and Egress">
@@ -35,7 +35,7 @@
     "@type":"TechArticle",
     "headline":"AWS S3 Pricing Model: Storage, Requests and Egress",
     "description":"A worked AWS S3 pricing model that separates storage, requests, retrieval, transfer, management, replication and retained versions, with estimates you can rerun in the S3 calculator.",
-    "author":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
     "datePublished":"2026-10-09",
     "dateModified":"2026-10-09",
@@ -82,7 +82,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Storage Cost Model</span><span class="chip">October 2026</span><span class="chip">14 min read</span><span class="chip">Ira</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Storage Cost Model</span><span class="chip">October 2026</span><span class="chip">14 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS S3 Pricing Model: Storage, Requests and Egress</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">I start with the storage rate because it is the easiest line to quote. Then I price requests, retrieval, transfer, object size and retention as separate meters. This worked model uses 1 TiB in S3 Standard to show what one million PUTs and ten million GETs add.</p>
         <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> 1,024 billable GB plus one million PUTs and ten million GETs produce a $32.55 modeled monthly subtotal at the example US East rates. It excludes transfer, management features, replication, tax, account credits and negotiated pricing. Rerun the inputs in the <a href="../tools/aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a>.</p>
@@ -92,7 +92,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Read volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10M GETs</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled subtotal</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$32.55 / month</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Ira · Data infrastructure cost model · Published October 9, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Data infrastructure cost model · Published October 9, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Scope:</strong> General-purpose S3 Standard in US East (N. Virginia), public example rates, USD, a full billing month. This is a modeled estimate, not an AWS quote. AWS measures storage in binary GB. Here 1 TiB is represented as 1,024 billable GB. Check the <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">live S3 pricing page</a> before budgeting.</aside>
@@ -178,7 +178,7 @@
         </section>
       </article>
 
-      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Ira · Editorial profile</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
   <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
   <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
   <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>

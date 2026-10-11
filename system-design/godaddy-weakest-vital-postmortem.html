@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="GoDaddy Lighthouse scores looked green while real visitors suffered. Field data indicted layout shift at 0.17, then image space plus min-height wrappers lifted passing sites from 40 to 70 percent.">
-  <meta name="author" content="Buildopsy">
+  <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="GoDaddy: The Lab Applauded. The Field Accused.">
@@ -29,18 +29,18 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GoDaddy: The Lab Applauded. The Field Accused.", "description": "A performance field postmortem of GoDaddy Websites plus Marketing Core Web Vitals turnaround: lab-green scores, field-red layout shift at 0.17, plus the weakest-first fixes that lifted passing sites from 40 to 70 percent.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-15", "dateModified": "2026-09-15", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html"}, "keywords": "GoDaddy, Core Web Vitals, CLS, lab versus field, web performance", "image": "https://buildopsy.com/images/articles/godaddy-cls-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GoDaddy: The Lab Applauded. The Field Accused.", "description": "A performance field postmortem of GoDaddy Websites plus Marketing Core Web Vitals turnaround: lab-green scores, field-red layout shift at 0.17, plus the weakest-first fixes that lifted passing sites from 40 to 70 percent.", "author": {"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-15", "dateModified": "2026-09-15", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/godaddy-weakest-vital-postmortem.html"}, "keywords": "GoDaddy, Core Web Vitals, CLS, lab versus field, web performance", "image": "https://buildopsy.com/images/articles/godaddy-cls-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Web Performance</span><span class="chip">September 2026</span><span class="chip">12 min read</span><span class="chip">Marta</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Web Performance</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GoDaddy: The Lab Applauded. The Field Accused.</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Here is my thesis, sharpened since the Swappie file: fix the weakest vital first. Distrust any green score you did not earn from real visitors. GoDaddy proved both halves on millions of customer sites. Lighthouse applauded. Real thumbs suffered. The field number nobody wanted to print was 0.17.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Lab scores showed 78 plus 98 percent passing while field data showed 47. Layout shift at 0.17 dragged the overall pass rate to 40 percent. Image space, min-height wrappers, plus real-user measurement lifted it near 70 percent.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Marta · Performance field postmortem · Updated September 15, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Performance field postmortem · Updated September 15, 2026</p>
     </header>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/godaddy-cls-meme.svg" alt="Three stat panels showing lab pass rates against a failing field pass rate" width="1200" height="680"><figcaption>Figure 1. The mirage in one diagram. Two green lab scores hid one red field score.</figcaption></figure>
@@ -72,7 +72,7 @@
         <p>Second, rank vitals by visitor pain, then fix strictly in that order. Layout shift that steals reading beats paint delays that merely bore. Weakest first is a strategy, not a slogan.</p>
         <p>Third, reserve space as a default, not a fix. Images, ads, plus dynamic components all arrive late by nature. Design the hole before the content, everywhere, always.</p>
         <p>Fourth, publish the misses alongside the wins. Trial plus error, admitted, builds more institutional trust than a perfect record nobody believes.</p>
-        <div class="tip"><strong>Marta's rule:</strong> If the lab is green while visitors suffer, the lab is decor. Measure thumbs or stop measuring.</div>
+        <div class="tip">If the lab is green while visitors suffer, the lab is decor. Measure thumbs or stop measuring.</div>
       </section>
       <section><h2>7. The Verdict</h2>
         <p>I opened with a repeated thesis plus close with its second receipt. Respect cannot be simulated. GoDaddy proved it across more sites than most engineers will touch in a career, using techniques any junior can implement before lunch. The barrier was never knowledge. It was the willingness to believe an ugly field number over a beautiful lab score.</p>
@@ -84,7 +84,7 @@
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://web.dev/case-studies/godaddy" target="_blank" rel="noopener noreferrer">web.dev: GoDaddy Websites plus Marketing 75 percent improvement case</a></li><li><a href="https://www.godaddy.com/resources/news/websites-and-marketing-case-study" target="_blank" rel="noopener noreferrer">GoDaddy: Case study confirmation (Jul 2022)</a></li><li><a href="https://web.dev/case-studies/vitals-business-impact" target="_blank" rel="noopener noreferrer">web.dev: Business impact of Core Web Vitals</a></li></ul>
       </section>
     </article>
-    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Marta</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
   <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
   <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
   <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
