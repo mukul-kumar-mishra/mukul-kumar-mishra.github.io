@@ -63,7 +63,7 @@
       </section>
       <section><h2>3. The Floor: What Physics Allows</h2>
         <p>Start where SpaceX starts: light. At 550 km altitude the user-to-satellite-to-ground round trip runs 1.8–3.6ms per leg, usually under 10ms total. An IETF measurement deck puts the absolute minimum signal round trip at 3.7ms. Against a 48.5ms peak median, physics explains under a fifth. Everything else is choice — topology, software, and tuning.</p>
-        <p>State it as the inequality that governs every LEO latency argument: measured latency ≥ propagation floor + ground path + scheduling + software overhead. Only the first term is fixed. The paper's 15.5ms cut came entirely from the other three, which is another way of saying the original network carried roughly 40ms of non-physics — a budget dominated by the vendor's own decisions, not by orbit.</p>
+        <p>State it as the inequality that governs every low Earth orbit (LEO) latency argument: measured latency ≥ propagation floor + ground path + scheduling + software overhead. Only the first term is fixed. The paper's 15.5ms cut came entirely from the other three, which is another way of saying the original network carried roughly 40ms of non-physics — a budget dominated by the vendor's own decisions, not by orbit.</p>
         <div class="tip"><strong>Price your own floor first:</strong> compute the speed-of-light round trip for your longest path before touching any code. Every millisecond above that number has an owner — a queue, a route, or a default — and owners can be billed.</div>
       </section>
       <section><h2>4. The Ground and the Air: PoPs Plus Fronthaul</h2>
