@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="ttl dsc">
+  <title id="ttl">Trust-boundary diagram of the Rockstar Games identity breach</title>
+  <desc id="dsc">A left lane shows the trusted identity plane: an employee or contractor identity, an identity provider with push multi-factor authentication, single sign-on across Slack, Google Workspace and VPN, and the source code, build and video assets behind it. A right lane shows the documented attacker path: purchased valid credentials, a flood of MFA push prompts where one is accepted, use of an unmanaged hotel device, then exfiltration of about 90 clips and source code with a Slack ultimatum. A timeline below marks September 2022, October 2022, December 2023 and November 2026.</desc>
+  <defs>
+    <marker id="arrowInk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0f172a"/></marker>
+    <marker id="arrowHot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e11d48"/></marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0369a1"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="19" font-weight="bold" fill="#f8fafc">IDENTITY POSTMORTEM: TRUST, NOT THE GAME, WAS THE TARGET</text>
+  <image x="1002" y="6" width="156" height="52" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+
+  <text x="60" y="128" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="29" font-weight="bold" fill="#0f172a">A trusted identity opened every door.</text>
+  <text x="60" y="158" font-family="Montserrat, 'Segoe UI', Verdana, sans-serif" font-size="17" fill="#475569">Valid credentials and push-fatigue MFA — not a game exploit — put 90 clips of GTA 6 on a public forum.</text>
+
+  <text x="44" y="196" font-family="ui-monospace, Consolas, monospace" font-size="12" font-weight="bold" fill="#0369a1" letter-spacing="1">TRUSTED IDENTITY PLANE — WHAT SHOULD BE PROTECTED</text>
+  <text x="760" y="196" font-family="ui-monospace, Consolas, monospace" font-size="12" font-weight="bold" fill="#e11d48" letter-spacing="1">DOCUMENTED PLAYBOOK — SAME ACTOR (PER UBER DISCLOSURE)</text>
+
+  <rect x="44" y="206" width="332" height="296" rx="12" fill="none" stroke="#0369a1" stroke-width="2" stroke-dasharray="9 6"/>
+  <text x="60" y="330" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#0369a1" transform="rotate(-90 60 330)">PERIMETER = IDENTITY</text>
+
+  <g font-family="Montserrat, 'Segoe UI', Verdana, sans-serif">
+    <rect x="72" y="222" width="288" height="58" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <rect x="72" y="222" width="288" height="6" rx="3" fill="#0369a1"/>
+    <text x="216" y="250" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">Employee / contractor identity</text>
+    <text x="216" y="269" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">a person, not a device</text>
+
+    <rect x="72" y="296" width="288" height="58" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <rect x="72" y="296" width="288" height="6" rx="3" fill="#0369a1"/>
+    <text x="216" y="324" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">IdP + push MFA</text>
+    <text x="216" y="343" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">no number match, no push limit</text>
+
+    <rect x="72" y="370" width="288" height="58" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <rect x="72" y="370" width="288" height="6" rx="3" fill="#0369a1"/>
+    <text x="216" y="398" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">SSO: Slack · Workspace · VPN</text>
+    <text x="216" y="417" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">one login, wide blast radius</text>
+
+    <rect x="72" y="444" width="288" height="58" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <rect x="72" y="444" width="288" height="6" rx="3" fill="#0369a1"/>
+    <text x="216" y="472" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">Source code · build · video</text>
+    <text x="216" y="491" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">the payload behind the door</text>
+  </g>
+
+  <line x1="216" y1="280" x2="216" y2="296" stroke="#0f172a" stroke-width="2" marker-end="url(#arrowInk)"/>
+  <line x1="216" y1="354" x2="216" y2="370" stroke="#0f172a" stroke-width="2" marker-end="url(#arrowInk)"/>
+  <line x1="216" y1="428" x2="216" y2="444" stroke="#0f172a" stroke-width="2" marker-end="url(#arrowInk)"/>
+
+  <g font-family="Montserrat, 'Segoe UI', Verdana, sans-serif">
+    <rect x="760" y="222" width="380" height="58" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+    <circle cx="790" cy="251" r="14" fill="#e11d48"/><text x="790" y="256" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">1</text>
+    <text x="816" y="248" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">Purchased valid credentials</text>
+    <text x="816" y="267" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">infostealer log / dark web</text>
+
+    <rect x="760" y="296" width="380" height="58" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+    <circle cx="790" cy="325" r="14" fill="#e11d48"/><text x="790" y="330" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">2</text>
+    <text x="816" y="322" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">MFA push flood — one accepted</text>
+    <text x="816" y="341" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">plus WhatsApp "IT" social engineering</text>
+
+    <rect x="760" y="370" width="380" height="58" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+    <circle cx="790" cy="399" r="14" fill="#e11d48"/><text x="790" y="404" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">3</text>
+    <text x="816" y="396" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">Unmanaged device accepted</text>
+    <text x="816" y="415" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">hotel Firestick + TV + phone</text>
+
+    <rect x="760" y="444" width="380" height="58" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+    <circle cx="790" cy="473" r="14" fill="#e11d48"/><text x="790" y="478" text-anchor="middle" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">4</text>
+    <text x="816" y="470" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="14" font-weight="bold" fill="#0f172a">Exfil + Slack ultimatum</text>
+    <text x="816" y="489" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">90 clips + source, 24h to pay</text>
+  </g>
+
+  <line x1="760" y1="251" x2="362" y2="251" stroke="#e11d48" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrowHot)"/>
+  <line x1="760" y1="325" x2="362" y2="325" stroke="#e11d48" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrowHot)"/>
+  <line x1="760" y1="399" x2="362" y2="399" stroke="#e11d48" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrowHot)"/>
+  <line x1="760" y1="473" x2="362" y2="473" stroke="#e11d48" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrowHot)"/>
+
+  <text x="470" y="530" font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#475569">Rockstar's own entry vector was never published; steps 1–2 are the actor's documented method at Uber.</text>
+
+  <line x1="90" y1="566" x2="1110" y2="566" stroke="#0f172a" stroke-width="2"/>
+  <g font-family="ui-monospace, Consolas, monospace" font-size="11" fill="#0f172a">
+    <circle cx="180" cy="566" r="6" fill="#0369a1"/><text x="180" y="594" text-anchor="middle">Sep 2022</text><text x="180" y="556" text-anchor="middle" fill="#475569">credentials → 90 clips</text>
+    <circle cx="480" cy="566" r="6" fill="#0369a1"/><text x="480" y="594" text-anchor="middle">Oct 2022</text><text x="480" y="556" text-anchor="middle" fill="#475569">UK + Brazil arrests</text>
+    <circle cx="770" cy="566" r="6" fill="#0369a1"/><text x="770" y="594" text-anchor="middle">Dec 2023</text><text x="770" y="556" text-anchor="middle" fill="#475569">12 offenses · $5M recovery</text>
+    <circle cx="1040" cy="566" r="6" fill="#e11d48"/><text x="1040" y="594" text-anchor="middle">Nov 9, 2026</text><text x="1040" y="556" text-anchor="middle" fill="#475569">retrial, before launch</text>
+  </g>
+
+  <rect x="60" y="614" width="1080" height="50" fill="#0f172a"/>
+  <text x="84" y="646" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">The game was never the target. <tspan fill="#38bdf8">The identity was.</tspan></text>
+  <image x="1004" y="620" width="128" height="40" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
