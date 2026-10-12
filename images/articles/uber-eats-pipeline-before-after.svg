@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Search pipeline timeline: serial stages with barriers redrawn as overlapped lanes converging on Above-the-Fold</title>
+  <desc id="desc">Before: retrieval, monolithic hydration, ranking, ads, and presentation run in strict sequence behind barrier markers. After: split hydration and ranking overlap while presentation flushes the first screen early at roughly half the time.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.label{font-size:18px;font-weight:700}.sub{font-size:14px}.mono{font-family:monospace}.tick{stroke:#8faac5;stroke-width:2}.barrier{stroke:#df5e60;stroke-width:3;stroke-dasharray:6 5}.atfline{stroke:#7dd3c7;stroke-width:3;stroke-dasharray:10 6}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">SEARCH INFRASTRUCTURE / PIPELINE TIMELINE</text>
+  <text x="58" y="105" class="head">Serial stages sum. Overlapped stages approach the max.</text>
+  <text x="58" y="139" class="muted" font-size="18">Time runs left to right. Red ticks are synchronization barriers; each one taxes every shard.</text>
+
+  <text x="58" y="200" class="label" fill="#df5e60">BEFORE - one chain, four barriers</text>
+  <g font-size="15" font-weight="700">
+    <rect x="120" y="218" width="225" height="46" rx="8" fill="#475569"/><text x="132" y="247" class="label">retrieval</text>
+    <rect x="345" y="218" width="250" height="46" rx="8" fill="#475569"/><text x="357" y="247" class="label">monolith hydration</text>
+    <rect x="595" y="218" width="175" height="46" rx="8" fill="#475569"/><text x="607" y="247" class="label">ranking</text>
+    <rect x="770" y="218" width="100" height="46" rx="8" fill="#475569"/><text x="782" y="247" class="label">ads</text>
+    <rect x="870" y="218" width="125" height="46" rx="8" fill="#475569"/><text x="882" y="247" class="label">present</text>
+  </g>
+  <line x1="345" y1="210" x2="345" y2="272" class="barrier"/>
+  <line x1="595" y1="210" x2="595" y2="272" class="barrier"/>
+  <line x1="770" y1="210" x2="770" y2="272" class="barrier"/>
+  <line x1="870" y1="210" x2="870" y2="272" class="barrier"/>
+  <text x="1000" y="247" class="sub muted">end to end = sum</text>
+
+  <text x="58" y="330" class="label" fill="#7dd3c7">AFTER - lanes overlap, first screen flushes early</text>
+  <g font-size="15" font-weight="700">
+    <rect x="120" y="348" width="165" height="46" rx="8" fill="#0369a1"/><text x="132" y="377" class="label">retrieval</text>
+    <rect x="220" y="404" width="120" height="46" rx="8" fill="#0369a1"/><text x="232" y="433" class="label">rank hyd.</text>
+    <rect x="300" y="460" width="130" height="46" rx="8" fill="#0369a1"/><text x="312" y="489" class="label">ranking</text>
+    <rect x="390" y="516" width="150" height="40" rx="8" fill="#16a34a"/><text x="402" y="542" class="label">ATF flush</text>
+    <rect x="470" y="348" width="180" height="46" rx="8" fill="#1d304b" stroke="#49627e" stroke-width="2"/><text x="482" y="377" class="label">ads (parallel)</text>
+    <rect x="540" y="460" width="220" height="46" rx="8" fill="#1d304b" stroke="#49627e" stroke-width="2"/><text x="552" y="489" class="label">rest of page</text>
+  </g>
+  <line x1="540" y1="340" x2="540" y2="570" class="atfline"/>
+  <text x="552" y="330" class="label" fill="#7dd3c7">ATF ~ half</text>
+
+  <line x1="120" y1="600" x2="1020" y2="600" class="tick"/>
+  <g class="sub muted">
+    <text x="120" y="626">0</text><text x="420" y="626">500ms</text><text x="720" y="626">1000ms</text><text x="990" y="626">schematic</text>
+  </g>
+  <text x="58" y="662" class="muted" font-size="14">Schematic timing, not a trace. Stage widths illustrative; lever values are Uber-reported.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>

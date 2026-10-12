@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Per-lever latency cuts colored by triage class: delete work, start earlier, or unblock</title>
+  <desc id="desc">Horizontal bars show each reported cut in milliseconds: UX over 200, infrastructure 200, ads 130, retrieval 120, hydration split over 100, embeddings 50, hedging 40, dependencies 35. Colors mark delete, start-earlier, and unblock classes.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.label{font-size:17px;font-weight:700}.sub{font-size:14px}.mono{font-family:monospace}.grid{stroke:#2b3f58;stroke-width:1}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">TRIAGE / EVERY LEVER, PRICED</text>
+  <text x="58" y="105" class="head">Delete work. Start earlier. Unblock everything else.</text>
+  <text x="58" y="139" class="muted" font-size="18">Reported per-lever maxima, milliseconds. Bars do not sum: overlapped stages share the total.</text>
+
+  <g font-size="14">
+    <line x1="330" y1="170" x2="330" y2="540" class="grid"/><line x1="530" y1="170" x2="530" y2="540" class="grid"/><line x1="730" y1="170" x2="730" y2="540" class="grid"/><line x1="930" y1="170" x2="930" y2="540" class="grid"/>
+    <text x="330" y="562" class="sub muted">0</text><text x="520" y="562" class="sub muted">100</text><text x="720" y="562" class="sub muted">200</text><text x="920" y="562" class="sub muted">300</text>
+  </g>
+  <g>
+    <text x="58" y="200" class="label">UX rethink</text><rect x="330" y="180" width="430" height="26" rx="6" fill="#38bdf8"/><text x="770" y="200" class="sub mono">200+</text>
+    <text x="58" y="240" class="label">infra bundle</text><rect x="330" y="220" width="400" height="26" rx="6" fill="#38bdf8"/><text x="740" y="240" class="sub mono">~200</text>
+    <text x="58" y="280" class="label">ads rebuild</text><rect x="330" y="260" width="260" height="26" rx="6" fill="#ed9b55"/><text x="600" y="280" class="sub mono">~130</text>
+    <text x="58" y="320" class="label">dead retrieval</text><rect x="330" y="300" width="240" height="26" rx="6" fill="#a3e635"/><text x="580" y="320" class="sub mono">~120</text>
+    <text x="58" y="360" class="label">hydration split</text><rect x="330" y="340" width="210" height="26" rx="6" fill="#38bdf8"/><text x="550" y="360" class="sub mono">100+</text>
+    <text x="58" y="400" class="label">embeddings</text><rect x="330" y="380" width="100" height="26" rx="6" fill="#a3e635"/><text x="440" y="400" class="sub mono">~50</text>
+    <text x="58" y="440" class="label">hedging</text><rect x="330" y="420" width="80" height="26" rx="6" fill="#ed9b55"/><text x="420" y="440" class="sub mono">~40</text>
+    <text x="58" y="480" class="label">dep removal</text><rect x="330" y="460" width="70" height="26" rx="6" fill="#ed9b55"/><text x="410" y="480" class="sub mono">~35</text>
+  </g>
+  <g font-size="15">
+    <rect x="58" y="510" width="18" height="18" rx="4" fill="#a3e635"/><text x="84" y="524" class="sub">delete work</text>
+    <rect x="230" y="510" width="18" height="18" rx="4" fill="#38bdf8"/><text x="256" y="524" class="sub">start earlier</text>
+    <rect x="420" y="510" width="18" height="18" rx="4" fill="#ed9b55"/><text x="446" y="524" class="sub">unblock</text>
+  </g>
+  <text x="640" y="524" class="sub muted">infra spans all three classes; plotted once.</text>
+
+  <text x="58" y="600" class="label" font-size="20">The longest bar is a metric change, not an optimization. Measure the wait first.</text>
+  <text x="58" y="634" class="muted" font-size="14">Values reported by Uber, Sep 2026. UX and infra bars overlap other stages by construction.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
