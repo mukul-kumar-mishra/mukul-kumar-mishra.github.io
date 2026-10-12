@@ -51,7 +51,9 @@
     "mainEntity":[
       {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost?","acceptedAnswer":{"@type":"Answer","text":"At the example US East rate of $0.023 per billable GB-month, 1,024 billable GB costs $23.55 for a full month of storage. Requests, retrieval, transfer and other charges are extra."}},
       {"@type":"Question","name":"Does the Buildopsy S3 calculator include data transfer out?","acceptedAnswer":{"@type":"Answer","text":"No. It models storage, entered PUT and GET requests, plus entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account."}},
-      {"@type":"Question","name":"Why can a cheaper S3 storage class cost more overall?","acceptedAnswer":{"@type":"Answer","text":"Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate."}}
+      {"@type":"Question","name":"Why can a cheaper S3 storage class cost more overall?","acceptedAnswer":{"@type":"Answer","text":"Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate."}},
+      {"@type":"Question","name":"How is S3 pricing structured?","acceptedAnswer":{"@type":"Answer","text":"Four meters: storage per billable GB-month, request fees per thousand PUT, GET and LIST calls, retrieval and early-deletion fees on colder classes, plus data transfer out. The worked 1 TiB model lands at $32.55 before transfer."}},
+      {"@type":"Question","name":"How can I estimate my S3 storage cost?","acceptedAnswer":{"@type":"Answer","text":"Enter billable gigabytes, monthly request counts, and retrieval volume into an S3 cost calculator with your region's rates, and model transfer out separately — it often exceeds storage."}}
     ]
   }
   </script>
@@ -161,6 +163,10 @@
           <p>No. It models storage, entered PUT and GET requests, plus entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account.</p>
           <h3>Why can a cheaper S3 storage class cost more overall?</h3>
           <p>Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate.</p>
+          <h3>How is S3 pricing structured?</h3>
+          <p>Four meters: storage per billable GB-month, request fees per thousand PUT, GET and LIST calls, retrieval and early-deletion fees on colder classes, plus data transfer out. The worked 1 TiB model on this page lands at $32.55 before transfer.</p>
+          <h3>How can I estimate my S3 storage cost?</h3>
+          <p>Enter billable gigabytes, monthly PUT and GET counts, and retrieval volume into the <a href="../tools/aws-s3-storage-cost-calculator.html">S3 cost calculator</a> with your region's rates. Model transfer out separately — it often exceeds storage.</p>
         </section>
 
         <section><h2>Sources and Method</h2>
