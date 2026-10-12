@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
+  <meta name="description" content="S3 billing explained with a worked 1 TiB US East model: storage, PUT/GET request fees, retrieval, transfer minimums and versioning. Re-run the estimate in the S3 calculator.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="AWS S3 Pricing Model: Storage, Requests and Egress">
+  <meta property="og:title" content="AWS S3 Pricing: Storage, Request Fees and Egress Costs Explained">
   <meta property="og:description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <meta property="og:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AWS S3 Pricing Model: Storage, Requests and Egress">
+  <meta name="twitter:title" content="AWS S3 Pricing: Storage, Request Fees and Egress Costs Explained">
   <meta name="twitter:description" content="A worked AWS S3 pricing model for 1 TiB in US East. Follow storage, PUT/GET requests, retrieval, transfer, class minimums and versioning. Re-run the 1,024-GB estimate in the S3 calculator.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <meta name="twitter:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
-  <title>AWS S3 Pricing Model: Storage, Requests and Egress | Buildopsy</title>
+  <title>AWS S3 Pricing: Storage, Request Fees and Egress Costs Explained | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@
   {
     "@context":"https://schema.org",
     "@type":"TechArticle",
-    "headline":"AWS S3 Pricing Model: Storage, Requests and Egress",
+    "headline":"AWS S3 Pricing: Storage, Request Fees and Egress Costs Explained",
     "description":"A worked AWS S3 pricing model that separates storage, requests, retrieval, transfer, management, replication and retained versions, with estimates you can rerun in the S3 calculator.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
