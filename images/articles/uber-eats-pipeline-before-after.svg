@@ -33,9 +33,9 @@
     <rect x="300" y="460" width="130" height="46" rx="8" fill="#0369a1"/><text x="312" y="489" class="label">ranking</text>
     <rect x="390" y="516" width="150" height="40" rx="8" fill="#16a34a"/><text x="402" y="542" class="label">ATF flush</text>
     <rect x="470" y="348" width="180" height="46" rx="8" fill="#1d304b" stroke="#49627e" stroke-width="2"/><text x="482" y="377" class="label">ads (parallel)</text>
-    <rect x="540" y="460" width="220" height="46" rx="8" fill="#1d304b" stroke="#49627e" stroke-width="2"/><text x="552" y="489" class="label">rest of page</text>
+    <rect x="552" y="460" width="208" height="46" rx="8" fill="#1d304b" stroke="#49627e" stroke-width="2"/><text x="564" y="489" class="label">rest of page</text>
   </g>
-  <line x1="540" y1="340" x2="540" y2="570" class="atfline"/>
+  <line x1="540" y1="450" x2="540" y2="570" class="atfline"/>
   <text x="552" y="330" class="label" fill="#7dd3c7">ATF ~ half</text>
 
   <line x1="120" y1="600" x2="1020" y2="600" class="tick"/>
