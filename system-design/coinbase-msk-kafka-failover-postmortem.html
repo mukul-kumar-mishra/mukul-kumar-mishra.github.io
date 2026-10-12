@@ -113,7 +113,7 @@
 
       <section><h2>5. The verdict: rehearse both control planes</h2>
         <p>Coinbase's postmortem describes a compound incident; adding a third Availability Zone alone would not guarantee failover. Matching-engine recovery required a new quorum path. Kafka recovery required AWS MSK control-plane recovery plus manual partition movement. The two-zone Kafka configuration increased impact, while the defect also affected three-zone clusters.</p>
-        <p>For an architecture review, ask for a timed matching-engine failover exercise and a separate managed-Kafka stuck-healing drill. Verify producer behavior, downstream queue limits, consumer catch-up and customer recovery independently. Compare with the consumer-side cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> and the broader <a href="learn-event-streaming.html">Event Streaming course</a>.</p>
+        <p>For an architecture review, ask for a timed matching-engine failover exercise and a separate managed-Kafka stuck-healing drill. Verify producer behavior, downstream queue limits, consumer catch-up and customer recovery independently. Compare with the consumer-side cascade in <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a> and the broader <a href="learn-event-streaming.html">Event Streaming course</a>. The provider side of the same May 7 event is covered in <a href="aws-thermal-outage-postmortem.html">the AWS thermal postmortem</a>.</p>
       </section>
 
       <section><h2>Frequently Asked Questions</h2>
@@ -134,6 +134,7 @@
           <li><a href="https://www.thestack.technology/coinbase-down-aws-kafka-bug" target="_blank" rel="noopener noreferrer">The Stack: Coinbase blames Amazon MSK edge-case during AZ outage</a></li>
           <li><a href="https://docs.aws.amazon.com/msk/latest/developerguide/bestpractices.html" target="_blank" rel="noopener noreferrer">AWS MSK documentation: availability and broker best practices</a></li>
           <li><a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: a separate consumer-group failure mode</a></li>
+          <li><a href="aws-thermal-outage-postmortem.html">AWS thermal outage: the provider side of the same May 7 event</a></li>
         </ul>
       </section>
       </article>

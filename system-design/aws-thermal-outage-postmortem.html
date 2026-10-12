@@ -72,7 +72,7 @@
       </section>
       <section><h2>6. The Verdict</h2>
         <p>AWS communicated clearly within the limits of an active incident. The status language was precise. The guidance was correct. Restore plus relaunch is genuinely the right advice. The uncomfortable part is that the advice only works for customers who prepared. The cloud gives you zones. Using one of them is a choice. Thursday priced that choice in public.</p>
-         <p>Coinbase's postmortem is a useful companion because it separates the provider's thermal event from its own matching-engine and Kafka recovery issues. The operational lesson is broader than snapshots: rehearse both provider-level failure and application-level recovery, then price the actual alternatives using your own workload and rates.</p>
+         <p><a href="coinbase-msk-kafka-failover-postmortem.html">Coinbase's postmortem</a> is a useful companion because it separates the provider's thermal event from its own matching-engine and Kafka recovery issues. The operational lesson is broader than snapshots: rehearse both provider-level failure and application-level recovery, then price the actual alternatives using your own workload and rates.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Cooling failed. Power followed. The snapshot was the only server that stayed cool.</strong></p>
       </section>
       <section><h2>Sources and Method</h2>
@@ -81,6 +81,7 @@
            <li><a href="https://health.aws.amazon.com/health/status?eventID=arn%3Aaws%3Ahealth%3Aus-east-1%3A%3Aevent%2FEC2%2FAWS_EC2_OPERATIONAL_ISSUE%2FAWS_EC2_OPERATIONAL_ISSUE_FFA94_A4DC515D30F" target="_blank" rel="noopener noreferrer">AWS Health: May 7 US-EAST-1 use1-az4 thermal event and nine impacted services</a></li>
            <li><a href="https://www.coinbase.com/blog/a-postmortem-of-our-may-7-2026-outage" target="_blank" rel="noopener noreferrer">Coinbase Engineering: A postmortem of our May 7, 2026 outage</a></li>
            <li><a href="https://www.crn.com/news/cloud/2026/aws-confirms-data-center-outage-caused-by-thermal-event-some-services-still-impacted" target="_blank" rel="noopener noreferrer">CRN: AWS confirms data center outage caused by thermal event</a></li>
+           <li><a href="coinbase-msk-kafka-failover-postmortem.html">Buildopsy: Coinbase MSK failover — the same May 7 incident from the tenant side</a></li>
          </ul>
       </section>
     </article>

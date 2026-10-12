@@ -223,7 +223,7 @@
         <section>
           <h2>10. The Verdict</h2>
           <p>Notion's architecture is impressive precisely where it is vulnerable. The block model made product composition absurdly fast. The same model made every new feature another consumer of a mutable, permissioned, update-heavy graph. The company responded the right way: shard the online database, separate offline data from online traffic, replace warehouse rewrites with CDC and lake storage, decouple vector storage from compute and use interruptible capacity for interruptible work.</p>
-          <p>The postmortem is not “Notion spent too much.” A billion-dollar product serving a hundred million people is supposed to have a large bill. The postmortem is that cost behaves like a distributed systems failure: it emerges from fan-out, retries, idle capacity, duplicated representations and the distance between the event that caused work and the feature that consumed it.</p>
+          <p>The postmortem is not “Notion spent too much.” A billion-dollar product serving a hundred million people is supposed to have a large bill. The postmortem is that cost behaves like a distributed systems failure: it emerges from fan-out, retries, idle capacity, duplicated representations and the distance between the event that caused work and the feature that consumed it. ShareChat's feature-store ledger is the same moral at a different scale: <a href="sharechat-feature-store-cost-postmortem.html">a billion features a second, then ten times cheaper</a>.</p>
           <p>The next incident will not arrive with a red dashboard. It may arrive as a new AI feature that converts every page edit into an embedding, a new enterprise customer with a ten-million-block workspace, or a reindex job that quietly consumes the same capacity as the API. The cursor will still blink on a blank page. The user will see simplicity.</p>
           <p>Behind it, 480 shards will wait. Kafka will begin to fill. A vector index will wake from cold storage. Somewhere, an engineer will look at the graph and ask the only question that matters:</p>
           <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>What did this one innocent block just make the system do?</strong></p>
@@ -249,6 +249,7 @@
             <li><a href="https://www.notion.com/blog/two-years-of-vector-search-at-notion" target="_blank" rel="noopener noreferrer">Notion Engineering: Two Years of Vector Search at Notion</a></li>
             <li><a href="https://www.notion.com/blog/balancing-cost-and-reliability-for-spark-on-kubernetes" target="_blank" rel="noopener noreferrer">Notion Engineering: Balancing Cost and Reliability for Spark on Kubernetes</a></li>
             <li><a href="https://aws.amazon.com/rds/pricing/" target="_blank" rel="noopener noreferrer">AWS RDS pricing reference</a></li>
+            <li><a href="sharechat-feature-store-cost-postmortem.html">Buildopsy: ShareChat feature store — the same cost-as-failure moral, itemized</a></li>
           </ul>
         </section>
       </article>

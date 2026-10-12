@@ -163,14 +163,14 @@
         <p><strong>Cache safe reads outside Postgres.</strong> PostgREST reads that do not need a fresh transaction can serve from edge cache with a short TTL keyed by query and auth scope. Auth aware caching is harder than public caching but ten times more valuable for a fleet that pretends to be serverless. The same edge thinking cut origin work in my <a href="vercel-fluid-compute-cost-postmortem.html">Vercel teardown</a> and in my <a href="lovable-vibe-coding-scale-postmortem.html">Lovable teardown</a>.</p>
         <p><strong>Isolate realtime by consumer tier.</strong> Separate low latency broadcast streams from analytics style listeners. Rate limit slot consumers per project, alert on slot lag and drop slow subscribers before one lagging slot stalls the primary. The most polite way to destroy a database is a well intentioned consumer that never acknowledges.</p>
         <p><strong>Route heavy reads to replicas by intent.</strong> Tag queries that can tolerate replica lag and route them explicitly. Keep writes and strong consistency reads on primary. A single connection string for every query forces primary to pay for work a replica could do for free.</p>
-        <p><strong>Budget branches like production.</strong> Database branching is wonderful for previews and terrifying for the bill. Expire idle branches automatically, compress WAL retention and alert on fork count. A branch that lives forever is not a preview. It is a tenant that forgot the door code.</p>
+        <p><strong>Budget branches like production.</strong> Database branching is wonderful for previews and terrifying for the bill. Expire idle branches automatically, compress WAL retention and alert on fork count. A branch that lives forever is not a preview. It is a tenant that forgot the door code. And a backup is only as good as its restore proof — Doltgres learned that publicly: <a href="doltgres-data-loss-postmortem.html">the backup passed while the restore failed</a>.</p>
         <div class="tip"><strong>Ops tip:</strong> Alert on pool wait time, active backend count and replication slot lag before you alert on CPU. By the time CPU moves at pooling scale the incident was already queuing at the pooler ten minutes ago.</div>
       </section>
 
       <div class="tip"><strong>Operator rule:</strong> Measure the tax before scaling the system. RLS, pooling plus auth multiply per query, silently.</div>
       <section><h2>9. The Verdict</h2>
         <p>Supabase earned its fleet the hard way. It gives every project a real Postgres, a real extension market and a real wire protocol, then accepts the burden of pooling that fleet for a world that spawns functions like confetti. Supavisor is the admission that hosted Postgres plus autoscaling functions needs a bouncer, a queue and a shared vocabulary for connections.</p>
-        <p>The cost is not Postgres itself. It is the mismatch between serverless burst and transactional backends plus policy work evaluated per row at platform scale. Pooling decides how many backends you run. Indexed RLS decides how much work each backend does. Replica routing decides whether the primary pays for everything. Get those three right and the bill reflects value rather than waste.</p>
+        <p>The cost is not Postgres itself. It is the mismatch between serverless burst and transactional backends plus policy work evaluated per row at platform scale. Pooling decides how many backends you run. WAL pressure decides whether they stay up — CircleCI's full volume is the log-side companion: <a href="circleci-wal-autovacuum-postmortem.html">one transaction log holding 3,500 job starts hostage</a>. Indexed RLS decides how much work each backend does. Replica routing decides whether the primary pays for everything. Get those three right and the bill reflects value rather than waste.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Serverless Postgres is not a database without limits. It is Postgres with a pooler you finally respect.</strong></p>
       </section>
 
@@ -182,6 +182,8 @@
           <li><a href="https://supabase.com/docs/guides/realtime" target="_blank" rel="noopener noreferrer">Supabase Docs: Realtime and Replication Slots</a></li>
           <li><a href="https://supabase.com/docs/guides/database/postgres/row-level-security" target="_blank" rel="noopener noreferrer">Supabase Docs: Row Level Security</a></li>
           <li><a href="https://supabase.com/blog" target="_blank" rel="noopener noreferrer">Supabase Blog: Fleet and Product Updates</a></li>
+          <li><a href="circleci-wal-autovacuum-postmortem.html">Buildopsy: CircleCI WAL saturation — pressure from the log side</a></li>
+          <li><a href="doltgres-data-loss-postmortem.html">Buildopsy: Doltgres backup verification — restore proof before destructive GC</a></li>
         </ul>
       </section>
     </article>

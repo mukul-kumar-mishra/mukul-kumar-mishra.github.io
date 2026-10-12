@@ -118,7 +118,7 @@
 
       <section><h2>5. The verdict: make maintenance stoppable</h2>
         <p>Google reported that workloads in unaffected zones continued to run. The incident shows how routine maintenance can defeat redundancy when a procedure removes multiple paths before checking the result.</p>
-        <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
+        <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. For the failure of isolation itself — one fault restricting a whole nation — see <a href="nats-outage-postmortem.html">the NATS restriction</a>. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
         <p>For comparison, see the distinct storage event in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>. Its failure mechanism and reported scope differ from this network-maintenance incident.</p>
       </section>
 
@@ -139,6 +139,7 @@
           <li><a href="https://status.cloud.google.com/incidents/J5ia5t9p3g9Q5Wi7r8Ev" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: September 1 us-central1 network incident, final report and September 29 addendum</a></li>
           <li><a href="https://status.cloud.google.com/summary" target="_blank" rel="noopener noreferrer">Google Cloud Service Health incident history</a></li>
           <li><a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 outage: a separate storage incident with a different failure mechanism</a></li>
+          <li><a href="nats-outage-postmortem.html">NATS restriction: national blast from a single fault, the uncontained version</a></li>
         </ul>
       </section>
       </article>
