@@ -196,6 +196,21 @@
       var monthly = onDemand * (1 - clamp(o.disc, 0, 100) / 100);
       return { onDemand: onDemand, monthly: monthly, savings: onDemand - monthly };
     },
+    /* GC runtime tune. Collector burn is fleet spend times GC share;
+       savings are fleet spend times the overall CPU cut the tune earns.
+       Simplified from the Zomato GOMEMLIMIT teardown: a $100k fleet at
+       25% GC share with a 30% cut lands at $30k a month. */
+    gcTune: function (o) {
+      var bill = nonneg(o.bill);
+      var gcBefore = bill * (clamp(o.beforePct, 0, 100) / 100);
+      var afterBill = bill * (1 - clamp(o.cutPct, 0, 100) / 100);
+      var gcAfter = afterBill * (clamp(o.afterPct, 0, 100) / 100);
+      var monthly = bill - afterBill;
+      return {
+        gcBefore: gcBefore, afterBill: afterBill, gcAfter: gcAfter,
+        monthly: monthly, yearly: monthly * 12
+      };
+    },
     /* Kubernetes cluster bill. Worker nodes plus control plane plus
        persistent volume storage. */
     k8sCost: function (o) {
@@ -630,6 +645,20 @@
       pct(r.monthly, r.onDemand));
   }
 
+  function renderGcTune() {
+    var o = {
+      bill: num('gc-spend', 100000), beforePct: num('gc-before', 25),
+      afterPct: num('gc-after', 2), cutPct: num('gc-cut', 30)
+    };
+    var r = Calcs.gcTune(o);
+    set('gc-monthly', money(r.monthly, 0));
+    set('gc-yearly', money(r.yearly, 0) + ' per year');
+    set('gc-gcbefore', money(r.gcBefore, 0) + ' / mo collector tax');
+    set('gc-gcafter', money(r.gcAfter, 0) + ' / mo collector tax');
+    donut('gc-donut', [[r.monthly, LIME], [r.afterBill, CYAN]],
+      pct(r.monthly, nonneg(o.bill)));
+  }
+
   function renderK8s() {
     var o = {
       nodes: num('k8s-nodes', 6), node: num('k8s-node', 140),
@@ -844,6 +873,7 @@
     renderS3();
     renderEgress();
     renderCompute();
+    renderGcTune();
     renderK8s();
     renderWarehouse();
     renderRds();
@@ -869,7 +899,7 @@
        /tools/ page hosts exactly one. Missing ids are skipped by bind/set. */
     var RESULT_IDS = ['tk-perturn', 'rps-monthly', 'cx-summary', 'rt-monthly', 'ue-monthly',
       'eb-budget', 'hpa-desired', 'obs-cost', 'pool-total', 'dt-total',
-      's3-monthly', 'eg-monthly', 'ec2-monthly', 'k8s-monthly',
+      's3-monthly', 'eg-monthly', 'ec2-monthly', 'gc-monthly', 'k8s-monthly',
       'dw-monthly', 'rds-monthly', 'lm-monthly', 'cdn-monthly', 'ob-monthly', 'vec-monthly',
       'qb-backlog', 'cache-net', 'sf-projected', 'kp-partitions', 'rc-time', 'tb-admitted',
       'br-total', 'lt-count', 'qa-availability', 'cb-savings'];
@@ -889,6 +919,7 @@
       bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp'], renderS3);
       bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
       bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-running', 'ec2-disc'], renderCompute);
+      bind(['gc-spend', 'gc-before', 'gc-after', 'gc-cut'], renderGcTune);
       bind(['k8s-nodes', 'k8s-node', 'k8s-cp', 'k8s-pv', 'k8s-pvp'], renderK8s);
       bind(['dw-credits', 'dw-creditp', 'dw-tb', 'dw-tbp'], renderWarehouse);
       bind(['rds-count', 'rds-hr', 'rds-hours', 'rds-storage', 'rds-storagep', 'rds-backup', 'rds-backupp'], renderRds);

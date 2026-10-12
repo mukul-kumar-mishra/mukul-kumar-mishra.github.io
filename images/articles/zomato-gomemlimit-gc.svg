@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">GOMEMLIMIT teardown: the container-blind collector fails two ways, and a dynamic soft limit paces it against the ceiling</title>
+  <desc id="desc">Default GOGC targets twice the live heap without seeing the container ceiling, causing OOM kills or GC burn. Zomato recomputes a soft limit per container from the ECS metadata endpoint. GC CPU fell from up to 60 percent to under 2 percent.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <linearGradient id="burn" x2="1"><stop stop-color="#ed9b55"/><stop offset="1" stop-color="#df5e60"/></linearGradient>
+    <linearGradient id="calm" x2="1"><stop stop-color="#57d6cb"/><stop offset="1" stop-color="#b6f26b"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}.muted{fill:#a8bad0}.kicker{font-size:16px;font-weight:700;letter-spacing:2px;fill:#7dd3c7}.head{font-size:30px;font-weight:700}.node{fill:#1d304b;stroke:#49627e;stroke-width:2}.nodehot{fill:#392936;stroke:#ed9b55;stroke-width:2}.nodesafe{fill:#193b3b;stroke:#7dd3c7;stroke-width:2}.label{font-size:20px;font-weight:700}.sub{font-size:15px}.big{font-size:24px;font-weight:700}.line{fill:none;stroke:#8faac5;stroke-width:3;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="58" y="60" class="kicker">BACKEND INFRASTRUCTURE / GO RUNTIME</text>
+  <text x="58" y="105" class="head">Pace the collector against the ceiling, not the heap.</text>
+  <text x="58" y="139" class="muted" font-size="18">Default GOGC targets 2x live heap. It cannot see the cgroup ceiling.</text>
+
+  <rect x="58" y="205" width="330" height="150" rx="16" class="nodehot"/>
+  <text x="84" y="248" class="label">Failure mode 1: OOM trap</text>
+  <text x="84" y="280" class="big" fill="url(#burn)">2x live heap</text>
+  <text x="84" y="308" class="sub muted">target above the hard limit</text>
+  <text x="84" y="332" class="sub muted">GC sleeps past the ceiling</text>
+
+  <rect x="412" y="205" width="330" height="150" rx="16" class="nodehot"/>
+  <text x="438" y="248" class="label">Failure mode 2: GC burn</text>
+  <text x="438" y="280" class="big" fill="url(#burn)">25-60% CPU</text>
+  <text x="438" y="308" class="sub muted">collecting over idle headroom</text>
+  <text x="438" y="332" class="sub muted">~25% average, per Zomato</text>
+
+  <rect x="766" y="205" width="376" height="150" rx="16" class="nodesafe"/>
+  <text x="792" y="248" class="label">Zomato loop, 250+ services</text>
+  <text x="792" y="280" class="big" fill="url(#calm)">limit = 0.9 x ceiling</text>
+  <text x="792" y="308" class="sub muted">metadata endpoint, recomputed</text>
+  <text x="792" y="332" class="sub muted">GC CPU to under 2%</text>
+
+  <text x="58" y="420" class="kicker">THE SIBLING FIX</text>
+  <rect x="58" y="440" width="1084" height="100" rx="16" class="node"/>
+  <text x="88" y="482" class="label" font-size="22">GOMAXPROCS from the task CPU quota: throttling down up to 50%. Go 1.25 now does this by default.</text>
+  <text x="88" y="514" class="sub muted">Unconfigured runtimes size threads to the machine and eat 100ms CFS pauses.</text>
+
+  <text x="58" y="590" class="kicker">REPORTED OUTCOME &#183; VENDOR-REPORTED</text>
+  <text x="58" y="622" class="label" font-size="22">Overall CPU down 25-50% across the fleet, about $30K a month off compute.</text>
+  <text x="58" y="656" class="muted" font-size="14">Figures reported by Zomato, July 2024. Soft limits cannot fix leaks; live heap past the ceiling still kills.</text>
+<image x="996" y="620" width="145" height="53" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
+</svg>
