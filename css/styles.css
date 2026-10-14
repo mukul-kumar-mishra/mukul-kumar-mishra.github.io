@@ -196,6 +196,14 @@ h1, h2, h3, h4, h5, h6 {
 .profile-hero-actions .iconbtn { background: var(--heading); border-color: var(--heading); color: var(--panel); }
 .profile-hero-actions .iconbtn:hover { background: var(--cyan); border-color: var(--cyan); color: #fff; }
 .profile-hero-actions .social-link { width: auto; min-width: 92px; padding: 0 11px; gap: 7px; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; text-decoration: none; }
+.brand-social-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
+.brand-social-link { display: inline-flex; align-items: center; gap: 6px; color: var(--mist); text-decoration: none; white-space: nowrap; }
+.brand-social-link:hover { color: var(--heading); }
+.brand-social-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+.brand-social-link svg { display: block; width: 16px; height: 16px; flex: none; }
+.brand-social-link .brand-icon-solid { fill: currentColor; }
+.brand-social-link .brand-icon-outline { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.brand-social-link .brand-icon-outline .brand-icon-dot { fill: currentColor; stroke: none; }
 
 /* ---------- Buttons ---------- */
 .btn {
@@ -768,6 +776,83 @@ section[data-support-card] { margin-top: 16px; }
   background: var(--card-muted);
   border: 1px solid var(--line);
   color: var(--paper);
+}
+.share-row a.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  text-decoration: none;
+}
+.share-row a.chip:hover { color: var(--heading); border-color: var(--cyan); }
+.share-row a.chip:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+/* Article-end layout: keep the author, share actions, and return link together. */
+.site main > div > footer:has(> .share-row[data-share-row]) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: center !important;
+  column-gap: 20px !important;
+  row-gap: 12px !important;
+}
+.site main > div > footer:has(> .share-row[data-share-row]) > span:first-child {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+.site main > div > footer:has(> .share-row[data-share-row]) > span:first-child a {
+  color: inherit;
+  text-decoration: none;
+}
+.site main > div > footer:has(> .share-row[data-share-row]) > span:first-child a:hover { color: var(--heading); }
+.site main > div > footer:has(> .share-row[data-share-row]) > .share-row {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-end;
+  margin: 0 !important;
+  min-width: 0;
+}
+.site main > div > footer:has(> .share-row[data-share-row]) > .share-row > .fl-desc { margin: 0; }
+.site main > div > footer:has(> .share-row[data-share-row]) > a:last-child {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  color: var(--cyan);
+  text-decoration: none;
+}
+.site main > div > footer:has(> .share-row[data-share-row]) > a:last-child:hover { color: var(--heading); }
+.site main > div > footer:has(> .share-row[data-share-row]) > a:last-child:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.site main > div > footer:has(> .share-row[data-share-row]) > a:last-child svg { width: 16px; height: 16px; }
+.site:has(main > div > footer > .share-row[data-share-row]) > footer.footer {
+  margin-top: 1.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (max-width: 640px) {
+  .share-row a.chip { min-height: 40px; padding: 8px 12px; }
+  .site main > div > footer:has(> .share-row[data-share-row]) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    justify-items: start;
+    align-items: start !important;
+    row-gap: 12px !important;
+  }
+  .site main > div > footer:has(> .share-row[data-share-row]) > span:first-child,
+  .site main > div > footer:has(> .share-row[data-share-row]) > .share-row,
+  .site main > div > footer:has(> .share-row[data-share-row]) > a:last-child {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+  .site main > div > footer:has(> .share-row[data-share-row]) > .share-row { width: 100%; justify-content: flex-start; }
+  .site main > div > footer:has(> .share-row[data-share-row]) > .share-row > .fl-desc { flex-basis: 100%; }
+  .site main > div > footer:has(> .share-row[data-share-row]) > a:last-child { min-height: 40px; }
 }
 
 /* ---------- Footer ---------- */
