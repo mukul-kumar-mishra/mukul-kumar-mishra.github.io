@@ -81,9 +81,9 @@
       </section>
 
       <section><h2>2. Why ElevenLabs Is the Right Unicorn Autopsy</h2>
-        <p>Founded in 2022 by Mati Staniszewski and Piotr Dabkowski, ElevenLabs became Europe's third largest AI unicorn by early 2026. It raised $19M Series A in June 2023 at $100M, $80M Series B in Jan 2024 at $1.1B, $180M Series C in Jan 2025 at $3.3B led by a16z and ICONIQ Growth and $500M Series D in Feb 2026 at $11B led by Sequoia. Total funding $781M. Customers include employees at over 60% of Fortune 500. That is not a research demo. That is critical audio plumbing.</p>
+        <p>Founded in 2022 by Mati Staniszewski and Piotr Dabkowski, ElevenLabs became Europe's third largest AI unicorn by early 2026. It raised $19M Series A in June 2023 at $100M, $80M Series B in Jan 2024 at $1.1B, $180M Series C in Jan 2025 at $3.3B led by a16z and ICONIQ Growth and $500M Series D in Feb 2026 at $11B led by Sequoia. Total funding $779M ($19M plus $80M plus $180M plus $500M). Customers include employees at over 60% of Fortune 500. That is not a research demo. That is critical audio plumbing.</p>
         <p>The company also publishes its trade. It offers three latency tiers. Multilingual v2 at 1000ms plus excellent quality and 1x cost. Turbo v2.5 at 250ms and good quality. Flash v2.5 at 75ms and acceptable quality at 0.5x cost. One minute of audio maps to about 1000 characters. Flash sacrifices prosodic range for speed and is priced for high volume conversation. The roadmap tells you the burn. The money raised goes to shrinking Flash to 50MB on iPhone NPU and to new music and dubbing models. The fastest model is still a centralized cloud model with 1 to 4 second jitter reports.</p>
-        <blockquote>"We started by building a voice that could sound human - and we did. Today we are building foundational models across the full audio stack" Piotr Dabkowski said at the $11B round. The human voice was chapter one. Billing for it forever is chapter two.</blockquote>
+        <blockquote>"We started by building a voice that could sound human - and we did. Today we are building foundational models across the full audio stack" — reported remarks attributed to Piotr Dabkowski at the $11B round (speech link needed). The human voice was chapter one. Billing for it forever is chapter two.</blockquote>
       </section>
 
       <section><h2>3. Reconstructing the Machine</h2>
@@ -130,11 +130,11 @@
 
       <section id="one-million-rps"><h2>7. The One Million RPS Thought Experiment</h2>
         <p>Normalize to one million TTS requests per second for one month. A month holds 2,592,000 seconds. Assume each request carries 20 characters average inbound plus 50kb audio outbound after compression.</p>
-        <p>In the current no cache shape, assume origin cost of $0.000015 per request for GPU time plus platform overhead for a short utterance. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.000015 equals $38.88M per month</strong>.</p>
-        <p>My cached shape dedupes by phoneme hash and serves 60% from an edge phoneme cache with 5ms lookup before any model wake. Keep Flash for truly novel sentences only. Assume 40% reaches origin and origin rate falls to $0.00001 after smaller GPU class for cache misses. Core origin work becomes <strong>400,000 times 2,592,000 times $0.00001 equals $10.37M per month</strong>. Add $2M for edge cache plus $1M for connection and LLM buffer. Proposed envelope is about <strong>$13.37M per month</strong>.</p>
+        <p>In the current no cache shape, assume origin cost of $0.000000015 per request for GPU time plus platform overhead for a short utterance. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.000000015 equals $38.88M per month</strong>.</p>
+        <p>My cached shape dedupes by phoneme hash and serves 60% from an edge phoneme cache with 5ms lookup before any model wake. Keep Flash for truly novel sentences only. Assume 40% reaches origin and origin rate falls to $0.00000001 after smaller GPU class for cache misses. Core origin work becomes <strong>400,000 times 2,592,000 times $0.00000001 equals $10.37M per month</strong>. Add $2M for edge cache plus $1M for connection and LLM buffer. Proposed envelope is about <strong>$13.37M per month</strong>.</p>
         <table><thead><tr><th>At 1M RPS</th><th>Render every time</th><th>Phoneme cached</th></tr></thead><tbody>
           <tr><td>Origin renders</td><td>1,000,000 per sec</td><td>400,000 per sec after cache</td></tr>
-          <tr><td>Modeled rate</td><td>$0.000015 per req</td><td>$0.00001 per req</td></tr>
+          <tr><td>Modeled rate</td><td>$0.000000015 per req</td><td>$0.00000001 per req</td></tr>
           <tr><td>Core origin work</td><td>$38.88M</td><td>$10.37M</td></tr>
           <tr><td>Edge cache and buffer</td><td>Included</td><td>$3M</td></tr>
           <tr><td><strong>Modeled monthly total</strong></td><td><strong>$38.88M</strong></td><td><strong>$13.37M</strong></td></tr>

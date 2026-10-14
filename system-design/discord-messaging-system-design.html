@@ -98,7 +98,7 @@
       </section>
 
       <section><h2>3. Hot Partitions and Quorum Amplification</h2>
-        <p>Partition by channel plus time and one hot channel concentrates 5,000 reads per second onto a single partition. At replication factor 3 with quorum reads, that becomes 10,000 replica reads against a handful of nodes. Double the hot channels on event night and the saturated set grows faster than the fleet, because every hot read multiplies across replicas while new nodes only dilute cold load.</p>
+        <p>Partition by channel plus time: in this illustrative scenario one hot channel concentrates 5,000 reads per second onto a single partition. At replication factor 3 with quorum reads, that becomes 10,000 replica reads against a handful of nodes. Double the hot channels on event night and the saturated set grows faster than the fleet, because every hot read multiplies across replicas while new nodes only dilute cold load.</p>
         <p>Discord reads plus writes at quorum, so saturated nodes slow down strangers too: cold channels sharing hardware with a hot partition pay the hot partition's latency. Add Cassandra's garbage-collection pauses plus compaction backlogs and three queues stack. Tail latency drifted from 40ms toward 125ms at p99 while medians looked healthy. Medians lie about chat. Everyone notices the stuck message.</p>
         <div class="tip"><strong>Interview line:</strong> when asked why adding nodes did not help, answer with the hot set. 177 nodes felt small because the saturated handful was the cluster. Capacity follows the hottest partition, never the average.</div>
       </section>

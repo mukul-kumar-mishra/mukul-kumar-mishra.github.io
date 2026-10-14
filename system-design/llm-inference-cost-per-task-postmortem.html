@@ -37,7 +37,7 @@
     "mainEntity":[
       {"@type":"Question","name":"What dominates LLM inference cost per task?","acceptedAnswer":{"@type":"Answer","text":"Output tokens dominate because decode prices run several times higher than input prices while retries plus eval sampling multiply the base. Price output first, then cache the repeated prefix."}},
       {"@type":"Question","name":"How does prefix cache change the bill?","acceptedAnswer":{"@type":"Answer","text":"A cache hit reprices repeated prefix tokens at the discounted cached rate instead of full input price. At a 55 percent hit rate on an 8,000-token prefix, the input leg falls by nearly half before any other optimization."}},
-      {"@type":"Question","name":"Why do agent retries cost more than model choice?","acceptedAnswer":{"@type":"Answer","text":"Each failed attempt rebills the full turn at the worst hour with no discount. Price every retry policy at 6x calm load before approving it, because the incident collects that loan."}},
+      {"@type":"Question","name":"Why do agent retries cost more than model choice?","acceptedAnswer":{"@type":"Answer","text":"Each failed attempt rebills the full turn at the worst hour with no discount. Price every retry policy at 3x calm load (1 original plus 2 retries) before approving it, because the incident collects that loan."}},
       {"@type":"Question","name":"How do I price my own workload?","acceptedAnswer":{"@type":"Answer","text":"Measure mean input plus output tokens per task, your prefix hit rate, batch size plus retry rate, then paste live vendor rates into the token-bill calculator. The worked model below shows every step so you can swap in your numbers."}}
     ]
   }
@@ -116,7 +116,7 @@
       </section>
 
       <section><h2>5. The Retry Amplifier plus the Eval Tax</h2>
-        <p>Failed attempts rebill the full turn. At a 12 percent task failure rate with one retry each, 120,000 extra turns bill on top of the base million. With no backoff during an incident the policy prices near 6x calm load, which this house prices before approving any retry config. Run your own numbers in the <a href="../calculators.html#retry-storm">retry-storm calculator</a> before the incident instead of after.</p>
+        <p>Failed attempts rebill the full turn. At a 12 percent task failure rate with one retry each, 120,000 extra turns bill on top of the base million. With no backoff during an incident the policy prices near 3x calm load (1 original plus 2 retries), which this house prices before approving any retry config. Run your own numbers in the <a href="../calculators.html#retry-storm">retry-storm calculator</a> before the incident instead of after.</p>
         <p>Eval sampling adds a second multiplier. Scoring 5 percent of tasks with a judge running triple depth adds roughly 15 percent of base cost as quality overhead. That spend is correct when it gates bad deploys. It is waste when scores go unread. Budget evals like capacity plus review their catches on the same schedule.</p>
       </section>
 
@@ -137,7 +137,7 @@
         <h3>How does prefix cache change the bill?</h3>
         <p>A cache hit reprices repeated prefix tokens at the discounted cached rate instead of full input price. At a 55 percent hit rate on an 8,000-token prefix, the input leg falls by nearly half before any other optimization.</p>
         <h3>Why do agent retries cost more than model choice?</h3>
-        <p>Each failed attempt rebills the full turn at the worst hour with no discount. Price every retry policy at 6x calm load before approving it, because the incident collects that loan.</p>
+        <p>Each failed attempt rebills the full turn at the worst hour with no discount. Price every retry policy at 3x calm load (1 original plus 2 retries) before approving it, because the incident collects that loan.</p>
         <h3>How do I price my own workload?</h3>
         <p>Measure mean input plus output tokens per task, your prefix hit rate, batch size plus retry rate, then paste live vendor rates into the token-bill calculator. The worked model above shows every step so you can swap in your numbers.</p>
       </section>

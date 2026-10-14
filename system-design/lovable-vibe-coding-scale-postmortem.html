@@ -117,14 +117,14 @@
 
       <section id="cost-model"><h2>6. The Cost Model: Why the Preview Button Costs More Than the Model</h2>
         <p>Model tokens dominate headlines but preview infrastructure dominates the tail.</p>
-        <p>Assume per turn input of 80k tokens with seventy percent cache reuse and output of 2k tokens. Blended effective input cost around $0.60 per million after caching. Input cost per turn is about $0.05. Output at $15 per million is $0.03. Add gateway overhead. Agent token cost lands near $0.10 per turn. Three hundred thousand turns per day is $30k per day or $900k per month.</p>
+        <p>Assume per turn input of 80k tokens with seventy percent cache reuse and output of 2k tokens. Blended effective input cost around $1.11 per million after caching (30% at $3 plus 70% at $0.30). Input cost per turn is about $0.09. Output at $15 per million is $0.03. Add gateway overhead. Agent token cost lands near $0.12 per turn. Three hundred thousand turns per day is $36k per day or $1.08M per month.</p>
         <p>Preview sandbox and build is the second bill. Assume ninety seconds of isolated container at $0.00005 per second plus network plus storage. That is $0.0045 per preview before install IO. Add npm install network and registry IO amortized to $0.01 per build when lockfile is reused and $0.04 when cold. With eighty percent lockfile reuse the blended build cost is $0.015 per preview. Three hundred thousand previews per day is $4.5k per day or $135k per month. Full rebuilds for every prompt would triple that.</p>
-        <p>Add Supabase per project provisioning, hosting for preview URLs, auth, storage and observability. Lovable Cloud and Supabase MCP together at platform scale sit near $250k per month for the modeled project volume. Total modeled envelope lands near $1.285M per month for this project scale, or roughly $42.8k per day.</p>
+        <p>Add Supabase per project provisioning, hosting for preview URLs, auth, storage and observability. Lovable Cloud and Supabase MCP together at platform scale sit near $250k per month for the modeled project volume. Total modeled envelope lands near $1.465M per month for this project scale ($1.08M tokens plus $135k sandbox plus $250k Supabase and hosting), or roughly $48.8k per day.</p>
         <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
-          <tr><td>Agent tokens with cache affinity</td><td>$900k</td><td>cache hit rate plus model mix</td></tr>
+          <tr><td>Agent tokens with cache affinity</td><td>$1.08M</td><td>cache hit rate plus model mix</td></tr>
           <tr><td>Sandbox boot plus Vite build</td><td>$135k</td><td>lockfile reuse plus layer cache</td></tr>
           <tr><td>Supabase MCP plus preview hosting</td><td>$250k</td><td>projects times idle timeout</td></tr>
-          <tr><td><strong>Total scenario</strong></td><td><strong>$1.285M</strong></td><td></td></tr>
+          <tr><td><strong>Total scenario</strong></td><td><strong>$1.465M</strong></td><td></td></tr>
         </tbody></table>
       </section>
 
