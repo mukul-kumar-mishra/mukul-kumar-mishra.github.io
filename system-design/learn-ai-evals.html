@@ -517,9 +517,9 @@
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Providers · Swap regressions</div>
           <h2>Vendors Move Under You</h2>
-          <p class="lesson-story">Wednesday. A $60 billion acquisition lands on the editor your evals were tuned for. An OpenAI cutoff gets dated November 12. The picker nudges toward a house model your suite never graded. Provider shock invalidates golden sets silently, which is the most expensive kind of silence: green dashboards over a changed model.</p>
+          <p class="lesson-story">Scenario. Your provider retires a model version and changes the default behind an existing integration. The request path still returns 200s, but your suite only grades the old version. A green dashboard can hide a model change unless the version and evaluation result travel together.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Provider shock triggering a full golden set replay that blocks the changed model until scores hold">
-            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">$60B shock</text>
+            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">model changes</text>
             <rect class="boxlime" x="160" y="55" width="130" height="40" rx="8"/><text x="225" y="79" font-size="11" text-anchor="middle">replay goldens</text>
             <rect class="boxhot" x="322" y="20" width="110" height="40" rx="8"/><text x="377" y="44" font-size="11" text-anchor="middle">scores dip</text>
             <rect class="box" x="322" y="90" width="110" height="40" rx="8"/><text x="377" y="114" font-size="11" text-anchor="middle">scores hold</text>
@@ -530,9 +530,9 @@
           <ul class="lesson-ideas">
             <li>Replay the full suite on every provider plus model change. Pin versions, then prove the pin.</li>
             <li>Track per-model scorecards over time. Drift attribution starts with versioned history.</li>
-            <li>Deep dive: <a href="cursor-spacex-acquisition-postmortem.html">Cursor Sold for $60B</a>, the shock that moved the picker.</li>
+            <li>Deep dive: <a href="cursor-spacex-acquisition-postmortem.html">Cursor and SpaceX transaction review</a>, a documented provider-change date and its limits.</li>
           </ul>
-          <p>Your artifact: a provider-change runbook, replay plus compare plus pin, stored beside the suite. Watch the changed model stop at the replay above, then stop one of your own. Green dashboards over changed models are the costliest green on the wall.</p>
+          <p>Your artifact: a provider-change runbook with a versioned model ID, a golden-set replay, an approval point, and a rollback path. In the diagram, a score regression blocks promotion; a passing run pins the new version with its evaluation record.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Your provider swaps models silently. Your detection plus response plan? <span class="q-seen">Seen at: LLMOps loops.</span></p>

@@ -512,9 +512,9 @@
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Vendor risk · Model shocks</div>
           <h2>Vendors Move Under You</h2>
-          <p class="lesson-story">Wednesday. A $60 billion acquisition lands on your coding assistant. An OpenAI cutoff gets dated November 12. Staff admit the picker nudges toward a house model. Your agent pinned nothing, abstracted nothing, plus re-tested nothing. Vendor shock is not news. It is a scheduled dependency failure.</p>
+          <p class="lesson-story">Scenario. A model provider changes ownership and announces that one API contract may end on a future date. Your agent's default model is buried in configuration, its fallback is untested, and its dashboards record requests but not model versions. A provider change becomes an operational failure only if your system cannot identify and route around it.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Vendor shock hitting a pinned abstraction layer that reroutes the agent to a fallback model">
-            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">$60B shock</text>
+            <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">provider change</text>
             <rect class="boxlime" x="160" y="55" width="130" height="40" rx="8"/><text x="225" y="79" font-size="11" text-anchor="middle">pinned layer</text>
             <rect class="box" x="322" y="55" width="100" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">fallback</text>
             <rect class="boxlime" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">still ships</text>
@@ -524,9 +524,9 @@
           <ul class="lesson-ideas">
             <li>Pin model versions plus abstract the provider behind one interface. Swaps become config, not surgery.</li>
             <li>Re-run golden evals on every provider change. New defaults need proof, not trust.</li>
-            <li>Deep dive: <a href="cursor-spacex-acquisition-postmortem.html">Cursor Sold for $60B</a>, the picker that paid the price.</li>
+            <li>Deep dive: <a href="cursor-spacex-acquisition-postmortem.html">Cursor and SpaceX transaction review</a>, the disclosed merger and proposed model-contract date.</li>
           </ul>
-          <p>Your artifact: a provider abstraction with pinned versions plus a fallback route plus a re-eval checklist. Watch the shock stop at the pinned layer above, then pin your own. Acquisitions do not page you first.</p>
+          <p>Your artifact: a provider abstraction with pinned model versions, a tested fallback route, and a re-evaluation checklist. Record the provider, model, and result for each run so a silent default change cannot pass as the same system.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Your model provider gets acquired. Your migration plan in five steps? <span class="q-seen">Seen at: AI engineering leadership loops.</span></p>

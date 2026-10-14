@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="One bad config file taking down a global edge network">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Illustrative flow of a ClickHouse permission change creating duplicate Bot Management feature rows, exceeding a proxy limit, and affecting services">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="133" result="n"/>
@@ -9,11 +9,11 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">One File Ruled the Whole Network</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Cloudflare Outage · November 18, 2025</text>
 <image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Wrong file in. Global errors out.</text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Metadata changed. Duplicate rows spread.</text>
 
-  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the proxy poisoned storage.</text>
+  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the published file crossed its runtime limit.</text>
   <svg x="90" y="205" width="300" height="300" viewBox="0 0 100 100">
 <g transform="translate(-1.43,-1.92) scale(0.0836)" fill="#0f172a">
 
@@ -24,28 +24,28 @@
 <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
     <rect x="455" y="185" width="255" height="125" rx="14" fill="#ffffff"/>
     <rect x="455" y="185" width="255" height="36" fill="#0f172a"/>
-    <text x="470" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#f8fafc" stroke="none">wrong feature file</text>
-    <text x="470" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">core proxy loads it</text>
-    <text x="470" y="255" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">error spike network-wide</text>
-    <text x="470" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">one file, global blast</text>
+    <text x="470" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#f8fafc" stroke="none">ClickHouse permission change</text>
+    <text x="470" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">query returns duplicate rows</text>
+    <text x="470" y="255" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">feature file grows past 200</text>
+    <text x="470" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">about 60 used normally</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#e11d48"><text x="720" y="250">→</text></g>
   <g filter="url(#roughen)">
     <rect x="760" y="185" width="300" height="125" rx="14" fill="#fffbeb" stroke="#e11d48" stroke-width="4"/>
     <rect x="760" y="185" width="300" height="36" fill="#e11d48"/>
-    <text x="775" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" stroke="none">X plus OpenAI down</text>
-    <text x="775" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">Workers KV dragged along</text>
-    <text x="775" y="255" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">proxy poisons storage</text>
-    <text x="775" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">shared fate, shared file</text>
+    <text x="775" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" stroke="none">Proxy versions failed differently</text>
+    <text x="775" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">FL2: 5xx · FL: bot score zero</text>
+    <text x="775" y="255" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">KV and Access also affected</text>
+    <text x="775" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">Cloudflare's report, summarized</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#0f172a"><text x="1080" y="250">→</text></g>
   <g filter="url(#roughen)">
     <rect x="590" y="350" width="420" height="80" rx="14" fill="#16a34a" stroke="#0f172a" stroke-width="3"/>
-    <text x="605" y="376" font-family="monospace" font-size="12" font-weight="bold" fill="#ffffff" stroke="none">patch: bypass proxy for KV</text>
-    <text x="605" y="398" font-family="monospace" font-size="12" fill="#ffffff" stroke="none">storage outlives the proxy</text>
-    <text x="605" y="418" font-family="monospace" font-size="11" fill="#dcfce7" stroke="none">decouple to survive</text>
+    <text x="605" y="376" font-family="monospace" font-size="12" font-weight="bold" fill="#ffffff" stroke="none">13:05 bypass reduced downstream errors</text>
+    <text x="605" y="398" font-family="monospace" font-size="12" fill="#ffffff" stroke="none">14:24 stopped bad file propagation</text>
+    <text x="605" y="418" font-family="monospace" font-size="11" fill="#dcfce7" stroke="none">main impact resolved at 14:30 UTC</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">shared fate.</text>
-  <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">shared file.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">validate generated config.</text>
+  <text x="510" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">stage its rollout.</text>
 </svg>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="The nudge in one diagram. Your toggle says off. The picker heard otherwise.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="OpenAI announced a proposed November 12 contract wind-down date for models supplied to Cursor; teams should inventory actual routes and test alternatives">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="11" result="n"/>
@@ -9,10 +9,10 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Cursor Sold for $60 Billion. Your Model Picker…</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Cursor · Model-Supply Dependency</text>
 <image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">JUST A NUDGE, THEY SAID</text>
-  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">your toggle has opinions now.</text>
+  <text x="60" y="122" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a">OPENAI PROPOSED A CUTOFF DATE</text>
+  <text x="60" y="156" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="21" font-style="italic" fill="#475569">check your own model routes before migrating.</text>
   <svg x="140" y="240" width="260" height="260" viewBox="0 0 100 100"><g transform="translate(-1.43,-1.92) scale(0.0836)" fill="#0f172a">
 
 
@@ -21,12 +21,13 @@
   <g filter="url(#roughen)">
     <rect x="620" y="230" width="460" height="230" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
     <rect x="620" y="230" width="460" height="46" fill="#0f172a"/>
-    <text x="640" y="261" font-family="monospace" font-size="19" font-weight="bold" fill="#f8fafc">SETTINGS &gt; MODELS</text>
-    <text x="640" y="320" font-family="monospace" font-size="20" fill="#475569">[ ] Grok  (you: OFF)</text>
-    <text x="640" y="360" font-family="monospace" font-size="20" fill="#1e293b">active model: GROK</text>
-    <text x="640" y="400" font-family="monospace" font-size="20" fill="#e11d48">toggled itself. again.</text>
-    <text x="640" y="440" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="17" font-style="italic" fill="#475569">have you tried Last Used?</text>
+    <text x="640" y="261" font-family="monospace" font-size="19" font-weight="bold" fill="#f8fafc">OPENAI NOTICE · AUG 28</text>
+    <text x="640" y="320" font-family="monospace" font-size="20" fill="#475569">model contract wind-down</text>
+    <text x="640" y="360" font-family="monospace" font-size="20" fill="#1e293b">proposed date: NOV 12</text>
+    <text x="640" y="400" font-family="monospace" font-size="20" fill="#e11d48">not yet effective on Oct 14</text>
+    <text x="640" y="440" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="17" font-style="italic" fill="#475569">verify your contract and fallback.</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">opt-out is the new opt-in.</text>
+  <text x="90" y="590" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="25" font-weight="bold" fill="#f8fafc">inventory model routes.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Source: OpenAI's proposed contract shutoff notice, Aug 28, 2026.</text>
 </svg>

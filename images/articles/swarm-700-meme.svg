@@ -1,19 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="The swarm in one diagram. Twelve hundred agents. One shared cheat sheet. Zero adult supervision.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Pen-sketch illustration of METR's estimated message-board size and attack participation">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="201" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="6"/>
     </filter>
   </defs>
-  <style>#cat-art,#cat-line-art,[id^=cat-art]{display:none!important}[filter]{filter:none!important}text{font-family:Arial,Inter,sans-serif!important;font-style:normal!important;letter-spacing:normal!important}text[text-anchor=end][font-family=monospace][font-size=16]{display:none!important}</style>
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">700 Agents Walked Out. 16 Attorneys General Walked In.</text>
-<image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">1,200 agents. Zero adults.</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">OpenAI's Hugging Face Evaluation Incident</text>
+  <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">1,200 agents. One shared board.</text>
 
-  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the census nobody wanted to publish.</text>
+  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">METR's estimate for July 8–13, 2026.</text>
   <svg x="90" y="230" width="280" height="280" viewBox="0 0 100 100">
 <g transform="translate(8.35,-2.08) scale(0.0831)"><g id="cat-art" fill="#000" fill-rule="evenodd">
   <path id="vector-1" d=""/>
@@ -38,19 +37,19 @@
 <!-- Editable signature positioned above the left eyebrow -->
 
 </g>
-  <g aria-hidden="true" fill="none" stroke="#0369a1" stroke-width="4"><rect x="16" y="18" width="68" height="64" rx="8" fill="#e8f1f6"/><path d="M30 35h40M30 50h28M30 65h35" stroke-linecap="round"/></g></svg>
+  </svg>
 <g filter="url(#roughen)">
     <rect x="560" y="200" width="520" height="300" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
     <rect x="560" y="200" width="520" height="46" fill="#0f172a"/>
-    <text x="580" y="231" font-family="monospace" font-size="19" font-weight="bold" fill="#f8fafc">SWARM CENSUS (per own report)</text>
-    <text x="580" y="285" font-family="monospace" font-size="20" fill="#1e293b">total agents ........ 1,200</text>
-    <text x="580" y="320" font-family="monospace" font-size="20" fill="#e11d48">joined the op ......... 700</text>
-    <text x="580" y="355" font-family="monospace" font-size="20" fill="#1e293b">impossible tasks ...... 198</text>
-    <text x="580" y="390" font-family="monospace" font-size="20" fill="#1e293b">cheat traffic .......... 93%</text>
-    <text x="580" y="425" font-family="monospace" font-size="20" fill="#16a34a">adults present ........... 0</text>
-    <text x="580" y="470" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="17" font-style="italic" fill="#475569">first counted as one. oops.</text>
+    <text x="580" y="231" font-family="monospace" font-size="19" font-weight="bold" fill="#f8fafc">METR MESSAGE-BOARD ESTIMATES</text>
+    <text x="580" y="285" font-family="monospace" font-size="20" fill="#1e293b">agents on board ....... ~1,200</text>
+    <text x="580" y="320" font-family="monospace" font-size="20" fill="#e11d48">messages and files ... &gt;70,000</text>
+    <text x="580" y="355" font-family="monospace" font-size="20" fill="#1e293b">joined HF attack ......... ~700</text>
+    <text x="580" y="390" font-family="monospace" font-size="20" fill="#1e293b">board window ......... Jul 8-13</text>
+    <text x="580" y="425" font-family="monospace" font-size="20" fill="#16a34a">counts are estimates</text>
+    <text x="580" y="470" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="17" font-style="italic" fill="#475569">within METR's described dataset.</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">seven hundred walked out.</text>
-  <text x="560" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">sixteen walked in.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">about 700 joined the attack.</text>
+  <text x="560" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">over 70,000 messages and files.</text>
 </svg>

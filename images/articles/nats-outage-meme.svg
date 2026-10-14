@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Grounded planes while air crews scatter across Europe">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="NATS September 8, 2026 incident: flight-code software defect, about six hours of UK restrictions, and more than two days of passenger disruption">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="123" result="n"/>
@@ -9,11 +9,11 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Four Hours That Cancelled 2,000 Flights</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">NATS Flight-Data Incident · September 8, 2026</text>
 <image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">One fault. Four hours. Three days.</text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">One software defect. About six hours.</text>
 
-  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the computers recovered first.</text>
+  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">passenger disruption lasted more than two days.</text>
   <svg x="90" y="205" width="300" height="300" viewBox="0 0 100 100">
 <g transform="translate(-1.43,-1.92) scale(0.0836)" fill="#0f172a">
 
@@ -24,28 +24,29 @@
 <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
     <rect x="455" y="185" width="255" height="125" rx="14" fill="#ffffff"/>
     <rect x="455" y="185" width="255" height="36" fill="#0f172a"/>
-    <text x="470" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#f8fafc" stroke="none">flight data system</text>
-    <text x="470" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">one fault, Tuesday</text>
-    <text x="470" y="255" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">traffic restricted</text>
-    <text x="470" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">safety first, planes later</text>
+    <text x="470" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#f8fafc" stroke="none">manual aircraft-code request</text>
+    <text x="470" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">paused by higher priority</text>
+    <text x="470" y="255" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">resumed with corrupted output</text>
+    <text x="470" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">NATS: defect occurred in ms</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#e11d48"><text x="720" y="250">→</text></g>
   <g filter="url(#roughen)">
     <rect x="760" y="185" width="300" height="125" rx="14" fill="#fffbeb" stroke="#e11d48" stroke-width="4"/>
     <rect x="760" y="185" width="300" height="36" fill="#e11d48"/>
-    <text x="775" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" stroke="none">4 hours, 2,000 flights</text>
-    <text x="775" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">Heathrow to Manchester</text>
-    <text x="775" y="255" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">crews out of position</text>
-    <text x="775" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">2023 all over again</text>
+    <text x="775" y="208" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" stroke="none">UK restrictions · about 6 hours</text>
+    <text x="775" y="235" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">CAA: &gt;2,000 flights affected</text>
+    <text x="775" y="255" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">delayed, cancelled or diverted</text>
+    <text x="775" y="283" font-family="monospace" font-size="11" fill="#475569" stroke="none">not cancellations alone</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#0f172a"><text x="1080" y="250">→</text></g>
   <g filter="url(#roughen)">
     <rect x="590" y="350" width="420" height="80" rx="14" fill="#16a34a" stroke="#0f172a" stroke-width="3"/>
-    <text x="605" y="376" font-family="monospace" font-size="12" font-weight="bold" fill="#ffffff" stroke="none">computers fixed same day</text>
-    <text x="605" y="398" font-family="monospace" font-size="12" fill="#ffffff" stroke="none">schedules took three more</text>
-    <text x="605" y="418" font-family="monospace" font-size="11" fill="#dcfce7" stroke="none">recovery is combinatorial</text>
+    <text x="605" y="376" font-family="monospace" font-size="12" font-weight="bold" fill="#ffffff" stroke="none">NATS operations normal same evening</text>
+    <text x="605" y="398" font-family="monospace" font-size="12" fill="#ffffff" stroke="none">passenger disruption: &gt;2 days</text>
+    <text x="605" y="418" font-family="monospace" font-size="11" fill="#dcfce7" stroke="none">NATS preliminary report</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">safety held.</text>
-  <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">schedules folded.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">restriction window.</text>
+  <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">passenger recovery window.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: NATS preliminary report, Sep 18, 2026; CAA review announcement, Sep 25, 2026.</text>
 </svg>
