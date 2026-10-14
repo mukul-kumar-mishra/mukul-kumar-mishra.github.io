@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Discord voice lost 17 percent of sessions for three hours when a safety check outran Kubernetes grace plus a thundering herd hit 14 of 15 instances. A forensic teardown with RPS plus cost math.">
+  <meta name="description" content="Discord says a Kubernetes scale-down terminated session pods before their handoff completed on March 25, 2026. Seventeen percent of sessions stopped ungracefully, triggering a voice reconnect cascade and a 3-hour-17-minute incident.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Discord Voice Postmortem: The Herd Heard Itself">
-  <meta property="og:description" content="A safety check that ignored grace plus a reconnect surge that ignored limits. Three hours, 17 percent of sessions, 14 of 15 voice nodes down. RPS math inside.">
+  <meta property="og:title" content="Discord's March 2026 Voice Outage: 17% of Sessions Stopped at Once">
+  <meta property="og:description" content="Discord says a Kubernetes scale-down terminated session pods before their handoff completed on March 25, 2026. Seventeen percent of sessions stopped ungracefully, triggering a voice reconnect cascade and a 3-hour-17-minute incident.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/discord-voice-thundering-meme.png">
-  <meta property="og:image:alt" content="Three stat panels showing pods dead, simultaneous reconnects and voice instances lost">
+  <meta property="og:image:alt" content="Discord's March 25 voice incident: 17% of sessions stopped ungracefully, reconnects overloaded voice syncers, and the incident lasted 3 hours 17 minutes">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Discord Voice Postmortem: The Herd Heard Itself">
-  <meta name="twitter:description" content="Grace period killed the cluster. Rate limits saved it. Three hours of RPS math.">
+  <meta name="twitter:title" content="Discord's March 2026 Voice Outage: 17% of Sessions Stopped at Once">
+  <meta name="twitter:description" content="Discord's postmortem: a scale-down exceeded the session handoff grace period, causing a reconnect cascade and a 3-hour-17-minute voice incident.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/discord-voice-thundering-meme.png">
-  <meta name="twitter:image:alt" content="Discord voice thundering herd stat panels">
-  <title>Discord Voice Postmortem: The Herd Heard Itself | Buildopsy</title>
+  <meta name="twitter:image:alt" content="Discord's March 25 voice incident: 17% of sessions stopped ungracefully, reconnects overloaded voice syncers, and the incident lasted 3 hours 17 minutes">
+  <title>Discord's March 2026 Voice Outage: 17% of Sessions Stopped at Once | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,75 +29,68 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Discord Voice Postmortem: The Herd Heard Itself", "description": "Discord voice lost 17 percent of sessions when a safety check outran Kubernetes grace plus a reconnect herd hit the cluster. Forensic teardown with RPS plus cost math.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html"}, "keywords": "Discord, voice, thundering herd, Kubernetes, postmortem, rate limiting, Mukul Kumar Mishra", "image": "https://buildopsy.com/images/articles/discord-voice-thundering-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Discord's March 2026 Voice Outage: 17% of Sessions Stopped at Once", "description": "A source-led review of Discord's March 25, 2026 voice incident: a Kubernetes scale-down terminated session pods before handoff completed, triggering a reconnect cascade and an incident window from 12:13 to 15:30 PDT.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-20", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/discord-voice-thundering-herd-postmortem.html"}, "keywords": "Discord, voice, outage, Kubernetes, graceful termination, reconnects", "image": "https://buildopsy.com/images/articles/discord-voice-thundering-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Discord Voice Postmortem: The Herd Heard Itself</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Vertical scaling asked for a stronger session service. A safety check ran long. Kubernetes stopped waiting. Pods marked dead triggered millions of reconnects at once. The herd that health checks were meant to prevent became the outage itself. Three hours later the fix was not more capacity first. It was less admission first.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Safety check exceeded grace. Pods died together. Reconnect surge exhausted US East memory plus dropped 14 of 15 voice instances. Recovery required aggressive rate limits plus doubled cluster size. Herd control beats herd capacity.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">March 2026 incident</span><span class="chip">10 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Discord's March 2026 Voice Outage: 17% of Sessions Stopped at Once</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Discord's postmortem says a routine scale-down during its Kubernetes migration terminated session pods before their handoff completed. Seventeen percent of sessions stopped ungracefully, causing reconnect traffic to cascade into gateway and voice systems. Discord reports voice and video degradation from 12:13 to 15:30 PDT on March 25, 2026, a window of 3 hours and 17 minutes.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The termination safety check waited longer than Kubernetes' grace period, so sessions could not hand off before pods were killed. Discord says 17% of sessions stopped and all 15 voice syncers showed growing mailbox queues. Recovery used lower syncer rate limits and additional cluster capacity. The user-supplied RPS and cost model below is illustrative, not Discord telemetry.</p>
       <div class="grid4" style="margin-top:24px;">
-        <div class="stat" style="padding:14px;"><div class="lbl">Impact</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">17 pct sessions</div></div>
-        <div class="stat" style="padding:14px;"><div class="lbl">Duration</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~3 hours</div></div>
-        <div class="stat" style="padding:14px;"><div class="lbl">Voice Fleet</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">14/15 down</div></div>
-        <div class="stat" style="padding:14px;"><div class="lbl">Fix</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Limit plus 2x</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Sessions stopped</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">17% · reported</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Incident window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">3h 17m · PDT</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Voice syncers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">15 queues grew</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Recovery measures</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Rate limits + capacity</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 20, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 14, 2026</p>
     </header>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/discord-voice-thundering-meme.svg" alt="Diagram summarizing a delayed termination check followed by a reconnect burst across voice instances" width="1200" height="680"><figcaption>Figure 1. The herd in one diagram. Safety check ran past termination grace. Millions reconnected at once. Fourteen of fifteen voice instances dropped.</figcaption></figure>
-      <section><h2>1. The Scaling That Scaled the Wrong Thing</h2>
-        <p>Discord voice is a long-lived session service on Erlang, fronted by Kubernetes. The intent was vertical scaling for headroom. The tool was a safety check before terminating old pods. The check read state that grew with history. The duration grew with state. At some width the check outlived <code>terminationGracePeriodSeconds</code>.</p>
-        <p>Kubernetes then stops waiting. SIGKILL arrives. The pod is dead regardless of whether the check promised to finish. When many pods share the same rollout, the same overdue check fires together. Many pods die together. That is the thunder. The herd is the clients that notice.</p>
-        <p>Clients reconnect fast because voice is latency sensitive. Millions of sessions retry at once, not spread over minutes. The control plane that scheduled the scaling now schedules the recovery, under the exact load the scaling tried to avoid.</p>
+      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/discord-voice-thundering-meme.svg" alt="Discord reports that 17% of sessions stopped ungracefully during a Kubernetes scale-down and the voice incident lasted from 12:13 to 15:30 PDT" width="1200" height="680"><figcaption>Figure 1. Discord reports that 17% of sessions stopped ungracefully after a scale-down exceeded the process handoff grace period. The company's incident window ran from 12:13 to 15:30 PDT.</figcaption></figure>
+      <section><h2>1. Session Handoff Outlasted Kubernetes' Grace Period</h2>
+        <p>Discord's <a href="https://discord.com/blog/behind-the-scenes-of-the-3-25-26-voice-outage" target="_blank" rel="noopener noreferrer">April 29 incident postmortem</a> says the incident began during a Kubernetes migration for Elixir services. The team reduced pod count while increasing pod resources. When the change reached the first zone at 12:13 PDT on March 25, Kubernetes terminated half the pods there. A safety check designed to wait for in-progress work kept handoff from starting before the termination grace period expired.</p>
+        <p>Discord says the sessions service ran across three equally balanced zones and 17% of sessions across the platform stopped ungracefully. That exact 17% is the company's reported figure. The postmortem attributes it to pod termination and incomplete handoff, not to clients violating a retry contract.</p>
       </section>
-      <section><h2>2. Why The Cluster Cascaded</h2>
-        <p>Voice session state is memory heavy plus connection heavy. Each reconnect allocates buffers, replays presence plus revalidates routes. At thunder scale the memory allocator becomes the scheduler. US East exhausted first. The region that held the most sessions held the most risk.</p>
-        <p>Fourteen of fifteen voice instances dropped after the flood. Targeted restarts failed because the target re-flooded. Full cluster restarts failed for the same reason. Restart is a capacity action. The incident needed an admission action.</p>
-        <p>Erlang's preemptive scheduling saved the remaining beam but not the storm. The service that prides itself on soft real-time hit a hard real-time edge. The deadline was not in code. The deadline lived in the deployment manifest.</p>
+      <section><h2>2. Reconnect Work Reached Gateways and Voice Syncers</h2>
+        <p>Discord says the disconnected sessions triggered monitor messages across its real-time systems and sent clients into reconnect. Gateway memory rose in <code>us-east1-b</code>, where affected sessions were concentrated. The same reconnect wave propagated to the A/V service as clients rejoined voice calls.</p>
+        <p>The postmortem says mailbox lengths began growing on all 15 voice syncer instances at 12:13 PDT, while RPCs to Discord's SFUs fell. The connection-pool and HTTP-connection supervisors were also on paths used by service discovery. When their mailboxes backed up, health announcements to etcd could be delayed and instances could leave the service ring. Discord describes a cascading bottleneck; it does not report that 14 of 15 instances simply “went down.”</p>
+        <p>The company's incident window is 12:13–15:30 PDT, or 3 hours and 17 minutes. That is the reported voice/video degradation window, not a measured period in which every call or every Discord service was unavailable.</p>
       </section>
       <section><h2>3. The RPS Model</h2>
-        <p>Assume 200 million monthly voice participants with 8 million concurrent voice sessions at peak. Each session holds one WebSocket plus one media path. Reconnect is one auth plus one session resume plus one presence fan-out, roughly 3 operations per client. A thunder that touches 17 percent, about 1.36 million sessions, generates about 4.1 million operations in the reconnect window.</p>
-        <p>If the window is 45 seconds before rate limits engage, the burst is about 91,000 RPS of reconnect plus 45,000 RPS of presence replays. The steady voice control plane at that hour might be 12,000 RPS. The herd multiplies baseline by nearly ten times for a full minute.</p>
-        <p>Targeted restarts added another multiplier. Each restart re-triggered the same safety check plus the same grace overflow plus the same death plus the same reconnect. Two restarts in 20 minutes double the incident cost without doubling the learning.</p>
+        <p>Discord did not publish a request-rate or cost measurement for this incident. To illustrate how a reconnect window can shape load, assume 8 million concurrent sessions, use Discord's reported 17% interruption rate, count three modeled work units per affected session, and spread them over an assumed 45-second reconnect window: 8,000,000 × 0.17 × 3 ÷ 45 ≈ 90,700 work units/second.</p>
+        <p>Add an assumed 45,000 presence-replay work units/second and a modeled 12,000 work units/second baseline: 90,700 + 45,000 + 12,000 ≈ 147,700, or about 148,000 modeled work units/second during that window. Only the 17% interruption figure is reported by Discord; the concurrent-session count, work per session, replay rate, baseline, and window are scenario inputs. These work units are not Discord's telemetry.</p>
+        <p>Discord's postmortem describes two unsuccessful recovery attempts before rate limits and added capacity stabilized the service. Repeated restarts can recreate work and must be evaluated against the backlog they produce, not just the number of healthy processes they bring back.</p>
         <table><thead><tr><th>Workload</th><th>Scenario</th><th>Modeled RPS</th></tr></thead><tbody>
-          <tr><td>Steady voice control</td><td>8M concurrent sessions</td><td>12k avg</td></tr>
-          <tr><td>Reconnect burst 17 pct</td><td>1.36M sessions, 3 ops each, 45 sec</td><td>91k peak</td></tr>
-          <tr><td>Presence replay</td><td>fan-out per reconnect</td><td>45k peak</td></tr>
-          <tr><td>Total with retries</td><td>no limits for first 45 sec</td><td>~148k</td></tr>
+          <tr><td>Baseline work</td><td>Assumed for the model</td><td>12k/s</td></tr>
+          <tr><td>Reconnect work</td><td>8M × 17% × 3 ÷ 45 sec</td><td>~90.7k/s</td></tr>
+          <tr><td>Presence replay</td><td>Assumed for the model</td><td>45k/s</td></tr>
+          <tr><td>Modeled total</td><td>baseline + reconnect + presence</td><td>~147.7k/s</td></tr>
         </tbody></table>
         <div class="tip"><strong>Load test tip:</strong> Test grace overflow before you test scale. A pod that cannot drain within its grace never scales safely. It fails equally on the way up plus on the way down.</div>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/discord-voice-rate-limit-flow.svg" alt="Flow diagram from rate limit to back pressure to cluster survival" width="1200" height="680"><figcaption>Figure 2. The fix in one diagram. Aggressive rate limits plus doubled cluster plus health check inside grace. Herd thinned before memory burned.</figcaption></figure>
-      <section><h2>4. The Fix That Actually Fixed It</h2>
-        <p>The recovery that worked applied back pressure before capacity. Aggressive rate limits at the edge thinned the herd. Only then did doubling the cluster help, because the doubled cluster no longer met the full thunder at once. Order mattered. Scale without limits replays the incident faster. Limits without scale prolongs degraded service. Together they converge.</p>
-        <p>The durable fix moves the safety check inside the grace or outside the critical path. Split the check into a pre-check that is bounded by time plus a post-check that can run after drain. Set the grace to exceed the p99 of the bounded check by at least two times. Alert when any check exceeds 70 percent of grace for three consecutive rolls.</p>
-        <p>Admission is now a budget. Voice resumes should be token bucket gated per instance plus per region. Presence replays should be coalesced per channel. Reconnect storms become a managed queue, not a flood.</p>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/discord-voice-rate-limit-flow.svg" alt="Discord's reported recovery timeline: lower syncer rate limits were in place by 13:43 PDT, 15 additional instances were added, and the cluster was healthy by 14:26 PDT" width="1200" height="680"><figcaption>Figure 2. Discord reports that lower syncer limits were in place by 13:43 PDT, 15 additional instances were brought online, and the voice-syncer cluster was healthy by 14:26 PDT.</figcaption></figure>
+      <section><h2>4. The Fixes Discord Reports</h2>
+        <p>Discord says it added a validating admission webhook for its Elixir workloads. The webhook rejects a scale-down until the affected pods have drained their entities and handed off their state. This checks the safety condition before Kubernetes starts the termination grace period.</p>
+        <p>For the voice-syncer bottleneck, Discord says it replaced a single connection-pool supervisor with partitioned supervisors, moved the gun connection lifecycle into the pool, and added or tuned rate limits on upstream syncer creation and endpoint selection. During recovery, rate limits were applied first; 15 additional instances were then brought online. Discord says the full cluster was healthy by 14:26 PDT, with the incident window ending at 15:30 PDT.</p>
+        <p>For another stateful service, measure drain completion before scale-down, keep a reconnect budget below the capacity of the recovering service, and test that recovery work does not overwhelm health reporting or service discovery.</p>
       </section>
-      <section id="cost-model"><h2>5. The Cost Model</h2>
-        <p>Assume the doubled cluster is 40 extra c6g.xlarge equivalents at $0.136 per hour, about $5.44 per hour plus 3 hours is $16.32 direct compute plus 12 hours of held headroom is $65. That is trivial. The incident cost lives elsewhere. Support, incident bridges plus customer impact dominate.</p>
-        <p>At 1M RPS thought experiment, the herd lesson saves more than vertical scale ever could. Limiting reconnects from 148k to 35k per region via token buckets cuts origin work by 76 percent. If each voice operation costs $0.0000015, the uncontrolled burst for one hour is $795. Controlled is $189. Over a month of recurring rolls without the fix the delta exceeds $18k in origin alone, before support plus churn.</p>
-        <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
-          <tr><td>Held headroom</td><td>$1,950</td><td>2x size held 12h per week</td></tr>
-          <tr><td>Uncontrolled burst</td><td>$19k at 1M scale</td><td>148k RPS, 1 hour per week</td></tr>
-          <tr><td>Controlled burst</td><td>$4.5k at 1M scale</td><td>35k gated RPS</td></tr>
-          <tr><td><strong>Delta</strong></td><td><strong>~$14.5k saved</strong></td><td><strong>Limits before scale</strong></td></tr>
-        </tbody></table>
-        <div class="callout"><strong>The lesson that bills:</strong> Grace is a deadline. Limits are capacity. The incident paid because the team scaled capacity without honoring deadlines plus without throttling admission.</div>
+      <section id="cost-model"><h2>5. Estimate Recovery Cost from Your Own Workload</h2>
+        <p>Discord's postmortem does not publish a per-request cost or a dollar estimate for this incident, so this article does not assign one. For a service you operate, a simple model is: <em>reconnect work units × unit cost × recovery duration + temporary capacity held during recovery</em>. Record each input from your own traffic and rate card.</p>
+        <p>For the scenario above, the reconnect-work estimate is about 90,700 work units per second under the stated assumptions. Multiply that rate by the measured cost per work unit and actual burst duration to estimate processing cost. Add the cost of extra capacity separately. Do not treat this modeled rate as Discord telemetry or the result as Discord's bill.</p>
+        <div class="callout"><strong>Operational lesson:</strong> The incident record supports back pressure and admission controls as design concerns. The public postmortem does not publish a financial loss figure.</div>
       </section>
       <section><h2>6. The Verdict</h2>
-        <p>Grace periods feel like safety nets until they act as kill timers. Health checks that outlive grace do not keep pods alive. They schedule pods to die together. The herd that follows is not a mystery. It is the clients doing exactly what they were designed to do when their server disappears.</p>
-        <p>The fix is boring in the right way. Bound every check to less than half the grace. Gate every reconnect with a bucket. Scale only after the bucket holds. That order turns a thundering herd into a queue that a cluster can absorb.</p>
+        <p>Discord's postmortem establishes the trigger and the cascade: scale-down began before state handoff completed, 17% of sessions stopped, and reconnect work reached the gateway and voice systems. It reports that all 15 voice syncers developed growing mailboxes, while the exact request-rate scenario in this article remains modeled from declared inputs.</p>
+        <p>The company reports concrete changes to drain validation, connection-pool concurrency, rate limits, and capacity. Other services can apply the same constraints by checking that pods are drained before scale-down and by limiting recovery traffic to what downstream systems can process.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The herd was not misbehavior. The herd was the design on its worst day.</strong></p>
       </section>
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident shape from public daily.dev summary of Discord voice global incident video (May 2026) plus Kubernetes graceful termination docs. RPS plus cost numbers are a labeled scenario model. Architecture advice is at system level, not a reproduction guide.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident mechanism, 17% session impact, timeline, mailbox growth across 15 voice syncers, and recovery measures are attributed to Discord Engineering's April 29, 2026 postmortem. The load scenario uses explicit assumed inputs and is not Discord telemetry. No dollar impact is estimated.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://www.youtube.com/watch?v=uWG4r55PmBc" target="_blank" rel="noopener noreferrer">Daily.dev: Discord Global Incident Report summary (May 31 2026)</a></li>
+          <li><a href="https://discord.com/blog/behind-the-scenes-of-the-3-25-26-voice-outage" target="_blank" rel="noopener noreferrer">Discord Engineering, April 29, 2026: You've Got (Too Much) Mail: Behind the Scenes of the 3/25/26 Voice Outage</a></li>
           <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination" target="_blank" rel="noopener noreferrer">Kubernetes: Pod termination and grace period</a></li>
           <li><a href="https://buildopsy.com/system-design/discord-messaging-system-design.html" target="_blank" rel="noopener noreferrer">Buildopsy: Discord message-storage architecture</a></li>
         </ul>

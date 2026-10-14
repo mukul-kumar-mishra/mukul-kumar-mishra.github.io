@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Evidence ledger for false AI-related claims after Charlie Kirk's killing, separating reported examples from unknown total post volume and revenue">
+  <title>Evidence limits for the reported false claims</title>
+  <desc>The diagram lists examples from CBS News and For The Win, then marks total post volume, production cost, and payout as unknown in the cited reporting.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="101" result="n"/>
@@ -68,5 +70,5 @@
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">source the example.</text>
   <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">leave scale open.</text>
-  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: CBS News, Sep 12, 2025; For The Win, Sep 18, 2025; OECD AI incident monitor.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: CBS News, Sep 12, 2025, and For The Win, Sep 18, 2025. OECD incident entry links For The Win.</text>
 </svg>

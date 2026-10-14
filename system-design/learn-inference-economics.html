@@ -379,7 +379,7 @@
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Requests per second multiplied by seconds per month multiplied by unit price into a monthly envelope">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">40 RPS</text>
             <rect class="box" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">2.6M sec/mo</text>
-            <rect class="boxhot" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">$0.33/turn</text>
+            <rect class="boxhot" x="302" y="55" width="110" height="40" rx="8"/><text x="357" y="79" font-size="11" text-anchor="middle">$0.00033/turn</text>
             <rect class="boxlime" x="444" y="55" width="108" height="40" rx="8"/><text x="498" y="79" font-size="11" text-anchor="middle">$34k/mo</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="412" y1="75" x2="444" y2="75"/></g>
             <text class="lbl" x="8" y="130" font-size="11">modeled envelope, labeled as estimates</text>
@@ -425,7 +425,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Failure · Failed turns still bill</div>
           <h2>Retries Multiply the Meter</h2>
-          <p class="lesson-story">Friday. Your agents retried failed deploys until retries cost more than features. Every retry is a second billed turn arriving exactly when the system is weakest. At two extra retries per stalled call with no backoff, recovery load lands near six times normal. Failed turns bill like successful ones.</p>
+          <p class="lesson-story">Friday. Your agents retried failed deploys until retries cost more than features. Every retry is a second billed turn arriving exactly when the system is weakest. At two extra retries per stalled call with no backoff, recovery load lands near three times normal (1 original + 2 retries). Failed turns bill like successful ones.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One failed turn fanning into retry copies that multiply the billed load before a breaker opens">
             <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">fail $0.33</text>
             <rect class="boxhot" x="120" y="55" width="100" height="40" rx="8"/><text x="170" y="79" font-size="11" text-anchor="middle">retry x2</text>

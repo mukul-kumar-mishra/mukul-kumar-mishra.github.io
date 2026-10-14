@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Event Streaming in Production: 15 Lessons From the Kafka Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: append everything, assume nothing arrives once, plus price the backlog. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic streaming lessons with live diagrams, from partitions to exactly-once math plus rebalance drills. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> Â· Backend plus SRE course Â· Updated September 19, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 14, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -405,7 +405,7 @@
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 Â· Correctness Â· A budget, not a feature</div>
           <h2>Exactly-Once Is a Budget</h2>
-          <p class="lesson-story">Assumption: the network delivers once. It delivers at least once, then apologizes with duplicates. One ledger moves $1.4 trillion without double-charging anyone. The trick is not a faster network. It is a key the client sends with every request, stored beside the result, so retries become safe by construction.</p>
+          <p class="lesson-story">Assumption: the network delivers once. In practice, queues and clients can retry, so consumers need a duplicate-handling strategy. Stripe <a href="https://stripe.com/newsroom/news/stripe-2024-update" target="_blank" rel="noopener noreferrer">reported $1.4 trillion in 2024 total payment volume</a>; that is dollar volume, not a transaction count. Its <a href="https://docs.stripe.com/api/idempotent_requests" target="_blank" rel="noopener noreferrer">API documentation</a> describes idempotency keys for eligible retries, not a global exactly-once guarantee.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Producer sending an idempotency key with each event while the consumer dedupes repeats against a stored ledger">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">producer</text>
             <rect class="boxlime" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">key per event</text>
@@ -415,9 +415,9 @@
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="260" y1="68" x2="292" y2="40"/><line x1="260" y1="82" x2="292" y2="102"/><line x1="412" y1="40" x2="444" y2="62"/><line x1="412" y1="110" x2="444" y2="88"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Key every effect that money touches. Idempotency keys turn at-least-once networks into exactly-once effects.</li>
+            <li>Key each operation and commit its deduplication record with the effect. That can provide once-per-key behavior for a defined operation, not global exactly-once processing across every service.</li>
             <li>Store the key beside the result atomically, or the check lies under concurrency.</li>
-            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, double-entry plus keys at $1.4 trillion.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, which separates reported payment volume from modeled event rates.</li>
           </ul>
           <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates plus reordering, then designing so none of them matter. Exactly-once is not a protocol setting. It is a budget line with a key attached.</p>
           <div class="lesson-questions">
@@ -430,8 +430,8 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 Â· Amplification Â· The 6x invoice</div>
           <h2>Retries Without Jitter Are DDoS</h2>
-          <p class="lesson-story">Assumption: retries help. Modeled: eleven paused minutes at 60,000 events per second build roughly 39.6 million events of backlog while downstream timeouts fire retries into topics consumers cannot yet drain. At two extra retries per stalled call with no backoff, recovery load lands near six times normal before one new event arrives. Retries without jitter plus backoff are a self-inflicted DDoS with a deploy as the trigger.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One stalled call fanning into retry copies that multiply recovery load sixfold before a capped breaker restores order">
+          <p class="lesson-story">Assumption: retries help. Modeled: eleven paused minutes at 60,000 events per second build roughly 39.6 million events of backlog while downstream timeouts fire retries into topics consumers cannot yet drain. At two extra retries per stalled call with no backoff, recovery load lands near three times normal (1 original + 2 retries) before one new event arrives. Retries without jitter plus backoff are a self-inflicted DDoS with a deploy as the trigger.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One stalled call fanning into retry copies that multiply recovery load about threefold before a capped breaker restores order">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">stall 11m</text>
             <rect class="boxhot" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">retry x2</text>
             <rect class="boxhot" x="272" y="55" width="110" height="40" rx="8"/><text x="327" y="79" font-size="11" text-anchor="middle">6x load</text>

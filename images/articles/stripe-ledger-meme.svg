@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Stripe ledger and idempotency retry illustration">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Illustrative payment request using the same idempotency key on each retry, with the saved result returned instead of repeating an eligible operation">
+  <title>Illustrative idempotency retry</title>
+  <desc>A generic payment request is retried with the same key. The API returns the saved result for an eligible request. The ledger example is illustrative and not Stripe's private architecture.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="88" result="n"/>
@@ -9,9 +11,9 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">The Ledger That Cannot Blink</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Illustrative Idempotency Retry</text>
 <image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">One charge. Three retries. Zero excuses.</text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Same key. Same request. Saved result.</text>
 
   <svg x="90" y="210" width="300" height="300" viewBox="0 0 100 100">
 <g transform="translate(-1.43,-1.92) scale(0.0836)" fill="#0f172a">
@@ -22,28 +24,29 @@
   <g aria-hidden="true" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 82V20M16 82h70"/><rect x="27" y="57" width="12" height="25" fill="#0369a1" stroke="none"/><rect x="47" y="43" width="12" height="39" fill="#16a34a" stroke="none"/><rect x="67" y="28" width="12" height="54" fill="#ed9b55" stroke="none"/></g></svg>
 <g filter="url(#roughen)" stroke="#0f172a" stroke-width="3" stroke-linecap="round">
     <rect x="460" y="200" width="220" height="110" rx="14" fill="#ffffff"/>
-    <text x="475" y="228" font-family="monospace" font-size="14" font-weight="bold" fill="#0f172a" stroke="none">POST /charge</text>
-    <text x="475" y="250" font-family="monospace" font-size="13" fill="#475569" stroke="none">retry #1</text>
-    <text x="475" y="270" font-family="monospace" font-size="13" fill="#475569" stroke="none">retry #2</text>
-    <text x="475" y="290" font-family="monospace" font-size="13" fill="#e11d48" stroke="none">retry #3 ← same $10</text>
+    <text x="475" y="228" font-family="monospace" font-size="14" font-weight="bold" fill="#0f172a" stroke="none">POST /payment</text>
+    <text x="475" y="250" font-family="monospace" font-size="13" fill="#475569" stroke="none">key: order-123</text>
+    <text x="475" y="270" font-family="monospace" font-size="13" fill="#475569" stroke="none">same request retried</text>
+    <text x="475" y="290" font-family="monospace" font-size="13" fill="#e11d48" stroke="none">same key, same operation</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="30" font-weight="bold" fill="#0f172a"><text x="695" y="262">→</text></g>
   <g filter="url(#roughen)">
     <rect x="730" y="180" width="260" height="140" rx="14" fill="#fff7ed" stroke="#e11d48" stroke-width="4"/>
     <rect x="730" y="180" width="260" height="40" fill="#e11d48"/>
-    <text x="745" y="206" font-family="monospace" font-size="14" font-weight="bold" fill="#fff" stroke="none">idempotency cache</text>
-    <text x="745" y="240" font-family="monospace" font-size="13" fill="#0f172a" stroke="none">key: abc-123</text>
-    <text x="745" y="262" font-family="monospace" font-size="13" fill="#16a34a" stroke="none">→ one ledger hit</text>
-    <text x="745" y="285" font-family="monospace" font-size="12" fill="#475569" stroke="none">two retries = free</text>
+    <text x="745" y="206" font-family="monospace" font-size="14" font-weight="bold" fill="#fff" stroke="none">saved idempotent result</text>
+    <text x="745" y="240" font-family="monospace" font-size="13" fill="#0f172a" stroke="none">same key + parameters</text>
+    <text x="745" y="262" font-family="monospace" font-size="13" fill="#16a34a" stroke="none">return original response</text>
+    <text x="745" y="285" font-family="monospace" font-size="12" fill="#475569" stroke="none">eligible request only</text>
   </g>
   <g filter="url(#roughen)">
     <rect x="840" y="340" width="250" height="110" rx="14" fill="#0f172a" stroke="#0f172a" stroke-width="3"/>
-    <text x="855" y="365" font-family="monospace" font-size="13" font-weight="bold" fill="#16a34a" stroke="none">ledger - double entry</text>
+    <text x="855" y="365" font-family="monospace" font-size="13" font-weight="bold" fill="#16a34a" stroke="none">illustrative ledger entry</text>
     <text x="855" y="388" font-family="monospace" font-size="13" fill="#f8fafc" stroke="none">+ $10.00  |  - $10.00</text>
-    <text x="855" y="410" font-family="monospace" font-size="12" fill="#f8fafc" stroke="none">= 0  ✓ never 2×</text>
-    <text x="855" y="430" font-family="monospace" font-size="11" fill="#93a4ba" stroke="none">without key: $20. oops.</text>
+    <text x="855" y="410" font-family="monospace" font-size="12" fill="#f8fafc" stroke="none">balanced example: $0 net</text>
+    <text x="855" y="430" font-family="monospace" font-size="11" fill="#93a4ba" stroke="none">not Stripe's private design</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">exactly once</text>
-  <text x="430" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">or refund forever.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">idempotent request.</text>
+  <text x="430" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">not global exactly-once.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Source: Stripe API idempotency documentation. Payment and ledger are illustrative examples.</text>
 </svg>

@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="NATS September 8, 2026 incident: flight-code software defect, about six hours of UK restrictions, and more than two days of passenger disruption">
+  <title>NATS flight-data incident and restriction window</title>
+  <desc>NATS reported a flight-code defect, about six hours of UK traffic restrictions, and normal operations the same evening. The CAA reported more than 2,000 flights delayed, cancelled, or diverted.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="123" result="n"/>
@@ -48,5 +50,5 @@
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">restriction window.</text>
   <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">passenger recovery window.</text>
-  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: NATS preliminary report, Sep 18, 2026; CAA review announcement, Sep 25, 2026.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: NATS preliminary report, Sep 18, 2026, and CAA announcement, Sep 25, 2026.</text>
 </svg>

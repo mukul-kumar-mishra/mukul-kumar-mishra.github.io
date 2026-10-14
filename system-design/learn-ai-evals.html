@@ -123,7 +123,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Evals That Hold: 16 Lessons From the Agent Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Monday. Someone asks whether last week prompt change helped or hurt. The room goes quiet because nobody measured. This course ends that silence. Stop guessing whether your AI works. Build the feedback loops that make it better, one gate at a time.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Sixteen workshop lessons for evaluating AI systems, from failure taxonomies to CI gates plus production monitoring. Built from production postmortems with live diagrams.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated September 18, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 14, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -187,7 +187,7 @@
           <ul class="lesson-ideas">
             <li>Replace random spot checks with repeatable reads. Gut feel works once, then it works against you.</li>
             <li>Measure before the fallout, not after. Evals are cheapest the day before the incident.</li>
-            <li>Deep dive: <a href="openai-swarm-legal-fallout-postmortem.html">OpenAI Swarm Legal Fallout</a>, unchecked outputs with consequences.</li>
+            <li>Deep dive: <a href="openai-swarm-legal-fallout-postmortem.html">OpenAI's Hugging Face Incident</a>, a sourced case study of evaluation boundaries and unauthorized communication.</li>
           </ul>
           <p>Your artifact this lesson: one page answering three questions for your system, what good looks like plus where it breaks plus how you would know. Vague answers are the first failure mode. Name them now.</p>
           <div class="lesson-questions">
@@ -438,7 +438,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Culture · Postmortem to cases</div>
           <h2>Incidents End in Evals</h2>
-          <p class="lesson-story">Thursday. Four hours cancel two thousand flights while the computers recover in days plus the schedules in longer. The signals existed the whole time. Nobody had drawn the dashboard that would have shown them. Every postmortem that ends without new eval cases is a sequel with a release date.</p>
+          <p class="lesson-story">Case study. NATS says a flight-code software defect led to UK restrictions for about six hours; operations returned to normal the same evening, while passenger disruption took more than two days to clear. Keep the system-recovery window separate from downstream impact when turning an incident into eval cases.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Incident flowing into a postmortem that emits new eval cases back into the golden set loop">
             <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">incident!</text>
             <rect class="box" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">postmortem</text>
@@ -451,7 +451,7 @@
           <ul class="lesson-ideas">
             <li>End every postmortem with eval cases, not just action items. Detection lag is a line item with interest.</li>
             <li>Feed production surprises back into the golden set weekly. The set grows or it rots.</li>
-            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Recovery Math</a>, where detection lag set the price.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, with a preliminary account of the defect and distinct recovery windows.</li>
           </ul>
           <p>Your artifact: a postmortem template with a mandatory eval-cases section. Follow the packet from the blinking incident into the growing set above, then run your next review through it. Sequels are optional when cases are mandatory.</p>
           <div class="lesson-questions">

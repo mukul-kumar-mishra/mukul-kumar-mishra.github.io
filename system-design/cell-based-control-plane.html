@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, zero blast radius, and reliable Go services on AWS.">
+  <meta name="description" content="Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, near-zero blast radius (under 5% design target), and reliable Go services on AWS.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/cell-based-control-plane.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Cell-Based Control Plane Architecture: Zero Blast Radius">
+  <meta property="og:title" content="Cell-Based Control Plane Architecture: Near-Zero Blast Radius">
   <meta property="og:description" content="A practical design for isolating regional control-plane failures with autonomous Raft-backed cells, Go routing, and AWS deployment trade-offs.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/cellbased-architect-meme.png">
   <meta property="og:image:type" content="image/png">
@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/cell-based-control-plane.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cell-Based Control Plane Architecture: Zero Blast Radius">
+  <meta name="twitter:title" content="Cell-Based Control Plane Architecture: Near-Zero Blast Radius">
   <meta name="twitter:description" content="Regional failure isolation with Raft-backed cells, Go routing, and AWS trade-offs.">
   <meta name="twitter:image:alt" content="Illustration of isolated regional cells containing a control-plane failure">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/cellbased-architect-meme.png">
@@ -40,7 +40,7 @@
   <style>
     .mermaid { background: transparent !important; }
   </style>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Cell-Based Control Plane Architecture: Zero Blast Radius", "description": "Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, zero blast radius, and reliable Go services on AWS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-07-01", "dateModified": "2026-09-05", "image": "https://buildopsy.com/images/articles/cellbased-architect-meme.svg", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cell-based-control-plane.html"}, "keywords": "cell-based architecture, control plane, Raft, Go, AWS, blast radius", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Cell-Based Control Plane Architecture: Near-Zero Blast Radius", "description": "Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, near-zero blast radius (under 5% design target), and reliable Go services on AWS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-07-01", "dateModified": "2026-09-05", "image": "https://buildopsy.com/images/articles/cellbased-architect-meme.svg", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cell-based-control-plane.html"}, "keywords": "cell-based architecture, control plane, Raft, Go, AWS, blast radius", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -103,7 +103,7 @@
           </div>
         </div>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A bad config ships in one region. Minutes later every region agrees to fail together. Cell-based architecture answers with bulkheads: split the control plane into isolated Raft-backed cells so a blast in one stays in one. This is the design, the Go router, plus the trade-offs.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> One bad config should never take every region. Cell-based control plane isolates failures with autonomous Raft-backed cells for zero blast radius. Global sync caused the outage.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> One bad config should never take every region. Cell-based control plane isolates failures with autonomous Raft-backed cells for a near-zero blast radius (under 5% design target). Global sync caused the outage.</p>
       </header>
 
       <!-- Article body -->
@@ -189,7 +189,7 @@ func (r *Router) GetCellID(tenantID string) int {
                 <tr>
                   <td><strong>Blast Radius</strong></td>
                   <td style="color:var(--hot);">100% of global traffic</td>
-                  <td style="color:var(--lime);">&lt. 5% (Limited to single cell)</td>
+                  <td style="color:var(--lime);">&lt; 5% (Limited to single cell)</td>
                 </tr>
                 <tr>
                   <td><strong>Operational Complexity</strong></td>

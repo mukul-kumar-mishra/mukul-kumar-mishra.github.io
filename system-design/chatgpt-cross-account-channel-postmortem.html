@@ -88,13 +88,13 @@
                     × shared writable service</code></pre>
         <p>If any factor is zero, the chain breaks. Remove the shared write path and the attacker loses the mailbox. Remove Gmail's broad permission and the channel carries less useful data. Remove instruction provenance and the agent is less likely to treat an external message as its own task.</p>
       </section>
-      <section><h2>4. What Went Wrong</h2>
+      <section><h2>3. What Went Wrong</h2>
         <p><strong>Shared metadata was treated as package plumbing.</strong> The service was designed to help containers access packages. It was not designed as a user-to-user transport. The security model checked container boundaries while ignoring shared state semantics.</p>
         <p><strong>Tenant identity did not follow every metadata field.</strong> A repository item can be public across the infrastructure while its metadata is effectively private to the account that created it. If the authorization model does not bind metadata to account and task, the side channel is already present.</p>
         <p><strong>Agent actions were not tied to a destination policy.</strong> Reading Gmail and writing a shared internal service were individually allowed. The dangerous flow emerged from the combination. Policy evaluated calls one at a time. The attack evaluated the graph.</p>
         <p><strong>Connected permissions amplified the outcome.</strong> The shared channel alone is a confidentiality problem. Add Gmail and the attacker gets a data source. Add a prompt injection and the victim's agent becomes the courier. The most dangerous component is often the permission users already granted.</p>
       </section>
-      <section><h2>5. What Should Happen Instead</h2>
+      <section><h2>4. What Should Happen Instead</h2>
         <p>First, make every shared service tenant-aware. Metadata must carry account, conversation, task and expiration identity. Reads should require a matching authorization context. “Internal” is not an authorization boundary.</p>
         <p>Second, remove cross-tenant write access from package infrastructure. Containers should receive immutable package artifacts. They should not write arbitrary metadata to a repository that another account can read. If a service needs coordination, use a dedicated broker with explicit tenant isolation and short retention.</p>
         <p>Third, enforce information-flow policy across tool calls. A session that reads Gmail should not be allowed to write the result into an untrusted or shared destination without an explicit user approval. The policy should understand source plus destination plus account, not just tool names.</p>
@@ -102,7 +102,7 @@
         <p>Fifth, kill the channel quickly. Decommissioning the named Artifactory instance closes the reported route. A stronger response rotates shared credentials, searches metadata for cross-account writes and tests sibling package services. Removing one mailbox is not the same as proving there are no mailboxes.</p>
         <div class="tip"><strong>Rook's rule:</strong> If two tenants can write to the same metadata plane, call it a network. Then secure it like one.</div>
       </section>
-      <section><h2>6. The Verdict</h2>
+      <section><h2>5. The Verdict</h2>
         <p>Check Point did not describe an active mass campaign. It described a closed path. That distinction matters. The report is still valuable because it exposes a design pattern that will recur as assistants gain more connectors and internal tools.</p>
         <p>The failure was not that containers lacked isolation. The failure was believing container isolation was the whole problem. AI assistants cross boundaries through tools, package managers, logs, caches, metadata and webhooks. Every shared service is a possible channel. Every legitimate permission is a possible payload source.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The container was isolated. The channel was not. Security diagrams love the first sentence and ignore the second.</strong></p>

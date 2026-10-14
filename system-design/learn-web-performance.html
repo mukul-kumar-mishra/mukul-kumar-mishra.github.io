@@ -492,13 +492,13 @@
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Edge · Shared fate</div>
           <h2>Shared Fate Fails Together</h2>
-          <p class="lesson-story">Here is the edge at its most honest: one wrong internal file loaded on every server at once, in November 2025, plus error pages replaced three giant platforms worldwide. Storage fell with the proxy it never needed. The fix cut storage loose from the proxy. Shared fate is a design choice wearing an accident costume.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One bad file propagating to every edge server with storage coupled to the failing proxy beside a bypassed storage path staying green">
-            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">wrong file</text>
-            <rect class="boxhot" x="150" y="20" width="130" height="40" rx="8"/><text x="215" y="44" font-size="11" text-anchor="middle">every server</text>
-            <rect class="boxhot" x="150" y="90" width="130" height="40" rx="8"/><text x="215" y="114" font-size="11" text-anchor="middle">KV falls too</text>
-            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">bypass: lives</text>
-            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">decoupled</text>
+          <p class="lesson-story">Cloudflare's November 18, 2025 postmortem traces its incident to a ClickHouse permission change that caused the Bot Management feature-file query to return duplicate rows. The file exceeded the proxy's feature limit. Cloudflare says newer FL2 proxies returned 5xx errors for traffic using the module, while the older FL proxy returned incorrect bot scores. Workers KV and Access were also affected through the core proxy path; a bypass reduced those errors during mitigation.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cloudflare's report: duplicate Bot Management feature rows exceeded a runtime limit; FL2 returned 5xx, the older proxy gave bot score zero, and a Workers KV bypass reduced downstream errors">
+            <rect class="boxhot" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">duplicate rows</text>
+            <rect class="boxhot" x="150" y="20" width="130" height="40" rx="8"/><text x="215" y="44" font-size="11" text-anchor="middle">FL2: 5xx errors</text>
+            <rect class="boxhot" x="150" y="90" width="130" height="40" rx="8"/><text x="215" y="114" font-size="11" text-anchor="middle">FL: score zero</text>
+            <rect class="boxlime" x="312" y="55" width="120" height="40" rx="8"/><text x="372" y="79" font-size="11" text-anchor="middle">KV bypass</text>
+            <rect class="box" x="464" y="55" width="88" height="40" rx="8"/><text x="508" y="79" font-size="11" text-anchor="middle">reduced errors</text>
             <circle class="blink" r="5" cx="215" cy="75" style="fill:var(--hot)"/>
             <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="70"/><line x1="280" y1="50" x2="312" y2="65"/><line x1="432" y1="75" x2="464" y2="75"/></g>
             <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L215,70 L350,70 L500,75"/></circle>
@@ -506,9 +506,9 @@
           <ul class="lesson-ideas">
             <li>Decouple data paths from control paths. Storage must survive the proxy worst day.</li>
             <li>Propagate config in stages with automatic halt. Network-wide simultaneity is a choice, not a requirement.</li>
-            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, shared fate with a bypass ending.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy</a>, with the source-reported failure modes and mitigation timeline.</li>
           </ul>
-          <p>The lesson bypasses every edge network built the same way. Speed at the edge means nothing when one file can redden every region. Fast plus fragile is just fast failure with geography.</p>
+          <p>The design lesson is to validate generated configuration against the consumer's limits and stage fleet-wide changes. Cloudflare's report documents one failure path and two proxy-version behaviors; it does not establish identical failure across every service or region.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> One config file threatens every edge region. Design the rollout that survives it. <span class="q-seen">Seen at: edge plus SRE loops.</span></p>

@@ -116,7 +116,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Course: 15 Lessons From Real Outages</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, plus points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen story-driven system design lessons with diagrams, from request paths to interview playbooks. Built from production postmortems, with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated September 14, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 14, 2026</p>
     </header>
     <section class="sec" id="newsletter" style="margin-bottom:32px;">
       <div class="newsletter-band">
@@ -153,8 +153,8 @@
       <div class="course-body">
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · Request paths</div>
-          <h2>One Click, Fourteen Hops</h2>
-          <p class="lesson-story">September 2026. A UK flight data fault lasts four hours. Two thousand flights die across three days. The computers recover Tuesday. The schedules recover Friday. One click from a controller met fourteen systems before becoming a cancelled flight.</p>
+          <h2>Map the Request Path</h2>
+          <p class="lesson-story">A browser request may cross DNS, a CDN, a load balancer, application servers, caches, queues, and a database. The diagram below is a simplified reference path, not a trace of a specific company's service. Map the actual dependencies and timing for the system you are designing.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Request path from browser through DNS, CDN, load balancer, app servers, cache, queue, workers to primary database with replica">
             <rect class="box" x="8" y="55" width="72" height="40" rx="8"/><text x="44" y="79" font-size="11" text-anchor="middle">browser</text>
             <rect class="box" x="92" y="55" width="60" height="40" rx="8"/><text x="122" y="79" font-size="11" text-anchor="middle">DNS</text>
@@ -167,10 +167,10 @@
             <g stroke-width="2"><line x1="80" y1="75" x2="92" y2="75"/><line x1="152" y1="75" x2="164" y2="75"/><line x1="224" y1="75" x2="236" y2="75"/><line x1="296" y1="75" x2="308" y2="75"/><line x1="368" y1="68" x2="380" y2="48"/><line x1="368" y1="82" x2="380" y2="102"/><line x1="452" y1="75" x2="464" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Every hop is a failure domain. Draw all fourteen before designing any one of them.</li>
-            <li>Latency adds up. A 20ms hop times fourteen is a 280ms page before logic runs.</li>
-            <li>The red box is where NATS lived. One unmirrored component gated a whole sky.</li>
-            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, the edge version of the same story.</li>
+            <li>Every dependency can fail. Draw the systems in your real request path before choosing where to add redundancy.</li>
+            <li>For a serial path, fourteen 20 ms hops would total 280 ms before application work; parallel work, cache hits, and local processing change the result. Measure the actual path.</li>
+            <li>NATS's preliminary report describes a specific flight-code process defect and restrictions for about six hours. It does not disclose a web-request hop count. <a href="nats-outage-postmortem.html">Read the incident review</a>.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy</a>, a published example of shared infrastructure impact.</li>
           </ul>
                     <p>Draw this map for every system you touch this year. Interviews reward candidates who start at the edges. Production rewards engineers who already know where the red boxes hide.</p>
 <div class="lesson-questions">
@@ -178,24 +178,24 @@
             <p><strong>Q1.</strong> Design TinyURL end to end, from API to storage. <span class="q-seen">Seen at: Amazon-style and Google-style loops.</span></p>
             <p><strong>Q2.</strong> What happens, packet by packet, when you type a URL and press enter? <span class="q-seen">Seen at: Meta-style loops plus early-stage startups.</span></p>
           </div>
-          <p class="lesson-hook">The red box fails next lesson too, but quietly. Money disappears instead of planes. <a href="#lesson-2">Lesson 02: APIs that survive →</a></p>
+          <p class="lesson-hook">The next lesson looks at how an API makes retries safe. <a href="#lesson-2">Lesson 02: APIs that survive →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · APIs · Idempotency</div>
           <h2>Charge Once, Even When Asked Twice</h2>
-          <p class="lesson-story">Stripe moves $1.4 trillion without double-charging anyone. The trick is not faster code. It is a key the client sends with every request, so retries become safe by construction. Networks retry. Your API should expect it.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Idempotency flow: client sends key, server checks ledger, returns stored result on retry">
+          <p class="lesson-story"><a href="https://stripe.com/newsroom/news/stripe-2024-update" target="_blank" rel="noopener noreferrer">Stripe reported</a> $1.4 trillion in 2024 total payment volume. That dollar figure is not a transaction count. <a href="https://docs.stripe.com/api/idempotent_requests" target="_blank" rel="noopener noreferrer">Stripe's API documentation</a> describes idempotency keys that let clients safely retry eligible requests. The design lesson is to make retries explicit in the API contract.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Generic idempotency flow: client sends key, service checks operation state, and returns a saved result for an eligible retry">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">client + key</text>
-            <rect class="boxlime" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">ledger lookup</text>
+            <rect class="boxlime" x="130" y="55" width="110" height="40" rx="8"/><text x="185" y="79" font-size="11" text-anchor="middle">key status</text>
             <rect class="box" x="272" y="20" width="120" height="40" rx="8"/><text x="332" y="44" font-size="11" text-anchor="middle">key seen: replay</text>
-            <rect class="boxhot" x="272" y="90" width="120" height="40" rx="8"/><text x="332" y="114" font-size="11" text-anchor="middle">new: execute once</text>
-            <rect class="box" x="424" y="55" width="128" height="40" rx="8"/><text x="488" y="79" font-size="11" text-anchor="middle">single charge</text>
+            <rect class="boxhot" x="272" y="90" width="120" height="40" rx="8"/><text x="332" y="114" font-size="11" text-anchor="middle">new: execute</text>
+            <rect class="box" x="424" y="55" width="128" height="40" rx="8"/><text x="488" y="79" font-size="11" text-anchor="middle">one keyed effect</text>
             <g stroke-width="2"><line x1="98" y1="75" x2="130" y2="75"/><line x1="240" y1="68" x2="272" y2="40"/><line x1="240" y1="82" x2="272" y2="102"/><line x1="392" y1="40" x2="424" y2="62"/><line x1="392" y1="110" x2="424" y2="88"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Idempotency keys turn at-least-once networks into exactly-once effects.</li>
+            <li>Idempotency keys let eligible retries reuse an earlier result; they do not make a distributed workflow globally exactly once.</li>
             <li>Store the key plus the result together, atomically, or the check lies.</li>
-            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>.</li>
           </ul>
                     <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates plus reordering, then designing so none of them matter.</p>
           <div class="lesson-questions">
@@ -382,7 +382,7 @@
           <ul class="lesson-ideas">
             <li>Deploy across zones with traffic live in all of them. Cold standby rots.</li>
             <li>Cells bound failure. One dark cell is an incident. One dark region is a disaster.</li>
-            <li>Deep dives: <a href="aws-thermal-outage-postmortem.html">AWS thermal</a>, <a href="nats-outage-postmortem.html">NATS recovery</a> plus <a href="cell-based-control-plane.html">cell design</a>.</li>
+            <li>Deep dives: <a href="aws-thermal-outage-postmortem.html">AWS thermal</a>, <a href="nats-outage-postmortem.html">NATS flight-data incident</a> and <a href="cell-based-control-plane.html">cell design</a>.</li>
           </ul>
                     <p>Test the dark cell on purpose. Game days that kill one zone prove the other two carry load. Untested failover is a rumor with runbooks.</p>
 <div class="lesson-questions">
@@ -416,7 +416,7 @@
           <ul class="lesson-ideas">
             <li>Pick one convergence point. Distributed agreement without a referee is a research project.</li>
             <li>Money uses double-entry ledgers. Collaboration uses operation order. Same instinct.</li>
-            <li>Deep dives: <a href="stripe-ledger-scale-postmortem.html">Stripe ledger</a> plus <a href="figma-multiplayer-cost-postmortem.html">Figma multiplayer</a>.</li>
+            <li>Deep dives: <a href="stripe-ledger-scale-postmortem.html">Stripe's idempotency and modeled scale</a> and <a href="figma-multiplayer-cost-postmortem.html">Figma multiplayer</a>.</li>
           </ul>
                     <p>Strong consistency costs latency. Every synchronous replica adds round trips to the critical path. Spend it only where money or safety demands it.</p>
 <div class="lesson-questions">
@@ -441,7 +441,7 @@
           <ul class="lesson-ideas">
             <li>Cache repeated work first. Greetings, prefills plus hot keys pay for the whole layer.</li>
             <li>Every entry needs a TTL plus an invalidation story. Stale money spends like real money.</li>
-            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a>, <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a> plus <a href="cloudflare-edge-outage-postmortem.html">Cloudflare edge caching</a>.</li>
+            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a>, <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a> and <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's Bot-Feature File Outage</a>.</li>
           </ul>
           <p>Lesson 10 taught convergence. Caches are replicas that converge lazily by design. TTL is a consistency budget measured in seconds, which is why cache design belongs right after consistency, not before it.</p>
           <div class="lesson-questions">
@@ -517,7 +517,7 @@
           <ul class="lesson-ideas">
             <li>Alert on symptoms users feel, not causes you guess. Latency plus error rate first, CPU last.</li>
             <li>Sample smart. Keep every error, sample the boring middle. Try the <a href="../calculators.html#obs-sample">sampling fitter</a>.</li>
-            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS recovery math</a>, where detection lag set the price.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, with a reported defect and distinct recovery windows.</li>
           </ul>
           <p>Lesson 8 taught surviving blasts. Blasts you cannot see, you cannot survive. Game days plus failover drills are blind without signals, which is why observability closes the resilience arc, not the cost chapter.</p>
           <div class="lesson-questions">

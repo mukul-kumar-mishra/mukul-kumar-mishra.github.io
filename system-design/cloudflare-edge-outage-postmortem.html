@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Cloudflare's November 18, 2025 outage began when a ClickHouse permission change duplicated Bot Management feature rows. The published postmortem explains the file-size failure, affected services, and recovery timeline.">
-  <meta name="keywords" content="Cloudflare outage, edge network, feature file incident, Workers KV, BYOIP, CDN resilience, config propagation">
+  <meta name="keywords" content="Cloudflare outage, edge network, Bot Management, feature file incident, Workers KV, CDN resilience, config propagation">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/cloudflare-edge-outage-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy">
   <meta property="og:description" content="Cloudflare's November 18, 2025 outage began when a ClickHouse permission change duplicated Bot Management feature rows. The published postmortem explains the file-size failure, affected services, and recovery timeline.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/cloudflare-edge-meme.png">
-  <meta property="og:image:alt" content="One bad config file taking down a global edge network">
+  <meta property="og:image:alt" content="Illustrative flow of a ClickHouse permission change creating duplicate Bot Management feature rows, exceeding a proxy limit, and affecting services">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
   <meta name="twitter:title" content="Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy">
   <meta name="twitter:description" content="Cloudflare's report traces the outage to duplicated Bot Management feature rows and a runtime size limit.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/cloudflare-edge-meme.png">
-  <meta name="twitter:image:alt" content="One bad config file taking down a global edge network">
+  <meta name="twitter:image:alt" content="Illustrative flow of a ClickHouse permission change creating duplicate Bot Management feature rows, exceeding a proxy limit, and affecting services">
   <title>Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +37,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Edge Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Edge Infrastructure</span><span class="chip">September 2026</span><span class="chip">10 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On November 18, 2025, a ClickHouse permission change caused Cloudflare's Bot Management feature-file query to return duplicate rows. The larger file exceeded a runtime limit. Cloudflare's report distinguishes the resulting errors on its newer proxy from incorrect bot scores on its older one, and traces how dependent services were affected.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Cloudflare attributes the incident to a metadata query that omitted a database filter, producing more than 200 features where the proxy limit was 200 and normal use was about 60. The file reached the network, but impact differed by proxy version. A Workers KV bypass reduced downstream errors during mitigation; the main recovery came from stopping and replacing the bad feature file.</p>
@@ -60,13 +60,13 @@
         <p><strong>Roll out shared configuration progressively.</strong> A file distributed across a fleet can create correlated failure. Canarying and automated rollback are general guardrails for reducing exposure; Cloudflare's report does not say these controls were present or absent in this incident.</p>
         <p><strong>Map dependencies for recovery.</strong> The report documents that Workers KV and Access depended on the core proxy path and that bypassing the path reduced their errors. A documented fallback can reduce shared fate, but it should be tested before an incident and its scope should be clear.</p>
       </section>
-      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cloudflare-canary-meme.svg" alt="The canary in one diagram. One city first. Then regions. Then the fleet, if the errors stay quiet." width="1200" height="680"><figcaption>Figure 2. The canary in one diagram, created for this article. One city first. Then regions. Then the fleet, if the errors stay quiet.</figcaption></figure>
+      <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cloudflare-canary-meme.svg" alt="Illustrative staged rollout: begin with one canary, expand to regions only if error rates remain within the chosen threshold" width="1200" height="680"><figcaption>Figure 2. An illustrative staged-rollout recommendation: begin with a canary, then expand only while observed errors stay within the chosen threshold.</figcaption></figure>
       <section><h2>4. Guardrails for Configuration and Shared Paths</h2>
         <p>Validate generated files against the consumer's schema and capacity before they enter a distribution queue. Reject duplicate entries when duplicates are invalid, and alert on sudden size changes. Use staged rollout and a kill switch where the system supports them. Record which proxy versions consume each configuration and what happens when parsing fails.</p>
         <p>For dependent services, document the request path and test fallback behavior independently. A bypass should specify which calls use it, what consistency guarantees remain, and how recovery returns traffic to the normal path. Measure the error rate of each dependent service during a controlled failure test rather than inferring resilience from the architecture diagram.</p>
         <div class="tip"><strong>Operator rule:</strong> Treat generated configuration as untrusted input at the point where it is parsed, even when it came from an internal query.</div>
       </section>
-      <section><h2>6. The Verdict</h2>
+      <section><h2>5. The Verdict</h2>
         <p>Cloudflare's November 2025 report establishes a specific chain: a permissions change altered metadata results; duplicate rows expanded the Bot Management feature file beyond its runtime limit; proxy versions failed differently; and dependent services shared part of the affected request path. The report also gives a recovery timeline and describes the temporary Workers KV/Access bypass.</p>
         <p>It does not establish that every Cloudflare service failed identically, that all customer traffic was down, or that the bypass was the final fix. Operators can take the narrower design lesson: validate generated configuration at the consumer boundary, stage fleet-wide changes, and test dependency fallbacks before an incident.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A duplicate row became a fleet-wide configuration problem when validation stopped at the database boundary.</strong></p>

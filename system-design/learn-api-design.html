@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">API Design in Production: 15 Lessons From the Gateway</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: name the promise, price the boundary, plus retire versions before they retire you. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic API lessons with live diagrams, from contracts to idempotency plus rate limits plus deprecation math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend plus SRE course · Updated September 26, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 14, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -171,7 +171,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · The contract ships first</div>
           <h2>The Contract Is the Product</h2>
-          <p class="lesson-story">Assumption first: clients outlive every implementation behind them. Stripe processed $1.4 trillion without double charging anything because the API promise held while ledgers plus regions plus vendors moved underneath. Design the promise before the handler. Version the promise like money depends on it, because it does.</p>
+          <p class="lesson-story">Clients outlive every implementation behind them. Stripe <a href="https://stripe.com/newsroom/news/stripe-2024-update" target="_blank" rel="noopener noreferrer">reported $1.4 trillion in 2024 total payment volume</a>; that dollar-volume figure is not a transaction count or proof that every payment succeeded exactly once. Its <a href="https://docs.stripe.com/api/idempotent_requests" target="_blank" rel="noopener noreferrer">API documentation</a> describes idempotency keys for safely retrying eligible requests. Design the promise before the handler.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="name the promise before the handler">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">clients</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">contract</text>
@@ -182,8 +182,8 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Name resources as nouns plus actions as verbs. Verbs in URLs age into lies the moment a second client arrives.</li>
-            <li>One contract, many handlers. Stripe plus Razorpay both kept promises while swapping queues plus regions underneath.</li>
-            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, idempotency keys plus double-entry discipline at $1.4 trillion.</li>
+            <li>One contract, many handlers. Keep the client-visible promise stable while implementation details change.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, with documented API behavior and explicitly modeled rates.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -219,7 +219,7 @@
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Safety · Retries that cannot double charge</div>
           <h2>Idempotency Keys End Double Charges</h2>
-          <p class="lesson-story">Networks retry. That is not a bug, that is physics. The bug is charging twice for one intent. Stripe solved it with idempotency keys plus a double-entry ledger, so a retried request replays the stored result instead of repeating the side effect. Every mutating endpoint needs the same discipline.</p>
+          <p class="lesson-story">Networks retry. The API contract must distinguish a retry of one intent from a new operation. Stripe's documentation says an eligible request with the same idempotency key can reuse its saved result instead of repeating the operation. This is an API behavior, not a claim of global exactly-once processing across every downstream system.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="same key twice bills once">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">intent</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">keyed request</text>
@@ -231,7 +231,7 @@
           <ul class="lesson-ideas">
             <li>Keys ride in headers, never in bodies. The key identifies intent while the body carries details.</li>
             <li>Store key plus response for at least 24 hours. A retry inside the window replays. Outside it starts fresh.</li>
-            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, exactly the machinery, priced.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, the API guarantee and its scenario limits.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -340,7 +340,7 @@
         <section class="lesson" id="lesson-8">
           <div class="lesson-kicker">Lesson 08 · Async · Callbacks that survive the night</div>
           <h2>Webhooks at Scale</h2>
-          <p class="lesson-story">Stripe-scale webhooks mean millions of outbound callbacks into customer endpoints of unknown quality. Sign every payload. Retry with backoff plus jitter across hours. Keep per-destination queues so one slow customer cannot stall the rest. The callback is your API in reverse, with all the same discipline owed.</p>
+          <p class="lesson-story">Webhook endpoints receive asynchronous events and can fail independently of the original request. Stripe's documentation says live-mode delivery can retry for up to three days and does not guarantee event order. Sign each payload, deduplicate processed event IDs, and isolate slow destinations in your own design.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="one slow customer stalls nobody">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">event fires</text>
             <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">per-dest queue</text>
@@ -352,8 +352,8 @@
           </svg>
           <ul class="lesson-ideas">
             <li>HMAC-sign payloads with rotating secrets plus versioned signatures. Unsigned callbacks are rumors.</li>
-            <li>Retry 8 times over 3 days with jitter. Dead-letter the rest to a dashboard someone actually reads.</li>
-            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">The Ledger That Cannot Blink</a>, webhook storms at 1M RPS.</li>
+            <li>Set a retry policy that fits your service. Stripe documents retries for up to three days in live mode; its public docs do not specify an eight-attempt schedule.</li>
+            <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, including webhook delivery limits and modeled load.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -437,7 +437,7 @@
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Money · The gateway invoice</div>
           <h2>The Gateway Bill</h2>
-          <p class="lesson-story">Assume 1M RPS through gateway plus auth plus limits at a modeled $0.0000012 per origin request. That is about $3,100 per day before data plus support. Token buckets that shed 65 percent of storm load save $70,000 per five-hour storm at that scale. Run the RPS Envelope calculator with your own numbers. The bill hides in the boundary. Here the boundary has a rate limit.</p>
+          <p class="lesson-story">Assume 1M RPS through gateway plus auth plus limits at a modeled $0.0000012 per origin request. That is about $1.20 per second, or about $103,700 per day, before data plus support (1M x 86,400 x $0.0000012; illustrative scenario, not a measured invoice). Shedding 65 percent of a modeled ~5M RPS storm for five hours saves about $70,000 in origin compute at the same unit rate (0.65 x 5M x 18,000s x $0.0000012). Run the RPS Envelope calculator with your own numbers. The bill hides in the boundary. Here the boundary has a rate limit.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits cut the invoice by three quarters">
             <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">steady 12k</text>
             <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">burst 148k</text>

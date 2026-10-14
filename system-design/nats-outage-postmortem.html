@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="NATS says a flight-code software defect led to UK air-traffic restrictions for about six hours on September 8, 2026. The CAA reports more than 2,000 flights were delayed, cancelled, or diverted; NATS says passenger disruption took more than two days to clear.">
+  <meta name="description" content="NATS says a flight-code software defect led to UK restrictions for about six hours on September 8, 2026. The CAA reports more than 2,000 flights were delayed, cancelled, or diverted. NATS says passenger disruption took more than two days to clear.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/nats-outage-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="NATS's 2026 Incident: Flight-Code Defect, Six-Hour Restrictions">
-  <meta property="og:description" content="NATS says a flight-code software defect led to UK air-traffic restrictions for about six hours on September 8, 2026. The CAA reports more than 2,000 flights were delayed, cancelled, or diverted; NATS says passenger disruption took more than two days to clear.">
+  <meta property="og:title" content="NATS's 2026 Incident: Flight-Code Defect, About Six Hours of Restrictions">
+  <meta property="og:description" content="NATS says a flight-code software defect led to UK restrictions for about six hours on September 8, 2026. The CAA reports more than 2,000 flights were delayed, cancelled, or diverted. NATS says passenger disruption took more than two days to clear.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/nats-outage-meme.png">
   <meta property="og:image:alt" content="Illustration of the NATS incident: a flight-data software defect led to UK traffic restrictions, while passenger disruption lasted more than two days">
   <meta property="og:image:type" content="image/png">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/nats-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="NATS's 2026 Incident: Flight-Code Defect, Six-Hour Restrictions">
+  <meta name="twitter:title" content="NATS's 2026 Incident: Flight-Code Defect, About Six Hours of Restrictions">
   <meta name="twitter:description" content="NATS reports about six hours of UK restrictions and more than two days to clear passenger disruption. The CAA says over 2,000 flights were delayed, cancelled, or diverted.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/nats-outage-meme.png">
   <meta name="twitter:image:alt" content="Illustration of the NATS incident: a flight-data software defect led to UK traffic restrictions, while passenger disruption lasted more than two days">
-  <title>NATS's 2026 Incident: Flight-Code Defect, Six-Hour Restrictions | Buildopsy</title>
+  <title>NATS's 2026 Incident: Flight-Code Defect, About Six Hours of Restrictions | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "NATS's 2026 Incident: Flight-Code Defect, Six-Hour Restrictions", "description": "A source-led account of NATS's September 8, 2026 flight-code software defect, the roughly six hours of UK air-traffic restrictions, and the reported passenger disruption that took more than two days to clear.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-11", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/nats-outage-postmortem.html"}, "keywords": "NATS, air traffic control, software defect, outage, recovery", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/nats-outage-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "NATS's 2026 Incident: Flight-Code Defect, About Six Hours of Restrictions", "description": "A source-led account of NATS's September 8, 2026 flight-code software defect, the roughly six hours of UK air-traffic restrictions, and the reported passenger disruption that took more than two days to clear.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-11", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/nats-outage-postmortem.html"}, "keywords": "NATS, air traffic control, software defect, outage, recovery", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/nats-outage-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -37,7 +37,7 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Safety-Critical Systems</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">NATS's 2026 Incident: A Flight-Code Defect and Six-Hour Restrictions</h1>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">NATS's 2026 Incident: A Flight-Code Defect and About Six Hours of Restrictions</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 8, 2026, a defect in NATS's flight-data software corrupted an output after a higher-priority message interrupted a manual aircraft-code request. NATS says restrictions were in place for about six hours. The CAA later reported that more than 2,000 flights were delayed, cancelled, or diverted; NATS said passenger disruption took more than two days to clear.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> NATS's preliminary report describes a millisecond-scale software defect in a specific flight-code process. The affected software was at London Area Control, but restrictions were applied across the UK to restart the National Airspace System and reload flight data. NATS said safety was never in question and that this incident was unrelated to the August 2023 outage.</p>
       <div class="grid4" style="margin-top:24px;">
@@ -57,7 +57,7 @@
       </section>
       <section><h2>2. Restrictions Ended Before the Backlog Did</h2>
         <p>NATS says the restrictions lasted some six hours and its operations returned to normal the same evening. It also says it took more than two days for the backlog of passenger disruption to clear, with hundreds of thousands of passengers' travel plans disrupted. Those are different measures: the restriction period describes air-traffic operations; the longer window describes passenger disruption.</p>
-        <p>On September 25, the UK Civil Aviation Authority said more than 2,000 flights had been delayed, cancelled, or diverted. The CAA's wording combines three outcomes; it is not a count of cancelled flights alone. Neither the preliminary NATS account nor the CAA announcement publishes a count of aircraft or crew displaced, so this article does not estimate one.</p>
+        <p>On September 25, the <a href="https://www.caa.co.uk/newsroom/news/uk-aviation-regulator-announces-scope-of-independent-review-into-nats-technical-incident-on-8-september-2026/" target="_blank" rel="noopener noreferrer">UK Civil Aviation Authority said more than 2,000 flights had been delayed, cancelled, or diverted</a>. The CAA's wording combines three outcomes; it is not a count of cancelled flights alone. Neither the preliminary NATS account nor the CAA announcement publishes a count of aircraft or crew displaced, so this article does not estimate one.</p>
         <div class="callout"><strong>Operational distinction:</strong> normal air-traffic operations the same evening did not mean every passenger schedule had recovered.</div>
       </section>
       <section><h2>3. NATS Says the 2023 Outage Was Unrelated</h2>
@@ -83,7 +83,7 @@
       </section>
       <section><h2>6. The Verdict</h2>
         <p>NATS's preliminary report identifies a millisecond-scale defect in how a manual aircraft-code request resumed after a higher-priority message interrupted it. The company says the defect was unrelated to its August 2023 outage, that restrictions lasted some six hours, that operations returned to normal the same evening, and that passenger disruption took more than two days to clear. The CAA reports more than 2,000 flights were delayed, cancelled, or diverted.</p>
-        <p>The public record does not yet establish the full recovery mechanics or final resilience actions. The CAA's initial report is due by the end of January 2027 and its final report by March 8, 2027. Until then, the useful lesson is to separate the verified software mechanism and the two recovery windows from open questions about architecture and recovery planning.</p>
+        <p>The public record does not yet establish the full recovery mechanics or final resilience actions. The <a href="https://www.caa.co.uk/newsroom/news/uk-aviation-regulator-announces-scope-of-independent-review-into-nats-technical-incident-on-8-september-2026/" target="_blank" rel="noopener noreferrer">CAA says its initial report is due by the end of January 2027 and its final report by March 8, 2027</a>. Until then, the useful lesson is to separate the verified software mechanism and the two recovery windows from open questions about architecture and recovery planning.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>A six-hour restriction and a two-day passenger backlog are different recovery measures.</strong></p>
       </section>
       <section><h2>Sources and Method</h2>

@@ -112,7 +112,7 @@
 
       <section><h2>5. How Figma Scales: The RPS Math</h2>
         <p>Figma reported more than 13 million monthly users in its 2025 prospectus. A transparent scenario turns that into load: 4 million daily users at 35 minutes each, one request every 20 seconds, gives about 4,860 average RPS. A six-times peak factor pushes the control plane near 29,000 RPS.</p>
-        <p>Presence dwarfs requests. Around 1.5 million concurrent users sending two coalesced cursor frames per second produce 3 million ephemeral frames per second before fan-out. Document mutations add roughly 400,000 per second on average with bursts near 2.4 million. The modeled peak across the system lands near 65,000 RPS.</p>
+        <p>Presence dwarfs requests. Around 1.5 million concurrent users sending two coalesced cursor frames per second produce 3 million ephemeral frames per second before fan-out. Document mutations add roughly 400,000 per second on average with bursts near 2.4 million. Ephemeral presence frames ride a separate best-effort lane. The companion cost teardown consolidates the durable work into a labeled 65k RPS scenario; that figure is a modeling choice there, not a sum of the per-lane rates above.</p>
         <table><thead><tr><th>Workload</th><th>Scenario</th><th>Result</th></tr></thead><tbody>
           <tr><td>API plus sync</td><td>4M DAU, 35 min sessions</td><td>4.9k avg RPS</td></tr>
           <tr><td>Peak multiplier</td><td>6x busy period</td><td>~29k RPS</td></tr>

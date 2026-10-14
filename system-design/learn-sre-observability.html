@@ -183,7 +183,7 @@
           <ul class="lesson-ideas">
             <li>Measure what users feel: success rate plus latency tails. Server CPU never felt anything.</li>
             <li>Freeze feature deploys when the budget burns out. The freeze is the feature.</li>
-            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, schedule-hours versus system-minutes.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, reported restriction time and downstream passenger recovery.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -254,7 +254,7 @@
           <ul class="lesson-ideas">
             <li>Cap metric cardinality: no user IDs, no request IDs in labels. Cardinality is the silent invoice.</li>
             <li>Log structured JSON with request IDs plus error codes. Grep-friendly logs are incident-friendly logs.</li>
-            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Loaded the Wrong File</a>, when telemetry must explain a wrong file.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy</a>, where error signals and file-generation assumptions mattered.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -326,7 +326,7 @@
           <ul class="lesson-ideas">
             <li>Write timelines from logs, never from memory. Memory edits itself to look competent.</li>
             <li>Assign every action an owner plus a date. Actions without dates are wishes.</li>
-            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Four Hours</a>, the repeat that indicted follow-through.</li>
+            <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, which NATS says was unrelated to its August 2023 outage.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -396,7 +396,7 @@
           <ul class="lesson-ideas">
             <li>Bind each component to an independent probe. Manual page flips lag reality by definition.</li>
             <li>Template updates as known plus unknown plus next check. Fill it in 5 minutes, not 50.</li>
-            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Wrong File</a>, error pages replacing X plus OpenAI.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage</a>, with the source-reported 5xx and bot-score effects.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -466,7 +466,7 @@
           <ul class="lesson-ideas">
             <li>Gate canaries on burn rate, not vibes. Breach means automatic rollback, no meeting required.</li>
             <li>Cap deploy blast with cells plus traffic shifting. Small blast, fast learning.</li>
-            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare Wrong File</a>, generation without guardrails.</li>
+            <li>Deep dive: <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage</a>, where duplicate feature rows exceeded a runtime limit.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>

@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Reported examples of AI-related false claims after Charlie Kirk's killing, from Grok, Perplexity, Google, and Facebook">
+  <title>Reported AI-related false claims after Charlie Kirk's killing</title>
+  <desc>CBS News documented false Grok outputs, an inaccurate Google AI Overview, and a false Perplexity post. For The Win reported a fabricated Facebook post attributed to Simone Biles. The graphic distinguishes these examples from any total count.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/>
@@ -49,5 +51,5 @@
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">reported examples.</text>
   <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">no total count.</text>
-  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: CBS News, Sep 12, 2025; For The Win, Sep 18, 2025; OECD AI incident monitor.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: CBS News, Sep 12, 2025, and For The Win, Sep 18, 2025. OECD incident entry links For The Win.</text>
 </svg>

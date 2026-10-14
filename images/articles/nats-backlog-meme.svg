@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="NATS reported normal operations the same evening, while passenger disruption took more than two days to clear">
+  <title>NATS operational and passenger recovery windows</title>
+  <desc>NATS reported that operations returned to normal the same evening while passenger disruption took more than two days to clear. The CAA count combines delayed, cancelled, and diverted flights.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="125" result="n"/>
@@ -66,5 +68,5 @@
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
   <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">six-hour restriction.</text>
   <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">more than two-day backlog.</text>
-  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: NATS preliminary report, Sep 18, 2026; CAA review announcement, Sep 25, 2026.</text>
+  <text x="60" y="658" font-family="monospace" font-size="12" fill="#475569">Sources: NATS preliminary report, Sep 18, 2026, and CAA announcement, Sep 25, 2026.</text>
 </svg>

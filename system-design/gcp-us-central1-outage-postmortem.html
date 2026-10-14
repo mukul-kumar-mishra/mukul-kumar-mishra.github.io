@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Outage: Fiber Isolation Across Two Zones", "description": "A sourced postmortem of Google's September 2026 us-central1 network incident: incompatible transceivers and an unsafe maintenance sequence isolated capacity in parts of two zones for 4 hours 11 minutes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-01", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Outage: Fiber Isolation Across Two Zones", "description": "A sourced postmortem of Google's September 2026 us-central1 network incident: incompatible transceivers and an unsafe maintenance sequence isolated capacity in parts of two zones for 4 hours 11 minutes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -77,7 +77,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">All paths disconnected</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Within 13m</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Published root cause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Maintenance error</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 1, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 14, 2026</p>
       </header>
 
 
@@ -118,7 +118,7 @@
 
       <section><h2>5. The verdict: make maintenance stoppable</h2>
         <p>Google reported that workloads in unaffected zones continued to run. The incident shows how routine maintenance can defeat redundancy when a procedure removes multiple paths before checking the result.</p>
-        <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. For the failure of isolation itself — one fault restricting a whole nation — see <a href="nats-outage-postmortem.html">the NATS restriction</a>. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
+        <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. A different safety-critical example is NATS's September 2026 incident: its preliminary report says a flight-code defect affected London Area Control, while UK-wide restrictions were used to restart the system and reload data. See <a href="nats-outage-postmortem.html">the NATS incident review</a>. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
         <p>For comparison, see the distinct storage event in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>. Its failure mechanism and reported scope differ from this network-maintenance incident.</p>
       </section>
 
@@ -139,7 +139,7 @@
           <li><a href="https://status.cloud.google.com/incidents/J5ia5t9p3g9Q5Wi7r8Ev" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: September 1 us-central1 network incident, final report and September 29 addendum</a></li>
           <li><a href="https://status.cloud.google.com/summary" target="_blank" rel="noopener noreferrer">Google Cloud Service Health incident history</a></li>
           <li><a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 outage: a separate storage incident with a different failure mechanism</a></li>
-          <li><a href="nats-outage-postmortem.html">NATS restriction: national blast from a single fault, the uncontained version</a></li>
+          <li><a href="nats-outage-postmortem.html">NATS flight-data incident: a localized software defect and UK-wide restart restrictions</a></li>
         </ul>
       </section>
       </article>
