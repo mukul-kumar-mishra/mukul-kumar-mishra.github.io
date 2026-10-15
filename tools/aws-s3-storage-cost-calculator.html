@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free AWS S3 cost calculator: estimate storage, PUT/GET request fees and retrieval with editable rates. Region, class and minimums change the result.">
+  <meta name="description" content="Free AWS S3 cost calculator: estimate S3 pricing for storage, PUT/GET request fees and retrieval with editable rates. Region, class and minimums change the result.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta property="og:description" content="Estimate S3 storage, PUT/GET requests and retrieval with editable rates. Region and class change request fees, retrieval charges and minimums. Small-object duration rules can change the storage-class result.">
+  <meta property="og:description" content="Estimate S3 pricing for storage, PUT/GET requests and retrieval with editable rates. Region and class change request fees, retrieval charges and minimums. Small-object duration rules can change the storage-class result.">
   <meta property="og:url" content="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta property="og:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
@@ -18,7 +18,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta name="twitter:description" content="Estimate S3 storage, PUT/GET requests and retrieval with editable rates. Region and class change request fees, retrieval charges and minimums. Small-object duration rules can change the storage-class result.">
+  <meta name="twitter:description" content="Estimate S3 pricing for storage, PUT/GET requests and retrieval with editable rates. Region and class change request fees, retrieval charges and minimums. Small-object duration rules can change the storage-class result.">
   <meta name="twitter:image:alt" content="Worked S3 Standard estimate: 1,024 billable GB, one million PUTs and ten million GETs total $32.55 before transfer and management charges">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <title>AWS S3 Storage Cost Calculator With Request Fees | Buildopsy</title>
@@ -35,8 +35,8 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the example US East list price of $0.023 per billable GB-month, 1,024 billable GB for 1 TiB costs $23.55 a month before request and retrieval fees. This calculator adds PUT and GET fees on top."}},
-      {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"They can. At the example US East Standard rates, one million PUT requests cost $5 at $0.005 per thousand. Ten million GET requests cost $4 at $0.0004 per thousand. Rates vary by storage class and Region."}},
+      {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the modeled example US East list price of $0.023 per billable GB-month, 1,024 billable GB for 1 TiB costs $23.55 a month before request and retrieval fees. This calculator adds PUT and GET fees on top."}},
+      {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"They can. At the modeled example US East Standard rates, one million PUT requests cost $5 at $0.005 per thousand. Ten million GET requests cost $4 at $0.0004 per thousand. Rates vary by storage class and Region."}},
       {"@type":"Question","name":"What costs are not included in this S3 estimate?","acceptedAnswer":{"@type":"Answer","text":"The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for the selected region and class."}}
     ]
   }
@@ -148,9 +148,9 @@
     <section class="sec" id="s3-faq">
       <h2 class="sec-title">Frequently Asked Questions</h2>
       <h3>How much does 1 TiB of S3 Standard storage cost per month?</h3>
-      <p class="fl-desc">At the example US East list price of $0.023 per billable GB-month, 1,024 billable GB for 1 TiB costs $23.55 a month before request and retrieval fees. This calculator adds PUT and GET fees on top.</p>
+      <p class="fl-desc">At the modeled example US East list price of $0.023 per billable GB-month, 1,024 billable GB for 1 TiB costs $23.55 a month before request and retrieval fees. This calculator adds PUT and GET fees on top.</p>
       <h3>Do S3 PUT and GET requests add much to the bill?</h3>
-      <p class="fl-desc">They can. At the example US East Standard rates, one million PUT requests cost $5.00 at $0.005 per thousand. Ten million GET requests cost $4.00 at $0.0004 per thousand. Rates vary by storage class and Region.</p>
+      <p class="fl-desc">They can. At the modeled example US East Standard rates, one million PUT requests cost $5.00 at $0.005 per thousand. Ten million GET requests cost $4.00 at $0.0004 per thousand. Rates vary by storage class and Region.</p>
       <h3>What costs are not included in this S3 estimate?</h3>
       <p class="fl-desc">The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for your Region and class.</p>
     </section>
