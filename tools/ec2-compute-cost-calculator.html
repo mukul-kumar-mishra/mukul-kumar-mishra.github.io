@@ -7,7 +7,7 @@
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy">
+  <meta property="og:title" content="EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy">
   <meta property="og:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
   <meta property="og:url" content="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
@@ -16,11 +16,11 @@
   <meta property="og:image:width" content="2078">
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy">
+  <meta name="twitter:title" content="EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy">
   <meta name="twitter:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
   <meta name="twitter:image:alt" content="EC2 Compute Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
-  <title>EC2 Instance Cost Calculator: Running Hours and Discounts | Buildopsy</title>
+  <title>EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How are EC2 instance charges estimated?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours. This example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount."}},
+      {"@type":"Question","name":"How are EC2 instance charges estimated?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours. This modeled example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount."}},
       {"@type":"Question","name":"Does CPU utilization reduce the EC2 instance charge?","acceptedAnswer":{"@type":"Answer","text":"No. EC2 instance usage is billed while the instance is running, even if it is idle. The running-time input models powered-on time as a share of the entered hours, not CPU load."}},
       {"@type":"Question","name":"Does this calculator reproduce Reserved Instance or Savings Plan billing?","acceptedAnswer":{"@type":"Answer","text":"No. The discount field applies an effective percentage to modeled running usage. Reserved Instances and Savings Plans are commitments that can be billed even when matching usage is absent, and actual discounts depend on terms and usage."}}
     ]

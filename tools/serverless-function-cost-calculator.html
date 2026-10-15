@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does AWS Lambda cost per month?","acceptedAnswer":{"@type":"Answer","text":"With the default rates and the full monthly free tier still available to the account, 100 million 200 ms invocations at 512 MB cost about $179.80. Other Lambda functions may already use part of the account-level free tier."}},
+      {"@type":"Question","name":"How much does AWS Lambda cost per month?","acceptedAnswer":{"@type":"Answer","text":"With the modeled default rates and the full monthly free tier still available to the account, 100 million 200 ms invocations at 512 MB cost about $179.80. Other Lambda functions may already use part of the account-level free tier."}},
       {"@type":"Question","name":"What is a GB-second in serverless billing?","acceptedAnswer":{"@type":"Answer","text":"A GB-second is one gigabyte of allocated memory for one second. A 512 MB function running for 200 ms uses 0.1 GB-second per invocation. Lambda bills duration in 1 ms increments; use billed duration for the closest estimate."}},
       {"@type":"Question","name":"Does more memory cost more or less on Lambda?","acceptedAnswer":{"@type":"Answer","text":"This model holds duration constant when memory changes. Higher memory raises compute capacity and the price per millisecond; measure the new duration and enter it to compare total GB-seconds."}}
     ]
@@ -69,7 +69,7 @@
 
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Serverless Function Cost Calculator</h1>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Serverless Function Cost Calculator (AWS Lambda)</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests plus GB-seconds of compute. This example prices 100 million requests at 200 ms and 512 MB at about $179.80 after the full monthly free tier. That free tier is shared across the AWS account. Enter what remains after other functions.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
