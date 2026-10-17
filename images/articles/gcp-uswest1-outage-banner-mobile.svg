@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="560" viewBox="0 0 390 560" role="img" aria-labelledby="title desc">
+  <title id="title">GCP us-west1 outage: fiber maintenance and failed rerouting, night illustration</title>
+  <desc id="desc">Buildopsy illustration of the August 20, 2026 us-west1 incident: two data centers linked by an inter-datacenter fiber route. The primary link is under scheduled fiber maintenance with amber warning lights and a service truck, an alternate path carries a queue of packets glowing red while packets drop off the path, and a status panel reads primary under maintenance and alternate congested. Illustration, not Google's network topology; the final report publishes no capacity or traffic values.</desc>
+  <defs>
+    <linearGradient id="skyGrad" gradientUnits="userSpaceOnUse" x1="0" y1="44" x2="0" y2="380">
+      <stop offset="0" stop-color="#04070d"/>
+      <stop offset="0.55" stop-color="#0a1322"/>
+      <stop offset="0.85" stop-color="#152640"/>
+      <stop offset="1" stop-color="#22344e"/>
+    </linearGradient>
+    <linearGradient id="groundGrad" gradientUnits="userSpaceOnUse" x1="0" y1="380" x2="0" y2="472">
+      <stop offset="0" stop-color="#0d1522"/>
+      <stop offset="1" stop-color="#06090e"/>
+    </linearGradient>
+    <linearGradient id="bldGradA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0d1626"/>
+      <stop offset="1" stop-color="#1b2b45"/>
+    </linearGradient>
+    <linearGradient id="bldGradB" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#111b2d"/>
+      <stop offset="1" stop-color="#22344f"/>
+    </linearGradient>
+    <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbbf24" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#fbbf24" stop-opacity="0.3"/>
+    </linearGradient>
+    <radialGradient id="redAura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ef4444" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ef4444" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.42" r="0.8">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="0.72" stop-color="#000000" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.48"/>
+    </radialGradient>
+    <linearGradient id="floorFade" gradientUnits="userSpaceOnUse" x1="0" y1="420" x2="0" y2="472">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.5"/>
+    </linearGradient>
+    <filter id="glow2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
+    <filter id="glow6" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="glow14" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="17" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+  <style>
+    text{font-family:Sora,'Segoe UI',Verdana,sans-serif}
+    .mono{font-family:Consolas,ui-monospace,'Segoe UI Mono',monospace}
+    .blink{animation:blk 2.2s ease-in-out infinite}
+    .blink2{animation:blk 1.4s ease-in-out infinite;animation-delay:-0.7s}
+    @keyframes blk{0%,100%{opacity:1}50%{opacity:0.25}}
+    @media (prefers-reduced-motion:reduce){.blink,.blink2{animation:none}}
+  </style>
+
+  <rect x="0" y="44" width="390" height="336" fill="url(#skyGrad)"/>
+  <g fill="#cbd5e1">
+    <circle cx="300" cy="70" r="0.9" opacity="0.5"/><circle cx="332" cy="100" r="0.7" opacity="0.35"/>
+    <circle cx="362" cy="78" r="1" opacity="0.45"/><circle cx="286" cy="128" r="0.7" opacity="0.3"/>
+    <circle cx="318" cy="156" r="0.8" opacity="0.35"/><circle cx="352" cy="140" r="0.7" opacity="0.28"/>
+    <circle cx="372" cy="180" r="0.8" opacity="0.32"/><circle cx="300" cy="196" r="0.7" opacity="0.26"/>
+    <circle cx="336" cy="212" r="0.8" opacity="0.3"/><circle cx="60" cy="60" r="0.7" opacity="0.3"/>
+    <circle cx="120" cy="52" r="0.8" opacity="0.35"/><circle cx="210" cy="58" r="0.7" opacity="0.3"/>
+    <circle cx="256" cy="74" r="0.8" opacity="0.35"/><circle cx="180" cy="82" r="0.6" opacity="0.25"/>
+  </g>
+  <circle cx="330" cy="86" r="16" fill="#cbd5e1" opacity="0.05" filter="url(#glow14)"/>
+  <circle cx="330" cy="86" r="7" fill="#dbe7f5" opacity="0.72"/>
+
+  <text x="16" y="80" font-size="24" font-weight="700" fill="#f8fafc">GCP us-west1 Outage</text>
+  <text x="16" y="104" font-size="11" fill="#b9c7da">Scheduled fiber work cut inter-datacenter capacity.</text>
+  <text x="16" y="120" font-size="11" fill="#b9c7da">Rerouting did not properly redistribute the load.</text>
+  <rect x="16" y="130" width="212" height="56" rx="8" fill="#050a12" fill-opacity="0.78" stroke="#7d8ea8" stroke-opacity="0.28"/>
+  <circle cx="28" cy="148" r="3" fill="#fbbf24" filter="url(#glow6)" class="blink"/>
+  <text x="38" y="152" class="mono" font-size="9.5" fill="#fcd34d">PRIMARY — UNDER MAINTENANCE</text>
+  <circle cx="28" cy="171" r="3" fill="#f87171" filter="url(#glow6)" class="blink2"/>
+  <text x="38" y="175" class="mono" font-size="9.5" fill="#fda4af">ALTERNATE — CONGESTED</text>
+  <rect x="16" y="194" width="196" height="21" rx="10.5" fill="#38bdf8" fill-opacity="0.1" stroke="#7dd3fc" stroke-opacity="0.4"/>
+  <text x="27" y="208" class="mono" font-size="9" fill="#7dd3fc">IMPACT WINDOW · 08:00–10:22 PT</text>
+
+  <path d="M0,378 L30,370 L60,376 L90,368 L120,375 L150,369 L180,376 L210,370 L240,377 L270,371 L300,377 L330,370 L360,376 L390,372 L390,380 L0,380 Z" fill="#0a1220" opacity="0.9"/>
+  <ellipse cx="195" cy="378" rx="180" ry="18" fill="#1e3a5f" opacity="0.5" filter="url(#glow14)"/>
+  <rect x="0" y="380" width="390" height="92" fill="url(#groundGrad)"/>
+  <line x1="195" y1="380" x2="40" y2="472" stroke="#38bdf8" stroke-opacity="0.05" stroke-width="2"/>
+  <line x1="195" y1="380" x2="350" y2="472" stroke="#38bdf8" stroke-opacity="0.05" stroke-width="2"/>
+
+  <rect x="6" y="224" width="144" height="8" fill="#22304a"/>
+  <line x1="6" y1="224" x2="150" y2="224" stroke="#3a5275" stroke-width="1" opacity="0.7"/>
+  <rect x="16" y="232" width="126" height="148" fill="url(#bldGradA)"/>
+  <line x1="58" y1="232" x2="58" y2="380" stroke="#0a1220" stroke-opacity="0.5"/>
+  <line x1="100" y1="232" x2="100" y2="380" stroke="#0a1220" stroke-opacity="0.5"/>
+  <rect x="22" y="240" width="78" height="12" rx="2" fill="#0a1322" opacity="0.85"/>
+  <text x="27" y="249" class="mono" font-size="7" letter-spacing="0.8" fill="#6f87a8">DATA CENTER A</text>
+  <g filter="url(#glow2)">
+    <rect x="26" y="260" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.85"/>
+    <rect x="54" y="260" width="16" height="11" rx="1.5" fill="#7dd3fc" opacity="0.95"/>
+    <rect x="82" y="260" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.8"/>
+    <rect x="110" y="260" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+    <rect x="26" y="286" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.8"/>
+    <rect x="54" y="286" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+    <rect x="82" y="286" width="16" height="11" rx="1.5" fill="#7dd3fc" opacity="0.9"/>
+    <rect x="110" y="286" width="16" height="11" rx="1.5" fill="#0c1526" opacity="0.9"/>
+    <rect x="26" y="312" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.85"/>
+    <rect x="54" y="312" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.75"/>
+    <rect x="82" y="312" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+    <rect x="110" y="312" width="16" height="11" rx="1.5" fill="#7dd3fc" opacity="0.9"/>
+  </g>
+  <rect x="24" y="211" width="34" height="13" fill="#1c2940" stroke="#0a1220" stroke-width="1"/>
+  <rect x="66" y="211" width="34" height="13" fill="#1c2940" stroke="#0a1220" stroke-width="1"/>
+  <line x1="24" y1="211" x2="58" y2="211" stroke="#33507a" stroke-opacity="0.5"/>
+  <line x1="66" y1="211" x2="100" y2="211" stroke="#33507a" stroke-opacity="0.5"/>
+  <circle cx="41" cy="217.5" r="4" fill="none" stroke="#2b3d5c" stroke-width="1.2"/>
+  <circle cx="83" cy="217.5" r="4" fill="none" stroke="#2b3d5c" stroke-width="1.2"/>
+  <line x1="134" y1="216" x2="134" y2="224" stroke="#22304a" stroke-width="1.5"/>
+  <circle cx="134" cy="214" r="2.5" fill="#fb7185" filter="url(#glow6)" class="blink"/>
+  <ellipse cx="79" cy="384" rx="80" ry="8" fill="#0ea5e9" opacity="0.1" filter="url(#glow6)"/>
+
+  <rect x="240" y="224" width="144" height="8" fill="#22304a"/>
+  <line x1="240" y1="224" x2="384" y2="224" stroke="#3a5275" stroke-width="1" opacity="0.7"/>
+  <rect x="248" y="232" width="126" height="148" fill="url(#bldGradB)"/>
+  <line x1="290" y1="232" x2="290" y2="380" stroke="#0a1220" stroke-opacity="0.5"/>
+  <line x1="332" y1="232" x2="332" y2="380" stroke="#0a1220" stroke-opacity="0.5"/>
+  <rect x="254" y="240" width="78" height="12" rx="2" fill="#0a1322" opacity="0.85"/>
+  <text x="259" y="249" class="mono" font-size="7" letter-spacing="0.8" fill="#6f87a8">DATA CENTER B</text>
+  <g filter="url(#glow2)">
+    <rect x="258" y="260" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+    <rect x="286" y="260" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.85"/>
+    <rect x="314" y="260" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.8"/>
+    <rect x="342" y="260" width="16" height="11" rx="1.5" fill="#fbbf24" opacity="0.85"/>
+    <rect x="258" y="286" width="16" height="11" rx="1.5" fill="#7dd3fc" opacity="0.9"/>
+    <rect x="286" y="286" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.8"/>
+    <rect x="314" y="286" width="16" height="11" rx="1.5" fill="#0c1526" opacity="0.9"/>
+    <rect x="342" y="286" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+    <rect x="258" y="312" width="16" height="11" rx="1.5" fill="#164e63" opacity="0.75"/>
+    <rect x="286" y="312" width="16" height="11" rx="1.5" fill="#7dd3fc" opacity="0.95"/>
+    <rect x="314" y="312" width="16" height="11" rx="1.5" fill="#fbbf24" opacity="0.85"/>
+    <rect x="342" y="312" width="16" height="11" rx="1.5" fill="#0891b2" opacity="0.8"/>
+  </g>
+  <rect x="256" y="211" width="34" height="13" fill="#1c2940" stroke="#0a1220" stroke-width="1"/>
+  <rect x="298" y="211" width="34" height="13" fill="#1c2940" stroke="#0a1220" stroke-width="1"/>
+  <line x1="256" y1="211" x2="290" y2="211" stroke="#33507a" stroke-opacity="0.5"/>
+  <line x1="298" y1="211" x2="332" y2="211" stroke="#33507a" stroke-opacity="0.5"/>
+  <circle cx="273" cy="217.5" r="4" fill="none" stroke="#2b3d5c" stroke-width="1.2"/>
+  <circle cx="315" cy="217.5" r="4" fill="none" stroke="#2b3d5c" stroke-width="1.2"/>
+  <line x1="256" y1="216" x2="256" y2="224" stroke="#22304a" stroke-width="1.5"/>
+  <circle cx="256" cy="214" r="2.5" fill="#fb7185" filter="url(#glow6)" class="blink"/>
+  <ellipse cx="311" cy="384" rx="80" ry="8" fill="#22d3ee" opacity="0.09" filter="url(#glow6)"/>
+
+  <path d="M142,240 Q195,264 248,246" fill="none" stroke="#05070b" stroke-opacity="0.55" stroke-width="6"/>
+  <path d="M142,238 Q195,262 248,244" fill="none" stroke="#1a2332" stroke-width="5" stroke-linecap="round"/>
+  <path d="M142,238 Q195,262 248,244" fill="none" stroke="#2b3a52" stroke-width="3" stroke-linecap="round"/>
+  <path d="M142,238 Q157.5,245 173,248.4" fill="none" stroke="#22d3ee" stroke-opacity="0.8" stroke-width="1.6" filter="url(#glow2)"/>
+  <path d="M217,250.95 Q232.5,249.3 248,244" fill="none" stroke="#22d3ee" stroke-opacity="0.8" stroke-width="1.6" filter="url(#glow2)"/>
+  <path d="M173,248.4 Q195,253.3 217,250.95" fill="none" stroke="#3a4a63" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <circle cx="173" cy="248.4" r="2" fill="#46587a"/>
+  <circle cx="217" cy="250.95" r="2" fill="#46587a"/>
+  <circle cx="150" cy="241.5" r="1.6" fill="#67e8f9" opacity="0.9" filter="url(#glow2)"/>
+  <circle cx="240" cy="246" r="1.6" fill="#67e8f9" opacity="0.9" filter="url(#glow2)"/>
+
+  <line x1="180" y1="258" x2="180" y2="250" stroke="#2b3a52" stroke-width="1"/>
+  <line x1="210" y1="258" x2="210" y2="250.5" stroke="#2b3a52" stroke-width="1"/>
+  <rect x="171" y="258" width="48" height="9" rx="2" fill="#16202f" stroke="#2c3e59" stroke-width="1"/>
+  <circle cx="179" cy="257.5" r="1.7" fill="#fbbf24" filter="url(#glow6)" class="blink"/>
+  <circle cx="195" cy="257.5" r="1.7" fill="#fbbf24" filter="url(#glow6)" class="blink2"/>
+  <circle cx="211" cy="257.5" r="1.7" fill="#fbbf24" filter="url(#glow6)" class="blink"/>
+  <line x1="180" y1="267" x2="180" y2="271" stroke="#3a4a63" stroke-width="1"/>
+  <line x1="210" y1="267" x2="210" y2="271" stroke="#3a4a63" stroke-width="1"/>
+  <rect x="150" y="271" width="90" height="17" rx="2" fill="#0b1420" stroke="#f59e0b" stroke-opacity="0.45"/>
+  <text x="195" y="283" text-anchor="middle" class="mono" font-size="7.5" font-weight="700" letter-spacing="0.4" fill="#fbbf24">FIBER MAINTENANCE</text>
+
+  <path d="M142,286 Q195,348 248,292" fill="none" stroke="#05070b" stroke-opacity="0.55" stroke-width="6"/>
+  <path d="M142,286 Q195,348 248,292" fill="none" stroke="#1a2332" stroke-width="5" stroke-linecap="round"/>
+  <path d="M142,286 Q195,348 248,292" fill="none" stroke="#2b3a52" stroke-width="3" stroke-linecap="round"/>
+  <path d="M142,286 Q195,348 248,292" fill="none" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="1.6" filter="url(#glow2)"/>
+  <ellipse cx="195" cy="318" rx="70" ry="22" fill="url(#redAura)" opacity="0.8" filter="url(#glow14)"/>
+  <path d="M165,307.3 Q195,327.95 225,310.8" fill="none" stroke="#f87171" stroke-opacity="0.85" stroke-width="2" filter="url(#glow2)"/>
+  <g filter="url(#glow2)">
+    <circle cx="171.7" cy="311.5" r="2" fill="#fecaca" opacity="0.9"/>
+    <circle cx="180.2" cy="315.3" r="2.1" fill="#fca5a5" opacity="0.9"/>
+    <circle cx="188.6" cy="317.8" r="2.2" fill="#fecaca" opacity="0.95"/>
+    <circle cx="195" cy="318.5" r="2.4" fill="#fca5a5"/>
+    <circle cx="201.4" cy="318.4" r="2.3" fill="#fecaca" opacity="0.95"/>
+    <circle cx="209.8" cy="317.1" r="2.1" fill="#fca5a5" opacity="0.9"/>
+    <circle cx="218.3" cy="314.1" r="2" fill="#fecaca" opacity="0.85"/>
+  </g>
+  <circle cx="228" cy="326" r="1.6" fill="#fda4af" opacity="0.28"/>
+  <circle cx="236" cy="342" r="1.3" fill="#fda4af" opacity="0.18"/>
+  <circle cx="244" cy="356" r="1.1" fill="#fda4af" opacity="0.1"/>
+
+  <ellipse cx="197" cy="388" rx="90" ry="11" fill="#fbbf24" opacity="0.07" filter="url(#glow14)"/>
+  <polygon points="178,344 186,344 228,262 162,262" fill="url(#beamGrad)" opacity="0.55" filter="url(#glow6)"/>
+  <rect x="180" y="344" width="44" height="26" rx="2" fill="#131c2b" stroke="#0a1220" stroke-width="1.2"/>
+  <rect x="164" y="352" width="18" height="18" rx="2" fill="#182338" stroke="#0a1220" stroke-width="1.2"/>
+  <rect x="167" y="355" width="7" height="7" fill="#0a0f17"/>
+  <rect x="180" y="342.5" width="7" height="4" rx="1" fill="#22304a"/>
+  <circle cx="183" cy="340" r="2" fill="#fbbf24" filter="url(#glow6)" class="blink2"/>
+  <circle cx="180" cy="344" r="4.5" fill="#fbbf24" opacity="0.5" filter="url(#glow6)"/>
+  <circle cx="188" cy="376" r="6" fill="#07090d" stroke="#1c2637" stroke-width="1.5"/>
+  <circle cx="214" cy="376" r="6" fill="#07090d" stroke="#1c2637" stroke-width="1.5"/>
+  <path d="M148,388 L153,378 L158,388 Z" fill="#f59e0b" opacity="0.9"/>
+  <path d="M234,388 L239,378 L244,388 Z" fill="#f59e0b" opacity="0.9"/>
+
+  <rect x="0" y="44" width="390" height="428" fill="url(#vig)"/>
+  <rect x="0" y="420" width="390" height="52" fill="url(#floorFade)"/>
+  <rect x="0" y="0" width="390" height="560" fill="#000000" filter="url(#grain)" opacity="0.6"/>
+
+  <rect x="0" y="0" width="390" height="44" fill="#0f172a"/>
+  <text x="14" y="27" font-size="11" font-weight="700" fill="#e2e8f0">GCP US-WEST1 · AUG 20, 2026</text>
+  <image x="302" y="9" width="74" height="27" href="data:image/png;base64,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"/>
+
+  <rect x="0" y="472" width="390" height="88" fill="#0b1220"/>
+  <line x1="0" y1="472" x2="390" y2="472" stroke="#1c2637" stroke-width="1"/>
+  <text x="16" y="511" font-size="10" fill="#8fa3bd">Buildopsy illustration, not Google's network topology.</text>
+  <text x="16" y="528" font-size="10" fill="#8fa3bd">The final report publishes no capacity or traffic values.</text>
+</svg>

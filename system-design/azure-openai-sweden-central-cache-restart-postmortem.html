@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Microsoft's Sweden Central PIR reports about 20× normal traffic to a regional backend, connection exhaustion and database-dependent restarts. Impact ran 10:03–15:58 UTC.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/azure-openai-sweden-central-cache-restart-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 Impact | Buildopsy">
+  <meta property="og:description" content="A cache-clearing deployment and two cache-read defects drove a regional Azure AI backend to about 20× normal traffic. Connection exhaustion and a database-dependent health check prolonged the impact.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/azure-openai-cache-restart.png">
+  <meta property="og:image:alt" content="Illustrative flow from a 09:38 cache-clearing deployment to about 20× normal regional-backend traffic, exhausted connections, database-dependent restarts and recovery after the health check changed; does not depict Azure's private topology">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/azure-openai-sweden-central-cache-restart-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 Impact">
+  <meta name="twitter:description" content="Microsoft's PIR traces cache misses, a regional backend surge, connection exhaustion and a database-dependent restart loop in Sweden Central.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/azure-openai-cache-restart.png">
+  <meta name="twitter:image:alt" content="Illustrative flow from a 09:38 cache-clearing deployment to about 20× normal regional-backend traffic, exhausted connections, database-dependent restarts and recovery after the health check changed; does not depict Azure's private topology">
+  <meta name="twitter:image:width" content="1200">
+  <meta name="twitter:image:height" content="630">
+  <title>Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 Impact | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 Impact",
+    "description":"Microsoft's PIR traces a cache-clearing deployment, about 20× normal traffic to a regional backend, connection exhaustion and a database-dependent restart loop in Sweden Central.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
+    "datePublished":"2026-10-17",
+    "dateModified":"2026-10-17",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/azure-openai-sweden-central-cache-restart-postmortem.html"},
+    "keywords":"Azure OpenAI, Azure AI Foundry, Sweden Central, cache misses, connection exhaustion, health checks, retries, Microsoft incident review",
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
+    "image":"https://buildopsy.com/images/articles/azure-openai-cache-restart.png"
+  }
+  </script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">12 min read</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 of Impact</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Microsoft says a September 29, 2026 deployment cleared an internal cache used in the Sweden Central AI service path. Two cache-read defects sent most lookups to a regional backend instead, where the PIR reports traffic reaching about 20 times normal. Longer calls, retries, exhausted outbound connection capacity and a database-dependent health check then prolonged the incident.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Microsoft's PIR describes intermittent failures and increased latency for a subset of Sweden Central customers from 10:03 to 15:58 UTC, a 5h55 window calculated from its endpoints. The report says a database-dependent health check caused instances to restart when outbound connections were exhausted. It publishes no customer count, absolute request rate, retry count or per-node connection limit.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">Calculated impact window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">5h 55m</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Backend traffic</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~20× normal</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Impact began</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10:03 UTC</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Health check changed</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">15:40 UTC</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Evidence-led system design postmortem · Published October 17, 2026</p>
+    </header>
+    <article class="prose">
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/azure-openai-cache-restart-mobile.svg"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/azure-openai-cache-restart.svg" alt="Illustrative flow from a 09:38 cache-clearing deployment to about 20× normal regional-backend traffic, exhausted connections, database-dependent restarts and recovery after the health check changed; does not depict Azure's private topology" width="1200" height="680"></picture><figcaption>Figure 1. Buildopsy's simplified diagram of Microsoft's reported sequence. The traffic multiplier is source-reported; the PIR does not disclose private service topology or per-node connection limits.</figcaption></figure>
+
+      <section><h2>1. The report scopes impact to Sweden Central</h2>
+        <p><a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">Microsoft's Post Incident Review</a> covers Azure OpenAI Service, Foundry Agent Service, Foundry Models and Azure AI services in Sweden Central. It reports intermittent request failures, increased latency and HTTP 500 or 503 errors for a subset of customers. The overall impact window is 10:03–15:58 UTC on September 29. Subtracting the endpoints gives 5 hours 55 minutes.</p>
+        <p>That is Microsoft's incident window, not a downtime measurement for every customer or resource. The PIR says impact varied by customer and resource; it gives no affected-customer count and does not establish that every Azure OpenAI deployment or region was unavailable.</p>
+      </section>
+
+      <section><h2>2. A cache-clearing deployment exposed a backend path</h2>
+        <p><a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">Microsoft describes</a> a regional backend service that retrieves account metadata and configuration. That backend reads from a cache layer and a database. Other internal services that call it also keep their own caches. This distinction matters: the deployment cleared a cache in one internal service, while the regional backend's separate cache later reached full utilization.</p>
+        <p>At 09:38 UTC, a planned deployment began and cleared the internal cache. Microsoft says two defects in how that service read from its caches caused most lookups to bypass them and call the regional backend directly. By approximately 10:00 UTC, traffic to that backend was about 20 times its normal level. The PIR does not describe the defects in enough detail to reconstruct their code paths.</p>
+      </section>
+
+      <section><h2>3. Slow calls and retries consumed connection capacity</h2>
+        <p>In its <a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">root-cause account</a>, Microsoft says the surge drove the backend's cache layer to full utilization and increased latency. Slower calls held connections open longer; client retries added more requests while earlier work was still in flight. Microsoft reports that the network connection capacity on the backend's infrastructure instances was exhausted, preventing new outbound connections to both the cache and database layers.</p>
+        <p>The relationship is directional, not a numeric reconstruction: higher arrival rates and longer time in flight tend to raise concurrent work. The PIR gives an approximate traffic multiplier and says latency increased, but it publishes no absolute arrival rate, average service time, retry rate, cache-hit ratio, node count or connection ceiling. There is not enough public data to calculate how many connections were needed.</p>
+      </section>
+
+      <section><h2>4. The health check turned dependency failure into restarts</h2>
+        <p>Each backend instance's automated health check depended on connecting to the database. Once outbound connections could not be established, the check failed and the instance restarted. More restarts left fewer healthy instances to serve requests, while dependent services continued retrying. A database-connectivity problem had become a capacity problem inside the service that needed the database.</p>
+        <p>Microsoft says the restart behavior primarily extended the incident. Scaling attempts and increased compute did not help until engineers changed the health check so it no longer depended on remote connectivity. Availability began to recover after that change.</p>
+      </section>
+
+      <section><h2>5. Service recovery came before the cause was confirmed</h2>
+        <p><a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">Microsoft's response timeline</a> separates the start of customer impact, mitigation and traffic-source identification.</p>
+        <table><thead><tr><th>Time (UTC)</th><th>Microsoft's report</th><th>What the timestamp establishes</th></tr></thead><tbody>
+          <tr><td>09:38</td><td>Internal service deployment began; its cache was cleared.</td><td>Change that preceded the traffic surge.</td></tr>
+          <tr><td>~10:00</td><td>Regional backend traffic rose to about 20× normal.</td><td>Approximate source-reported backend load, not total platform traffic.</td></tr>
+          <tr><td>10:03</td><td>Customer impact began.</td><td>Start of Microsoft's overall impact window.</td></tr>
+          <tr><td>10:17</td><td>Monitoring detected elevated request failures.</td><td>Alerting preceded the reported cause identification.</td></tr>
+          <tr><td>11:30</td><td>Engineers identified connection timeouts to the backend cache and database.</td><td>Connection symptoms were identified before the traffic source.</td></tr>
+          <tr><td>13:55</td><td>Scaling adjustments did not produce significant improvement.</td><td>Scaling had not yet restored service.</td></tr>
+          <tr><td>15:40</td><td>The health check was reconfigured; availability began to recover.</td><td>Mitigation addressed the restart loop.</td></tr>
+          <tr><td>15:58</td><td>Customer impact was mitigated.</td><td>End of the reported 5h55 incident window.</td></tr>
+          <tr><td>16:30</td><td>Teams identified the deployment as the source of increased traffic.</td><td>Cause confirmation followed customer-impact mitigation by 32 minutes.</td></tr>
+        </tbody></table>
+        <p>The ordering is useful for incident response: restoring service did not require waiting for a complete explanation. Microsoft reports that the health-check change began recovery at 15:40, customer impact was mitigated at 15:58, and the traffic source was correlated with the deployment at 16:30. Those are distinct recovery and diagnosis milestones.</p>
+      </section>
+
+      <section><h2>6. Guardrails for cache and health-check failures</h2>
+        <p>In its <a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">PIR</a>, Microsoft marks the health-check change, cache load-and-latency monitoring and updated troubleshooting guidance as completed. It lists additional throttling and rate limits, more cache capacity, diagnostic improvements and cache partitioning as work with estimated completion dates in October or December 2026. Those dates are estimates in the report, not proof that every item has shipped.</p>
+        <ol>
+          <li><strong>Keep process liveness separate from dependency health.</strong> A failed database connection can make an instance temporarily unable to serve a dependency-dependent request without meaning the process needs a restart. If dependency status changes routing, ensure one shared outage cannot eject or restart every serving instance at once.</li>
+          <li><strong>Exercise cold-cache paths before rollout.</strong> Test cache-empty and cache-bypass behavior under representative peak load. A cache miss should have a bounded path to the backend, not an uncontrolled multiplier.</li>
+          <li><strong>Budget retries against the dependency's capacity.</strong> Microsoft's PIR advises customers to review retry patterns, especially exponential backoff. Buildopsy's recommendation is to bound attempts and deadlines as well; the <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/retry" target="_blank" rel="noopener noreferrer">Retry pattern guidance</a> warns that aggressive retries can further degrade a service already near capacity.</li>
+          <li><strong>Measure the pressure path directly.</strong> Track cache hit rate and latency, outbound connection failures, restart rate and retry volume together. A green process check alone cannot show whether the service can reach its dependencies.</li>
+        </ol>
+        <p>For your own workload, the <a href="../tools/connection-pool-calculator.html">connection-pool calculator</a> estimates a conservative concurrency requirement from measured peak RPS and p99 latency. It is a planning heuristic, not a reconstruction of Microsoft's undisclosed node limits. The <a href="learn-sre-observability.html#lesson-8">SRE and Observability course's capacity-planning lesson</a> covers the same measurement boundary.</p>
+      </section>
+
+      <section><h2>7. Verdict: the cause chain is reported; capacity numbers are not</h2>
+        <p>Microsoft's PIR attributes the incident to this sequence: a deployment cleared an internal cache, two cache-read defects sent most lookups to a regional backend, backend traffic rose to about 20× normal, connections were exhausted, and database-dependent health checks restarted instances. Reconfiguring the check preceded recovery. The 5h55 impact duration is calculated from Microsoft's 10:03 and 15:58 UTC endpoints.</p>
+        <p>The report does not disclose absolute request rates, cache-hit ratio, number of instances, connection limit, retry count or affected-customer count. Those missing values prevent a capacity reconstruction or financial estimate. This was a Sweden Central Azure AI incident, separate from Microsoft's <a href="azure-wan-route-withdrawal-postmortem.html">July West US route-withdrawal event</a>, which involved a different network-maintenance failure.</p>
+        <p>The design lesson is specific: a cache-miss path, slow dependency and restart-oriented health check can turn one deployment into a shrinking-capacity loop. Keep each boundary observable and make sure recovery actions do not remove the instances still able to serve.</p>
+      </section>
+
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">I checked the current Microsoft Azure Status History PIR for tracking ID 7QL5-Z50 (incident September 29, 2026; retrieved October 17, 2026): “What happened?”, “What went wrong and why?”, “How did we respond?”, “How are we making incidents like this less likely or less impactful?”, “How can customers make incidents like this less impactful?” and the customer-impact note. All incident times are UTC. The 5h55 duration is Buildopsy arithmetic: 15:58 minus 10:03. The 32-minute gap between impact mitigation and cause identification is also calculated: 16:30 minus 15:58. Microsoft's approximately 20× figure is reported traffic to the regional backend by about 10:00; it is not an estimate of total Azure OpenAI traffic. The diagram is an illustration of the published sequence, not a map of private Azure topology.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The causal account is Microsoft's own PIR; Buildopsy does not have independent access to Azure telemetry. The PIR publishes no absolute request rate, retry count, cache-hit ratio, node count, connection ceiling, customer count or financial loss. The article does not infer those values. Recommendations are Buildopsy design guidance, separated from Microsoft's reported remediation status.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://azure.status.microsoft/en-us/status/history?trackingId=7QL5-Z50" target="_blank" rel="noopener noreferrer">Microsoft Azure Status History: Post Incident Review 7QL5-Z50, Sweden Central Azure OpenAI and Azure AI services (incident September 29, 2026)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/retry" target="_blank" rel="noopener noreferrer">Microsoft Learn: Retry pattern (updated December 9, 2025)</a></li>
+          <li><a href="../tools/connection-pool-calculator.html">Buildopsy: Connection Pool Size Calculator</a> — use measured workload inputs; not Microsoft's incident telemetry.</li>
+          <li><a href="learn-sre-observability.html#lesson-8">Buildopsy: SRE and Observability in Production, Lesson 08 on capacity planning</a></li>
+          <li><a href="azure-wan-route-withdrawal-postmortem.html">Buildopsy: Azure West US route-withdrawal postmortem (a separate incident)</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);"><span><a href="../about.html#author-mukul">Mukul Kumar Mishra</a></span><div class="share-row" data-share-row>
+      <span class="fl-desc" style="font-weight:700;">Share this postmortem:</span>
+      <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+      <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+      <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+      <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+      <a class="chip" data-share="copy" href="#">Copy link</a>
+    </div>
+    <script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a> · <a href="../privacy.html">Privacy</a></span></div></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
