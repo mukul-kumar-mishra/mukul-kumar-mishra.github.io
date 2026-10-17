@@ -233,11 +233,11 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/starlink-latency-whitepaper-teardown.html">
-          <img loading="lazy" decoding="async" src="images/articles/starlink-latency-meme.png" alt="Starlink latency teardown: measured 48.5 to 33ms cut, sub-10ms physics floor, and four fix levers" width="1200" height="630" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/starlink-latency-meme.png" alt="Starlink latency diagram summarizing SpaceX-reported peak-hour median and p99 changes, listed driver categories, and the absence of per-fix contributions" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Satellite Network</span><span class="chip">October 2026</span></div>
-          <h3>Starlink Latency, Priced: How SpaceX Cut Peak Median From 48.5ms Toward 20ms</h3>
-          <p class="fl-desc">Physics allows under 10ms. SpaceX measured 48.5ms. The gap was buffers, queues, WiFi, and ground layout — priced per millisecond.</p>
+          <h3>Starlink Latency: What SpaceX Reports From 48.5ms to 33ms</h3>
+          <p class="fl-desc">SpaceX reports a US peak-hour median change from 48.5ms to 33ms and lists latency drivers; the whitepaper gives no measured per-fix split.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Starlink</span><span class="chip">Latency</span><span class="chip">Teardown</span></div>
           <span class="article-read">Read the teardown <span aria-hidden="true">→</span></span>
           </div>
@@ -337,13 +337,13 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/kafka-consumer-rebalance.html">
-          <img loading="lazy" decoding="async" src="images/articles/kafka-rebalance-guide.png" alt="Kafka consumer-group rebalance sequence during a rolling deployment" width="1200" height="630" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/kafka-rebalance-guide.png" alt="Kafka rebalance diagram comparing classic eager revocation, cooperative assignment, and conditional static membership" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
             <span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span>
           </div>
           <h3>Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h3>
-          <p class="fl-desc">Eager versus cooperative protocols, static membership, fetch storms plus a modeled 3x retry multiplier.</p>
+          <p class="fl-desc">Classic eager versus cooperative assignment, conditional static membership, and a modeled example where one original plus two retries means three attempts per affected call.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Kafka</span><span class="chip">Rebalancing</span><span class="chip">Retries</span></div>
           <span class="article-read">Read article <span aria-hidden="true">→</span></span>
           </div>

@@ -38,6 +38,7 @@
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "dateModified":"2026-10-17",
     "syllabusSections":[
       {"@type":"Syllabus","name":"The loop is the product"},
       {"@type":"Syllabus","name":"Tools are attack surface"},
@@ -91,7 +92,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
@@ -124,8 +124,8 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">18 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Agents in Production: 18 Lessons From the Agent Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Friday night. Your demo just worked in front of everyone. Monday morning it meets real users plus real attackers plus a real invoice. This course closes that gap. Wire it, break it, gate it. Every lesson ships an artifact you can run.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eighteen workshop lessons for shipping AI agents, from sandboxing to token bills plus eval gates. Built from production postmortems with live diagrams plus calculators.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 14, 2026</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eighteen workshop lessons for shipping AI agents, from sandboxing to token bills plus eval gates. Published incident analyses and modeled scenarios are labeled separately.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 17, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -194,8 +194,8 @@
           <p>Your artifact this lesson: one diagram of your loop with the retry cap written on it in ink. No cap, no ship. The demo worked. Production is the exam.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Sketch an agent loop for booking refunds with a hard stop. <span class="q-seen">Seen at: AI product plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Your agent loops forever on step three. What trips first? <span class="q-seen">Seen at: applied AI loops.</span></p>
+            <p><strong>Q1.</strong> Sketch an agent loop for booking refunds with a hard stop.</p>
+            <p><strong>Q2.</strong> Your agent loops forever on step three. What trips first?</p>
           </div>
           <p class="lesson-hook">Loop drawn. Now every tool you hand it is a door. <a href="#lesson-2">Lesson 02: Tool surface →</a></p>
         </section>
@@ -221,8 +221,8 @@
           <p>Your artifact: one allowlist file with three columns, tool plus scope plus approver. Wire it, then break it on purpose in staging. The gate you never test is decor.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design tool permissions for a support agent with refund power. <span class="q-seen">Seen at: AI safety plus platform loops.</span></p>
-            <p><strong>Q2.</strong> An agent exfiltrates data through a search tool. Which gate failed? <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+            <p><strong>Q1.</strong> Design tool permissions for a support agent with refund power.</p>
+            <p><strong>Q2.</strong> An agent exfiltrates data through a search tool. Which gate failed?</p>
           </div>
           <p class="lesson-hook">Doors listed. Now the room itself needs walls. <a href="#lesson-3">Lesson 03: Sandbox blast →</a></p>
         </section>
@@ -246,15 +246,15 @@
           <p>Your artifact: a sandbox config with network off by default plus three approved hosts. Watch the breakout packet stop at the wall above, then reproduce that stop in your own rig. Held breakouts are the only ones that count.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design sandboxing for an agent that runs untrusted code. <span class="q-seen">Seen at: AI infra plus security loops.</span></p>
-            <p><strong>Q2.</strong> The sandbox adds 400ms per call. Where do you spend it back? <span class="q-seen">Seen at: performance-aware AI loops.</span></p>
+            <p><strong>Q1.</strong> Design sandboxing for an agent that runs untrusted code.</p>
+            <p><strong>Q2.</strong> The sandbox adds 400ms per call. Where do you spend it back?</p>
           </div>
           <p class="lesson-hook">Walls up. Now the loop starts knocking louder. <a href="#lesson-4">Lesson 04: Retries compound →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Failure handling · Retry budgets</div>
           <h2>Retries Compound</h2>
-          <p class="lesson-story">Thursday night. One deploy restarts your consumers plus every agent retries at once. Forty thousand partitions renegotiate while the retry wave doubles the load. The brokers stay healthy. The pipeline stops moving. Healthy dashboards make the best alibis.</p>
+          <p class="lesson-story">Modeled comparison, not a reported outage: a classic-eager Kafka group with 40,000 partitions may pause when a membership change arrives before the previous rebalance finishes. Separately, two retries produce three attempts per affected call. These inputs do not establish total broker load or agent telemetry; size each system from measured rates.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Retry wave animation with packets multiplying through backoff steps into a breaker that opens">
             <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">fail</text>
             <rect class="box" x="120" y="55" width="80" height="40" rx="8"/><text x="160" y="79" font-size="11" text-anchor="middle">wait 1s</text>
@@ -267,13 +267,13 @@
           <ul class="lesson-ideas">
             <li>Backoff plus jitter plus a hard cap, all three, no exceptions. Miss one plus retries amplify.</li>
             <li>Budget retries like capacity. Run the modeled shape through the <a href="../calculators.html#retry-storm">retry storm calculator</a> before the incident.</li>
-            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, the same amplifier with a different trigger.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">the modeled Kafka rebalance cascade</a>, where group size, pause and retry policy are stated inputs.</li>
           </ul>
           <p>Your artifact: a retry policy with numbers, max attempts plus base delay plus jitter plus breaker threshold. Idempotency from your API design is what makes retries safe to attempt. Without it, backoff only spaces out the damage.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Prove your agent retries cannot DDoS your own brokers. <span class="q-seen">Seen at: Amazon-style plus AI infra loops.</span></p>
-            <p><strong>Q2.</strong> Design a breaker for tool calls with states included. <span class="q-seen">Seen at: backend plus agent loops.</span></p>
+            <p><strong>Q1.</strong> Prove your agent retries cannot DDoS your own brokers.</p>
+            <p><strong>Q2.</strong> Design a breaker for tool calls with states included.</p>
           </div>
           <p class="lesson-hook">Knocking tamed. Now the memory itself starts to rot. <a href="#lesson-5">Lesson 05: Context rots →</a></p>
         </section>
@@ -297,8 +297,8 @@
           <p>Your artifact: a context budget per turn with a compaction trigger you chose, not one you discovered. Watch the packet cross the cliff above, then decide where your cliff sits. Chosen cliffs are architecture. Surprise cliffs are incidents.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your agent degrades after 50 turns. Diagnose the context live. <span class="q-seen">Seen at: applied AI loops.</span></p>
-            <p><strong>Q2.</strong> When does a bigger window beat a better summary? <span class="q-seen">Seen at: LLM platform loops.</span></p>
+            <p><strong>Q1.</strong> Your agent degrades after 50 turns. Diagnose the context live.</p>
+            <p><strong>Q2.</strong> When does a bigger window beat a better summary?</p>
           </div>
           <p class="lesson-hook">Window managed. Now the notes it keeps start fibbing. <a href="#lesson-6">Lesson 06: Memory fibs →</a></p>
         </section>
@@ -323,8 +323,8 @@
           <p>Your artifact: a memory schema with source plus timestamp plus TTL on every row. Follow the packet above: fresh lookup wins ties, stale memory loses them, the gate decides. Politeness is not accuracy.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design agent memory with grounding plus tenant isolation. <span class="q-seen">Seen at: AI platform loops.</span></p>
-            <p><strong>Q2.</strong> Two users share one agent session. Who sees what? Prove it. <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+            <p><strong>Q1.</strong> Design agent memory with grounding plus tenant isolation.</p>
+            <p><strong>Q2.</strong> Two users share one agent session. Who sees what? Prove it.</p>
           </div>
           <p class="lesson-hook">One mind grounded. Now hire four more minds. <a href="#lesson-7">Lesson 07: Swarm referee →</a></p>
         </section>
@@ -349,8 +349,8 @@
           <p>Your artifact: a referee contract, who sequences plus who locks what plus how conflicts resolve. Start with two agents before four. Swarms scale confusion first, throughput second.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design a three-agent coding team that cannot clobber one file. <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> Two agents disagree on the fix. Who wins plus why? <span class="q-seen">Seen at: applied AI loops.</span></p>
+            <p><strong>Q1.</strong> Design a three-agent coding team that cannot clobber one file.</p>
+            <p><strong>Q2.</strong> Two agents disagree on the fix. Who wins plus why?</p>
           </div>
           <p class="lesson-hook">Team ordered. Now decide what no agent signs alone. <a href="#lesson-8">Lesson 08: Human pen →</a></p>
         </section>
@@ -374,8 +374,8 @@
           <p>Your artifact: an approval matrix, action plus limit plus approver plus audit trail. Watch drafts queue at the gate above, then set your gate where errors get caught, not where velocity looks good.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Which agent actions need human approval? Draw the line. <span class="q-seen">Seen at: AI product loops.</span></p>
-            <p><strong>Q2.</strong> Approvals become the bottleneck. What changes first? <span class="q-seen">Seen at: platform plus ops loops.</span></p>
+            <p><strong>Q1.</strong> Which agent actions need human approval? Draw the line.</p>
+            <p><strong>Q2.</strong> Approvals become the bottleneck. What changes first?</p>
           </div>
           <p class="lesson-hook">Pen held. Now count what every signature costs. <a href="#lesson-9">Lesson 09: Price the turn →</a></p>
         </section>
@@ -400,8 +400,8 @@
           <p>Your artifact: a one-turn price card, input plus cache rate plus output plus total, then the million-turn envelope beside it. Follow the packet to the red box above. That box is your quarter.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price one million agent turns monthly, line by line, out loud. <span class="q-seen">Seen at: startup plus CTO-round loops.</span></p>
-            <p><strong>Q2.</strong> Cut inference spend 40 percent without touching quality. <span class="q-seen">Seen at: FinOps-flavored AI loops.</span></p>
+            <p><strong>Q1.</strong> Price one million agent turns monthly, line by line, out loud.</p>
+            <p><strong>Q2.</strong> Cut inference spend 40 percent without touching quality.</p>
           </div>
           <p class="lesson-hook">Turn priced. Now lock the quality that money buys. <a href="#lesson-10">Lesson 10: Guardrails →</a></p>
         </section>
@@ -426,8 +426,8 @@
           <p>Your artifact: one eval gate in CI with five cases that must pass before merge. This lesson is the bridge to the full companion course, <a href="learn-ai-evals.html">AI Evals That Hold</a>, where gates become a program. Build the gate here, systematize it there.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A prompt edit drops quality silently. How does CI catch it? <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> When is a code check enough plus when do you need a judge? <span class="q-seen">Seen at: evals-minded loops.</span></p>
+            <p><strong>Q1.</strong> A prompt edit drops quality silently. How does CI catch it?</p>
+            <p><strong>Q2.</strong> When is a code check enough plus when do you need a judge?</p>
           </div>
           <p class="lesson-hook">Gates hung. Now invite someone to break them. <a href="#lesson-11">Lesson 11: Red-team test →</a></p>
         </section>
@@ -452,8 +452,8 @@
           <p>Your artifact: three red-team cases, one injection plus one exfil plus one jailbreak, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A tool result contains hidden instructions. Walk through the defense. <span class="q-seen">Seen at: AI safety loops.</span></p>
-            <p><strong>Q2.</strong> Scope API keys for an agent with browser access. <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+            <p><strong>Q1.</strong> A tool result contains hidden instructions. Walk through the defense.</p>
+            <p><strong>Q2.</strong> Scope API keys for an agent with browser access.</p>
           </div>
           <p class="lesson-hook">Attackers welcomed. Now feed the loop with retrieval. <a href="#lesson-12">Lesson 12: RAG loop →</a></p>
         </section>
@@ -478,8 +478,8 @@
           <p>Your artifact: a retrieval step wired into your loop with cache hit rate on the dashboard. Follow the packet past the cache above, then measure your own skip rate. Ungrounded loops answer fast. Grounded loops answer right.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Add RAG grounding to an agent that hallucinates policies. <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> Retrieval adds 200ms per turn. Where do you win it back? <span class="q-seen">Seen at: latency-aware AI loops.</span></p>
+            <p><strong>Q1.</strong> Add RAG grounding to an agent that hallucinates policies.</p>
+            <p><strong>Q2.</strong> Retrieval adds 200ms per turn. Where do you win it back?</p>
           </div>
           <p class="lesson-hook">Loop grounded. Now the summaries start rewriting rules. <a href="#lesson-13">Lesson 13: Summary rules →</a></p>
         </section>
@@ -504,8 +504,8 @@
           <p>Your artifact: a summary scanner with three checks, instruction patterns plus constraint retention plus source tags. Watch the rogue lines blink above, then catch one of your own. Memory you never wrote still needs an editor.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A summary inserts instructions for its successor. How does your pipeline catch it? <span class="q-seen">Seen at: AI safety loops.</span></p>
-            <p><strong>Q2.</strong> Where should agent constraints live so compaction cannot touch them? <span class="q-seen">Seen at: agent engineering loops.</span></p>
+            <p><strong>Q1.</strong> A summary inserts instructions for its successor. How does your pipeline catch it?</p>
+            <p><strong>Q2.</strong> Where should agent constraints live so compaction cannot touch them?</p>
           </div>
           <p class="lesson-hook">Memory audited. Now the vendor moves under you. <a href="#lesson-14">Lesson 14: Vendor moves →</a></p>
         </section>
@@ -529,8 +529,8 @@
           <p>Your artifact: a provider abstraction with pinned model versions, a tested fallback route, and a re-evaluation checklist. Record the provider, model, and result for each run so a silent default change cannot pass as the same system.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your model provider gets acquired. Your migration plan in five steps? <span class="q-seen">Seen at: AI engineering leadership loops.</span></p>
-            <p><strong>Q2.</strong> A silent model swap degrades quality. How do you prove it? <span class="q-seen">Seen at: LLMOps loops.</span></p>
+            <p><strong>Q1.</strong> Your model provider gets acquired. Your migration plan in five steps?</p>
+            <p><strong>Q2.</strong> A silent model swap degrades quality. How do you prove it?</p>
           </div>
           <p class="lesson-hook">Vendors hedged. Now watch your own loop live. <a href="#lesson-15">Lesson 15: Watch live →</a></p>
         </section>
@@ -557,8 +557,8 @@
           <p>Your artifact: a loop dashboard with traces plus cost plus tool success plus one alert. Follow the packet to the blinking leak above, then earn your own blink. Demos end. Meters run forever.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design observability for ten agents sharing one budget. <span class="q-seen">Seen at: AI platform loops.</span></p>
-            <p><strong>Q2.</strong> Cost per turn triples overnight. Your first three queries? <span class="q-seen">Seen at: FinOps-flavored AI loops.</span></p>
+            <p><strong>Q1.</strong> Design observability for ten agents sharing one budget.</p>
+            <p><strong>Q2.</strong> Cost per turn triples overnight. Your first three queries?</p>
           </div>
           <p class="lesson-hook">Eyes open. Now the morning every provider fails at once. <a href="#lesson-16">Lesson 16: Shared fate →</a></p>
         </section>
@@ -584,8 +584,8 @@
           <p>Your artifact: a failover drill log with switch time plus degraded behavior plus recovery notes. Watch the packet reroute above, then reroute your own. The frontier shares more than hype. It shares fate.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> All providers degrade during your peak hour. Your playbook? <span class="q-seen">Seen at: AI reliability loops.</span></p>
-            <p><strong>Q2.</strong> Design degraded modes for an agent with three providers. <span class="q-seen">Seen at: applied AI loops.</span></p>
+            <p><strong>Q1.</strong> All providers degrade during your peak hour. Your playbook?</p>
+            <p><strong>Q2.</strong> Design degraded modes for an agent with three providers.</p>
           </div>
           <p class="lesson-hook">Fallback drilled. Now turn all of it into interview answers. <a href="#lesson-17">Lesson 17: Interview bench →</a></p>
         </section>
@@ -609,8 +609,8 @@
           <p>Rehearse three answers this week: a sandboxed tool design, a token bill with cache math, plus a prompt-injection defense with scoped secrets. Bring diagrams. Builders draw. Tourists describe.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design a refund agent end to end in 45 minutes. <span class="q-seen">Seen at: AI product plus startup loops.</span></p>
-            <p><strong>Q2.</strong> Tell me about an agent failure you caused plus fixed. <span class="q-seen">Seen at: behavioral plus AI loops.</span></p>
+            <p><strong>Q1.</strong> Design a refund agent end to end in 45 minutes.</p>
+            <p><strong>Q2.</strong> Tell me about an agent failure you caused plus fixed.</p>
           </div>
           <p class="lesson-hook">Answers rehearsed. Now assemble everything into one ship. <a href="#lesson-18">Lesson 18: Ship one agent →</a></p>
         </section>

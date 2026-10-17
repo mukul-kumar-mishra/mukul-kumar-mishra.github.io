@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka consumer assignment behavior by protocol</title>
+  <desc id="desc">Three stacked panels compare classic eager assignment, cooperative incremental assignment, and static membership. Eager rebalancing requires all members to revoke current assignments; cooperative assignment can retain current owners and transfer movers later. A stable group.instance.id and suitable session timeout may avoid reassignment during brief unavailability, but expiration can still trigger reassignment. The newer Consumer protocol is distinct from classic assignors.</desc>
+  <style>text{font-family:Arial,Inter,sans-serif}.mono{font-family:Consolas,"Liberation Mono",monospace}</style>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="66" fill="#0f172a"/>
+  <text x="38" y="44" class="mono" font-size="30" font-weight="700" fill="#f8fafc">KAFKA GUIDE · CONSUMER REBALANCE</text>
+  <text x="55" y="117" font-size="48" font-weight="700" fill="#0f172a">Protocol choice changes what moves.</text>
+  <rect x="50" y="145" width="1100" height="118" rx="12" fill="#fff1f2" stroke="#e11d48" stroke-width="3"/>
+  <text x="78" y="181" class="mono" font-size="30" font-weight="700" fill="#be123c">CLASSIC EAGER</text>
+  <text x="78" y="226" class="mono" font-size="38" fill="#0f172a">Every member revokes its current assignments</text>
+  <text x="78" y="254" class="mono" font-size="32" fill="#334155">before joining the new assignment round.</text>
+  <rect x="50" y="278" width="1100" height="118" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+  <text x="78" y="314" class="mono" font-size="30" font-weight="700" fill="#15803d">COOPERATIVE INCREMENTAL</text>
+  <text x="78" y="359" class="mono" font-size="38" fill="#0f172a">Keep current owners; revoke only movers.</text>
+  <text x="78" y="387" class="mono" font-size="32" fill="#334155">Revoked partitions may move in a later round.</text>
+  <rect x="50" y="411" width="1100" height="125" rx="12" fill="#ffffff" stroke="#0369a1" stroke-width="3"/>
+  <text x="78" y="447" class="mono" font-size="30" font-weight="700" fill="#0369a1">STATIC MEMBERSHIP</text>
+  <text x="78" y="490" class="mono" font-size="34" fill="#0f172a">Stable group.instance.id + suitable session timeout</text>
+  <text x="78" y="526" class="mono" font-size="31" fill="#334155">may avoid transient reassignment; expiry can still rebalance.</text>
+  <rect x="50" y="551" width="1100" height="92" rx="12" fill="#0f172a"/>
+  <text x="78" y="586" class="mono" font-size="29" font-weight="700" fill="#f8fafc">Classic assignors differ from the newer Consumer protocol.</text>
+  <text x="78" y="620" class="mono" font-size="23" fill="#cbd5e1">Source: Apache Kafka 4.2 consumer docs · KIP-429 · KIP-345</text>
+</svg>

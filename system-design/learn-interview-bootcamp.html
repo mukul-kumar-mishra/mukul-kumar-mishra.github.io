@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free system design interview course in 15 forensic rounds from Mukul. Clarify, boxes, RPS math, storage, cache, queues, sharding, consistency, failure drills plus cost closes, rehearsed on production postmortems.">
+  <meta name="description" content="A free system design interview course in 15 forensic rounds from Mukul. Clarify, boxes, RPS math, storage, cache, queues, sharding, consistency, failure drills and cost closes, practiced on published postmortems and labeled scenarios.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-interview-bootcamp.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="System Design Interview Bootcamp: 15 Rounds From the Whiteboard">
-  <meta property="og:description" content="Clarify plus boxes plus RPS math rehearsed. Fifteen interview rounds with live diagrams plus verdict math from the whiteboard.">
+  <meta property="og:description" content="Fifteen practice rounds for clarifying scope, drawing a design, estimating workload and testing failure cases, with labeled scenarios and calculators.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-interview-bootcamp-meme.png">
   <meta property="og:image:alt" content="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="System Design Interview Bootcamp: 15 Rounds From the Whiteboard">
-  <meta name="twitter:description" content="Clarify plus boxes plus RPS math rehearsed. Fifteen interview rounds with live diagrams plus verdict math from the whiteboard.">
+  <meta name="twitter:description" content="Practice scope clarification, system diagrams, workload estimates and failure analysis with fifteen interview-style exercises.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-interview-bootcamp-meme.png">
   <meta name="twitter:image:alt" content="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide">
   <title>System Design Interview Bootcamp: 15 Rounds From the Whiteboard | Buildopsy</title>
@@ -31,10 +31,10 @@
   <script src="https://unpkg.com/lucide@latest" defer></script>
 <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Course","name":"System Design Interview Bootcamp: 15 Rounds From the Whiteboard",
-    "description":"A free system design interview course in 15 forensic rounds covering clarification, diagramming, RPS math, storage, caching, queues, sharding, consistency, failure drills, cost closes, API design, deep dives, behavioral proof, mock loops plus offer week.",
+    "description":"A free system design interview course with 15 practice rounds covering clarification, diagramming, workload math, storage, caching, queues, sharding, consistency, failure analysis, cost, APIs, behavioral examples and mock interviews.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-10",
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-17",
     "syllabusSections":[{"@type":"Syllabus","name":"Clarify First"},{"@type":"Syllabus","name":"Boxes Before Arrows"},{"@type":"Syllabus","name":"Numbers Out Loud"},{"@type":"Syllabus","name":"Storage Choices"},{"@type":"Syllabus","name":"Cache Math"},{"@type":"Syllabus","name":"Queue Versus Sync"},{"@type":"Syllabus","name":"Sharding Keys"},{"@type":"Syllabus","name":"Consistency Tradeoffs"},{"@type":"Syllabus","name":"Failure Drills"},{"@type":"Syllabus","name":"Cost Close"},{"@type":"Syllabus","name":"API Round"},{"@type":"Syllabus","name":"Deep Dive Round"},{"@type":"Syllabus","name":"Behavioral With Receipts"},{"@type":"Syllabus","name":"Mock Loop"},{"@type":"Syllabus","name":"Offer Week"}]}
   </script>
   <script type="application/ld+json">
@@ -60,7 +60,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
@@ -103,19 +102,19 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Interview Bootcamp: 15 Rounds From the Whiteboard</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of interviews from both sides of the table taught me one discipline: clarify first, draw second, speak math aloud plus close with a bill. Each round rehearses on a real production postmortem with numbers you can re-run. The bill hides in the boundary.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen interview rounds with live diagrams, from clarification to RPS math plus failure drills plus cost closes. Built from production postmortems with verdict math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated October 10, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A strong system-design answer makes its reasoning visible: clarify first, draw second, size the workload, test failure, and defend the cost. Each round uses published postmortems or clearly labeled scenarios with arithmetic readers can rerun.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen practice rounds with diagrams, from clarification and RPS math to failure drills and cost estimates. Published incident findings and modeled inputs are identified separately.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated October 17, 2026</p>
     </header>
     <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-interview-bootcamp-meme.svg" alt="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide" width="1200" height="680"><figcaption class="fl-desc">A strong answer is a visible chain: clear assumptions, a readable request path, measured scale, tested failure, and a defended decision.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
-        <li>Clarify any prompt in five minutes, diagram the happy path in ten, plus narrate RPS plus storage plus bandwidth math aloud.</li>
-        <li>Pick storage plus caching plus queues with reasons, shard hot keys, trade consistency per workflow, plus murder your own diagram with drills.</li>
-        <li>Close every round with a per-million bill, own one subsystem to the metal, plus tell behavioral stories with measured receipts.</li>
-        <li>Rehearse mock loops with tapes plus scores, then ship a two-week offer calendar with a decision log.</li>
-        <li>Answer interviewers with boxes plus numbers plus verdicts, in that order, every round.</li>
+        <li>Clarify the prompt, diagram the happy path, and estimate RPS, storage and bandwidth aloud.</li>
+        <li>Choose storage, caching and queues with reasons; shard hot keys, state consistency trade-offs and test failure cases.</li>
+        <li>Close with a per-million cost model, explain one subsystem in depth and support behavioral examples with verifiable details.</li>
+        <li>Practice mock interviews, record the results and follow a two-week preparation schedule.</li>
+        <li>Present the design, its estimates and the trade-offs in a clear order.</li>
       </ul>
       <p class="fl-desc" style="margin:8px 0 0;">How interviewers test this course: clarification first, math aloud second, depth with prices third. Lesson 14 rehearses the loop.</p>
     </section>
@@ -155,7 +154,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Opening · Questions before boxes</div>
           <h2>Clarify First</h2>
-          <p class="lesson-story">Assumption first: the fastest failure is solving the wrong prompt. Spend five minutes on users plus scale plus constraints before touching the marker. Ask read-write ratio plus latency SLO plus consistency needs plus budget shape. Clarification without notes is theater. Write every answer where the interviewer sees it.</p>
+          <p class="lesson-story">A common design risk is solving the wrong problem. Clarify users, scale and constraints before drawing. Ask about the read-write ratio, latency objective, consistency needs and budget. Write down assumptions as you go.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="clarify arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">users set</text>
@@ -170,15 +169,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design URL shortener for 100M links a month. What do you ask first? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Interviewer says latency must stay under 200ms p99. What constraint follows? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design a URL shortener for 100M links a month. What do you ask first?</p>
+            <p><strong>Q2.</strong> The latency target is under 200ms p99. What constraint follows?</p>
           </div>
           <p class="lesson-hook">Scope set. Now draw. <a href="#lesson-2">Lesson 02: Boxes →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Diagramming · Structure before depth</div>
           <h2>Boxes Before Arrows</h2>
-          <p class="lesson-story">Draw the happy path end to end in four boxes before any deep dive. Client plus API plus service plus store covers most prompts. Label every arrow with protocol plus payload size. Depth without a map strands both of you. The board is a contract, not decoration.</p>
+          <p class="lesson-story">Draw the happy path end to end in four boxes before a deep dive. A client, API, service and store make a useful starting point. Label each arrow with its protocol and payload size so the diagram records the main assumptions.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="diagram arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">client drawn</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">api drawn</text>
@@ -189,20 +188,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Timebox the overview to ten minutes. Detail belongs in rounds, not the opener.</li>
-            <li>Say uncertain parts aloud plus mark them. Hidden guesses fail silently at review.</li>
+            <li>State uncertain parts aloud and mark them. Hidden guesses are hard to review.</li>
             <li>Deep dive: <a href="figma-system-design.html">Figma Multiplayer</a>, fan-out drawn before depth.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Sketch TinyURL end to end in under ten minutes. What are the four boxes? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Where do you mark uncertainty on the board? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Sketch TinyURL end to end in under ten minutes. What are the four boxes?</p>
+            <p><strong>Q2.</strong> Where do you mark uncertainty on the board?</p>
           </div>
           <p class="lesson-hook">Map drawn. Now speak numbers. <a href="#lesson-3">Lesson 03: Math →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Estimation · Math out loud</div>
           <h2>Numbers Out Loud</h2>
-          <p class="lesson-story">Interview math is narration, not arithmetic. State users plus actions per user plus peak factor, then derive RPS plus storage plus bandwidth in round numbers. Correct powers of ten beat precise digits. Silent scribbling scores zero even when right. Talk through every exponent.</p>
+          <p class="lesson-story">Interview math is narration as well as arithmetic. State users, actions per user and peak factor, then derive RPS, storage and bandwidth in round numbers. Correct powers of ten matter more than false precision. Explain each step.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="estimation arithmetic">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
 <text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
@@ -218,20 +217,20 @@
 </svg>
           <ul class="lesson-ideas">
             <li>Round aggressively: 86,400 seconds becomes 100K. Speed signals fluency.</li>
-            <li>Derive storage for five years plus bandwidth per second. Both fit one board corner.</li>
+            <li>Estimate storage for five years and bandwidth per second. Both fit on the same board.</li>
             <li>Deep dive: <a href="discord-messaging-system-design.html">Discord Messages Scale</a>, trillions priced per row.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price storage for 10K photos a day at 2MB each over five years. <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Peak factor hits 5x average. What breaks first in your sketch? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Price storage for 10K photos a day at 2MB each over five years.</p>
+            <p><strong>Q2.</strong> Peak factor hits 5x average. What breaks first in your sketch?</p>
           </div>
           <p class="lesson-hook">Math spoken. Now pick storage. <a href="#lesson-4">Lesson 04: Storage →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Storage · The right home per access</div>
           <h2>Storage Choices</h2>
-          <p class="lesson-story">Match store to access pattern, not fashion. Relational for transactions plus joins. Wide-column plus key-value for massive scale with simple reads. Object stores for blobs with CDN in front. One sentence of justification per choice beats a catalog. Wrong store with reasons still scores.</p>
+          <p class="lesson-story">Match the store to the access pattern, not fashion. Relational stores suit transactions and joins; wide-column and key-value stores suit large-scale, simple reads. Object storage suits blobs, often with a CDN in front. Give a reason for each choice.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="storage arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">reads typed</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -248,15 +247,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Chat history for 50M users. SQL or wide-column? Defend it. <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> When does object storage plus CDN beat any database? <span class="q-seen">Seen at: full-stack plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Chat history for 50M users. SQL or wide-column? Defend the choice.</p>
+            <p><strong>Q2.</strong> When does object storage with a CDN beat a database?</p>
           </div>
           <p class="lesson-hook">Store picked. Now cache it. <a href="#lesson-5">Lesson 05: Cache →</a></p>
         </section>
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Caching · Hit rates are hired</div>
           <h2>Cache Math</h2>
-          <p class="lesson-story">Caches turn repeated reads into memory hits. Quote hit rate plus TTL plus eviction plus stampede guard for every cache you draw. A cache without invalidation is a bug with a hit ratio. Price the miss path first. Interviewers probe invalidation hardest.</p>
+          <p class="lesson-story">Caches turn repeated reads into memory hits. State the expected hit rate, TTL, eviction policy and stampede guard. A cache without an invalidation plan is a bug with a hit ratio. Price the miss path first.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="cache arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">hot keys</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">TTL set</text>
@@ -271,15 +270,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Celebrity posts spike reads 100x. What guards the cache? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
-            <p><strong>Q2.</strong> TTL expires during peak. What prevents the stampede? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Celebrity posts spike reads 100x. What guards the cache?</p>
+            <p><strong>Q2.</strong> TTL expires during peak. What prevents the stampede?</p>
           </div>
           <p class="lesson-hook">Hits priced. Now split sync from async. <a href="#lesson-6">Lesson 06: Queues →</a></p>
         </section>
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Async · Fast path versus slow lane</div>
           <h2>Queue Versus Sync</h2>
-          <p class="lesson-story">Synchronous calls suit reads needing answers now. Queues suit writes surviving bursts plus retries. Draw the sync path for latency plus the async lane for durability in every design. Mixing them without reasons invites the hardest follow-ups. Latency budgets decide the split.</p>
+          <p class="lesson-story">Synchronous calls suit reads that need an immediate answer. Queues can absorb bursts and retries. Draw the synchronous path for latency and the asynchronous lane for durability. Use latency budgets to explain the split.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="queue arithmetic">
             <text class="lbl" x="10" y="52" font-size="10">before</text>
             <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">sync path</text>
@@ -291,20 +290,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Queue depth equals burst rate times drain time. Little Law answers sizing live.</li>
-            <li>Name dead-letter handling plus replay. Queues without replays lose data politely.</li>
-            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, 40,000 partitions paused.</li>
+            <li>Name dead-letter handling and replay. Queues without a replay path can leave data unprocessed.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">a modeled Kafka rebalance cascade</a>, with 40,000 partitions and an assumed pause duration.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Payments need receipts now plus settlement later. Sync or queue each leg? <span class="q-seen">Seen at: backend plus fintech loops.</span></p>
-            <p><strong>Q2.</strong> Queue depth triples at noon. What drains it safely? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+            <p><strong>Q1.</strong> Payments need receipts now and settlement later. Which leg is synchronous, and which uses a queue?</p>
+            <p><strong>Q2.</strong> Queue depth triples at noon. What drains it safely?</p>
           </div>
           <p class="lesson-hook">Lanes split. Now shard the heat. <a href="#lesson-7">Lesson 07: Sharding →</a></p>
         </section>
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Partitioning · Keys carry the load</div>
           <h2>Sharding Keys</h2>
-          <p class="lesson-story">Sharding spreads rows plus queries across nodes by key. Hash keys balance evenly. Range keys order well plus hotspot badly. Hot keys need splitting or caching regardless of scheme. Key choice without hotspot analysis fails review.</p>
+          <p class="lesson-story">Sharding distributes rows and queries across nodes by key. Hash keys can balance load; range keys preserve order but may create hot spots. Hot keys may need splitting or caching. Analyze the access pattern before choosing a key.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="shard arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">key picked</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">spread even</text>
@@ -320,15 +319,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> User handles cluster by geography. Hash or range? Defend it. <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> One celebrity owns 5 percent of rows. What saves the shard? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q1.</strong> User handles cluster by geography. Hash or range? Defend the choice.</p>
+            <p><strong>Q2.</strong> One celebrity owns 5 percent of rows. What saves the shard?</p>
           </div>
           <p class="lesson-hook">Heat spread. Now trade consistency. <a href="#lesson-8">Lesson 08: Consistency →</a></p>
         </section>
         <section class="lesson" id="lesson-8">
           <div class="lesson-kicker">Lesson 08 · Tradeoffs · Promises with prices</div>
           <h2>Consistency Tradeoffs</h2>
-          <p class="lesson-story">Strong consistency simplifies reasoning plus costs latency plus availability. Eventual consistency scales plus demands conflict plans. State your choice per workflow, not per system. Mixed models with reasons show seniority. CAP without application is recital.</p>
+          <p class="lesson-story">Strong consistency can simplify reasoning but may cost latency or availability during a partition. Eventual consistency shifts work to conflict handling. State the choice for each workflow and explain why.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="consistency arithmetic">
             <text class="lbl" x="10" y="52" font-size="10">before</text>
             <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">per workflow</text>
@@ -339,21 +338,21 @@
             <g stroke-width="2"><line x1="290" y1="46" x2="310" y2="46"/><line x1="290" y1="110" x2="310" y2="110"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Count cross-region round trips per write. Each adds tens of milliseconds plus failure modes.</li>
+            <li>Count cross-region round trips per write. Each adds latency and another failure mode.</li>
             <li>Design idempotency for retried writes. At-least-once without keys double-charges.</li>
-            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, metadata missed plus data erased.</li>
+            <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, where missing metadata led to data deletion.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Likes counter versus wallet balance. Which consistency each? <span class="q-seen">Seen at: backend plus fintech loops.</span></p>
-            <p><strong>Q2.</strong> Two regions diverge during partition. What reconciles them? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Compare a likes counter with a wallet balance. What consistency does each need?</p>
+            <p><strong>Q2.</strong> Two regions diverge during a partition. What reconciles them?</p>
           </div>
           <p class="lesson-hook">Trades priced. Now break it live. <a href="#lesson-9">Lesson 09: Failure →</a></p>
         </section>
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Resilience · Kill it on the board</div>
           <h2>Failure Drills</h2>
-          <p class="lesson-story">Interviewers hire people who murder their own diagrams. Walk through dead zones plus slow disks plus retry storms plus poison deploys. Show health checks plus failover plus budgets for each. Designs without funerals read junior. Kill one box per round minimum.</p>
+          <p class="lesson-story">Test the design against failures such as a lost zone, slow storage, retry amplification and a faulty deployment. For each case, explain the health check, failover path and capacity budget.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="failure arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">zone killed</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">disk slowed</text>
@@ -362,21 +361,21 @@
             <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Budget retries at 6x calm load aloud. Numbers prove the drill ran.</li>
+            <li>Budget retries from measured arrival rates, configured attempt limits, and fan-out across dependent services; explain the arithmetic aloud.</li>
             <li>Pin control away from sick zones. Shared brains spread single-zone pain.</li>
             <li>Deep dive: <a href="gcp-us-central1-outage-postmortem.html">GCP us-central1</a>, incompatible transceivers isolated capacity in parts of two zones.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your primary zone goes dark mid-demo. What serves traffic? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Deploys poison 10 percent of hosts. What rolls it back? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Your primary zone goes dark mid-demo. What serves traffic?</p>
+            <p><strong>Q2.</strong> A deploy poisons 10 percent of hosts. What rolls it back?</p>
           </div>
           <p class="lesson-hook">Deaths survived. Now close with cost. <a href="#lesson-10">Lesson 10: Cost →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Closing · Bills beat adjectives</div>
           <h2>Cost Close</h2>
-          <p class="lesson-story">End every interview with a cost sketch. Price steady state per million requests plus name the dearest box plus one lever that halves it. Interviewers remember closers. Adjectives fade. Bills stick. The bill hides in the boundary, say it with numbers.</p>
+          <p class="lesson-story">End with a cost sketch. Estimate steady-state cost per million requests, identify the largest component and describe one plausible optimization. State the assumptions behind the estimate.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="closing arithmetic">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
 <text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
@@ -397,15 +396,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price your URL shortener per million links. What dominates? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Cut the design bill 40 percent. What goes first? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Price your URL shortener per million links. What dominates?</p>
+            <p><strong>Q2.</strong> Cut the design bill 40 percent. What goes first?</p>
           </div>
           <p class="lesson-hook">Closed with bills. Now the API round. <a href="#lesson-11">Lesson 11: API →</a></p>
         </section>
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · API Round · Contracts under pressure</div>
           <h2>API Round</h2>
-          <p class="lesson-story">API interviews test contracts plus idempotency plus limits plus versioning in forty minutes. Lead with resources plus verbs, then keys per intent, then rate math, then webhook retries. Version without breakage closes it. Endpoints without error models read junior.</p>
+          <p class="lesson-story">A useful API design covers resource contracts, idempotency, limits and versioning. Start with resources and verbs, then explain idempotency keys, rate limits and webhook retries. Include an error model.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="api arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">verbs set</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">keys issued</text>
@@ -421,15 +420,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design checkout APIs that survive double-clicks. What prevents double charge? <span class="q-seen">Seen at: backend plus fintech loops.</span></p>
-            <p><strong>Q2.</strong> Version 2 breaks mobile clients. What ships instead? <span class="q-seen">Seen at: full-stack plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Design checkout APIs that survive double-clicks. What prevents a double charge?</p>
+            <p><strong>Q2.</strong> Version 2 breaks mobile clients. What ships instead?</p>
           </div>
           <p class="lesson-hook">Contracts signed. Now go deep. <a href="#lesson-12">Lesson 12: Deep Dive →</a></p>
         </section>
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Deep Dive · One system, fully owned</div>
           <h2>Deep Dive Round</h2>
-          <p class="lesson-story">Pick one subsystem plus own it to the metal: schema plus indexes plus queries plus failure modes plus cost. Depth in one box beats shallows in five. Narrate choices as bets with prices. Interviewers promote owners, not tourists.</p>
+          <p class="lesson-story">Choose one subsystem and explain its schema, indexes, queries, failure modes and cost. Show the assumptions behind the choices and how you would test them.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="depth arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">box picked</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -440,21 +439,21 @@
 <rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">owned aloud</text>
 </svg>
           <ul class="lesson-ideas">
-            <li>Write two queries with plans plus index shapes. Concrete beats abstract.</li>
-            <li>Close the dive with its own bill plus its own funeral. Owners price both.</li>
+            <li>Write two queries with execution plans and index shapes.</li>
+            <li>Close with the subsystem's cost and failure-recovery plan.</li>
             <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, 3,000 connections too many.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Own the feed ranking store end to end. Schema plus indexes plus cost. <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Your picked box doubles traffic overnight. What breaks first? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design the feed-ranking store end to end, including schema, indexes and cost.</p>
+            <p><strong>Q2.</strong> Your chosen component doubles traffic overnight. What breaks first?</p>
           </div>
           <p class="lesson-hook">Depth owned. Now prove character. <a href="#lesson-13">Lesson 13: Behavioral →</a></p>
         </section>
         <section class="lesson" id="lesson-13">
           <div class="lesson-kicker">Lesson 13 · Behavioral · Stories with receipts</div>
           <h2>Behavioral With Receipts</h2>
-          <p class="lesson-story">Behavioral rounds filter storytellers from owners. Bring three stories with numbers: incident led, conflict resolved, deadline renegotiated. Structure as situation plus action plus measured result. Vague verbs fail. Receipts pass.</p>
+          <p class="lesson-story">Prepare three examples with verifiable details: an incident response, a conflict you resolved and a deadline you renegotiated. Structure each around the situation, your actions and the measured result.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="story arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">incident owned</text>
@@ -469,15 +468,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Tell me about the worst outage you owned. Timelines plus owners plus fix. <span class="q-seen">Seen at: every loop.</span></p>
-            <p><strong>Q2.</strong> Disagree with your manager on architecture. What happened? <span class="q-seen">Seen at: leadership plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Describe an outage you owned. What was the timeline, who was involved, and what changed?</p>
+            <p><strong>Q2.</strong> Describe a disagreement with your manager about architecture. What happened?</p>
           </div>
           <p class="lesson-hook">Character proven. Now rehearse fully. <a href="#lesson-14">Lesson 14: Mocks →</a></p>
         </section>
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Rehearsal · The loop before the loop</div>
           <h2>Mock Loop</h2>
-          <p class="lesson-story">Run two full mock loops before real ones: one friendly plus one hostile. Record yourself. Count filler words plus silent stretches plus unpriced claims. Fix the worst three, not all thirty. Rehearsal converts knowledge into offers.</p>
+          <p class="lesson-story">Run two full mock interviews before an onsite: one supportive and one challenging. Record yourself, note filler words, long pauses and unpriced estimates, then work on the three largest issues.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="rehearsal arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">mock booked</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">tape reviewed</text>
@@ -486,21 +485,21 @@
             <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Score each round on clarify plus math plus depth plus close. Weakest pillar gets the week.</li>
+            <li>Review each round for clarification, workload math, technical depth and a clear conclusion. Spend practice time on the weakest area.</li>
             <li>Rehearse the cost close until it fits ninety seconds. Closers get remembered.</li>
             <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, fifteen lessons of material.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your mocks stall at estimation. What drill fixes it in a week? <span class="q-seen">Seen at: self review.</span></p>
-            <p><strong>Q2.</strong> Hostile interviewer kills every box. What keeps you moving? <span class="q-seen">Seen at: self review.</span></p>
+            <p><strong>Q1.</strong> Your practice interviews stall at estimation. What exercise will help?</p>
+            <p><strong>Q2.</strong> The interviewer challenges each component. How do you keep the design moving?</p>
           </div>
           <p class="lesson-hook">Rehearsed. Now ship the week. <a href="#lesson-15">Lesson 15: Offer →</a></p>
         </section>
         <section class="lesson" id="lesson-15">
           <div class="lesson-kicker">Lesson 15 · Capstone · Offer week shipped</div>
           <h2>Offer Week</h2>
-          <p class="lesson-story">Capstone: run a real two-week loop calendar. Week one drills estimation plus two deep dives daily. Week two runs mocks plus applies to twelve matching roles. Track every round in a decision log with verdicts plus prices. Graduates carry offers, not certificates.</p>
+          <p class="lesson-story">Capstone: build a two-week preparation plan. Use the first week for estimation and focused technical study; use the second for mock interviews and applications to suitable roles. Track practice results and follow-up decisions.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="offer arithmetic">
 <polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
 <text x="280" y="26" font-size="11" text-anchor="middle">drills daily</text>
@@ -512,14 +511,14 @@
 <text x="280" y="122" font-size="11" text-anchor="middle">offers compared</text>
 </svg>
           <ul class="lesson-ideas">
-            <li>Exit criteria: three mocks passed plus cost close under ninety seconds plus log complete.</li>
-            <li>Compare offers on growth plus scope plus comp in that order. Title without scope is rent.</li>
+            <li>Course practice target: complete three mocks, explain a cost estimate in under ninety seconds and maintain a decision log.</li>
+            <li>Compare offers on growth, scope and compensation. A title alone does not describe the work.</li>
             <li>Deep dive: <a href="learn-postgres-production.html">Postgres Course</a>, depth material for dive rounds.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Plan my next fourteen days before onsite season. <span class="q-seen">Seen at: self review.</span></p>
-            <p><strong>Q2.</strong> Two offers diverge on scope versus pay. What decides? <span class="q-seen">Seen at: self review.</span></p>
+            <p><strong>Q1.</strong> Plan a two-week interview preparation schedule.</p>
+            <p><strong>Q2.</strong> Two offers differ in scope and pay. What factors decide?</p>
           </div>
           <p class="lesson-hook">Bootcamp complete. Start the companion. <a href="learn-system-design.html">System Design Course →</a></p>
         </section>

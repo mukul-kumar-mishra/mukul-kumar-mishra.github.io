@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Flow from stuck logins to outage">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Illustrative queue model separating reported login stalls and reduced core-component capacity from the unpublished trigger and queue design">
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="92" result="n"/>
@@ -11,11 +11,11 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc" filter="url(#grain)"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Stuck. Queued. Dark.</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Salesforce Trust: Reported Service State</text>
   <text x="948" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="24" font-weight="bold" fill="#f8fafc">Build<tspan dx="10" fill="#16a34a">opsy</tspan></text>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Waiting is a workload.</text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">Status reports symptoms, not queue topology.</text>
 
-  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the queue bills everyone.</text>
+  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">The queue-feedback path below is illustrative.</text>
   <svg x="90" y="200" width="300" height="300" viewBox="0 0 100 100">
 <g transform="translate(8.35,-2.08) scale(0.0831)"><g id="cat-art" fill="#000" fill-rule="evenodd">
   <path id="vector-1" d=""/>
@@ -41,9 +41,9 @@
 
 </g>
   </svg>
-<g filter="url(#roughen)"><path d="M439.6,230.3 L640.3,230.4 L641.5,352.3 L440.9,351.5 L440.4,229.9 Z" fill="#ffffff" stroke="#0f172a" stroke-width="4"/><text x="455" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#0f172a">STUCK</text><text x="455" y="318" font-family="monospace" font-size="18" fill="#475569">waiting login</text><path d="M660.0,290.0 Q680.0,290.0 700.0,290.0" fill="none" stroke="#e11d48" stroke-width="4" class="flow"/><line x1="700.0" y1="290.0" x2="686.3" y2="296.1" stroke="#e11d48" stroke-width="4"/><line x1="700.0" y1="290.0" x2="686.3" y2="283.9" stroke="#e11d48" stroke-width="4"/><path d="M721.7,232.5 L920.4,230.7 L917.8,351.8 L720.7,350.7 L718.3,230.4 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="735" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">QUEUE</text><text x="735" y="318" font-family="monospace" font-size="18" fill="#475569">capacity gone</text><path d="M940.0,290.0 Q957.5,290.0 975.0,290.0" fill="none" stroke="#38bdf8" stroke-width="4" class="flow"/><line x1="975.0" y1="290.0" x2="961.3" y2="296.1" stroke="#38bdf8" stroke-width="4"/><line x1="975.0" y1="290.0" x2="961.3" y2="283.9" stroke="#38bdf8" stroke-width="4"/><path d="M995.5,228.3 L1124.6,231.2 L1126.4,351.1 L995.9,352.3 L996.5,227.8 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="1010" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">DARK</text><text x="1010" y="318" font-family="monospace" font-size="18" fill="#475569">support too</text></g>
+<g filter="url(#roughen)"><path d="M439.6,230.3 L640.3,230.4 L641.5,352.3 L440.9,351.5 L440.4,229.9 Z" fill="#ffffff" stroke="#0f172a" stroke-width="4"/><text x="455" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#0f172a">STALL</text><text x="455" y="318" font-family="monospace" font-size="18" fill="#475569">requests at login</text><path d="M660.0,290.0 Q680.0,290.0 700.0,290.0" fill="none" stroke="#e11d48" stroke-width="4" class="flow"/><line x1="700.0" y1="290.0" x2="686.3" y2="296.1" stroke="#e11d48" stroke-width="4"/><line x1="700.0" y1="290.0" x2="686.3" y2="283.9" stroke="#e11d48" stroke-width="4"/><path d="M721.7,232.5 L920.4,230.7 L917.8,351.8 L720.7,350.7 L718.3,230.4 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="735" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">LOAD</text><text x="735" y="318" font-family="monospace" font-size="18" fill="#475569">capacity reduced</text><path d="M940.0,290.0 Q950.0,290.0 960.0,290.0" fill="none" stroke="#38bdf8" stroke-width="4" class="flow"/><line x1="960.0" y1="290.0" x2="946.3" y2="296.1" stroke="#38bdf8" stroke-width="4"/><line x1="960.0" y1="290.0" x2="946.3" y2="283.9" stroke="#38bdf8" stroke-width="4"/><path d="M970.5,228.3 L1149.6,231.2 L1151.4,351.1 L970.9,352.3 L971.5,227.8 Z" fill="#ffffff" stroke="#e11d48" stroke-width="4"/><text x="985" y="280" font-family="monospace" font-size="32" font-weight="bold" fill="#e11d48">UNKNOWN</text><text x="985" y="318" font-family="monospace" font-size="18" fill="#475569">not published</text></g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">one queue.</text>
-  <text x="340" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">every customer.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">reported service facts.</text>
+  <text x="500" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">model mechanism stays labeled.</text>
 
 </svg>

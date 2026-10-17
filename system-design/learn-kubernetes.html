@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free Kubernetes course in 15 forensic lessons from Mukul. Control planes, autoscaling, blast radius plus inference scheduling, priced from production postmortems.">
+  <meta name="description" content="A free Kubernetes course in 15 forensic lessons from Mukul. Control planes, autoscaling, blast radius and inference scheduling from published incidents and labeled design scenarios.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-kubernetes.html">
   <meta property="og:type" content="article">
@@ -38,6 +38,7 @@
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "dateModified":"2026-10-17",
     "syllabusSections":[
       {"@type":"Syllabus","name":"The cluster is a promise"},
       {"@type":"Syllabus","name":"Declare then converge"},
@@ -88,7 +89,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
@@ -120,9 +120,9 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes in Production: 15 Lessons From the On-Call</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: declare what you want, watch what converges, plus price the gap. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Kubernetes lessons with live diagrams, from control planes to GPU scheduling plus cost discipline. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 14, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: declare what you want, watch what converges, plus price the gap. Lessons draw on published incidents or clearly labeled scenarios, state their assumptions, plus end in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Kubernetes lessons with live diagrams, from control planes to GPU scheduling plus cost discipline. Published incident evidence and modeled inputs are identified separately.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 17, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -190,33 +190,33 @@
           <p>Count your exposure with the pool sizer: peak connections times hold time equals state your servers must carry. The calculator prices the honest case. The attacker prices the missing bound.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Silent connections exhaust etcd memory. Walk through the fix live. <span class="q-seen">Seen at: infra plus security loops.</span></p>
-            <p><strong>Q2.</strong> Where does the control plane keep state plus what happens when it fills? <span class="q-seen">Seen at: platform loops.</span></p>
+            <p><strong>Q1.</strong> Silent connections exhaust etcd memory. Walk through the fix live.</p>
+            <p><strong>Q2.</strong> Where does the control plane keep state, and what happens when it fills?</p>
           </div>
           <p class="lesson-hook">Brain guarded. Now the workloads it was promised. <a href="#lesson-2">Lesson 02: Declare converge →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · GitOps · Reconciliation storms</div>
           <h2>Declare Then Converge</h2>
-          <p class="lesson-story">A routine rolling deploy restarts 120 consumers one by one. Each restart rejoins the group. Each rejoin triggers a rebalance across roughly 40,000 partitions. The group never settles for 11 modeled minutes. Assumption: declared state plus converged state differ during every rollout, so measure the convergence window, not just the manifest.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Deploy restarts flowing into a rebalance loop with consumption paused until the group settles">
+          <p class="lesson-story">Modeled classic-eager example: a 120-member group with 40,000 partitions has an assumed 660-second pause. The cascade condition is that a new membership change arrives before the current rebalance completes; partition count alone does not establish that duration. This is a scenario, not a reported customer outage. For Kubernetes rollouts, measure the convergence window, not only the manifest.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Modeled classic-eager scenario with an assumed 660-second pause; a membership change arrives before the previous rebalance finishes">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">deploy push</text>
             <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">rebalance loop</text>
-            <rect class="box" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">paused 11m</text>
+            <rect class="box" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">660s assumed</text>
             <rect class="boxlime" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">settled</text>
             <g stroke-width="2"><line x1="118" y1="75" x2="150" y2="75"/><line x1="280" y1="75" x2="312" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
             <circle class="pkt" r="4"><animateMotion dur="3s" repeatCount="indefinite" path="M63,75 L215,75 L215,95 L150,95 L150,75 L503,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Stagger restarts plus prefer cooperative protocols. Eager rebalancing pauses everything the deploy touches.</li>
-            <li>GitOps makes the desired state visible. Static membership plus canary steps make convergence survivable.</li>
-            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, coordinator math across 40,000 partitions.</li>
+            <li>Stagger restarts and observe group state. Under the classic eager protocol, members revoke their current assignments before a new assignment is installed; cooperative assignors use a different handoff.</li>
+            <li>A stable member ID and suitable session timeout may avoid removal during a brief restart. GitOps makes the desired state visible but does not determine Kafka's group protocol.</li>
+            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">the modeled Kafka rebalance cascade</a>, with coordinator behavior separated from assumed timings.</li>
           </ul>
-          <p>The deploy that touches one consumer at a time paused all of them continuously. Three defaults, each reasonable alone, composed into an outage while every broker dashboard stayed green. Convergence is the feature. The pause is the price.</p>
+          <p>The modeled classic-eager sequence shows how a healthy broker dashboard can coexist with stalled consumer progress. Its 660-second pause is an input, not an observed deploy duration. Measure consumer-group generation and rebalance progress alongside Kubernetes rollout status.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A rolling deploy pauses all consumers. Walk through the fix. <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Eager versus cooperative rebalancing: when does each hurt? <span class="q-seen">Seen at: messaging infra loops.</span></p>
+            <p><strong>Q1.</strong> In a modeled classic-eager group, a rolling deploy pauses consumption. Explain the overlap condition and the metrics you would check before changing the rollout.</p>
+            <p><strong>Q2.</strong> Eager versus cooperative rebalancing: when does each hurt?</p>
           </div>
           <p class="lesson-hook">Convergence priced. Now the replicas it converges toward. <a href="#lesson-3">Lesson 03: Requests replicas →</a></p>
         </section>
@@ -240,8 +240,8 @@
           <p>Junior Kubernetes is a cost generator. Senior Kubernetes is a cost controller. The fleet that looks busy is not the fleet that is needed. Measure, then subtract.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size replicas for tripled evening traffic with HPA math out loud. <span class="q-seen">Seen at: Google-style loops.</span></p>
-            <p><strong>Q2.</strong> When does autoscaling make an outage worse? <span class="q-seen">Seen at: AWS-style plus startup loops.</span></p>
+            <p><strong>Q1.</strong> Size replicas for tripled evening traffic with HPA math out loud.</p>
+            <p><strong>Q2.</strong> When does autoscaling make an outage worse?</p>
           </div>
           <p class="lesson-hook">Fleet trimmed. Now the doorway every request queues at. <a href="#lesson-4">Lesson 04: Pool door →</a></p>
         </section>
@@ -265,8 +265,8 @@
           <p>Watch for the pooler becoming the bottleneck itself. One proxy in front of the database is a single point with a nice dashboard. Pair it, or shard past it, before traffic proves the point.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size the pool for 50k RPS at 20ms p99 across 40 pods. <span class="q-seen">Seen at: Google-style plus Uber-style loops.</span></p>
-            <p><strong>Q2.</strong> Connections exhaust at 3 AM with flat traffic. What leaked? <span class="q-seen">Seen at: SRE loops.</span></p>
+            <p><strong>Q1.</strong> Size the pool for 50k RPS at 20ms p99 across 40 pods.</p>
+            <p><strong>Q2.</strong> Connections exhaust at 3 AM with flat traffic. What leaked?</p>
           </div>
           <p class="lesson-hook">Door managed. Now the building the door stands in. <a href="#lesson-5">Lesson 05: Zones unit →</a></p>
         </section>
@@ -288,8 +288,8 @@
           <p>Game days that kill one zone prove the other two carry load. Untested failover is a rumor with runbooks. Run the rumor until it becomes a drill.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> One zone dies during peak checkout. Now what? <span class="q-seen">Seen at: Amazon-style loops.</span></p>
-            <p><strong>Q2.</strong> Price four hours of single-zone impairment out loud. <span class="q-seen">Seen at: FinOps-flavored loops.</span></p>
+            <p><strong>Q1.</strong> One zone dies during peak checkout. Now what?</p>
+            <p><strong>Q2.</strong> Price four hours of single-zone impairment out loud.</p>
           </div>
           <p class="lesson-hook">Zones survived. Now shrink the blast further. <a href="#lesson-6">Lesson 06: Cells blast →</a></p>
         </section>
@@ -311,8 +311,8 @@
           <p>Cells cost duplication up front plus save multiplication later. The spreadsheet that refuses cells is pricing Tuesday while Friday sends the invoice.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design failover customers never notice across three cells. <span class="q-seen">Seen at: Google-style plus Netflix-style loops.</span></p>
-            <p><strong>Q2.</strong> Cells versus zones: when does each contain what? <span class="q-seen">Seen at: principal-level loops.</span></p>
+            <p><strong>Q1.</strong> Design failover customers never notice across three cells.</p>
+            <p><strong>Q2.</strong> Cells versus zones: when does each contain what?</p>
           </div>
           <p class="lesson-hook">Blast bounded. Now the traffic the cells absorb. <a href="#lesson-7">Lesson 07: Queues spikes →</a></p>
         </section>
@@ -337,8 +337,8 @@
           <p>Dead letters deserve readers. Every message in the red box is a bug report from production. Teams that review them weekly find failures before customers file them.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design ingestion for one million events per second without losing any. <span class="q-seen">Seen at: Uber-style plus LinkedIn-style loops.</span></p>
-            <p><strong>Q2.</strong> One lane floods. Prove the other lane stays dry. <span class="q-seen">Seen at: messaging infra loops.</span></p>
+            <p><strong>Q1.</strong> Design ingestion for one million events per second without losing any.</p>
+            <p><strong>Q2.</strong> One lane floods. Prove the other lane stays dry.</p>
           </div>
           <p class="lesson-hook">Spikes absorbed. Now the retries inside the mesh. <a href="#lesson-8">Lesson 08: Retries mesh →</a></p>
         </section>
@@ -364,8 +364,8 @@
           <p>Unbounded retries are a self-inflicted DDoS with a deploy log. Budget the remaining retries like any other load. The mesh forgives planned load. It punishes surprise load with interest.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Convince me your mesh retries cannot cascade. <span class="q-seen">Seen at: Amazon-style loops.</span></p>
-            <p><strong>Q2.</strong> Design a breaker with closed plus open plus half-open states. <span class="q-seen">Seen at: Netflix-style loops.</span></p>
+            <p><strong>Q1.</strong> Convince me your mesh retries cannot cascade.</p>
+            <p><strong>Q2.</strong> Design a breaker with closed, open and half-open states.</p>
           </div>
           <p class="lesson-hook">Mesh spared. Now the senses that watch it. <a href="#lesson-9">Lesson 09: Seeing cluster →</a></p>
         </section>
@@ -390,8 +390,8 @@
           <p>Monitoring is not paperwork. It is the only sense organ production has. Blasts you cannot see, you cannot survive, which is why observability closes the resilience arc.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> p99 triples at 2 AM with no deploy. Walk through it live. <span class="q-seen">Seen at: Google-style plus Meta-style SRE loops.</span></p>
-            <p><strong>Q2.</strong> Design dashboards for a payments API before launch. <span class="q-seen">Seen at: Stripe-style plus fintech loops.</span></p>
+            <p><strong>Q1.</strong> p99 triples at 2 AM with no deploy. Walk through it live.</p>
+            <p><strong>Q2.</strong> Design dashboards for a payments API before launch.</p>
           </div>
           <p class="lesson-hook">Senses wired. Now the workload that changed the schedule. <a href="#lesson-10">Lesson 10: GPU schedule →</a></p>
         </section>
@@ -416,8 +416,8 @@
           <p>AI did not reduce the need for operators. It raised the bar on what one is worth. Spiky inference on shared clusters punishes every lesson this course skipped, with GPU pricing attached.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Schedule inference on a shared cluster with spiky load. <span class="q-seen">Seen at: AI infra loops.</span></p>
-            <p><strong>Q2.</strong> GPU queue grows while CPUs idle. What does the scheduler not know? <span class="q-seen">Seen at: platform loops.</span></p>
+            <p><strong>Q1.</strong> Schedule inference on a shared cluster with spiky load.</p>
+            <p><strong>Q2.</strong> GPU queue grows while CPUs idle. What does the scheduler not know?</p>
           </div>
           <p class="lesson-hook">Schedule set. Now the invoice that grades it. <a href="#lesson-11">Lesson 11: Bill design →</a></p>
         </section>
@@ -441,8 +441,8 @@
           <p>Revisit the bill quarterly. Traffic shapes drift, prices change, plus yesterday optimization rots. The platform team that prices its own conveniences earns the right to mandate them.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price a preview environment per developer monthly, out loud. <span class="q-seen">Seen at: platform plus startup loops.</span></p>
-            <p><strong>Q2.</strong> Cut platform spend 30 percent without touching velocity. <span class="q-seen">Seen at: FinOps-flavored loops.</span></p>
+            <p><strong>Q1.</strong> Price a preview environment per developer monthly, out loud.</p>
+            <p><strong>Q2.</strong> Cut platform spend 30 percent without touching velocity.</p>
           </div>
           <p class="lesson-hook">Bill read. Now the secrets riding every pod. <a href="#lesson-12">Lesson 12: Secrets ride →</a></p>
         </section>
@@ -467,8 +467,8 @@
           <p>Lesson 4 of the foundation course taught this for APIs. Clusters multiply the lesson across every pod. External secret operators plus rotation plus audit complete the pattern. The vault is the only pod allowed to know everything.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design secret management for 200 microservices on one cluster. <span class="q-seen">Seen at: platform plus fintech loops.</span></p>
-            <p><strong>Q2.</strong> A key leaks from a pod log at midnight. Your first hour? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+            <p><strong>Q1.</strong> Design secret management for 200 microservices on one cluster.</p>
+            <p><strong>Q2.</strong> A key leaks from a pod log at midnight. Your first hour?</p>
           </div>
           <p class="lesson-hook">Secrets scoped. Now the state the pods refuse to hold. <a href="#lesson-13">Lesson 13: State outside →</a></p>
         </section>
@@ -492,8 +492,8 @@
           <p>Operators encode this discipline: custom resources describe the desired data state, controllers converge toward it, plus backups verify themselves. Stateful on Kubernetes works when the state never trusts the pod lifecycle.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design backup plus restore for 10 TB of stateful data on Kubernetes. <span class="q-seen">Seen at: AWS-style plus fintech loops.</span></p>
-            <p><strong>Q2.</strong> A volume snapshot restores empty. What was never tested? <span class="q-seen">Seen at: SRE loops.</span></p>
+            <p><strong>Q1.</strong> Design backup and restore for 10 TB of stateful data on Kubernetes.</p>
+            <p><strong>Q2.</strong> A volume snapshot restores empty. What was never tested?</p>
           </div>
           <p class="lesson-hook">State secured. Now turn all of it into interview answers. <a href="#lesson-14">Lesson 14: Interview cluster →</a></p>
         </section>
@@ -518,8 +518,8 @@
           <p>Rehearse three answers this week: an HPA sizing with live numbers, a zone failure with recovery math, plus a bill defense with the envelope. Bring one incident story of your own. Borrowed failures teach. Owned failures hire.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design checkout for 100k RPS on Kubernetes, then break it three ways. <span class="q-seen">Seen at: Amazon-style plus Google-style loops.</span></p>
-            <p><strong>Q2.</strong> Tell me about a production incident you owned end to end. <span class="q-seen">Seen at: every senior loop.</span></p>
+            <p><strong>Q1.</strong> Design checkout for 100k RPS on Kubernetes, then break it three ways.</p>
+            <p><strong>Q2.</strong> Tell me about a production incident you owned end to end.</p>
           </div>
           <p class="lesson-hook">Answers rehearsed. Now run one service for real. <a href="#lesson-15">Lesson 15: Run service →</a></p>
         </section>

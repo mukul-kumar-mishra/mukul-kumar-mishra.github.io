@@ -114,7 +114,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Postgres in Production: 15 Lessons From the Write Path</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Postgres under write pressure taught me one discipline: WAL first, pages later, plus receipts for every index. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Postgres lessons with live diagrams, from WAL to vacuum plus pooling plus backup math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Database course · Updated September 30, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Database course · Updated October 17, 2026</p>
     </header>
     <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-postgres-wal-meme.svg" alt="Three panels showing WAL write plus checkpoint plus index cost" width="1200" height="680"><figcaption>Course cover. WAL first plus checkpoints priced plus indexes billed per write.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
@@ -425,7 +425,7 @@
           <ul class="lesson-ideas">
             <li>Log lock waits past 1 second. One holder with 500 waiters is the incident before the incident.</li>
             <li>Use concurrent index builds plus short migrations. Single giant migration locks the quarter.</li>
-            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Login Queue</a>, queues that ate the morning.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall</a>, a reported shared-service disruption with an unpublished internal queue design.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>

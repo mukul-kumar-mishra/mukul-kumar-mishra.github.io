@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Coinbase's MSK control-plane recovery chain</title>
+  <desc id="desc">Coinbase reports an AWS MSK control-plane defect left two clusters stuck healing and unable to reelect partition leaders. Producers could not write, blocking the fee service and quoting. Manual partition reassignment began at 3:00 AM ET on May 8. Priority-zero and priority-one topics were fully available by 9:30 AM ET; the remaining topics cleared by 2:00 PM ET.</desc>
+  <style>text{font-family:Arial,Inter,sans-serif}.mono{font-family:Consolas,"Liberation Mono",monospace}</style>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="68" fill="#0f172a"/>
+  <text x="42" y="46" class="mono" font-size="32" font-weight="700" fill="#f8fafc">COINBASE · AWS MSK RECOVERY</text>
+  <text x="52" y="124" font-size="44" font-weight="700" fill="#0f172a">The control plane blocked leader reelection.</text>
+  <text x="54" y="163" font-size="28" fill="#475569">Coinbase's May 7 report · recovery milestones are May 8 ET</text>
+  <rect x="50" y="184" width="1100" height="96" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+  <text x="82" y="226" class="mono" font-size="38" font-weight="700" fill="#0f172a">2 MSK CLUSTERS</text>
+  <text x="520" y="222" font-size="34" font-weight="700" fill="#be123c">Stuck in healing.</text>
+  <text x="520" y="259" font-size="27" fill="#475569">Partition leaders were not reelected.</text>
+  <rect x="50" y="295" width="1100" height="96" rx="12" fill="#fee2e2" stroke="#0f172a" stroke-width="3"/>
+  <text x="82" y="338" class="mono" font-size="38" font-weight="700" fill="#be123c">PRODUCER WRITES</text>
+  <text x="520" y="337" font-size="34" font-weight="700" fill="#0f172a">Could not proceed.</text>
+  <text x="520" y="372" font-size="27" fill="#475569">The fee service and quoting were blocked.</text>
+  <rect x="50" y="406" width="1100" height="96" rx="12" fill="#dcfce7" stroke="#0f172a" stroke-width="3"/>
+  <text x="82" y="450" class="mono" font-size="38" font-weight="700" fill="#0f172a">MANUAL MOVES</text>
+  <text x="520" y="449" font-size="34" font-weight="700" fill="#0f172a">Started at 3:00 AM.</text>
+  <text x="520" y="484" font-size="27" fill="#475569">Priority topics full by 9:30 AM; rest by 2:00 PM.</text>
+  <rect x="50" y="520" width="1100" height="124" rx="12" fill="#0f172a"/>
+  <text x="80" y="566" class="mono" font-size="30" font-weight="700" fill="#86efac">TWO CLUSTERS · PRODUCER WRITES BLOCKED</text>
+  <text x="80" y="610" font-size="26" fill="#f8fafc">Source: Coinbase Engineering, May 7, 2026 outage postmortem.</text>
+</svg>

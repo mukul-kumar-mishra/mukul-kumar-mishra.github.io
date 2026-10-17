@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">ShareChat feature-store measures by stage</title>
+  <desc id="desc">Stacked panels show row reads falling from about 2 billion to 200 million per second after row packing, average tile fetches falling from about 70 to about 7, and cache hits rising from 80 percent to as high as 99 percent. The first printed row-read endpoints imply 10 times, although the 2024 account labels them 100 times.</desc>
+  <style>text{font-family:Arial,Inter,sans-serif}.mono{font-family:Consolas,"Liberation Mono",monospace}</style>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="66" fill="#0f172a"/>
+  <text x="38" y="44" class="mono" font-size="30" font-weight="700" fill="#f8fafc">SHARECHAT FEATURE STORE · THREE MEASURES</text>
+  <text x="55" y="115" font-size="46" font-weight="700" fill="#0f172a">Keep stages and units separate.</text>
+  <rect x="50" y="142" width="1100" height="116" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+  <text x="78" y="177" class="mono" font-size="36" font-weight="700" fill="#475569">ROW READS · AFTER ROW PACKING</text>
+  <text x="78" y="220" class="mono" font-size="52" font-weight="700" fill="#0f172a">2B → 200M rows/s</text>
+  <text x="78" y="249" class="mono" font-size="29" fill="#be123c">Endpoints imply 10×; 2024 source label: 100×.</text>
+  <rect x="50" y="271" width="1100" height="116" rx="12" fill="#16a34a" stroke="#0f172a" stroke-width="3"/>
+  <text x="78" y="306" class="mono" font-size="36" font-weight="700" fill="#dcfce7">AVERAGE TILE FETCHES</text>
+  <text x="78" y="355" class="mono" font-size="52" font-weight="700" fill="#ffffff">70 → ~7 per feature</text>
+  <text x="78" y="379" class="mono" font-size="29" fill="#dcfce7">Tile configuration first reached ~23.</text>
+  <rect x="50" y="400" width="1100" height="116" rx="12" fill="#16a34a" stroke="#0f172a" stroke-width="3"/>
+  <text x="78" y="435" class="mono" font-size="36" font-weight="700" fill="#dcfce7">CACHE HITS · CONSISTENT HASHING</text>
+  <text x="78" y="485" class="mono" font-size="48" font-weight="700" fill="#ffffff">80% → up to 99%</text>
+  <text x="78" y="508" class="mono" font-size="29" fill="#dcfce7">Highest reported rate, not a guarantee.</text>
+  <rect x="50" y="529" width="1100" height="113" rx="12" fill="#0f172a"/>
+  <text x="78" y="565" class="mono" font-size="32" font-weight="700" fill="#f8fafc">Different stages; not interchangeable measures.</text>
+  <text x="78" y="598" class="mono" font-size="28" fill="#dbeafe">Sources: ScyllaDB 2024 · ShareChat Engineering 2025</text>
+  <text x="78" y="628" class="mono" font-size="22" fill="#94a3b8">Row endpoint discrepancy remains unexplained by the source.</text>
+</svg>

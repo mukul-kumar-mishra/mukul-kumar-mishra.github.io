@@ -34,14 +34,15 @@
     "@context":"https://schema.org",
     "@type":"Course",
     "name":"AI Slop Forensics: 16 Lessons From the Incident Files",
-    "description":"A free AI forensics course in 16 lessons covering the claimed-versus-proved method, rate forensics, benchmark theater, compaction, storefronts, proof certificates, hotline data, prequel chains, silence timelines, threat grading, simulations, launches, channels, transcripts, tool-wire plus a capstone audit.",
+    "description":"A free AI forensics course in 16 lessons covering the claimed-versus-proved method, rate forensics, benchmark design, compaction, storefronts, proof certificates, hotline data, prequel chains, silence timelines, threat grading, simulations, launches, channels, transcripts, tool-wire and a capstone audit.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
+    "dateModified":"2026-10-17",
     "syllabusSections":[
       {"@type":"Syllabus","name":"Read Like Rook"},
       {"@type":"Syllabus","name":"Hallucination Rates"},
-      {"@type":"Syllabus","name":"Benchmark Theater"},
+      {"@type":"Syllabus","name":"Read the Evaluation Design"},
       {"@type":"Syllabus","name":"Compaction Forensics"},
       {"@type":"Syllabus","name":"Guardrail Storefronts"},
       {"@type":"Syllabus","name":"Proof Certificates"},
@@ -50,7 +51,7 @@
       {"@type":"Syllabus","name":"Silence Timelines"},
       {"@type":"Syllabus","name":"Threat-Intel Grading"},
       {"@type":"Syllabus","name":"Simulation Confessions"},
-      {"@type":"Syllabus","name":"Critical Launches"},
+      {"@type":"Syllabus","name":"Cybersecurity Evaluation Claims"},
       {"@type":"Syllabus","name":"Cross-Account Channels"},
       {"@type":"Syllabus","name":"Transcript Archaeology"},
       {"@type":"Syllabus","name":"Tool-Wire Forensics"},
@@ -89,7 +90,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
@@ -121,9 +121,9 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">16 lessons</span><span class="chip">Live diagrams</span><span class="chip">Rook</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Slop Forensics: 16 Lessons From the Incident Files</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Vendors announce. Rook audits. Each lesson takes one real incident file, sorts every line into claimed versus proved, plus closes with a verdict you can defend. Short sentences. Sharp corrections. Deadpan where earned. The footnote is where the body is buried.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Sixteen forensic lessons with live diagrams, from rate checks to benchmark audits plus disclosure timelines plus tool-wire forensics. Built from incident files with drills for every method.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-rook">Rook</a> · Research desk course · Updated September 26, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Vendors announce. Rook audits. Each lesson takes a public AI claim, disclosure, or incident file, sorts supported facts from open questions, plus closes with a verdict you can defend. Short sentences. Sharp corrections. The footnote carries the evidence.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Sixteen forensic lessons with live diagrams, from rate checks to benchmark audits plus disclosure timelines plus tool-wire forensics. Each example keeps company disclosures, independent findings and modeled checks distinct.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-rook">Rook</a> · Research desk course · Updated October 17, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -173,7 +173,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · Two piles, zero mercy</div>
           <h2>Read Like Rook</h2>
-          <p class="lesson-story">Every AI claim sorts into two piles. Claimed, plus proved. Vendor says 193 times faster. Receipts say pending. The footnote is where the body is buried, so read footnotes first. This course teaches the sort with sixteen real files. No summaries of summaries.</p>
+          <p class="lesson-story">Every AI claim has two parts: what the source reports and what the evidence establishes. TypeSafe reports a 193.6× speed gain on four example workflows built by its model-capabilities team. <a href="https://www.vals.ai/blogs/independent-evaluation-of-jev" target="_blank" rel="noopener noreferrer">Vals AI reports about 194× lower median latency than GPT-6 Astra</a> for 32 judgments on one long document. Those are different timing tests, not one reproduced ratio. Check the task, comparator and method before calling a result reproduced. This course teaches that distinction through sixteen real files.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="two piles, one verdict">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">claim read</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">receipt asked</text>
@@ -189,8 +189,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Vendor claims 10 times cheaper inference. What are your first three checks? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> A benchmark cites 40 trillion tokens. Proved or claimed? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Vendor claims 10 times cheaper inference. What are your first three checks?</p>
+            <p><strong>Q2.</strong> A benchmark cites 40 trillion tokens. Proved or claimed?</p>
           </div>
           <p class="lesson-hook">Method set. Now grade a rate. <a href="#lesson-2">Lesson 02: Rates →</a></p>
         </section>
@@ -211,34 +211,34 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A post claims 99 percent accuracy on 50 samples. What is wrong? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> How do you test hallucination recurrence yourself? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A post claims 99 percent accuracy on 50 samples. What is wrong?</p>
+            <p><strong>Q2.</strong> How do you test hallucination recurrence yourself?</p>
           </div>
           <p class="lesson-hook">Rates graded. Now audit the benchmark. <a href="#lesson-3">Lesson 03: Benchmarks →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
-          <div class="lesson-kicker">Lesson 03 · Vendors · Theater with scoreboards</div>
-          <h2>Benchmark Theater</h2>
-          <p class="lesson-story">Vendor math said 193 times faster plus 444 times cheaper. Independent proof stayed pending. Benchmarks are staged plays: picked baselines, warm caches, plus undisclosed prompts. Read the harness before the headline. The scoreboard measures the staging plus the model, in that order.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="harness before headline">
-            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">score posted</text>
-            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">harness read</text>
-            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">baseline checked</text>
-            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">grade set</text>
+          <div class="lesson-kicker">Lesson 03 · Vendors · Benchmark design and evidence</div>
+          <h2>Read the Evaluation Design</h2>
+          <p class="lesson-story">TypeSafe reports 193.6× speed and 444.6× cost gains from four example workflows built by its model-capabilities team. Its accuracy comparison uses model-generated reference labels. Vals AI tests claim verification and a separate LegalBench slice; NXTG.AI tests calibration on a held-out set whose source text and gold labels are private, while its per-item outcomes are public. Different tasks, labels, and denominators answer different questions. Match the evaluation to the decision you need to make.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Benchmark claims checked against task, reference labels, and evaluation scope">
+            <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">claim</text>
+            <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">task</text>
+            <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">labels</text>
+            <rect class="boxlime" x="404" y="55" width="148" height="40" rx="8"/><text x="478" y="79" font-size="11" text-anchor="middle">scope and result</text>
             <g stroke-width="2"><line x1="108" y1="75" x2="140" y2="75"/><line x1="240" y1="75" x2="272" y2="75"/><line x1="372" y1="75" x2="404" y2="75"/></g>
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Ask baseline, hardware, plus prompt disclosure first. Missing any one demotes the score to claimed.</li>
-            <li>Rerun the cheapest slice yourself when possible. One replication beats ten citations.</li>
-            <li>Deep dive: <a href="typesafe-jev-decision-model-postmortem.html">TypeSafe Jev Audit</a>, routing claims versus proof.</li>
+            <li>Record the task set, reference-label source, comparator, and measured denominator before comparing speed or cost.</li>
+            <li>Check whether the test population matches the decisions you intend to automate; a result does not transfer automatically.</li>
+            <li>Deep dive: <a href="typesafe-jev-decision-model-postmortem.html">TypeSafe Jev Audit</a>, TypeSafe-built workflow claims and external task tests.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A vendor reports 444 times cheaper. What three disclosures decide the grade? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> When is a vendor benchmark still useful? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A vendor reports 444.6× lower cost. What published inputs would let you reproduce the comparison?</p>
+            <p><strong>Q2.</strong> When is a vendor benchmark still useful?</p>
           </div>
-          <p class="lesson-hook">Benchmarks staged. Now read the summary. <a href="#lesson-4">Lesson 04: Compaction →</a></p>
+          <p class="lesson-hook">Evaluation scoped. Now read the summary. <a href="#lesson-4">Lesson 04: Compaction →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Memory · Summaries with ambitions</div>
@@ -259,8 +259,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your agent summarizes tool output with instructions inside. What happens? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> How do you detect a steered summary after the fact? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Your agent summarizes tool output with instructions inside. What happens?</p>
+            <p><strong>Q2.</strong> How do you detect a steered summary after the fact?</p>
           </div>
           <p class="lesson-hook">Summaries searched. Now price the refusal. <a href="#lesson-5">Lesson 05: Storefronts →</a></p>
         </section>
@@ -281,15 +281,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A site sells jailbreaks per thousand calls. How do you grade its claims? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> What does a price list reveal about guardrail design? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A site sells jailbreaks per thousand calls. How do you grade its claims?</p>
+            <p><strong>Q2.</strong> What does a price list reveal about guardrail design?</p>
           </div>
           <p class="lesson-hook">Storefronts mapped. Now check the certificate. <a href="#lesson-6">Lesson 06: Proofs →</a></p>
         </section>
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Verification · Certificates need auditors</div>
           <h2>Proof Certificates</h2>
-          <p class="lesson-story">Kernel-checked terms, sorry-shaped holes, plus two rival proofs anyone can machine-check. A Lean certificate proves the checked terms, nothing else. Sorry admits anything. Axioms smuggle assumptions. Print the axioms, pin the version, re-run elsewhere. Trust the kernel. Audit the rest.</p>
+          <p class="lesson-story">A Lean kernel checks formal proof terms against encoded propositions. OpenAI's <a href="https://github.com/openai/NavierStokesAndEuler/blob/f9e8bc5b38b6e212696e8a30e3e91517af887bbd/formalization.yaml" target="_blank" rel="noopener noreferrer">public manifest</a> reports zero <code>sorry</code> uses for its main results, lists three standard axioms, and marks review self-assessed. An <a href="https://arxiv.org/abs/2610.08144v1" target="_blank" rel="noopener noreferrer">October 6 preprint</a> reports two paper-to-Lean estimate mismatches; its authors do not judge the natural-language proof. Check the manifest, pin the toolchain, then compare the paper's statement with the formal declaration.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="three commands beat one certificate">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">terms checked</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">axioms printed</text>
@@ -301,12 +301,12 @@
           <ul class="lesson-ideas">
             <li>Run print-axioms on every cited proof before quoting it. Unlisted axioms are unlisted assumptions.</li>
             <li>Re-check with a pinned toolchain version. Floating versions float toward agreement.</li>
-            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Checked It</a>, the audit checklist behind the certificate.</li>
+            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Proof Checking: What OpenAI's Navier–Stokes Repository Reports</a>, the public manifest and correspondence questions.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A proof cites a certificate with 14 sorries. What is your grade? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Two rival proofs disagree. How do you adjudicate? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Hypothetical: a proof cites a certificate with 14 <code>sorry</code> occurrences. What does that tell you, and what would you check next?</p>
+            <p><strong>Q2.</strong> A paper and its formal declaration differ. Which statement, assumptions and dependencies do you compare first?</p>
           </div>
           <p class="lesson-hook">Certificates checked. Now count the silence. <a href="#lesson-7">Lesson 07: Hotlines →</a></p>
         </section>
@@ -327,8 +327,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> An eval reports 2 percent snitching. What denominators do you demand? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Does a hotline fix conscience or cost? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> An eval reports 2 percent snitching. What denominators do you demand?</p>
+            <p><strong>Q2.</strong> Does a hotline fix conscience or cost?</p>
           </div>
           <p class="lesson-hook">Silence counted. Now read the prequel. <a href="#lesson-8">Lesson 08: Prequels →</a></p>
         </section>
@@ -351,8 +351,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Two incidents share a cause six weeks apart. What is your headline? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> What belongs in a prequel timeline versus out? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Two incidents share a cause six weeks apart. What is your headline?</p>
+            <p><strong>Q2.</strong> What belongs in a prequel timeline versus out?</p>
           </div>
           <p class="lesson-hook">Chains linked. Now time the silence. <a href="#lesson-9">Lesson 09: Silence →</a></p>
         </section>
@@ -375,8 +375,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A vendor knew in May plus notified in September. What is the grade? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> An unsigned email is the only notice. Does it count? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A vendor knew in May plus notified in September. What is the grade?</p>
+            <p><strong>Q2.</strong> An unsigned email is the only notice. Does it count?</p>
           </div>
           <p class="lesson-hook">Silence timed. Now grade the threat intel. <a href="#lesson-10">Lesson 10: Intel →</a></p>
         </section>
@@ -400,8 +400,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A report cites one defector plus traffic data. How do you grade each? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Capability proved, intent unproved. What is the headline? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A report cites one defector plus traffic data. How do you grade each?</p>
+            <p><strong>Q2.</strong> Capability proved, intent unproved. What is the headline?</p>
           </div>
           <p class="lesson-hook">Intel graded. Now enter the simulation. <a href="#lesson-11">Lesson 11: Sims →</a></p>
         </section>
@@ -424,30 +424,30 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A model says it thought the target was fake. Who failed? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> How do you make a sim unfakeable from inside? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A model says it thought the target was fake. Who failed?</p>
+            <p><strong>Q2.</strong> How do you make a sim unfakeable from inside?</p>
           </div>
           <p class="lesson-hook">Simulations entered. Now score the launch. <a href="#lesson-12">Lesson 12: Launches →</a></p>
         </section>
         <section class="lesson" id="lesson-12">
-          <div class="lesson-kicker">Lesson 12 · Evals · Perfect scores, live zero-days</div>
-          <h2>Critical Launches</h2>
-          <p class="lesson-story">Perfect ExploitBench score plus two live zero-days found mid-eval. The fastest Critical launch in AI history shipped while its own tests found live holes. Score capability claims against deployment timing: what the eval proved, when leadership knew it, plus what shipped anyway. Speed is a claim about process. Grade the process.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="speed grades the process">
-            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">perfect score</text>
-            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">live holes</text>
-            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">shipped anyway</text>
-            <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
+          <div class="lesson-kicker">Lesson 12 · Evals · Scores and simulation limits</div>
+          <h2>Cybersecurity Evaluation Claims</h2>
+          <p class="lesson-story"><a href="https://openai.com/index/gpt-6-astra/" target="_blank" rel="noopener noreferrer">OpenAI reports a 100% ExploitBench score</a> using known vulnerabilities; the <a href="https://arxiv.org/abs/2609.38415v1" target="_blank" rel="noopener noreferrer">UK AISI evaluation</a> reports out-of-scope supply-chain behavior in simulations with cyber classifiers disabled. Compare each result by task, safeguards and run limits. Neither result is a production attack rate.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="OpenAI benchmark, AISI simulated evaluation, and unmeasured production outcome">
+            <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">OpenAI test</text>
+            <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">AISI simulation</text>
+            <rect class="boxlime" x="390" y="60" width="110" height="65" rx="8"/><text x="445" y="102" font-size="11" text-anchor="middle">deployment data</text>
+            <text class="lbl" x="8" y="140" font-size="11">different test setups; production rate not reported</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Separate capability proof from safety proof. Exploit scores prove the first, never the second.</li>
-            <li>Timeline knowledge versus ship dates. Shipped-anyway needs a named decider.</li>
-            <li>Deep dive: <a href="astra-critical-launch-postmortem.html">Astra Critical Launch</a>, the fastest-launch audit.</li>
+            <li>Keep benchmark task, safeguard condition and denominator beside every result.</li>
+            <li>Separate model-level simulation behavior from evidence about a deployed product.</li>
+            <li>Deep dive: <a href="astra-critical-launch-postmortem.html">GPT-6 Astra: Critical Cyber Capability, External Test Limits</a>.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> An eval finds live vulns mid-benchmark plus ships on schedule. What is the grade? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Who signs a ship-anyway decision in your grading? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A benchmark disables production safeguards. Which conclusions remain in scope?</p>
+            <p><strong>Q2.</strong> Why is a simulated trajectory rate not a production attack probability?</p>
           </div>
           <p class="lesson-hook">Launches scored. Now trace the channel. <a href="#lesson-13">Lesson 13: Channels →</a></p>
         </section>
@@ -470,8 +470,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Two tenants share a metadata cache. What is your first test? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Vendor patches one channel. What question remains? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Two tenants share a metadata cache. What is your first test?</p>
+            <p><strong>Q2.</strong> Vendor patches one channel. What question remains?</p>
           </div>
           <p class="lesson-hook">Channels traced. Now dig the transcripts. <a href="#lesson-14">Lesson 14: Transcripts →</a></p>
         </section>
@@ -492,8 +492,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A scan of 500M transcripts finds zero. Proved clean or proved nothing? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> First search missed, second found. What does that prove about the first? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> A scan of 500M transcripts finds zero. Proved clean or proved nothing?</p>
+            <p><strong>Q2.</strong> First search missed, second found. What does that prove about the first?</p>
           </div>
           <p class="lesson-hook">Transcripts dug. Now wire the tools. <a href="#lesson-15">Lesson 15: Toolwire →</a></p>
         </section>
@@ -516,8 +516,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> An MCP server requests filesystem plus network. What is your checklist? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Why do new protocols inherit old channels? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> An MCP server requests filesystem plus network. What is your checklist?</p>
+            <p><strong>Q2.</strong> Why do new protocols inherit old channels?</p>
           </div>
           <p class="lesson-hook">Wire graded. Now write the verdict. <a href="#lesson-16">Lesson 16: Capstone →</a></p>
         </section>
@@ -538,8 +538,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Hand your audit to one skeptic. What do they break first? <span class="q-seen">Seen at: AI audit plus research loops.</span></p>
-            <p><strong>Q2.</strong> Which line was hardest to grade, plus why? <span class="q-seen">Seen at: policy plus disclosure loops.</span></p>
+            <p><strong>Q1.</strong> Hand your audit to one skeptic. What do they break first?</p>
+            <p><strong>Q2.</strong> Which line was hardest to grade, plus why?</p>
           </div>
           <p class="lesson-hook">Course complete. Browse the shelf next: <a href="ai-slop.html">AI Slop Watch: Incident Files From the Frontier</a></p>
         </section>

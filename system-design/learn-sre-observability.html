@@ -88,7 +88,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
@@ -122,7 +121,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">SRE and Observability in Production: 15 Lessons From the On-Call</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: measure recovery in user-minutes, budget every signal, plus drill the fire before it schedules itself. Each lesson starts from a real production outage, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic SRE lessons with live diagrams, from SLOs to burn rates plus tracing bills plus game days. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend plus SRE course · Updated September 26, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 17, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -187,8 +186,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> What SLO fits a checkout API versus an internal dashboard? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Your budget hits zero Thursday. What ships Friday? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> What SLO fits a checkout API versus an internal dashboard?</p>
+            <p><strong>Q2.</strong> Your budget hits zero Thursday. What ships Friday?</p>
           </div>
           <p class="lesson-hook">Contract numbered. Now alert on burn. <a href="#lesson-2">Lesson 02: Burn →</a></p>
         </section>
@@ -211,8 +210,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size burn windows for a 99.95 percent SLO. Show the math. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Your fast-burn fires during a deploy. Page or ticket? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Size burn windows for a 99.95 percent SLO. Show the math.</p>
+            <p><strong>Q2.</strong> Your fast-burn fires during a deploy. Page or ticket?</p>
           </div>
           <p class="lesson-hook">Burn windowed. Now price the telemetry. <a href="#lesson-3">Lesson 03: Tracing →</a></p>
         </section>
@@ -233,8 +232,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price full tracing at your RPS with modeled per-span cost. What dominates? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> When does tail sampling lie to you? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Price full tracing at your RPS with modeled per-span cost. What dominates?</p>
+            <p><strong>Q2.</strong> When does tail sampling lie to you?</p>
           </div>
           <p class="lesson-hook">Traces budgeted. Now split the signals. <a href="#lesson-4">Lesson 04: Signals →</a></p>
         </section>
@@ -258,8 +257,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your logging bill triples. What do you cut first? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> A debug needs one request path. Which signal answers? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your logging bill triples. What do you cut first?</p>
+            <p><strong>Q2.</strong> A debug needs one request path. Which signal answers?</p>
           </div>
           <p class="lesson-hook">Signals split. Now staff the night. <a href="#lesson-5">Lesson 05: Oncall →</a></p>
         </section>
@@ -282,8 +281,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Staff a rota for a 4-person team covering 24/7. What breaks? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> A teammate burns out mid-quarter. What changes first? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Staff a rota for a 4-person team covering 24/7. What breaks?</p>
+            <p><strong>Q2.</strong> A teammate burns out mid-quarter. What changes first?</p>
           </div>
           <p class="lesson-hook">Nights staffed. Now command the incident. <a href="#lesson-6">Lesson 06: Command →</a></p>
         </section>
@@ -302,12 +301,12 @@
           <ul class="lesson-ideas">
             <li>Declare severity by user impact within 10 minutes. Severity by vibes pages the wrong people.</li>
             <li>Update status every 20 minutes with known plus unknown plus next check. Silence breeds tickets.</li>
-            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue</a>, support dark with the product.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall</a>; the Trust record says some customers could not create support cases while public status updates continued.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your sev-1 has no commander after 15 minutes. What do you do? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Write the first status update for a login outage with unknown cause. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your sev-1 has no commander after 15 minutes. What do you do?</p>
+            <p><strong>Q2.</strong> Write the first status update for a login outage with unknown cause.</p>
           </div>
           <p class="lesson-hook">Command set. Now learn without blame. <a href="#lesson-7">Lesson 07: Postmortems →</a></p>
         </section>
@@ -330,8 +329,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your postmortem names an engineer. Rewrite that paragraph. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Which fix ships first from your last incident? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your postmortem names an engineer. Rewrite that paragraph.</p>
+            <p><strong>Q2.</strong> Which fix ships first from your last incident?</p>
           </div>
           <p class="lesson-hook">Blame removed. Now plan the capacity. <a href="#lesson-8">Lesson 08: Capacity →</a></p>
         </section>
@@ -348,12 +347,12 @@
           <ul class="lesson-ideas">
             <li>Compute slots as peak RPS times p99 seconds times safety factor. The Pool Sizer calculator runs it.</li>
             <li>Hold 30 percent headroom on stateful tiers plus 50 on control planes. Control starvation cascades fastest.</li>
-            <li>Deep dive: <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>, queue math at 8 times baseline.</li>
+            <li>Deep dive: <a href="gcp-us-west1-network-capacity-postmortem.html">GCP us-west1</a>, Google's reported fiber-maintenance capacity loss and recovery sequence.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size connection pools for 40k peak RPS at 120ms p99 across 20 pods. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Growth runs 10 percent monthly. When do you buy? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Size connection pools for 40k peak RPS at 120ms p99 across 20 pods.</p>
+            <p><strong>Q2.</strong> Growth runs 10 percent monthly. When do you buy?</p>
           </div>
           <p class="lesson-hook">Capacity planned. Now rehearse the fire. <a href="#lesson-9">Lesson 09: Gamedays →</a></p>
         </section>
@@ -376,8 +375,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design a 2-hour game day for route withdrawal in staging. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Your drill finds a 40-minute detection gap. What ships Monday? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design a 2-hour game day for route withdrawal in staging.</p>
+            <p><strong>Q2.</strong> Your drill finds a 40-minute detection gap. What ships Monday?</p>
           </div>
           <p class="lesson-hook">Fire rehearsed. Now speak through it. <a href="#lesson-10">Lesson 10: Status →</a></p>
         </section>
@@ -400,8 +399,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your probe is green but users fail. What changed? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Draft the 15-minute update for a regional degradation. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your probe is green but users fail. What changed?</p>
+            <p><strong>Q2.</strong> Draft the 15-minute update for a regional degradation.</p>
           </div>
           <p class="lesson-hook">Comms honest. Now total the telemetry bill. <a href="#lesson-11">Lesson 11: TeleBill →</a></p>
         </section>
@@ -422,8 +421,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price your log pipeline at current volume. What dominates? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Cut the bill 50 percent without losing error fidelity. How? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Price your log pipeline at current volume. What dominates?</p>
+            <p><strong>Q2.</strong> Cut the bill 50 percent without losing error fidelity. How?</p>
           </div>
           <p class="lesson-hook">Telemetry priced. Now price the page. <a href="#lesson-12">Lesson 12: Paging →</a></p>
         </section>
@@ -446,8 +445,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your team takes 40 pages weekly. What is the monthly cost? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Which three alerts do you demote first? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your team takes 40 pages weekly. What is the monthly cost?</p>
+            <p><strong>Q2.</strong> Which three alerts do you demote first?</p>
           </div>
           <p class="lesson-hook">Pages priced. Now deploy without fear. <a href="#lesson-13">Lesson 13: Deploys →</a></p>
         </section>
@@ -470,8 +469,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design canary stages for a gateway handling 900k RPS. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Your canary burns budget in 20 minutes. Who decides? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design canary stages for a gateway handling 900k RPS.</p>
+            <p><strong>Q2.</strong> Your canary burns budget in 20 minutes. Who decides?</p>
           </div>
           <p class="lesson-hook">Deploys safe. Now face the panel. <a href="#lesson-14">Lesson 14: Interviews →</a></p>
         </section>
@@ -494,8 +493,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Debug a 5x latency spike with only dashboards in 45 minutes. <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Tell me about an outage you owned plus the topology fix. <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Debug a 5x latency spike with only dashboards in 45 minutes.</p>
+            <p><strong>Q2.</strong> Tell me about an outage you owned and the topology fix.</p>
           </div>
           <p class="lesson-hook">Bench warmed. Now run the review. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
         </section>
@@ -516,8 +515,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Present your SLO review to one skeptic. What do they challenge? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Your drill pages at 2 AM. Was the rota fair? <span class="q-seen">Seen at: observability plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Present your SLO review to one skeptic. What do they challenge?</p>
+            <p><strong>Q2.</strong> Your drill pages at 2 AM. Was the rota fair?</p>
           </div>
           <p class="lesson-hook">Course complete. Price the gateway next: <a href="learn-api-design.html">API Design in Production: 15 Lessons From the Gateway</a></p>
         </section>

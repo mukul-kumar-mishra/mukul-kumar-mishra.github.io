@@ -88,7 +88,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxhot { fill: var(--card-muted); stroke: var(--hot); stroke-width: 2; }
@@ -122,7 +121,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">API Design in Production: 15 Lessons From the Gateway</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: name the promise, price the boundary, plus retire versions before they retire you. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic API lessons with live diagrams, from contracts to idempotency plus rate limits plus deprecation math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 14, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 17, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -187,8 +186,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design checkout for a store doing 40,000 RPS. What is your first endpoint? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> A partner stored your v1 response shape in their warehouse. How do you ship v2? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design checkout for a store doing 40,000 RPS. What is your first endpoint?</p>
+            <p><strong>Q2.</strong> A partner stored your v1 response shape in their warehouse. How do you ship v2?</p>
           </div>
           <p class="lesson-hook">Promise named. Now keep it across versions. <a href="#lesson-2">Lesson 02: Versioning →</a></p>
         </section>
@@ -207,12 +206,12 @@
           <ul class="lesson-ideas">
             <li>Prefer URL versions for public APIs plus header versions for partners who negotiate. Either works when the sunset date is contractual.</li>
             <li>Emit Sunset plus Deprecation headers on every old response. Clients that can see the deadline meet the deadline.</li>
-            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue That Ate Dreamforce</a>, shared paths plus forced marches.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall</a>, with a reported service symptom and an explicitly modeled queue explanation.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your mobile app has a 6-week review lag. How do you version? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> When is header versioning better than URL versioning? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your mobile app has a 6-week review lag. How do you version?</p>
+            <p><strong>Q2.</strong> When is header versioning better than URL versioning?</p>
           </div>
           <p class="lesson-hook">Versions live side by side. Now make retries safe. <a href="#lesson-3">Lesson 03: Idempotency →</a></p>
         </section>
@@ -235,8 +234,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design fund transfer with at-least-once delivery. Where does the key live? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> A client reuses one key for two different payments. What breaks? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design fund transfer with at-least-once delivery. Where does the key live?</p>
+            <p><strong>Q2.</strong> A client reuses one key for two different payments. What breaks?</p>
           </div>
           <p class="lesson-hook">Retries made safe. Now cap the flood. <a href="#lesson-4">Lesson 04: Limits →</a></p>
         </section>
@@ -259,8 +258,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size a token bucket for 90k burst RPS against 12k steady. Show the refill. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> When do you shed with 429 versus queue with 202? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Size a token bucket for 90k burst RPS against 12k steady. Show the refill.</p>
+            <p><strong>Q2.</strong> When do you shed with 429 versus queue with 202?</p>
           </div>
           <p class="lesson-hook">Flood gated. Now write the contract down. <a href="#lesson-5">Lesson 05: OpenAPI →</a></p>
         </section>
@@ -283,8 +282,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Your spec has 200 endpoints. How do you review it without drowning? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> Codegen versus hand-written SDKs. When does each win? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Your spec has 200 endpoints. How do you review it without drowning?</p>
+            <p><strong>Q2.</strong> Codegen versus hand-written SDKs. When does each win?</p>
           </div>
           <p class="lesson-hook">Contract written. Now place the enforcement. <a href="#lesson-6">Lesson 06: Topology →</a></p>
         </section>
@@ -308,8 +307,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Draw request path for a checkout call through gateway plus mesh. Label every policy point. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> When does a mesh add more risk than it removes? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Draw a request path for a checkout call through a gateway and mesh. Label every policy point.</p>
+            <p><strong>Q2.</strong> When does a mesh add more risk than it removes?</p>
           </div>
           <p class="lesson-hook">Policy placed. Now prove identity. <a href="#lesson-7">Lesson 07: Auth →</a></p>
         </section>
@@ -326,14 +325,14 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Validate plus cache JWKS with short TTLs. A slow validator becomes the outage, as us-west1 proved for IAM.</li>
+            <li>Validate and cache JWKS with short TTLs. Google's us-west1 report lists IAM among services affected by regional network degradation; it does not identify token validation as the cause.</li>
             <li>Scope per action, not per service. Broad scopes turn one leaked token into a skeleton key.</li>
-            <li>Deep dive: <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>, when IAM validation queues behind disk.</li>
+            <li>Deep dive: <a href="gcp-us-west1-network-capacity-postmortem.html">GCP us-west1</a>, where a fiber-maintenance capacity loss reached IAM and other dependent products.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design scope model for marketplace with buyers plus sellers plus admins. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> Your JWKS endpoint slows to 4 seconds. What breaks first? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design a scope model for a marketplace with buyers, sellers and admins.</p>
+            <p><strong>Q2.</strong> Your JWKS endpoint slows to 4 seconds. What breaks first?</p>
           </div>
           <p class="lesson-hook">Identity settled. Now survive the callback. <a href="#lesson-8">Lesson 08: Webhooks →</a></p>
         </section>
@@ -357,8 +356,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design webhook delivery for 1M events with 5 percent failing endpoints. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> How do you rotate signing secrets without dropping trust? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design webhook delivery for 1M events with 5 percent failing endpoints.</p>
+            <p><strong>Q2.</strong> How do you rotate signing secrets without dropping trust?</p>
           </div>
           <p class="lesson-hook">Callbacks tamed. Now page through millions. <a href="#lesson-9">Lesson 09: Paging →</a></p>
         </section>
@@ -381,15 +380,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price offset page 50,000 against cursor page 50,000 at 1M rows. Show the gap. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> When is offset pagination still the right call? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Price offset page 50,000 against cursor page 50,000 at 1M rows. Show the gap.</p>
+            <p><strong>Q2.</strong> When is offset pagination still the right call?</p>
           </div>
           <p class="lesson-hook">Lists flattened. Now fail usefully. <a href="#lesson-10">Lesson 10: Errors →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Clients · Failures they can act on</div>
           <h2>Errors Clients Can Handle</h2>
-          <p class="lesson-story">Every error must answer three questions: what happened, whether retry helps, plus what to do next. Machine-readable codes plus retryable flags plus request IDs turn a 3 AM mystery into a 3 PM ticket. Salesforce darkness taught that support goes dark with the product unless errors carry their own flashlight.</p>
+          <p class="lesson-story">Every error must answer three questions: what happened, whether retry helps, and what to do next. Machine-readable codes, retryable flags, and request IDs make failures easier to diagnose. <a href="https://status.salesforce.com/incidents/20004433" target="_blank" rel="noopener noreferrer">Salesforce Trust reported that some customers could not create support cases</a> during its September 16 disruption while public status updates continued; its record does not say all support channels were unavailable.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="errors that teach beat errors that hide">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">fail fast</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">code set</text>
@@ -401,12 +400,12 @@
           <ul class="lesson-ideas">
             <li>Mark every error retryable or terminal. Ambiguous errors breed the retry storms of Lesson 04.</li>
             <li>Echo a request ID in every response plus every log line. Correlation without IDs is archaeology.</li>
-            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">The Login Queue</a>, darkness with no flashlight.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall: 16 Instance IDs, 7h36m</a>, with the status record separated from the queue model.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design an error catalog for payments with 12 failure modes. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> Your 500s spike. How does a client tell retryable from fatal? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design an error catalog for payments with 12 failure modes.</p>
+            <p><strong>Q2.</strong> Your 500s spike. How does a client tell retryable from fatal?</p>
           </div>
           <p class="lesson-hook">Failures legible. Now retire the old. <a href="#lesson-11">Lesson 11: Sunsets →</a></p>
         </section>
@@ -429,8 +428,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Two versions cost how much per quarter? Model it for your fleet. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> A top customer refuses migration. What is your playbook? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Two versions cost how much per quarter? Model it for your fleet.</p>
+            <p><strong>Q2.</strong> A top customer refuses migration. What is your playbook?</p>
           </div>
           <p class="lesson-hook">Old retired. Now price the whole gateway. <a href="#lesson-12">Lesson 12: Billing →</a></p>
         </section>
@@ -451,8 +450,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Price your gateway at current RPS with modeled unit cost. What dominates? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> A storm triples offered load. What does the gated invoice read? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Price your gateway at current RPS with modeled unit cost. What dominates?</p>
+            <p><strong>Q2.</strong> A storm triples offered load. What does the gated invoice read?</p>
           </div>
           <p class="lesson-hook">Invoice priced. Now rehearse breakage. <a href="#lesson-13">Lesson 13: Contracts →</a></p>
         </section>
@@ -475,8 +474,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design a pact suite for 3 consumers sharing one checkout API. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> A pact breaks at 2 AM. Roll forward or roll back? <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design a pact suite for 3 consumers sharing one checkout API.</p>
+            <p><strong>Q2.</strong> A pact breaks at 2 AM. Roll forward or roll back?</p>
           </div>
           <p class="lesson-hook">Breakage rehearsed. Now face the panel. <a href="#lesson-14">Lesson 14: Interviews →</a></p>
         </section>
@@ -499,8 +498,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design rate limiting for 100M users in 45 minutes. Talk while you draw. <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> Tell me about an API breakage you caused plus fixed. <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Design rate limiting for 100M users in 45 minutes. Talk while you draw.</p>
+            <p><strong>Q2.</strong> Tell me about an API breakage you caused and fixed.</p>
           </div>
           <p class="lesson-hook">Bench warmed. Now ship for real. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
         </section>
@@ -521,8 +520,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Ship the spec plus the gateway config to one reviewer. What do they flag? <span class="q-seen">Seen at: backend plus API loops.</span></p>
-            <p><strong>Q2.</strong> Your webhook endpoint goes dark Friday night. Walk the runbook. <span class="q-seen">Seen at: gateway plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Ship the spec and gateway config to one reviewer. What do they flag?</p>
+            <p><strong>Q2.</strong> Your webhook endpoint goes dark Friday night. Walk the runbook.</p>
           </div>
           <p class="lesson-hook">Course complete. Interview the whole system next: <a href="learn-system-design.html">System Design: 15 Lessons From Real Outages</a></p>
         </section>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Salesforce Trust outage record: 16 impacted instances and 7h36m</title>
+  <desc id="desc">Salesforce Trust lists a 07:50 UTC disruption start, 16 impacted instance IDs and a 7-hour-36-minute duration. Some support cases were affected. The record does not publish the technical trigger or count customer organizations.</desc>
+  <style>text{font-family:Arial,Inter,sans-serif}.mono{font-family:Consolas,"Liberation Mono",monospace}</style>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="66" fill="#0f172a"/>
+  <text x="38" y="44" class="mono" font-size="30" font-weight="700" fill="#f8fafc">SALESFORCE TRUST · INCIDENT 20004433</text>
+  <text x="55" y="120" font-size="48" font-weight="700" fill="#0f172a">The final record lists 16 impacted IDs.</text>
+  <rect x="50" y="150" width="1100" height="110" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+  <text x="80" y="190" class="mono" font-size="31" font-weight="700" fill="#475569">DISRUPTION START</text>
+  <text x="80" y="242" class="mono" font-size="49" font-weight="700" fill="#0f172a">07:50 UTC</text>
+  <rect x="50" y="275" width="1100" height="110" rx="12" fill="#fff1f2" stroke="#e11d48" stroke-width="3"/>
+  <text x="80" y="315" class="mono" font-size="31" font-weight="700" fill="#be123c">FINAL IMPACTED-INSTANCE LIST</text>
+  <text x="80" y="367" class="mono" font-size="49" font-weight="700" fill="#0f172a">16 instance IDs</text>
+  <rect x="50" y="400" width="1100" height="110" rx="12" fill="#fff1f2" stroke="#e11d48" stroke-width="3"/>
+  <text x="80" y="440" class="mono" font-size="31" font-weight="700" fill="#be123c">SERVICE DISRUPTION DURATION</text>
+  <text x="80" y="492" class="mono" font-size="49" font-weight="700" fill="#0f172a">7 hours 36 minutes</text>
+  <rect x="50" y="525" width="1100" height="120" rx="12" fill="#0f172a"/>
+  <text x="80" y="566" class="mono" font-size="32" font-weight="700" fill="#f8fafc">Some support-case creation was affected.</text>
+  <text x="80" y="603" class="mono" font-size="29" fill="#dbeafe">The exact queue design and technical trigger remain unpublished.</text>
+  <text x="80" y="633" class="mono" font-size="23" fill="#94a3b8">Source: Salesforce Trust, Incident 20004433</text>
+</svg>

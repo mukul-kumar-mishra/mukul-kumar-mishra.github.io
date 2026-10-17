@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="The claim in one diagram. Ten thousand agents find a shrinking vortex. Lean checks the proof. Clay still has a review process.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">OpenAI's reported Navier–Stokes claim and a paper-to-Lean mismatch</title>
+  <desc id="desc">An illustration of OpenAI's reported agent search and Lean formalization. A separate panel shows the October 6 preprint's reported m+4 versus m+5 derivative estimate difference; the preprint authors do not judge whether the written proof is correct.</desc>
   <defs>
     <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="103" result="n"/>
@@ -9,11 +11,11 @@
   <rect x="0" y="0" width="1200" height="680" fill="#f8fafc"/>
   <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#0f172a" stroke-width="6"/>
   <rect x="0" y="0" width="1200" height="64" fill="#0f172a"/>
-  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">OpenAI Says It Solved Navier-Stokes</text>
+  <text x="36" y="41" font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">OPENAI'S REPORTED NAVIER-STOKES CLAIM</text>
 <image x="1000" y="5" width="155" height="56" preserveAspectRatio="xMaxYMid meet" href="../logo.png"/>
-  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">90 years. 10,000 agents. One vortex.</text>
+  <text x="60" y="130" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="34" font-weight="bold" fill="#0f172a">~10,000 agents. 88 hours of search. Lean formalization.</text>
 
-  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">the velocity has left the chat.</text>
+  <text x="60" y="156" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="21" font-style="italic" fill="#475569">paper-to-code correspondence remains open.</text>
   <svg x="90" y="195" width="320" height="320" viewBox="0 0 100 100">
 <g transform="translate(-1.43,-1.92) scale(0.0836)" fill="#0f172a">
 
@@ -26,27 +28,28 @@
     <rect x="455" y="180" width="270" height="38" fill="#0f172a"/>
     <text x="470" y="205" font-family="monospace" font-size="13" font-weight="bold" fill="#f8fafc" stroke="none">Navier-Stokes</text>
     <text x="470" y="237" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">∂u/∂t + (u·∇)u</text>
-    <text x="470" y="257" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">= -∇p + νΔu</text>
-    <text x="470" y="282" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">smooth?  or blow-up?</text>
-    <text x="470" y="303" font-family="monospace" font-size="11" fill="#475569" stroke="none">90 years unanswered</text>
+    <text x="470" y="257" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">= -∇p + νΔu + f</text>
+    <text x="470" y="282" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">finite-time blow-up claimed</text>
+    <text x="470" y="303" font-family="monospace" font-size="11" fill="#475569" stroke="none">statements C and D</text>
   </g>
   <g font-family="Sora, 'Segoe UI', Verdana, sans-serif" font-size="28" font-weight="bold" fill="#0f172a"><text x="740" y="252">→</text></g>
   <g filter="url(#roughen)">
     <rect x="790" y="175" width="310" height="170" rx="14" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
     <rect x="790" y="175" width="310" height="38" fill="#16a34a"/>
-    <text x="805" y="200" font-family="monospace" font-size="13" font-weight="bold" fill="#ffffff" stroke="none">Astra agents × 10,000</text>
-    <text x="805" y="230" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">vortex shrinks inward</text>
+    <text x="805" y="200" font-family="monospace" font-size="13" font-weight="bold" fill="#ffffff" stroke="none">OpenAI internal agents</text>
+    <text x="805" y="230" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">vortex spirals inward</text>
     <text x="805" y="250" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">velocity → infinity</text>
     <text x="805" y="270" font-family="monospace" font-size="12" fill="#16a34a" stroke="none">energy stays finite</text>
-    <text x="805" y="294" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">Lean: sorry = 0</text>
-    <text x="805" y="320" font-family="monospace" font-size="11" fill="#475569" stroke="none">88h search + 17h check</text>
+    <text x="805" y="294" font-family="monospace" font-size="12" fill="#0f172a" stroke="none">repo: zero sorry reported</text>
+    <text x="805" y="320" font-family="monospace" font-size="11" fill="#475569" stroke="none">88h search / 17h formalization</text>
   </g>
   <g filter="url(#roughen)">
     <rect x="590" y="365" width="400" height="62" rx="12" fill="#fffbeb" stroke="#e11d48" stroke-width="3"/>
-    <text x="605" y="390" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">finite energy ≠ finite velocity</text>
-    <text x="605" y="410" font-family="monospace" font-size="11" fill="#475569" stroke="none">the footnote is doing cardio</text>
+    <text x="605" y="390" font-family="monospace" font-size="12" fill="#e11d48" stroke="none">Oct 6 preprint: paper m+4 vs Lean m+5</text>
+    <text x="605" y="410" font-family="monospace" font-size="11" fill="#475569" stroke="none">authors do not say the paper is false</text>
   </g>
   <rect x="60" y="540" width="1080" height="80" fill="#0f172a"/>
-  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">finite energy.</text>
-  <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">infinite footnote.</text>
+  <text x="90" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#f8fafc">reported claim.</text>
+  <text x="470" y="591" font-family="'Segoe Script','Segoe Print','Comic Sans MS','Chalkboard SE',cursive" font-size="27" font-weight="bold" fill="#16a34a">correspondence review.</text>
+  <text x="60" y="655" font-family="monospace" font-size="12" fill="#475569">SOURCES: OpenAI announcement and repo at f9e8bc5 · Bastounis et al., arXiv v1 §3.1</text>
 </svg>

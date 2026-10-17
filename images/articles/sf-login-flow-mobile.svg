@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Salesforce reported login stalls; queue feedback is illustrative</title>
+  <desc id="desc">The first two panels show Salesforce Trust's reported symptoms: requests stalled at an internal login service and increased load reduced a core component's capacity. The final panel marks the exact trigger and queue design as undisclosed. The connection between these facts is an explanatory model, not a disclosed implementation.</desc>
+  <style>text{font-family:Arial,Inter,sans-serif}.mono{font-family:Consolas,"Liberation Mono",monospace}</style>
+  <rect width="1200" height="680" fill="#f8fafc"/>
+  <rect width="1200" height="66" fill="#0f172a"/>
+  <text x="38" y="44" class="mono" font-size="30" font-weight="700" fill="#f8fafc">SALESFORCE TRUST · REPORTED SERVICE STATE</text>
+  <text x="55" y="120" font-size="48" font-weight="700" fill="#0f172a">Reported symptoms; topology unknown.</text>
+  <rect x="50" y="150" width="1100" height="110" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+  <text x="80" y="190" class="mono" font-size="31" font-weight="700" fill="#475569">REQUESTS</text>
+  <text x="80" y="242" class="mono" font-size="44" font-weight="700" fill="#0f172a">Stalled at internal login service</text>
+  <rect x="50" y="275" width="1100" height="110" rx="12" fill="#fff1f2" stroke="#e11d48" stroke-width="3"/>
+  <text x="80" y="315" class="mono" font-size="31" font-weight="700" fill="#be123c">CORE COMPONENT</text>
+  <text x="80" y="367" class="mono" font-size="42" font-weight="700" fill="#0f172a">Increased load reduced request capacity</text>
+  <rect x="50" y="400" width="1100" height="110" rx="12" fill="#e8f1f6" stroke="#0369a1" stroke-width="3"/>
+  <text x="80" y="440" class="mono" font-size="31" font-weight="700" fill="#0369a1">NOT PUBLISHED</text>
+  <text x="80" y="492" class="mono" font-size="42" font-weight="700" fill="#0f172a">Technical trigger · queue configuration</text>
+  <rect x="50" y="525" width="1100" height="120" rx="12" fill="#0f172a"/>
+  <text x="80" y="566" class="mono" font-size="32" font-weight="700" fill="#f8fafc">The feedback path is an explanatory model.</text>
+  <text x="80" y="603" class="mono" font-size="29" fill="#dbeafe">It is not Salesforce's disclosed internal architecture.</text>
+  <text x="80" y="633" class="mono" font-size="23" fill="#94a3b8">Source: Salesforce Trust, Incident 20004433</text>
+</svg>

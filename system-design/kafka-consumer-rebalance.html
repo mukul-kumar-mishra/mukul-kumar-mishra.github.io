@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Kafka consumer rebalance explained: how JoinGroup plus eager assignment pause every consumer, why rolling deploys cascade across 40,000 partitions plus how static membership and cooperative rebalancing end it.">
+  <meta name="description" content="Kafka rebalancing explained with a labeled 120-member, 40,000-partition scenario: classic eager pauses, cooperative assignment, conditional static membership and retry arithmetic.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/kafka-consumer-rebalance.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
-  <meta property="og:description" content="A postmortem of Kafka consumer-group rebalancing: eager versus cooperative protocols, static membership, fetch storms plus retry amplification.">
+  <meta property="og:description" content="Protocol guide to classic eager and cooperative rebalancing, with a labeled 120-member model. Two retries plus the original are three attempts per affected call.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
-  <meta property="og:image:alt" content="Kafka consumer rebalance storm diagram">
+  <meta property="og:image:alt" content="Protocol diagram showing classic eager revocation of all current assignments, cooperative transfer of moved partitions, and conditional static membership">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,9 +18,9 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
-  <meta name="twitter:description" content="Eager versus cooperative rebalancing, static membership, fetch storms, modeled 3x retry multiplier.">
+  <meta name="twitter:description" content="Classic eager vs cooperative assignment, conditional static membership and a labeled 120-member model. One call plus two retries is three attempts, not six.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
-  <meta name="twitter:image:alt" content="Kafka consumer rebalance storm diagram">
+  <meta name="twitter:image:alt" content="Protocol diagram showing classic eager revocation of all current assignments, cooperative transfer of moved partitions, and conditional static membership">
   <title>Kafka Rebalance Explained: Consumer Storms and Fixes | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,16 +29,16 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "description": "Kafka consumer rebalance explained: JoinGroup plus eager assignment, rolling-deploy cascades across 40,000 partitions, fetch storms, retry amplification plus the fixes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/kafka-consumer-rebalance.html"}, "keywords": "Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, rebalance storm", "image": "https://buildopsy.com/images/articles/kafka-rebalance-guide.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "description": "Protocol guide to classic eager and cooperative rebalancing, conditional static membership and a labeled 120-member, 40,000-partition scenario. The model assumes an 11-minute pause; two retries plus the original are three attempts per affected call.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-17", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/kafka-consumer-rebalance.html"}, "keywords": "Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, KIP-848", "image": "https://buildopsy.com/images/articles/kafka-rebalance-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"What triggers a Kafka consumer rebalance?","acceptedAnswer":{"@type":"Answer","text":"Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group."}},
-      {"@type":"Question","name":"What is the difference between eager and cooperative rebalancing?","acceptedAnswer":{"@type":"Answer","text":"Eager revokes all partitions from every member on each rebalance, pausing the whole group. Cooperative revokes only partitions that must move, so unaffected partitions keep consuming through the transition."}},
-      {"@type":"Question","name":"How does static membership prevent rebalance storms?","acceptedAnswer":{"@type":"Answer","text":"Each consumer restarts under a stable instance id and keeps its assignment instead of rejoining as a stranger. Rolling deploys stop triggering full rebalances entirely."}},
-      {"@type":"Question","name":"Why do rolling deploys pause Kafka consumers?","acceptedAnswer":{"@type":"Answer","text":"Each restarted member rejoins the group plus under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls."}}
+      {"@type":"Question","name":"What triggers a Kafka consumer rebalance?","acceptedAnswer":{"@type":"Answer","text":"Under the classic group protocol, membership, subscription or relevant topic-metadata changes can require a new assignment. JoinGroup carries member information; it is not a universal trigger rule for every protocol."}},
+      {"@type":"Question","name":"What is the difference between eager and cooperative rebalancing?","acceptedAnswer":{"@type":"Answer","text":"Under the classic eager protocol, each member revokes all currently owned partitions before participating in a rebalance. A cooperative assignor can let members retain partitions they still own and transfer revoked partitions in a later rebalance round."}},
+      {"@type":"Question","name":"How does static membership prevent rebalance storms?","acceptedAnswer":{"@type":"Answer","text":"A stable group.instance.id lets Kafka recognize a briefly restarted member. If it returns before its session expires, Kafka can avoid removing and re-adding it. If the session expires, reassignment can still occur."}},
+      {"@type":"Question","name":"Why can rolling deploys pause Kafka consumers?","acceptedAnswer":{"@type":"Answer","text":"With the classic eager protocol, a membership change can start a group rebalance and members revoke assignments before receiving new ones. If restart triggers arrive before earlier rebalances finish, a group-wide pause can persist. Cooperative and the newer consumer protocol use different assignment behavior."}}
     ]
   }
   </script>
@@ -71,75 +71,78 @@
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A routine deploy restarts consumers one by one. Each restart rejoins the group. Each rejoin reassigns every partition. This postmortem explains the rebalance protocol, why it cascades at scale plus the three settings that end the loop.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eager rebalancing stops the world on every membership change. Rolling restarts arrive faster than rebalances complete, so the group never settles. Static membership plus cooperative assignment break the cycle.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A Kafka group reassigns partitions when membership or subscription changes require it. Under the classic eager protocol, members revoke their current assignments before receiving the new assignment, creating a group-wide pause in record processing. This guide explains the protocol and uses a labeled 120-member, 40,000-partition scenario; its 11-minute duration is assumed, not a reported incident or a duration derived from partition count.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Classic eager rebalancing pauses the group while assignments are revoked. Cooperative assignment moves only partitions that need to change owners; static membership can avoid a rebalance during a brief restart, before session expiry. In the modeled retry example, 1 original attempt plus 2 retries equals 3 attempts per affected call.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Consumers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">120</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Partitions</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">40,000</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Modeled Pause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">11 Min</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Retry Amplifier</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">6x Load</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Assumed pause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">660 s</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Attempts per call</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1 + 2 = 3</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Protocol guide with a modeled scenario · Published September 18, 2026 · Updated October 17, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the cascade analysis plus the coordinator math: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm: One Rolling Deploy Paused Every Consumer</a>. This postmortem answers how the protocol works, why it cascades plus how to configure it.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion scenario:</strong> the separate <a href="kafka-rebalance-storm-postmortem.html">modeled Kafka rebalance cascade</a> shows one 120-member, 40,000-partition example. Its timings are assumptions, not a report of a customer outage.</aside>
 
 
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/kafka-rebalance-guide.svg" alt="Kafka consumer group rebalance diagram showing rolling deploy, coordinator, eager versus cooperative assignment" width="1200" height="680"><figcaption>Figure 1. One restart in, every partition reassigned. The protocol is correct. The defaults are not.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width: 600px)" srcset="../images/articles/kafka-rebalance-guide-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/kafka-rebalance-guide.svg" alt="Protocol diagram showing classic eager revocation of all current assignments, cooperative transfer of moved partitions, and conditional static membership" width="1200" height="680"></picture><figcaption>Figure 1. The classic eager protocol requires members to revoke their current assignments before participating in a rebalance. Cooperative assignment may retain partitions that stay with their current member; revoked partitions can move in a later round. Static membership can avoid reassignment during transient unavailability when configured with a suitable session timeout.</figcaption></figure>
 
       <section><h2>1. What a Kafka Rebalance Is in 60 Seconds</h2>
-        <p>A consumer group splits partitions across its members. When membership changes, through a join, a crash, a deploy restart or a subscription edit, the group must reassign partitions. The triggering member sends JoinGroup. The coordinator computes a new assignment. Members revoke, re-fetch positions plus resume. Under the classic eager protocol, every member revokes everything first, so consumption stops group-wide for the window.</p>
-        <p>At small scale the window lasts seconds and nobody notices. At 120 members sharing 40,000 partitions, assignment math plus position refetching stretch the window into minutes. That duration is the entire story. Everything below is what happens when the window outlasts the trigger interval.</p>
+        <p>A consumer group assigns each partition to a member. Under the classic protocol, membership, subscription, or relevant topic-metadata changes can require a new assignment; JoinGroup carries member information to the coordinator. With the classic eager protocol, members revoke all current assignments before receiving the new assignment, pausing group-wide record processing. Cooperative rebalancing changes the handoff: only partitions that must move are revoked, potentially over more than one rebalance round.</p>
+        <p>The companion scenario uses 120 members and 40,000 partitions. Their average share is <code>40,000 ÷ 120 ≈ 333</code> partitions per member. That is a distribution average, not a complexity estimate or a prediction of rebalance duration. Assignment time depends on client version, assignor, cluster state and application work.</p>
         <div class="callout"><strong>The mental model:</strong> a rebalance is a classroom reshuffle. Eager sends every student into the hallway on each change. Cooperative moves only the students who must switch desks.</div>
       </section>
 
       <section><h2>2. Why Rolling Deploys Cascade</h2>
-        <p>Roll one restart at a time across 120 consumers and each restart rejoins the group. Each rejoin triggers a full eager rebalance. Each rebalance takes long enough at 40,000 partitions that the next restart lands mid-rebalance. The timer resets before completion, over and over, for a modeled 11 minutes. The safest rollout in the fleet becomes a continuous stall. Rolling deploys are sold as zero-downtime. Against eager rebalancing they are zero-uptime with extra steps.</p>
-        <p>Defaults conspire. A consumer stuck rebalancing past the poll interval looks dead, gets fenced out plus triggers another rebalance. Session timeouts tuned for crash detection fire during the very storm they should ride out. Then the fetch storm: 120 consumers resume at once from stale offsets, re-request the backlog plus breach poll intervals again. Recovery carries its own trigger.</p>
+        <p>A membership change can require a new assignment. The companion model assumes a <code>660 s</code> group pause; it does not derive that duration from the 40,000-partition count or from an unstated restart cadence. For the cascade mechanism to hold, the next membership change must arrive before the current classic-eager rebalance finishes. That overlap is a modeled condition, not a Kafka timing guarantee.</p>
+        <p>Consumer timeouts can create a second trigger. If a member misses <code>max.poll.interval.ms</code>, Kafka can treat it as failed; with static membership, reassignment is delayed until its session timeout. When a group resumes, members may fetch accumulated records at once. The exact catch-up load depends on arrival rate, retention, fetch settings and application throughput, so the companion scenario labels those inputs separately.</p>
       </section>
 
-      <section><h2>3. The Retry Amplifier: 11 Minutes Becomes 6x</h2>
-        <p>Upstream never waits. Eleven paused minutes at 60,000 events per second builds roughly 39.6 million events of backlog while downstream timeouts fire retries into topics consumers cannot yet drain. At 2 extra retries per stalled call with no backoff, recovery load lands near 3x normal (1 original + 2 retries) before one new event arrives. Retries without jitter plus backoff are a self-inflicted DDoS with a deploy as the trigger.</p>
-        <p>Price your own retry policy with the <a href="../calculators.html#retry-storm">retry-storm calculator</a> before the incident instead of after. The full recovery math plus operator rules live in the <a href="kafka-rebalance-storm-postmortem.html">deep postmortem</a>.</p>
-        <div class="tip"><strong>Interview line:</strong> when asked how deploys cause Kafka outages, answer with generations. The group never reaches a stable generation because triggers outpace completions. Fix the race, not the brokers.</div>
+      <section><h2>3. Backlog and Retry Arithmetic Are Separate</h2>
+        <p>The companion scenario assumes producers continue at <code>60,000 events/s</code> through a <code>660 s</code> pause. Its backlog estimate is <code>60,000 × 660 = 39,600,000 events</code>, assuming consumers make no progress during that window. This is modeled backlog, not Kafka incident telemetry.</p>
+        <p>Retry attempts are a separate input. If each affected logical call gets two immediate retries, the number of attempts is <code>1 + 2 = 3</code> per call. That is a 3× attempt multiplier for those calls, not 6× total load on the brokers or every service. Backoff, jitter, retry caps and idempotency change the recovery profile. Price your own policy with the <a href="../calculators.html#retry-storm">retry-storm calculator</a> using measured arrival rates; the full scenario arithmetic is in the <a href="kafka-rebalance-storm-postmortem.html">modeled cascade teardown</a>.</p>
+        <div class="tip"><strong>Interview line:</strong> for the modeled classic-eager cascade, explain the overlap: membership changes arrive before the current rebalance completes, so the group may not stabilize. Fix the trigger race, not the brokers.</div>
       </section>
 
       <section><h2>4. Eager Versus Cooperative Rebalancing</h2>
-        <p>Eager revokes all partitions from all members on every rebalance. Simple to reason about, catastrophic at scale. Cooperative assignment, from KIP-429, revokes only partitions that must move, so unaffected partitions keep consuming through the transition. The pause shrinks from group-wide to partial. The cascade loses the overlap it feeds on.</p>
-        <p>Static membership, from KIP-345, removes the trigger instead of softening the blow. Each consumer restarts under a stable instance id plus keeps its assignment. The rolling deploy becomes 120 uneventful restarts. For new deployments, track the next-generation consumer protocol from KIP-848, which moves coordination off the old broker-centric path.</p>
+        <p>The modeled failure path uses the <em>classic eager</em> rebalance protocol. Apache Kafka's KIP-429 adds cooperative incremental revocation: partitions that keep the same owner can remain assigned, while moved partitions are revoked before a later round assigns them. That can keep unaffected partitions consuming, but an assignment that moves many partitions still needs work and follow-up rounds.</p>
+        <p>Static membership (KIP-345) uses a stable <code>group.instance.id</code> so a brief restart can return as the same member before its session expires; it can avoid a rebalance for that temporary absence. It does not make longer outages or membership changes rebalance-free. Kafka 4.0+ also offers the KIP-848 consumer protocol, which is GA but must be enabled with <code>group.protocol=consumer</code>; in Kafka 4.2, <code>classic</code> remains the default.</p>
         <table><thead><tr><th>Approach</th><th>What changes</th><th>Effect</th></tr></thead><tbody>
-          <tr><td>Static membership</td><td>Stable instance ids</td><td>Restarts skip rebalancing</td></tr>
-          <tr><td>Cooperative protocol</td><td>Incremental revocation</td><td>Pauses turn partial</td></tr>
+          <tr><td>Static membership</td><td>Stable instance ID plus suitable session timeout</td><td>May avoid removal during transient unavailability</td></tr>
+          <tr><td>Cooperative assignor</td><td>Incremental revocation</td><td>Partitions that stay with their owner may remain assigned</td></tr>
           <tr><td>Group-aware deploys</td><td>Settle windows plus caps</td><td>Triggers stop overlapping</td></tr>
           <tr><td>Budgeted retries</td><td>Backoff plus jitter plus caps</td><td>Recovery stays near 1x</td></tr>
         </tbody></table>
       </section>
 
       <section><h2>5. What to Measure and Set</h2>
-        <p><strong>Alert on rebalance time, not just lag.</strong> Track join-sync duration, generations per hour plus assignment size, with pages that fire before the cascade locks in. Throughput plus broker health look idle or fine during a storm. <strong>Make deploys group-aware.</strong> Pause rollouts while a rebalance flies, stagger restarts with settle windows plus cap concurrent restarts as a fraction of group size. <strong>Budget retries like capacity.</strong> Backoff with jitter, per-dependency caps plus circuit breakers that open while lag is extreme. <strong>Revisit protocol defaults as partitions grow.</strong> Defaults are load-bearing architecture. Review them on the same schedule as capacity.</p>
+        <p><strong>Alert on rebalance duration, not only lag.</strong> Track rebalance latency, failed rebalance rate, generations per hour and assignment size. <strong>Make deploys group-aware.</strong> Wait for a stable generation, stagger restarts and cap concurrent restarts. <strong>Budget retries like capacity.</strong> Use backoff, jitter, per-dependency caps and circuit breakers that open while lag is extreme. <strong>Revisit protocol defaults as partitions grow.</strong> Measure your client, assignor and state-restore work; partition count alone does not predict pause duration.</p>
       </section>
 
       <section><h2>6. The Verdict: Boring Is the Fix</h2>
-        <p>Nothing here is novel. That is the point. Stable instance ids. Incremental revocation. Settle windows. Backoff with jitter. Protocol-level alerts. Each fix is boring alone. Together they remove the trigger, soften the blow, separate the control planes plus price the recovery. The outage was three reasonable defaults composing at scale. The fix is five boring settings reviewed on the same schedule as capacity.</p>
+        <p>Nothing here is novel. That is the point. Stable instance IDs, incremental revocation, settle windows, backoff with jitter and protocol-level alerts are ordinary controls. In the modeled cascade, overlapping membership changes keep restarting group coordination; the inputs do not establish that a particular customer outage occurred. Review these controls on the same schedule as capacity.</p>
         <p>The pattern travels past Kafka. Every system has a coordination cost that grows with membership, a rollout strategy that ignores it plus a retry policy priced at calm-weather load. Find yours before Tuesday does.</p>
       </section>
 
       <section><h2>7. Frequently Asked Questions</h2>
         <h3>What triggers a Kafka consumer rebalance?</h3>
-        <p>Membership changes: a consumer joins, leaves, crashes, or a subscription changes. Every JoinGroup triggers a rebalance so partitions can be reassigned across the group.</p>
+        <p>Under the classic group protocol, membership, subscription or relevant topic-metadata changes can require a new assignment. JoinGroup carries member information; it is not a universal trigger rule for every protocol.</p>
         <h3>What is the difference between eager and cooperative rebalancing?</h3>
-        <p>Eager revokes all partitions from every member on each rebalance, pausing the whole group. Cooperative revokes only partitions that must move, so unaffected partitions keep consuming through the transition.</p>
+        <p>Under the classic eager protocol, every member revokes its currently owned partitions before participating in a rebalance. A cooperative assignor can retain partitions that stay with their current owner and transfer revoked partitions in a later rebalance round.</p>
         <h3>How does static membership prevent rebalance storms?</h3>
-        <p>Each consumer restarts under a stable instance id and keeps its assignment instead of rejoining as a stranger. Rolling deploys stop triggering full rebalances entirely.</p>
+        <p>A stable <code>group.instance.id</code> lets Kafka recognize a briefly restarted member. If it returns before its session expires, Kafka can avoid removing and re-adding it. If the session expires, reassignment can still occur.</p>
         <h3>Why do rolling deploys pause Kafka consumers?</h3>
-        <p>Each restarted member rejoins the group. Under eager rebalancing every rejoin stops the world. Restarts arrive faster than rebalances complete, so the group never settles and consumption stalls.</p>
+        <p>With the classic eager protocol, a membership change can start a group rebalance and members revoke assignments before receiving new ones. If restart triggers arrive before earlier rebalances finish, a group-wide pause can persist. Cooperative and the newer consumer protocol use different assignment behavior.</p>
       </section>
 
       <section><h2>Sources and Method</h2>
         <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Protocol details come from Apache Kafka documentation and KIPs. The scenario model is explained in <a href="kafka-rebalance-storm-postmortem.html">the companion teardown</a>.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://kafka.apache.org/documentation/#consumerconfigs" target="_blank" rel="noopener noreferrer">Apache Kafka documentation: consumer configuration (session timeouts, poll interval, static membership)</a></li>
+          <li><a href="https://kafka.apache.org/42/configuration/consumer-configs/" target="_blank" rel="noopener noreferrer">Apache Kafka 4.2 consumer configuration: group.protocol, static membership, max.poll.interval.ms and assignors</a></li>
+          <li><a href="https://kafka.apache.org/42/operations/consumer-rebalance-protocol/" target="_blank" rel="noopener noreferrer">Apache Kafka 4.2 consumer rebalance protocol: classic and KIP-848 consumer groups</a></li>
+          <li><a href="https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/ConsumerPartitionAssignor.RebalanceProtocol.html" target="_blank" rel="noopener noreferrer">Apache Kafka 4.2 API: eager and cooperative revocation semantics</a></li>
+          <li><a href="https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/CooperativeStickyAssignor.html" target="_blank" rel="noopener noreferrer">Apache Kafka 4.2 API: CooperativeStickyAssignor requirements</a></li>
           <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-429%3A+Kafka+Consumer+Incremental+Rebalance+Protocol" target="_blank" rel="noopener noreferrer">KIP-429: Kafka Consumer Incremental Rebalance Protocol</a></li>
           <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-345%3A+Introduce+static+membership+protocol+to+reduce+consumer+rebalances" target="_blank" rel="noopener noreferrer">KIP-345: Static membership protocol to reduce consumer rebalances</a></li>
           <li><a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-848%3A+The+Next+Generation+of+the+Consumer+Rebalance+Protocol" target="_blank" rel="noopener noreferrer">KIP-848: The Next Generation of the Consumer Rebalance Protocol</a></li>

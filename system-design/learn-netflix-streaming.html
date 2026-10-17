@@ -34,7 +34,8 @@
     "description":"A free Netflix architecture course in 25 forensic lessons covering playback, Open Connect CDN, proactive fill, steering, per-title encoding, Zuul gateway, Eureka discovery, Hystrix resilience, retry budgets, chaos engineering, EVCache, Cassandra, Keystone pipeline, Flink, data lake, recommendations, experimentation, Atlas telemetry, Titus containers, Spinnaker deploys, predictive capacity, stream economics, studio supply chain plus a capstone stream.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P15H"},
+     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P15H"},
+     "dateModified":"2026-10-17",
     "syllabusSections":[{"@type":"Syllabus","name":"Play Promise"},{"@type":"Syllabus","name":"Open Connect"},{"@type":"Syllabus","name":"Fill Windows"},{"@type":"Syllabus","name":"Steering"},{"@type":"Syllabus","name":"Per-Title Encode"},{"@type":"Syllabus","name":"Zuul Gateway"},{"@type":"Syllabus","name":"Eureka Discovery"},{"@type":"Syllabus","name":"Hystrix Breakers"},{"@type":"Syllabus","name":"Retry Budgets"},{"@type":"Syllabus","name":"Chaos Discipline"},{"@type":"Syllabus","name":"EVCache"},{"@type":"Syllabus","name":"Cassandra Scale"},{"@type":"Syllabus","name":"Keystone Pipeline"},{"@type":"Syllabus","name":"Flink Nearline"},{"@type":"Syllabus","name":"Data Lake"},{"@type":"Syllabus","name":"Recommendations"},{"@type":"Syllabus","name":"Experimentation"},{"@type":"Syllabus","name":"Atlas Telemetry"},{"@type":"Syllabus","name":"Titus Containers"},{"@type":"Syllabus","name":"Spinnaker Deploys"},{"@type":"Syllabus","name":"Predictive Capacity"},{"@type":"Syllabus","name":"Stream Economics"},{"@type":"Syllabus","name":"Studio Supply Chain"},{"@type":"Syllabus","name":"Design Netflix Round"},{"@type":"Syllabus","name":"Ship One Stream"}]}
   </script>
   <script type="application/ld+json">
@@ -60,7 +61,6 @@
     .lesson-questions { margin: 16px 0 4px; padding: 14px 16px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--line)); background: color-mix(in srgb, var(--cyan) 5%, var(--card)); }
     .lesson-questions-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
     .lesson-questions p { margin: 0.55em 0; font-size: 0.94rem; }
-    .q-seen { font-size: 0.78rem; color: var(--mist); }
     .cdiagram { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; }
     .cdiagram .box { fill: var(--card-muted); stroke: var(--cyan); stroke-width: 2; }
     .cdiagram .boxlime { fill: var(--card-muted); stroke: var(--lime); stroke-width: 2; }
@@ -100,9 +100,9 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">25 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Netflix in Production: 25 Lessons From the Stream</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of streaming-shaped systems taught me one discipline: play is a promise, edge serves it, plus every layer carries a price. Twenty-five lessons from button to bill, each grounded in published engineering practice with math you can re-run. The bill hides in the boundary.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A streaming system makes one promise: press play and deliver the next frame. Edge delivery, encoding, gateways, data pipelines and operations all contribute to that experience and its cost. These lessons trace the path from playback to bill using published engineering practice and arithmetic readers can rerun.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Twenty-five Netflix lessons with live diagrams, from Open Connect to encodes plus breakers plus recommendations plus stream economics. The complete stream in one place.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Streaming course · Updated September 30, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Streaming course · Updated October 17, 2026</p>
     </header>
     <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-netflix-stream-meme.svg" alt="Three panels showing play request plus cached delivery plus encoded ladder" width="1200" height="680"><figcaption>Course cover. Play pressed plus edge served plus ladders encoded per title.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
@@ -177,8 +177,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Startup must stay under 2 seconds on 3G. What loads first? <span class="q-seen">Seen at: backend plus mobile loops.</span></p>
-            <p><strong>Q2.</strong> Rebuffers spike on one ISP nightly. What steering changes? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
+            <p><strong>Q1.</strong> Startup must stay under 2 seconds on 3G. What loads first?</p>
+            <p><strong>Q2.</strong> Rebuffers spike on one ISP nightly. What steering changes?</p>
           </div>
           <p class="lesson-hook">Promise priced. Now own the last mile. <a href="#lesson-2">Lesson 02: Open Connect →</a></p>
         </section>
@@ -202,8 +202,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Peak traffic triples at 8 PM in one metro. Where do bytes come from? <span class="q-seen">Seen at: backend plus network loops.</span></p>
-            <p><strong>Q2.</strong> ISP link saturates during finals. What absorbs the spike? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
+            <p><strong>Q1.</strong> Peak traffic triples at 8 PM in one metro. Where do bytes come from?</p>
+            <p><strong>Q2.</strong> ISP link saturates during finals. What absorbs the spike?</p>
           </div>
           <p class="lesson-hook">Mile owned. Now fill before demand. <a href="#lesson-3">Lesson 03: Fill →</a></p>
         </section>
@@ -225,8 +225,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> A global launch lands Friday 8 PM. When does the title reach edge? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Faulty encode needs global replacement in hours. What rails carry it? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> A global launch lands Friday 8 PM. When does the title reach edge?</p>
+            <p><strong>Q2.</strong> Faulty encode needs global replacement in hours. What rails carry it?</p>
           </div>
           <p class="lesson-hook">Filled early. Now steer each play. <a href="#lesson-4">Lesson 04: Steering →</a></p>
         </section>
@@ -249,8 +249,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Appliance sickens mid-evening. Where do its sessions go? <span class="q-seen">Seen at: SRE plus network loops.</span></p>
-            <p><strong>Q2.</strong> Two paths tie on latency. What breaks the tie? <span class="q-seen">Seen at: backend plus network loops.</span></p>
+            <p><strong>Q1.</strong> Appliance sickens mid-evening. Where do its sessions go?</p>
+            <p><strong>Q2.</strong> Two paths tie on latency. What breaks the tie?</p>
           </div>
           <p class="lesson-hook">Path picked. Now encode smarter. <a href="#lesson-5">Lesson 05: Encode →</a></p>
         </section>
@@ -278,8 +278,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Animation plus action share one ladder. What changes per title? <span class="q-seen">Seen at: backend plus media loops.</span></p>
-            <p><strong>Q2.</strong> AV1 promises 30 percent savings. What migrates first? <span class="q-seen">Seen at: platform plus media loops.</span></p>
+            <p><strong>Q1.</strong> Animation and action share one ladder. What changes per title?</p>
+            <p><strong>Q2.</strong> AV1 promises 30 percent savings. What migrates first?</p>
           </div>
           <p class="lesson-hook">Bits shaped. Now guard the door. <a href="#lesson-6">Lesson 06: Zuul →</a></p>
         </section>
@@ -304,8 +304,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Retry storm triples inbound RPS. What sheds first? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> CPU-heavy personalization strains the door. What degrades gracefully? <span class="q-seen">Seen at: platform plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Retry storm triples inbound RPS. What sheds first?</p>
+            <p><strong>Q2.</strong> CPU-heavy personalization strains the door. What degrades gracefully?</p>
           </div>
           <p class="lesson-hook">Door held. Now find services. <a href="#lesson-7">Lesson 07: Eureka →</a></p>
         </section>
@@ -327,8 +327,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Deploy replaces 500 instances in minutes. How do callers track them? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Registry blips for 30 seconds. What keeps traffic flowing? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Deploy replaces 500 instances in minutes. How do callers track them?</p>
+            <p><strong>Q2.</strong> Registry blips for 30 seconds. What keeps traffic flowing?</p>
           </div>
           <p class="lesson-hook">Fleet named. Now isolate failure. <a href="#lesson-8">Lesson 08: Hystrix →</a></p>
         </section>
@@ -348,41 +348,41 @@
           <ul class="lesson-ideas">
             <li>Tune timeouts from p99 plus headroom. Generous timeouts queue, tight ones flap.</li>
             <li>Serve degraded fallbacks per dependency. Static rows beat blank screens.</li>
-            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Queue</a>, stuck logins with no breaker.</li>
+            <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce's Dreamforce login stall</a>; the public record does not establish its queue or breaker settings.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Dependency p99 triples at peak. What contains the blast? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Breaker flaps all afternoon. Timeout or threshold moves? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Dependency p99 triples at peak. What contains the blast?</p>
+            <p><strong>Q2.</strong> Breaker flaps all afternoon. Timeout or threshold moves?</p>
           </div>
           <p class="lesson-hook">Cascades broken. Now budget retries. <a href="#lesson-9">Lesson 09: Retries →</a></p>
         </section>
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Retries · Loans with budgets</div>
           <h2>Retry Budgets Cap Storms</h2>
-          <p class="lesson-story">Retries multiply calm traffic into storms when every client retries blindly. Budgets cap retry share near a fifth of traffic with backoff plus jitter. Device retries get throttled at the edge before entering. Unbudgeted retries turn one slow dependency into a fleet-wide queue. The incident collects every loan.</p>
-<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="retry arithmetic">
+          <p class="lesson-story">Retries can multiply offered load when clients retry blindly. Set a bounded budget per dependency, use backoff with jitter to spread attempts, and throttle excess retries before they reach an overloaded service. Choose limits from measured baseline load, dependency capacity, and timeout behavior rather than a universal retry percentage.</p>
+<svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Conceptual retry controls: set a budget, spread attempts with backoff and jitter, and throttle excess at the edge; bars are not measured values">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
-<text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
-<text x="130" y="136" font-size="11" text-anchor="middle">budgets set</text>
+<text x="130" y="34.0" font-size="11" text-anchor="middle">baseline</text>
+<text x="130" y="136" font-size="11" text-anchor="middle">budget set</text>
 <rect class="box" x="230" y="69.6" width="80" height="48.4" rx="6"/>
-<text x="270" y="63.6" font-size="11" text-anchor="middle">62</text>
+<text x="270" y="63.6" font-size="11" text-anchor="middle">spread</text>
 <text x="270" y="136" font-size="11" text-anchor="middle">backoff jittered</text>
 <rect class="box" x="370" y="91.5" width="80" height="26.5" rx="6"/>
-<text x="410" y="85.5" font-size="11" text-anchor="middle">34</text>
+<text x="410" y="85.5" font-size="11" text-anchor="middle">capped</text>
 <text x="410" y="136" font-size="11" text-anchor="middle">edge throttled</text>
 <g stroke-width="2"><line x1="60" y1="118" x2="500" y2="118"/></g>
-<text class="lbl" x="280" y="144" font-size="10" text-anchor="middle">storms capped · modeled, not invoices</text>
+<text class="lbl" x="280" y="144" font-size="10" text-anchor="middle">conceptual sequence · bars are not to scale</text>
 </svg>
           <ul class="lesson-ideas">
-            <li>Price every policy at 6x calm load before approving. Numbers veto hopeful configs.</li>
+            <li>Test each policy at its configured maximum attempt count and combined downstream fan-out before approval.</li>
             <li>Run the retry-storm calculator with your RPS. Storms modeled beat storms survived.</li>
-            <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">Kafka Rebalance Storm</a>, 3x retry amplification modeled (1 original + 2 retries).</li>
+             <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">the modeled Kafka rebalance scenario</a>: one original plus two retries equals three attempts per affected call.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Three services retry one slow API. What caps the product? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Budget exhausts nightly at 8 PM. What moves: budget or dependency? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Three services retry one slow API. What caps the product?</p>
+            <p><strong>Q2.</strong> Budget exhausts nightly at 8 PM. What moves: budget or dependency?</p>
           </div>
           <p class="lesson-hook">Storms capped. Now rehearse fire. <a href="#lesson-10">Lesson 10: Chaos →</a></p>
         </section>
@@ -404,8 +404,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Leadership fears prod chaos. What drill runs first? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Region evacuation stalls halfway. What proved missing? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Leadership fears prod chaos. What drill runs first?</p>
+            <p><strong>Q2.</strong> Region evacuation stalls halfway. What proved missing?</p>
           </div>
           <p class="lesson-hook">Fire rehearsed. Now cache hot. <a href="#lesson-11">Lesson 11: EVCache →</a></p>
         </section>
@@ -429,8 +429,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Personalization reads spike 10x at 8 PM. What serves them? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> RAM bill doubles yearly. What tier absorbs cold taste? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Personalization reads spike 10x at 8 PM. What serves them?</p>
+            <p><strong>Q2.</strong> RAM bill doubles yearly. What tier absorbs cold taste?</p>
           </div>
           <p class="lesson-hook">Hot cached. Now persist globals. <a href="#lesson-12">Lesson 12: Cassandra →</a></p>
         </section>
@@ -452,8 +452,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Region partitions for an hour. Reads or writes bend? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Node loss during peak goes unnoticed. What architecture earns that? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+            <p><strong>Q1.</strong> Region partitions for an hour. Reads or writes bend?</p>
+            <p><strong>Q2.</strong> Node loss during peak goes unnoticed. What architecture earns that?</p>
           </div>
           <p class="lesson-hook">Catalog held. Now stream events. <a href="#lesson-13">Lesson 13: Keystone →</a></p>
         </section>
@@ -476,8 +476,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Launch night triples events. What absorbs the burst? <span class="q-seen">Seen at: data plus backend loops.</span></p>
-            <p><strong>Q2.</strong> One sink lags hours. What isolates the slow reader? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Launch night triples events. What absorbs the burst?</p>
+            <p><strong>Q2.</strong> One sink lags hours. What isolates the slow reader?</p>
           </div>
           <p class="lesson-hook">Events piped. Now compute nearline. <a href="#lesson-14">Lesson 14: Flink →</a></p>
         </section>
@@ -499,8 +499,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Trending needs five-minute freshness. Batch or stream? <span class="q-seen">Seen at: data plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Job dies mid-window at peak. What restores exact counts? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Trending needs five-minute freshness. Batch or stream?</p>
+            <p><strong>Q2.</strong> Job dies mid-window at peak. What restores exact counts?</p>
           </div>
           <p class="lesson-hook">Nearline fresh. Now lake the history. <a href="#lesson-15">Lesson 15: Lake →</a></p>
         </section>
@@ -525,8 +525,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Analyst scans cost 10x this quarter. What prunes them? <span class="q-seen">Seen at: data plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Nightly load misses its window. What parallelizes safely? <span class="q-seen">Seen at: data plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Analyst scans cost 10x this quarter. What prunes them?</p>
+            <p><strong>Q2.</strong> Nightly load misses its window. What parallelizes safely?</p>
           </div>
           <p class="lesson-hook">History kept. Now taste by math. <a href="#lesson-16">Lesson 16: Taste →</a></p>
         </section>
@@ -554,8 +554,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Row take-rate halves this month. Model or presentation fault? <span class="q-seen">Seen at: data plus product loops.</span></p>
-            <p><strong>Q2.</strong> Feature store bill doubles. What tier absorbs cold taste? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Row take-rate halves this month. Model or presentation fault?</p>
+            <p><strong>Q2.</strong> Feature store bill doubles. What tier absorbs cold taste?</p>
           </div>
           <p class="lesson-hook">Taste ranked. Now test everything. <a href="#lesson-17">Lesson 17: Tests →</a></p>
         </section>
@@ -579,8 +579,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Artwork test lifts clicks but cuts plays. Ship or kill? <span class="q-seen">Seen at: product plus data loops.</span></p>
-            <p><strong>Q2.</strong> Canary regresses latencies 5 percent. What decides rollback? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Artwork test lifts clicks but cuts plays. Ship or kill?</p>
+            <p><strong>Q2.</strong> Canary regresses latencies 5 percent. What decides rollback?</p>
           </div>
           <p class="lesson-hook">Bets priced. Now watch everything. <a href="#lesson-18">Lesson 18: Atlas →</a></p>
         </section>
@@ -603,8 +603,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Cardinality explodes after a deploy. What caps it? <span class="q-seen">Seen at: SRE plus observability loops.</span></p>
-            <p><strong>Q2.</strong> Alerts fire on CPU while users hurt elsewhere. What re-aims them? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Cardinality explodes after a deploy. What caps it?</p>
+            <p><strong>Q2.</strong> Alerts fire on CPU while users hurt elsewhere. What re-aims them?</p>
           </div>
           <p class="lesson-hook">Signals separate. Now schedule work. <a href="#lesson-19">Lesson 19: Titus →</a></p>
         </section>
@@ -632,8 +632,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> GPU jobs starve behind batch queues. What separates them? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Evening peak needs 30 percent more cores. What frees them? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> GPU jobs starve behind batch queues. What separates them?</p>
+            <p><strong>Q2.</strong> Evening peak needs 30 percent more cores. What frees them?</p>
           </div>
           <p class="lesson-hook">Work scheduled. Now ship safely. <a href="#lesson-20">Lesson 20: Spinnaker →</a></p>
         </section>
@@ -655,8 +655,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Canary passes but full rollout burns. What stage missed it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Deploy velocity stalls on manual gates. What automates safely? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Canary passes but full rollout burns. What stage missed it?</p>
+            <p><strong>Q2.</strong> Deploy velocity stalls on manual gates. What automates safely?</p>
           </div>
           <p class="lesson-hook">Deploys boring. Now predict capacity. <a href="#lesson-21">Lesson 21: Capacity →</a></p>
         </section>
@@ -678,8 +678,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Tentpole launches Friday. When does capacity land? <span class="q-seen">Seen at: SRE plus capacity loops.</span></p>
-            <p><strong>Q2.</strong> Forecast misses by 20 percent upward. What absorbs it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Tentpole launches Friday. When does capacity land?</p>
+            <p><strong>Q2.</strong> Forecast misses by 20 percent upward. What absorbs it?</p>
           </div>
           <p class="lesson-hook">Capacity preset. Now total the month. <a href="#lesson-22">Lesson 22: Economics →</a></p>
         </section>
@@ -707,8 +707,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> One metro costs 3x per hour. What lever moves first? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Codec migration promises 25 percent savings. What proves it? <span class="q-seen">Seen at: backend plus media loops.</span></p>
+            <p><strong>Q1.</strong> One metro costs 3x per hour. What lever moves first?</p>
+            <p><strong>Q2.</strong> Codec migration promises 25 percent savings. What proves it?</p>
           </div>
           <p class="lesson-hook">Month totaled. Now feed the machine. <a href="#lesson-23">Lesson 23: Studio →</a></p>
         </section>
@@ -731,8 +731,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Launch slips a week on QC backlog. What parallelizes safely? <span class="q-seen">Seen at: platform plus media loops.</span></p>
-            <p><strong>Q2.</strong> Master corrupts after encodes ship. What restores the chain? <span class="q-seen">Seen at: SRE plus media loops.</span></p>
+            <p><strong>Q1.</strong> Launch slips a week on QC backlog. What parallelizes safely?</p>
+            <p><strong>Q2.</strong> Master corrupts after encodes ship. What restores the chain?</p>
           </div>
           <p class="lesson-hook">Factory fed. Now ace the round. <a href="#lesson-24">Lesson 24: Interview →</a></p>
         </section>
@@ -754,8 +754,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design video sharing for 50M daily viewers. Sketch plus price it. <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Steering plus encodes draw the hardest probes. What numbers answer them? <span class="q-seen">Seen at: backend plus media loops.</span></p>
+            <p><strong>Q1.</strong> Design video sharing for 50M daily viewers. Sketch and price it.</p>
+            <p><strong>Q2.</strong> Steering and encodes draw the hardest probes. What numbers answer them?</p>
           </div>
           <p class="lesson-hook">Round rehearsed. Now ship proof. <a href="#lesson-25">Lesson 25: Capstone →</a></p>
         </section>
@@ -780,8 +780,8 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Demo your streamer under injected zone failure. What stays smooth? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Price your streamer per thousand hours. What dominates? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Demo your streamer under injected zone failure. What stays smooth?</p>
+            <p><strong>Q2.</strong> Price your streamer per thousand hours. What dominates?</p>
           </div>
           <p class="lesson-hook">Course complete. Start the companion. <a href="learn-system-design.html">System Design Course →</a></p>
         </section>
