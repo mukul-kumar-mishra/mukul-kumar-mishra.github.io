@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="570" viewBox="0 0 390 570" role="img" aria-labelledby="title desc">
+  <title id="title">Two separate GCS write-impact windows total 18 hours and 11 minutes</title>
+  <desc id="desc">Google's final report lists an October 8 us-central1 write-impact window of 12 hours and 30 minutes and an October 9 us-central1-b recurrence of 5 hours and 41 minutes. Their active durations total 18 hours and 11 minutes. The elapsed start-to-final-end span is 29 hours and 46 minutes, with 11 hours and 35 minutes between the listed windows.</desc>
+  <style>text{font-family:Inter,Arial,sans-serif}</style>
+  <rect width="390" height="570" fill="#0b2032"/><rect width="390" height="58" fill="#071727"/>
+  <text x="18" y="24" font-size="10" font-weight="700" letter-spacing="1.1" fill="#6ddbd0">INCIDENT WINDOWS / GOOGLE CLOUD STORAGE</text>
+  <text x="18" y="82" font-size="21" font-weight="750" fill="#eff8ff">Two write-impact windows</text>
+  <text x="18" y="104" font-size="12" fill="#b5d0df">All times US/Pacific · October 8–9, 2026</text>
+  <rect x="18" y="124" width="354" height="126" rx="10" fill="#102b41" stroke="#37617a" stroke-width="1.5"/>
+  <text x="31" y="151" font-size="12" font-weight="700" fill="#ffc078">FIRST · OCT 8 · US-CENTRAL1</text>
+  <text x="31" y="184" font-size="19" font-weight="750" fill="#eff8ff">04:00–16:30 PT</text>
+  <text x="31" y="218" font-size="13" font-weight="700" fill="#eff8ff">12h 30m</text>
+  <rect x="18" y="266" width="354" height="126" rx="10" fill="#15364d" stroke="#37617a" stroke-width="1.5"/>
+  <text x="31" y="293" font-size="12" font-weight="700" fill="#6ddbd0">RECURRENCE · OCT 9 · US-CENTRAL1-B</text>
+  <text x="31" y="326" font-size="19" font-weight="750" fill="#eff8ff">04:05–09:46 PT</text>
+  <text x="31" y="360" font-size="13" font-weight="700" fill="#eff8ff">5h 41m</text>
+  <text x="18" y="432" font-size="17" font-weight="750" fill="#eff8ff">12h30 + 5h41 = 18h11 active</text>
+  <text x="18" y="458" font-size="12" fill="#b5d0df">29h46 elapsed · 11h35 between windows</text>
+  <text x="18" y="527" font-size="9" fill="#b5d0df">Source: Google Cloud Status · final report, Oct 14, 2026.</text>
+</svg>

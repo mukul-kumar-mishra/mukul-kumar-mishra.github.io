@@ -1,33 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="img-title img-desc">
-<title id="img-title">The sorter meant to relieve nodes starved them.</title>
-<desc id="img-desc">Google's preliminary report: a relief optimization plus a metadata fault behind 12.5 hours of us-central1 write errors. 1 / TRIGGER, Sorting optimization ships, Meant to relieve local hotspots · Ran on us-central1 backend nodes. 2 / EXHAUSTION, Nodes run out of resources, Ingestion services time out · Writes routed there fail. 3 / OUTCOME, Regional 503s for 12.5 hours, WriteObject 503s + timeouts · Reads wobble; other regions green</desc>
-<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#8faac5"/></marker></defs>
-<rect width="1200" height="680" fill="#101a2c"/>
-<rect width="1200" height="78" fill="#0b1423"/>
-<image x="40" y="9" width="174" height="60" preserveAspectRatio="xMinYMid meet" href="../logo.png"/>
-<text x="244.0" y="48.0" font-size="15" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="2"><tspan x="244.0" dy="0">CLOUD STORAGE / WRITE-PATH FAILURE</tspan></text>
-<text x="54.0" y="137.0" font-size="31" font-weight="750" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="54.0" dy="0">The sorter meant to relieve nodes starved them.</tspan></text>
-<text x="56.0" y="177.0" font-size="17" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Google's preliminary report: a relief optimization plus a metadata fault behind 12.5 hours of us-central1 write errors.</tspan></text>
-<path d="M54 202H1146" stroke="#405776" stroke-width="1" opacity="0.7"/>
-<rect x="54.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
-<rect x="54.0" y="250" width="6" height="218" rx="3" fill="#67d5cb"/>
-<text x="78.0" y="284.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="78.0" dy="0">1 / TRIGGER</tspan></text>
-<text x="78.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Sorting optimization</tspan><tspan x="78.0" dy="24.0">ships</tspan></text>
-<text x="78.0" y="389.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Meant to relieve local hotspots ·</tspan><tspan x="78.0" dy="20.0">Ran on us-central1 backend nodes</tspan></text>
-<path d="M401.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
-<rect x="428.0" y="250" width="344.0" height="218" rx="16" fill="#202e46" stroke="#405776" stroke-width="2"/>
-<rect x="428.0" y="250" width="6" height="218" rx="3" fill="#ffb36b"/>
-<text x="452.0" y="284.0" font-size="13" font-weight="700" fill="#ffb36b" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="452.0" dy="0">2 / EXHAUSTION</tspan></text>
-<text x="452.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Nodes run out of</tspan><tspan x="452.0" dy="24.0">resources</tspan></text>
-<text x="452.0" y="389.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="452.0" dy="0">Ingestion services time out · Writes</tspan><tspan x="452.0" dy="20.0">routed there fail</tspan></text>
-<path d="M775.0 359h18" fill="none" stroke="#b6c5d8" stroke-width="3" marker-end="url(#arrow)"/>
-<rect x="802.0" y="250" width="344.0" height="218" rx="16" fill="#192741" stroke="#405776" stroke-width="2"/>
-<rect x="802.0" y="250" width="6" height="218" rx="3" fill="#ffb36b"/>
-<text x="826.0" y="284.0" font-size="13" font-weight="700" fill="#ffb36b" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.3"><tspan x="826.0" dy="0">3 / OUTCOME</tspan></text>
-<text x="826.0" y="326.0" font-size="20" font-weight="700" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">Regional 503s for 12.5</tspan><tspan x="826.0" dy="24.0">hours</tspan></text>
-<text x="826.0" y="389.0" font-size="14" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="826.0" dy="0">WriteObject 503s + timeouts · Reads</tspan><tspan x="826.0" dy="20.0">wobble; other regions green</tspan></text>
-<rect x="54" y="496" width="1092" height="90" rx="14" fill="#283751" stroke="#405776" stroke-width="2" stroke-dasharray="7 5"/>
-<text x="78.0" y="527.0" font-size="13" font-weight="700" fill="#67d5cb" font-family="Inter, Arial, sans-serif" text-anchor="start" letter-spacing="1.4"><tspan x="78.0" dy="0">PRELIMINARY REPORT LIMIT</tspan></text>
-<text x="78.0" y="558.0" font-size="16" font-weight="600" fill="#f2f6fb" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="78.0" dy="0">Google labels this a preliminary report; the full root-cause analysis is still underway. Node counts and traffic volumes were not</tspan><tspan x="78.0" dy="20.5">disclosed.</tspan></text>
-<text x="56.0" y="632.0" font-size="12" font-weight="400" fill="#b6c5d8" font-family="Inter, Arial, sans-serif" text-anchor="start"><tspan x="56.0" dy="0">Source: Google Cloud Status, incident mSFVt6PiP557bjRyYsut, Oct 8–9, 2026.</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Capacity-aware routing was bypassed during the GCS write incident</title>
+  <desc id="desc">Google's final October 14 report says a traffic-sorting configuration update bypassed standard capacity-aware routing. A small fraction of backend nodes with low available serving capacity received an overwhelming proportion of writes, exhausted resources, and timed out. A separate underlying-database issue added metadata errors during part of the incident.</desc>
+  <style>
+    text{font-family:Inter,Arial,sans-serif}.desktop{display:block}.mobile{display:none}
+    @media(max-width:700px){.desktop{display:none}.mobile{display:block}}
+  </style>
+  <rect width="1200" height="680" fill="#101a2c"/><rect width="1200" height="78" fill="#0b1423"/>
+  <text x="54" y="48" font-size="16" font-weight="700" letter-spacing="2" fill="#67d5cb">CLOUD STORAGE / WRITE-PATH FAILURE</text>
+  <g class="desktop">
+    <text x="54" y="137" font-size="33" font-weight="750" fill="#f2f6fb">A routing change sent writes where capacity was low.</text>
+    <text x="56" y="178" font-size="18" fill="#b6c5d8">Google's final report · incident in us-central1 · Oct 8, 2026</text>
+    <rect x="54" y="232" width="234" height="226" rx="15" fill="#192741" stroke="#405776" stroke-width="2"/>
+    <text x="74" y="269" font-size="13" font-weight="700" letter-spacing="1.2" fill="#67d5cb">1 / CONFIGURATION</text>
+    <text x="74" y="316" font-size="21" font-weight="700" fill="#f2f6fb"><tspan x="74">Traffic-sorting</tspan><tspan x="74" dy="26">update</tspan></text>
+    <text x="74" y="390" font-size="16" fill="#b6c5d8"><tspan x="74">Intended to address</tspan><tspan x="74" dy="22">localized capacity</tspan></text>
+    <path d="M292 344h20" stroke="#b6c5d8" stroke-width="3"/><path d="m306 335 9 9-9 9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="320" y="232" width="234" height="226" rx="15" fill="#202e46" stroke="#405776" stroke-width="2"/>
+    <text x="340" y="269" font-size="13" font-weight="700" letter-spacing="1.2" fill="#ffb36b">2 / ROUTING</text>
+    <text x="340" y="316" font-size="21" font-weight="700" fill="#f2f6fb"><tspan x="340">Capacity-aware</tspan><tspan x="340" dy="26">logic bypassed</tspan></text>
+    <text x="340" y="390" font-size="16" fill="#b6c5d8"><tspan x="340">Standard routing guard</tspan><tspan x="340" dy="22">was not applied</tspan></text>
+    <path d="M558 344h20" stroke="#b6c5d8" stroke-width="3"/><path d="m572 335 9 9-9 9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="586" y="232" width="234" height="226" rx="15" fill="#192741" stroke="#405776" stroke-width="2"/>
+    <text x="606" y="269" font-size="13" font-weight="700" letter-spacing="1.2" fill="#ffb36b">3 / LOAD IMBALANCE</text>
+    <text x="606" y="316" font-size="21" font-weight="700" fill="#f2f6fb"><tspan x="606">Small node</tspan><tspan x="606" dy="26">fraction overloaded</tspan></text>
+    <text x="606" y="390" font-size="16" fill="#b6c5d8"><tspan x="606">Overwhelming write share</tspan><tspan x="606" dy="22">despite low capacity</tspan></text>
+    <path d="M824 344h20" stroke="#b6c5d8" stroke-width="3"/><path d="m838 335 9 9-9 9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="852" y="232" width="294" height="226" rx="15" fill="#202e46" stroke="#ff846e" stroke-width="2"/>
+    <text x="872" y="269" font-size="13" font-weight="700" letter-spacing="1.2" fill="#ff846e">4 / CUSTOMER SYMPTOM</text>
+    <text x="872" y="316" font-size="21" font-weight="700" fill="#f2f6fb"><tspan x="872">Ingestion services</tspan><tspan x="872" dy="26">timed out</tspan></text>
+    <text x="872" y="390" font-size="16" fill="#b6c5d8"><tspan x="872">WriteObject 503s and</tspan><tspan x="872" dy="22">client-side timeouts</tspan></text>
+    <rect x="54" y="487" width="1092" height="96" rx="14" fill="#283751" stroke="#405776" stroke-width="2"/>
+    <text x="78" y="524" font-size="14" font-weight="700" letter-spacing="1.3" fill="#67d5cb">SEPARATE CONTRIBUTING ISSUE</text>
+    <text x="78" y="558" font-size="19" font-weight="600" fill="#f2f6fb">An underlying database issue added metadata-processing errors during part of the first incident.</text>
+    <text x="56" y="633" font-size="13" fill="#b6c5d8">Source: Google Cloud Status, incident mSFVt6PiP557bjRyYsut; final report, Oct 14, 2026.</text>
+  </g>
+  <g class="mobile">
+    <text x="44" y="133" font-size="38" font-weight="750" fill="#f2f6fb">Why GCS writes failed</text>
+    <text x="46" y="168" font-size="25" fill="#b6c5d8">Final Google report · Oct 14, 2026</text>
+    <rect x="42" y="190" width="1116" height="75" rx="12" fill="#192741" stroke="#405776" stroke-width="2"/>
+    <text x="65" y="220" font-size="25" font-weight="700" fill="#67d5cb">1 · TRAFFIC-SORTING CONFIG UPDATE</text>
+    <text x="65" y="249" font-size="21" fill="#f2f6fb">Intended to address localized capacity constraints</text>
+    <path d="M600 267v9" stroke="#b6c5d8" stroke-width="3"/><path d="m591 272 9 9 9-9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="42" y="284" width="1116" height="75" rx="12" fill="#202e46" stroke="#405776" stroke-width="2"/>
+    <text x="65" y="314" font-size="25" font-weight="700" fill="#ffb36b">2 · CAPACITY-AWARE ROUTING BYPASSED</text>
+    <text x="65" y="343" font-size="21" fill="#f2f6fb">The standard routing logic was not applied</text>
+    <path d="M600 361v9" stroke="#b6c5d8" stroke-width="3"/><path d="m591 366 9 9 9-9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="42" y="378" width="1116" height="75" rx="12" fill="#192741" stroke="#405776" stroke-width="2"/>
+    <text x="65" y="408" font-size="25" font-weight="700" fill="#ffb36b">3 · WRITE TRAFFIC CONCENTRATED</text>
+    <text x="65" y="437" font-size="21" fill="#f2f6fb">Small node fraction; low serving capacity</text>
+    <path d="M600 455v9" stroke="#b6c5d8" stroke-width="3"/><path d="m591 460 9 9 9-9" fill="none" stroke="#b6c5d8" stroke-width="3"/>
+    <rect x="42" y="472" width="1116" height="75" rx="12" fill="#202e46" stroke="#ff846e" stroke-width="2"/>
+    <text x="65" y="502" font-size="25" font-weight="700" fill="#ff846e">4 · INGESTION TIMED OUT</text>
+    <text x="65" y="531" font-size="21" fill="#f2f6fb">WriteObject 503s and client-side timeouts</text>
+    <text x="46" y="580" font-size="20" font-weight="700" fill="#67d5cb">Separate: database issue added metadata errors during part of the first window.</text>
+    <text x="46" y="642" font-size="17" fill="#b6c5d8">Source: Google Cloud Status · final report, Oct 14, 2026.</text>
+  </g>
 </svg>

@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Google's September 2026 us-central1 outage isolated network capacity in parts of two zones for 4 hours 11 minutes. A sourced postmortem of the fiber-maintenance failure.">
+  <meta name="description" content="Google's final report gives a 4h11 customer-impact window; the status header gives 4h08. Incompatible transceivers and missing maintenance safeguards isolated network capacity in parts of two zones.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="GCP us-central1 Outage: Fiber Isolation Across Two Zones | Buildopsy">
-  <meta property="og:description" content="Google's September 2026 us-central1 outage isolated network capacity in parts of two zones for 4 hours 11 minutes. A sourced postmortem of the fiber-maintenance failure.">
+  <meta property="og:title" content="GCP us-central1 Fiber Isolation: 4h11 Customer Impact | Buildopsy">
+  <meta property="og:description" content="Google's final report gives a 4h11 customer-impact window; the status header gives 4h08. Incompatible transceivers and missing maintenance safeguards isolated network capacity in parts of two zones.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta property="og:image:alt" content="Two affected zones, a 4 hour 11 minute incident window and fiber paths lost within 13 minutes">
+  <meta property="og:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, plus the reported 13-minute fiber disconnection sequence">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="GCP us-central1 Outage: Fiber Isolation Across Two Zones">
-  <meta name="twitter:description" content="Google's September 2026 report documents a fiber-maintenance failure that isolated network capacity in parts of two zones for 4 hours 11 minutes.">
+  <meta name="twitter:title" content="GCP us-central1 Fiber Isolation: 4h11 Customer Impact">
+  <meta name="twitter:description" content="Google's final report gives a 4h11 customer-impact window; the status header gives 4h08. Incompatible transceivers and missing maintenance safeguards isolated network capacity in parts of two zones.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta name="twitter:image:alt" content="Two affected zones, a 4 hour 11 minute incident window and fiber paths lost within 13 minutes">
-  <title>GCP us-central1 Outage: Fiber Isolation Across Two Zones | Buildopsy</title>
+  <meta name="twitter:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, plus the reported 13-minute fiber disconnection sequence">
+  <title>GCP us-central1 Fiber Isolation: 4h11 Customer Impact | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,14 +29,14 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Outage: Fiber Isolation Across Two Zones", "description": "A sourced postmortem of Google's September 2026 us-central1 network incident: incompatible transceivers and an unsafe maintenance sequence isolated capacity in parts of two zones for 4 hours 11 minutes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Fiber Isolation: 4h11 Customer Impact", "description": "Google's final report gives a 4h11 detailed customer-impact window, while the incident header gives 4h08; incompatible transceivers and missing maintenance safeguards isolated capacity in parts of two zones.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-17", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"What caused the September 2026 GCP us-central1 outage?","acceptedAnswer":{"@type":"Answer","text":"Google's incident report says incompatible optical transceivers were installed during network maintenance. A work sequence and verification failure led to fiber paths being disconnected in parts of us-central1-b and us-central1-f."}},
-      {"@type":"Question","name":"How long did the Google Cloud incident last?","acceptedAnswer":{"@type":"Answer","text":"Google reports the incident window as 07:41 to 11:52 US/Pacific on September 1, 2026, a duration of 4 hours 11 minutes."}},
+      {"@type":"Question","name":"How long did the Google Cloud incident last?","acceptedAnswer":{"@type":"Answer","text":"Google's final report gives customer impact from 07:41 to 11:52 US/Pacific, or 4 hours 11 minutes. The status-page header starts at 07:44 and ends at 11:52, a 4-hour-8-minute record window; Google does not reconcile the start-time difference."}},
       {"@type":"Question","name":"Did the outage affect an entire region?","acceptedAnswer":{"@type":"Answer","text":"No. Google says the physical network isolation affected specific clusters in parts of two zones. Many multi-zonal deployments continued to serve through unaffected capacity, though dependent regional products also saw symptoms."}},
       {"@type":"Question","name":"What engineering lessons does Google's report support?","acceptedAnswer":{"@type":"Answer","text":"The report describes missing work sequencing and verification safeguards. It supports explicit maintenance sequencing, stop-work checks, automated traffic diversion and rehearsed application behavior during network isolation."}}
     ]
@@ -68,22 +68,22 @@
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-central1 Outage: Fiber Isolation Across Two Zones</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 1, 2026, a network-maintenance error isolated compute capacity in specific clusters in us-central1-b and us-central1-f. Google's incident report attributes the failure to incompatible optical transceivers plus a work sequence that omitted required verification. The reported incident window was 4 hours 11 minutes.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The primary failure was physical network isolation during maintenance, not a demonstrated regional control-plane queue. This reconstruction separates Google's published incident facts from the resilience analysis that follows.</p>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-central1 Fiber Isolation: 4h11 Customer Impact</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 1, 2026, incompatible optical transceivers and a maintenance sequence without required checks isolated compute capacity in specific clusters in us-central1-b and us-central1-f. Google's final report gives customer impact from 07:41 to 11:52 US/Pacific (4h11); the status-page header starts at 07:44 (4h08) and ends at 11:52.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The final report records a 4h11 customer-impact window; the status header records 4h08, and Google does not reconcile the three-minute start difference. The failure was physical network isolation during maintenance, not a demonstrated regional control-plane queue.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Zones with affected clusters</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">us-central1-b and -f</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Reported incident window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h 11m</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Detailed customer impact</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h 11m</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">All paths disconnected</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Within 13m</div></div>
-          <div class="stat" style="padding:14px;"><div class="lbl">Published root cause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Maintenance error</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Status-header window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h 08m</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 14, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 17, 2026</p>
       </header>
 
 
 
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Summary of Google's GCP outage report: two affected zones, a 4 hour 11 minute incident window and fiber paths disconnected during maintenance" width="1200" height="680"><figcaption>Figure 1. Google's report records fiber isolation in parts of two zones, with an incident window of 4 hours 11 minutes.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-central1-zone-mobile.svg"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Timeline comparison: Google's detailed report gives customer impact from 07:41 to 11:52 PT (4h11); the status-page header gives 07:44 to 11:52 (4h08). Fiber paths were disconnected within 13 minutes." width="1200" height="680"></picture><figcaption>Figure 1. Google gives different start times in the detailed customer-impact report (07:41) and incident header (07:44); both end at 11:52 PT. The report says fiber paths were disconnected within 13 minutes.</figcaption></figure>
 
       <section><h2>1. What Google's report establishes</h2>
         <p>On September 1, a scheduled capacity upgrade replaced optical transceivers on network routers supporting parts of us-central1-b and us-central1-f. The replacement transceivers were incompatible with equipment remaining in the network fabric. A manually orchestrated work list omitted the required one-router-at-a-time sequence plus the normal human and software verification steps. Fiber paths were disconnected across the affected devices within 13 minutes.</p>
@@ -96,7 +96,7 @@
         <p>The September 29 addendum adds important detail: traffic diversion reduced the impact to regional products, while Cloud Run and App Engine saw a later thundering herd as workloads initialized on replacement capacity. GKE control-plane requests also experienced errors and delays. Those are reported outcomes. They do not establish the invented per-minute queue and retry counts previously shown here.</p>
       </section>
 
-      <figure class="article-figure"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Sequence in Google's incident report: incompatible transceiver replacement, fiber-path loss, then network isolation in affected clusters" width="1200" height="680"><figcaption>Figure 2. The reported chain from incompatible maintenance hardware to network isolation. It does not depict an unreported retry multiplier.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-central1-coupling-mobile.svg"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Google's reported sequence: scheduled router upgrade, incompatible optical transceivers, a manual work list without one-router-at-a-time checks, then fiber-path loss and network isolation" width="1200" height="680"></picture><figcaption>Figure 2. The final report links incompatible transceivers and missing maintenance sequencing and verification to fiber-path loss and network isolation.</figcaption></figure>
 
       <section><h2>3. Timeline from the primary report</h2>
         <ul>
@@ -106,7 +106,7 @@
           <li><strong>09:19:</strong> diversion actions were removed as network capacity recovered.</li>
           <li><strong>11:52:</strong> Google confirmed recovery across nearly all affected services and long-running operations.</li>
         </ul>
-        <p>Google's 4-hour-11-minute figure is the incident window. Individual products and workloads had different impact periods.</p>
+        <p>Google's final report calls 07:41–11:52 the customer-impact interval (4 hours 11 minutes). The incident-page header instead records 07:44–11:52 (4 hours 8 minutes). Both times are US/Pacific; the public report does not explain the three-minute difference. Individual products and workloads had different impact periods.</p>
       </section>
 
       <section><h2>4. Resilience lessons supported by the evidence</h2>
@@ -119,14 +119,14 @@
       <section><h2>5. The verdict: make maintenance stoppable</h2>
         <p>Google reported that workloads in unaffected zones continued to run. The incident shows how routine maintenance can defeat redundancy when a procedure removes multiple paths before checking the result.</p>
         <p>For an infrastructure review, ask for the ordered maintenance plan, the independent signal that blocks the next operation, the stop-work threshold, the traffic-diversion objective and a tested recovery path for workloads that move to cold capacity. A different safety-critical example is NATS's September 2026 incident: its preliminary report says a flight-code defect affected London Area Control, while UK-wide restrictions were used to restart the system and reload data. See <a href="nats-outage-postmortem.html">the NATS incident review</a>. Measure each against your own environment. Do not turn a provider's incident into a cost estimate without workload and rate-card data.</p>
-        <p>For comparison, see the distinct storage event in <a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1</a>. Its failure mechanism and reported scope differ from this network-maintenance incident.</p>
+        <p>For comparison, see the separate <a href="gcp-us-west1-network-capacity-postmortem.html">GCP us-west1 fiber-maintenance and rerouting incident</a>. Both involved regional network capacity, but their reported causes, service impacts and timelines differ.</p>
       </section>
 
       <section><h2>Frequently Asked Questions</h2>
         <h3>What caused the September 2026 GCP us-central1 outage?</h3>
         <p>Google's incident report says incompatible optical transceivers were installed during network maintenance. Missing sequencing and verification safeguards allowed fiber paths to be disconnected in parts of us-central1-b and us-central1-f.</p>
         <h3>How long did the Google Cloud incident last?</h3>
-        <p>Google reports an incident window from 07:41 to 11:52 US/Pacific on September 1, 2026, a duration of 4 hours 11 minutes.</p>
+        <p>Google's final detailed-impact description records 07:41–11:52 US/Pacific, or 4 hours 11 minutes. The status-page header records 07:44–11:52, or 4 hours 8 minutes; the public report does not reconcile the three-minute start-time difference.</p>
         <h3>Did the outage affect an entire region?</h3>
         <p>No. Google describes network isolation in specific clusters in parts of two zones. Many multi-zonal deployments continued through unaffected capacity, though dependent regional products also saw symptoms.</p>
         <h3>What engineering lessons does Google's report support?</h3>
@@ -134,11 +134,11 @@
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident facts and the timeline come from Google's incident report and its September 29 addendum. Recommendations are engineering analysis based on those reported failure mechanisms. This revision removes previously published queue, retry and cost figures that had no primary-source support.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The final incident report was posted September 10, 2026; the September 29 addendum expands the detailed customer-impact description. Google's status header and detailed report retain different start times (07:44 and 07:41), which the public record does not reconcile. Recommendations are engineering analysis based on Google's reported maintenance failure and recovery actions. This revision removes previously published queue, retry and cost figures that had no primary-source support.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://status.cloud.google.com/incidents/J5ia5t9p3g9Q5Wi7r8Ev" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: September 1 us-central1 network incident, final report and September 29 addendum</a></li>
           <li><a href="https://status.cloud.google.com/summary" target="_blank" rel="noopener noreferrer">Google Cloud Service Health incident history</a></li>
-          <li><a href="gcp-us-west1-persistent-disk-postmortem.html">GCP us-west1 outage: a separate storage incident with a different failure mechanism</a></li>
+          <li><a href="gcp-us-west1-network-capacity-postmortem.html">GCP us-west1 outage: scheduled fiber maintenance and failed rerouting</a></li>
           <li><a href="nats-outage-postmortem.html">NATS flight-data incident: a localized software defect and UK-wide restart restrictions</a></li>
         </ul>
       </section>

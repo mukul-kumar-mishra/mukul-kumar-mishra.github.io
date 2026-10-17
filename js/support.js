@@ -56,24 +56,7 @@
   }
 
   function placeArticleCard(article) {
-    var sections = Array.prototype.slice.call(article.querySelectorAll('section'));
-    var contentSections = sections.filter(function (section) {
-      var heading = section.querySelector('h2');
-      return !heading || !/^(sources|receipts|references|sources and method)/i.test(heading.textContent.trim());
-    });
-    if (!contentSections.length) {
-      article.insertAdjacentElement('afterend', makeCard(
-        'Found this analysis useful?',
-        'Buildopsy is currently ad-free. If this source-linked case study helped you understand a system or failure, an optional coffee helps fund research and future analysis. It never changes coverage or conclusions.'
-      ));
-      return;
-    }
-    var articleIndex = Math.min(contentSections.length - 1, Math.max(1, Math.round(contentSections.length * 0.4)));
-    var articleBreak = contentSections[articleIndex];
-    while (articleBreak.nextElementSibling && articleBreak.nextElementSibling.tagName === 'FIGURE') {
-      articleBreak = articleBreak.nextElementSibling;
-    }
-    articleBreak.insertAdjacentElement('afterend', makeCard(
+    article.insertAdjacentElement('afterend', makeCard(
       'Found this analysis useful?',
       'Buildopsy is currently ad-free. If this source-linked case study helped you understand a system or failure, an optional coffee helps fund research and future analysis. It never changes coverage or conclusions.'
     ));
@@ -82,8 +65,7 @@
   function placeCourseCard(course) {
     var lessons = course ? course.querySelectorAll('.lesson') : main.querySelectorAll('.lesson');
     if (!lessons.length) return false;
-    var lessonIndex = Math.min(lessons.length - 1, Math.max(2, Math.floor(lessons.length * 0.25)));
-    lessons[lessonIndex].insertAdjacentElement('afterend', makeCard(
+    main.appendChild(makeCard(
       'Found these lessons useful?',
       'The courses are free to read. Optional support helps fund research and maintenance for future lessons.'
     ));
@@ -111,14 +93,11 @@
   var newsletter = main.querySelector('#newsletter');
   var result = main.querySelector('section.sec .radar-card');
   if (newsletter && result) {
-    var resultSection = result.closest('section.sec');
-    if (resultSection) {
-      resultSection.insertAdjacentElement('afterend', makeCard(
-        'Did this calculator help?',
-        'These browser-based calculators are free and ad-free today. Optional support helps maintain them and build new tools.'
-      ));
-      updateButtonImages();
-      watchTheme();
-    }
+    newsletter.insertAdjacentElement('beforebegin', makeCard(
+      'Did this calculator help?',
+      'These browser-based calculators are free and ad-free today. Optional support helps maintain them and build new tools.'
+    ));
+    updateButtonImages();
+    watchTheme();
   }
 })();

@@ -835,7 +835,7 @@ section[data-support-card] { margin-top: 16px; }
 }
 
 @media (max-width: 640px) {
-  .share-row a.chip { min-height: 40px; padding: 8px 12px; }
+  .share-row a.chip { min-width: 40px; min-height: 40px; padding: 8px 12px; }
   .site main > div > footer:has(> .share-row[data-share-row]) {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;

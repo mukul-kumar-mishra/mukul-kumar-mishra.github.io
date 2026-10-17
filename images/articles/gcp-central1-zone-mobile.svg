@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="510" viewBox="0 0 390 510" role="img" aria-labelledby="title desc">
+  <title id="title">Google's detailed customer-impact window and status-header window differ by three minutes</title>
+  <desc id="desc">For the September 1, 2026 us-central1 network incident, Google's final report gives customer impact from 07:41 to 11:52 US/Pacific, or four hours and eleven minutes. The status-page header gives 07:44 to 11:52, or four hours and eight minutes. Google says technicians disconnected fiber paths within thirteen minutes.</desc>
+  <style>text{font-family:Inter,Arial,sans-serif}</style>
+  <rect width="390" height="510" fill="#101a2c"/><rect width="390" height="58" fill="#0b1423"/>
+  <text x="18" y="24" font-size="10" font-weight="700" letter-spacing="1.1" fill="#67d5cb">GCP US-CENTRAL1 / SEPTEMBER 1</text>
+  <text x="18" y="82" font-size="20" font-weight="750" fill="#f2f6fb">Two reported time windows</text>
+  <text x="18" y="104" font-size="12" fill="#b6c5d8">Both end at 11:52 PT · Sep 1, 2026</text>
+  <rect x="18" y="124" width="354" height="120" rx="10" fill="#192741" stroke="#405776" stroke-width="1.5"/>
+  <text x="31" y="151" font-size="11" font-weight="700" fill="#67d5cb">FINAL REPORT · CUSTOMER IMPACT</text>
+  <text x="31" y="184" font-size="18" font-weight="750" fill="#f2f6fb">07:41–11:52 PT</text>
+  <text x="31" y="216" font-size="13" font-weight="700" fill="#f2f6fb">4h 11m</text>
+  <rect x="18" y="260" width="354" height="120" rx="10" fill="#192741" stroke="#405776" stroke-width="1.5"/>
+  <text x="31" y="287" font-size="11" font-weight="700" fill="#ffb36b">STATUS-PAGE HEADER</text>
+  <text x="31" y="320" font-size="18" font-weight="750" fill="#f2f6fb">07:44–11:52 PT</text>
+  <text x="31" y="352" font-size="13" font-weight="700" fill="#f2f6fb">4h 08m</text>
+  <rect x="18" y="398" width="354" height="58" rx="10" fill="#283751" stroke="#405776" stroke-width="1.5"/>
+  <text x="31" y="422" font-size="12" font-weight="700" fill="#67d5cb">FIBER PATHS DISCONNECTED</text>
+  <text x="31" y="444" font-size="12" fill="#f2f6fb">within 13 minutes</text>
+  <text x="18" y="488" font-size="9" fill="#b6c5d8">Source: Google Cloud Status · final report Sep 10; addendum Sep 29.</text>
+</svg>

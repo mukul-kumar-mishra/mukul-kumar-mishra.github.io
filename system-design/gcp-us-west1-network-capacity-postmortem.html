@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Google's final report says scheduled fiber work reduced us-west1 inter-datacenter capacity and rerouting did not properly redistribute traffic to alternate capacity. Detailed customer-impact window: 08:00–10:22 PT (2h22).">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/gcp-us-west1-network-capacity-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="GCP us-west1 Outage: Fiber Maintenance and Failed Rerouting | Buildopsy">
+  <meta property="og:description" content="Google says scheduled fiber work reduced inter-datacenter capacity and automated rerouting did not properly redistribute traffic to alternate capacity. The detailed customer-impact window is 08:00–10:22 PT (2h22).">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/gcp-uswest1-capacity-chain.png">
+  <meta property="og:image:alt" content="Flow diagram of Google's reported us-west1 outage sequence: scheduled fiber maintenance reduced inter-datacenter capacity, rerouting did not properly redistribute traffic to alternate capacity, and congestion caused packet loss, throttling, latency and errors">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/gcp-us-west1-network-capacity-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GCP us-west1 Outage: Fiber Maintenance and Failed Rerouting | Buildopsy">
+  <meta name="twitter:description" content="Google says scheduled fiber work reduced inter-datacenter capacity and automated rerouting did not properly redistribute traffic to alternate capacity. The detailed customer-impact window is 08:00–10:22 PT (2h22).">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/gcp-uswest1-capacity-chain.png">
+  <meta name="twitter:image:alt" content="Flow diagram of Google's reported us-west1 outage sequence: scheduled fiber maintenance reduced inter-datacenter capacity, rerouting did not properly redistribute traffic to alternate capacity, and congestion caused packet loss, throttling, latency and errors">
+  <meta name="twitter:image:width" content="1200">
+  <meta name="twitter:image:height" content="630">
+  <title>GCP us-west1 Outage: Fiber Maintenance and Failed Rerouting | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"GCP us-west1 Outage: Fiber Maintenance and Failed Rerouting","description":"A source-led analysis of Google's Aug 20, 2026 us-west1 network incident: scheduled fiber maintenance reduced inter-datacenter capacity, and automated rerouting did not properly redistribute traffic to alternate capacity, followed by congestion, packet loss, latency and errors.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-26","dateModified":"2026-10-17","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/gcp-us-west1-network-capacity-postmortem.html"},"keywords":"Google Cloud us-west1 outage, fiber maintenance, network capacity, rerouting, packet loss, Mukul Kumar Mishra","image":"https://buildopsy.com/images/articles/gcp-uswest1-capacity-chain.png"}</script>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">August 2026 incident</span><span class="chip">9 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-west1 Outage: Fiber Maintenance and Failed Rerouting</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Google's final report attributes the Aug 20, 2026 incident to scheduled fiber-optic maintenance that reduced network capacity between data centers in us-west1. Automated rerouting did not properly redistribute traffic to alternate capacity, and congestion produced packet loss, latency and errors across dependent services.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The detailed incident report gives a customer-impact window of 08:00–10:22 US/Pacific. Google's status record lists a broader 08:40–12:20 window; the report does not reconcile the difference. Persistent Disk, GKE and IAM appear among affected products, but Google attributes the initiating failure to network capacity and rerouting, not a disk fault.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Reported impact start</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">08:00 PT</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Reported impact end</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10:22 PT</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Detailed-report window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2h22m</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Root-cause layer</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Regional network</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Source-led outage analysis · Published September 26, 2026 · Updated October 17, 2026</p>
+    </header>
+    <article class="prose">
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-uswest1-capacity-chain-mobile.svg"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-uswest1-capacity-chain.svg" alt="Flow diagram of Google's reported us-west1 outage sequence: scheduled fiber maintenance reduced inter-datacenter capacity, rerouting did not properly redistribute traffic to alternate capacity, and congestion caused packet loss, throttling, latency and errors" width="1200" height="680"></picture><figcaption>Figure 1. Google's final report links scheduled fiber work to reduced inter-datacenter capacity, rerouting that did not properly redistribute traffic to alternate capacity, and congestion. Buildopsy illustration, not Google's network topology; the report publishes no link-capacity or traffic-rate values.</figcaption></figure>
+      <section><h2>1. What Google's Final Report Establishes</h2>
+        <p>Google's detailed report says customer impact in us-west1 ran from 08:00 to 10:22 US/Pacific on August 20, 2026, a reported 2 hours and 22 minutes. The status page's incident header gives a different record window: 08:40 to 12:20 US/Pacific. The page does not reconcile the two. This article uses the detailed report's window for customer impact and preserves the separate status-record interval rather than blending them.</p>
+        <p>Google lists elevated latency, provisioning failures, increased error rates and service degradations across both control-plane operations and data-plane requests. Its report includes Persistent Disk, Google Kubernetes Engine, Compute Engine, Cloud Storage and IAM among the affected products. The published account does not give customer counts, request rates, packet-loss percentages or a cost estimate.</p>
+      </section>
+      <section><h2>2. The Cause Was Network Capacity and Rerouting</h2>
+        <p>The final report attributes the disruption to scheduled fiber-optic maintenance that unexpectedly compromised network capacity between data centers in us-west1. Google's automated rerouting mechanisms did not properly redistribute traffic to alternate capacity. Traffic volumes then exceeded available bandwidth in the affected area, causing congestion.</p>
+        <p>Google says the network degradation produced severe packet loss, request throttling and elevated latency across inter-campus dependencies. Spanner Paxos consensus and the Unified Metadata Server experienced latency spikes; downstream products, including Cloud Storage, IAM, Persistent Disk and GKE, then saw timeouts and errors. Persistent Disk was an affected service, not the initiating disk failure described by the earlier version of this article.</p>
+        <p>A simple capacity condition captures the design constraint: during maintenance, redirected demand must stay within the capacity left on surviving paths, <code>λ<sub>redirected</sub> ≤ C<sub>remaining</sub></code>. Google published no values for either side, so this inequality explains the mechanism without reconstructing private network telemetry.</p>
+      </section>
+      <section><h2>3. The Blast Radius Followed Shared Network Dependencies</h2>
+        <p>The report distinguishes the physical trigger from the service symptoms. The capacity loss occurred on inter-campus links within us-west1; network-dependent products experienced different combinations of latency, throttling, provisioning failures and errors. Google's affected-service list is not evidence that every product failed in the same way or for the same duration.</p>
+        <p>This is why the incident should not be reduced to “Persistent Disk stalled GKE.” The public report identifies packet loss and latency across shared network dependencies, then names Persistent Disk, GKE and IAM among the downstream products affected. It does not describe a disk-control-plane fault or provide a per-product causal trace.</p>
+      </section>
+      <figure class="article-figure pm-meme"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-uswest1-recovery-mobile.svg"><img loading="lazy" decoding="async" src="../images/articles/gcp-uswest1-recovery-flow.svg" alt="Buildopsy diagram of Google's reported recovery sequence: drain traffic away from the compromised inter-campus network, restore capacity, then reintroduce traffic through controlled validation" width="1200" height="680"></picture><figcaption>Figure 2. Google reports draining traffic, restoring the inter-campus capacity and reintroducing workloads through controlled validation stages.</figcaption></figure>
+      <section><h2>4. Recovery Was a Drain, Restore and Validate Sequence</h2>
+        <p>Google says engineers drained production traffic away from the compromised inter-campus network to limit customer impact. After restoring network capacity, they reintroduced production traffic through controlled validation stages and confirmed service normalization.</p>
+        <p>The final report says longer-running operations and localized state reconciliation kept some workloads recovering after primary service traffic had normalized. That distinction matters: restoring the physical path did not instantly finish every dependent product's recovery.</p>
+      </section>
+      <section><h2>5. Guardrails for Planned Network Work</h2>
+        <p>Google's stated follow-up work includes revising scheduled-maintenance protocols, strengthening safety checks and circuit redundancy before routine maintenance, and improving automated regional traffic failover. Those items are listed as remediation work, not as completed outcomes.</p>
+        <p>For operators, turn that direction into testable gates: verify the remaining path capacity before removing a link; confirm failover actually moves representative traffic; stop the change if loss or latency crosses a defined threshold; and reintroduce traffic in stages after the physical path returns. These are design recommendations based on the reported mechanism, not claims that Google's teams lacked each control.</p>
+      </section>
+      <section><h2>6. The Verdict</h2>
+        <p>Google's final incident report establishes a network-capacity failure during planned fiber maintenance, ineffective rerouting to alternate capacity, and congestion that propagated through regional service dependencies. It does not support the earlier article's claim that Persistent Disk caused the outage, nor the private RPS, retry, snapshot or cost figures that were built on that premise. Those unsupported reconstructions have been removed.</p>
+        <p>The remaining open detail is the timing: the detailed report gives customer impact from 08:00 to 10:22 PT, while the incident header lists 08:40 to 12:20 PT. Google does not explain that difference in the public record.</p>
+      </section>
+      <section><h2>Sources and Method</h2>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Incident facts and recovery actions follow Google's final incident report posted August 27, 2026, with the status-page incident history used to preserve its separate incident-record window. The capacity inequality is a general design condition, not a measurement of Google's traffic or network. Recommendations are Buildopsy analysis; no customer losses or private telemetry are estimated.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+          <li><a href="https://status.cloud.google.com/incidents/utF3FMFdQfwBzJcGG6vf" target="_blank" rel="noopener noreferrer">Google Cloud Service Health: us-west1 incident report and status history (August 20–27, 2026), Summary, Root Cause, Remediation and Detailed Description of Impact</a></li>
+          <li><a href="gcp-us-central1-outage-postmortem.html">Buildopsy: September us-central1 fiber-maintenance incident (a separate event)</a></li>
+          <li><a href="gcs-us-central1-storage-write-postmortem.html">Buildopsy: October us-central1 Cloud Storage write incident (a separate event)</a></li>
+        </ul>
+      </section>
+    </article>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+  <a class="chip" data-share="copy" href="#">Copy link</a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+<a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
