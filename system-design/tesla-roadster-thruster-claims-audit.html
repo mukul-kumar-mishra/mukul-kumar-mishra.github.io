@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A physics-led audit of the Tesla Roadster's cold-gas thruster claims. Calculate the acceleration implied by 0.81 seconds to 60 mph, examine thrust and propellant equations, and identify the missing data needed to verify tank capacity and refill time.">
+  <meta name="author" content="Buildopsy">
+  <link rel="canonical" href="https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math">
+  <meta property="og:description" content="A technical audit of the Roadster's cold-gas propulsion claims, using Newtonian mechanics, the rocket thrust equation, and explicit assumptions instead of unverified tank-mass estimates.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/roadster-boost-budget.png">
+  <meta property="og:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Its burn-time and refill figures are model assumptions, not verified Tesla specifications.">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math">
+  <meta name="twitter:description" content="What does a 0.81-second 0–60 claim imply physically? An engineering audit of acceleration, thrust, propellant use, and the missing refill data.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/roadster-boost-budget.png">
+  <meta name="twitter:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Its burn-time and refill figures are model assumptions, not verified Tesla specifications.">
+  <title>0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math","description":"A physics-led audit of the Tesla Roadster's reported cold-gas propulsion claims. It calculates the acceleration implied by a 0.81-second 0–60 mph run and explains why verified tank, gas-property, thrust-profile, and refill data are needed to establish propellant use and operating time.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-10-18","dateModified":"2026-10-18","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html"},"keywords":"Tesla Roadster, cold-gas thrusters, SpaceX, acceleration, thrust equation, nitrogen, propellant mass, refill energy, engineering claims audit","image":"https://buildopsy.com/images/articles/roadster-boost-budget.png"}</script>
+</head>
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html">
+        <img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757">
+        <img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true">
+      </a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a>
+        <a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;">
+          <span class="fl-tag">Vehicle Engineering</span>
+          <span class="chip">October 2026</span>
+          <span class="chip">16 min read</span>
+          <span class="chip">Rook</span>
+        </div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tesla has described a Roadster equipped with SpaceX-derived cold-gas thrusters and made extraordinary acceleration claims. The engineering question is not whether compressed gas can produce thrust. It can. The question is whether the public evidence establishes the complete vehicle's performance, propellant budget, operating envelope, and refill cycle.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A run from rest to 60 mph in 0.81 seconds implies an average acceleration of about 33.1 m/s², or 3.38 g. That calculation is straightforward. The propellant calculation is not: tank volume and a pressure rating alone do not establish usable gas mass or burn duration. A simplified 80 kN thrust example at 700 m/s exhaust velocity implies about 114 kg/s of mass flow, but that is a conditional model, not a measured Roadster result. Without the actual thrust profile, operating conditions, usable tank inventory, and refill-system data, a definitive burn time or refill-energy figure would be false precision.</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook . Engineering claims audit . Updated October 18, 2026</p>
+      </header>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> This audit distinguishes reported claims, statements attributed to interviews, and calculations made under explicit assumptions. The equations below establish what follows mathematically from their inputs; they do not independently verify Tesla's specifications. A complete assessment needs measured thrust-versus-time data, confirmed gas and tank properties, usable operating pressure, and independently documented test conditions.</aside>
+      <article class="prose">
+        <section>
+          <h2>1. What Tesla Actually Showed</h2>
+          <p>October 2026 coverage described a reworked second-generation Roadster and a proposed SpaceX-derived cold-gas propulsion package. Reporting and interview summaries have discussed multiple thrusters, high-pressure gas storage, rapid acceleration, and a vehicle configuration that goes beyond a conventional battery-electric sports car.</p>
+          <p>The accounts of the demonstration, its operating setup, and the proposed production configurations should be checked against their original reporting. In particular, a remotely operated or unmanned demonstration is not equivalent to a repeatable test of a production vehicle carrying a driver. The earlier report about an unmanned demonstration appeared in <a href="https://electrek.co/2026/08/14/tesla-flying-roadster-demo-this-month-no-driver/" target="_blank" rel="noopener noreferrer">Electrek's summary of reporting by The Information</a>. The details of the later reveal are described in the reporting linked in the sources below.</p>
+          <p>The timing claim needs the same distinction. Car and Driver reported runs described as approximately 1.0 second and 0.8 seconds to 60 mph. The 0.81-second number that circulated afterward should be treated as a reported claim unless the underlying measurement, timing method, test conditions, and results are independently documented.</p>
+          <p>For context, Tesla's reported lineup distinguishes a road-oriented Performance configuration from more extreme Thrust and Rocket configurations. Coverage of the latter includes cold-gas thrusters and a warning that the Rocket configuration is not approved for public-road use. Those configuration-specific claims should not be collapsed into a single specification for every Roadster.</p>
+          <div class="callout"><strong>The distinction that matters:</strong> An event can show that a particular demonstration took place. It does not, by itself, verify a production vehicle's repeatable acceleration, exact propellant inventory, sustained thrust, safety case, or refill performance. The calculations in this article are not telemetry.</div>
+        </section>
+        <section>
+          <h2>2. Cold Gas, Not Combustion</h2>
+          <p>A cold-gas thruster stores a pressurized gas and releases it through a nozzle. The escaping gas carries momentum away from the vehicle, creating thrust in the opposite direction. The gas does not need to burn. The system still needs pressure vessels, valves, regulators, nozzles, plumbing, and a finite supply of propellant.</p>
+          <p>The general thrust equation is:</p>
+          <p><strong>F = ṁ × v<sub>e</sub> + (p<sub>e</sub> − p<sub>a</sub>) × A<sub>e</sub></strong></p>
+          <p>Where:</p>
+          <ul>
+            <li><strong>F</strong> is thrust, in newtons (N).</li>
+            <li><strong>ṁ</strong> is exhaust mass-flow rate, in kilograms per second (kg/s).</li>
+            <li><strong>v<sub>e</sub></strong> is exhaust velocity, in metres per second (m/s).</li>
+            <li><strong>p<sub>e</sub></strong> is the static pressure at the nozzle exit.</li>
+            <li><strong>p<sub>a</sub></strong> is ambient pressure.</li>
+            <li><strong>A<sub>e</sub></strong> is nozzle exit area.</li>
+          </ul>
+          <p>The first term, ṁ × v<sub>e</sub>, represents momentum thrust. The second term represents pressure thrust. The often-used approximation <strong>F ≈ ṁ × v<sub>e</sub></strong> neglects the pressure-thrust term; its accuracy depends on the nozzle and operating conditions. Calculations based on that approximation should be presented as estimates, not measurements.</p>
+          <p>Specific impulse, I<sub>sp</sub>, is another way to describe propellant efficiency. The approximate relationship between effective exhaust velocity and specific impulse is:</p>
+          <p><strong>v<sub>e</sub> ≈ I<sub>sp</sub> × g<sub>0</sub></strong></p>
+          <p>Here, g<sub>0</sub> is standard gravitational acceleration, approximately 9.80665 m/s². NASA's SmallSat technology survey lists nitrogen cold-gas devices with specific impulses of 57 to 70 seconds in Table 4-5. That corresponds to an effective exhaust velocity of approximately 559 to 686 m/s under this relationship. These are reference values for the listed devices, not a measured specification for the Roadster's thrusters.</p>
+          <p>For a transparent example later in this article, 700 m/s is used as a rounded illustrative exhaust velocity. It is an assumption, not a claim that Tesla's hardware has been measured at that value.</p>
+          <p>Tesla's reported descriptions have also discussed carbon-fibre-overwrapped pressure vessels (COPVs), tire-force limits, and fan-generated suction. Those are separate engineering claims that need their own evidence. A vessel's pressure rating does not, on its own, establish its operating pressure, stored gas mass, crashworthiness in the vehicle, or the amount of gas that can be used while maintaining a required thrust.</p>
+        </section>
+        <figure class="article-figure">
+          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/roadster-boost-budget.svg" alt="Illustrative Roadster cold-gas propellant-budget graphic comparing modeled burn times and refill estimates. The displayed values depend on assumptions and are not verified Tesla tank capacities, measured burn times, or confirmed refill specifications." width="1200" height="680">
+          <figcaption>Figure 1. The boost-budget graphic is an illustrative model, not a set of verified Tesla specifications. Its displayed burn-time and refill labels depend on assumptions about usable gas mass, pressure, exhaust velocity, thrust history, and refill equipment. The public information cited here does not establish those inputs well enough to confirm the graphic's numerical burn-time or refill estimates. Treat its figures as hypotheses to check, not as measured Roadster data.</figcaption>
+        </figure>
+        <section>
+          <h2>3. The Tank Arithmetic</h2>
+          <p>The useful starting point is the acceleration claim, because it can be examined without guessing the tank's contents. A speed of 60 mph converts to approximately 26.8224 m/s. If a vehicle reaches that speed from rest in 0.81 seconds, its average acceleration is the change in velocity divided by the elapsed time:</p>
+          <p><strong>a<sub>avg</sub> = Δv ÷ Δt</strong></p>
+          <p><strong>a<sub>avg</sub> = 26.8224 m/s ÷ 0.81 s ≈ 33.11 m/s²</strong></p>
+          <p><strong>a<sub>avg</sub> ≈ 3.38 g</strong></p>
+          <p>Here, g represents standard gravitational acceleration, approximately 9.80665 m/s². This is an average over the run. It does not show that acceleration remained constant, nor does it identify how much force came from the wheels versus the thrusters. Those questions require a measured acceleration profile and information about the propulsion system's contribution.</p>
+          <p>We can estimate kinetic energy at 60 mph if we make an explicit assumption about vehicle mass. For this example, assume a mass of 1,800 kg. That is an illustrative input, not a confirmed mass for the configuration used in the reported run.</p>
+          <p><strong>E<sub>k</sub> = ½ × m × v²</strong></p>
+          <p><strong>E<sub>k</sub> = 0.5 × 1,800 kg × (26.8224 m/s)²</strong></p>
+          <p><strong>E<sub>k</sub> ≈ 647,000 J = 647 kJ ≈ 0.18 kWh</strong></p>
+          <p>This is the kinetic energy of the assumed vehicle at the target speed. It is not the total energy consumed during acceleration, and it is not the energy needed to compress the gas. Real propulsion systems have losses, and the electric drivetrain may provide some or all of the vehicle's acceleration.</p>
+          <h3>Momentum change is not the same as thruster impulse</h3>
+          <p>The change in vehicle momentum for the same illustrative mass and speed change is:</p>
+          <p><strong>Δp = m × Δv</strong></p>
+          <p><strong>Δp = 1,800 kg × 26.8224 m/s ≈ 48,300 kg.m/s</strong></p>
+          <p><strong>Δp ≈ 48.3 kN.s</strong></p>
+          <p>This is the net momentum change implied by the assumed mass and velocity. It is not automatically the impulse that the thrusters must provide. If the tires and electric motors contribute to acceleration, the thrusters supply only part of the total impulse. A reliable split requires measured forces, the actual acceleration curve, and the vehicle's operating conditions.</p>
+          <h3>Estimating gas consumption from thrust</h3>
+          <p>Under the simplified momentum-thrust approximation, mass flow can be estimated by rearranging the equation:</p>
+          <p><strong>F ≈ ṁ × v<sub>e</sub></strong></p>
+          <p><strong>ṁ ≈ F ÷ v<sub>e</sub></strong></p>
+          <p>Suppose, purely for illustration, that the system produces 80,000 N of thrust and has an effective exhaust velocity of 700 m/s:</p>
+          <p><strong>ṁ ≈ 80,000 N ÷ 700 m/s ≈ 114.3 kg/s</strong></p>
+          <p>If those same values remained constant for five seconds, the corresponding discharged mass would be:</p>
+          <p><strong>m<sub>gas</sub> ≈ ṁ × t</strong></p>
+          <p><strong>m<sub>gas</sub> ≈ 114.3 kg/s × 5 s ≈ 571 kg</strong></p>
+          <p><strong>Important limitation:</strong> This is a conditional calculation, not a measured Roadster result. It assumes sustained 80 kN thrust, a 700 m/s effective exhaust velocity, and a simplified thrust equation that neglects pressure thrust. Actual thrust could vary over time as pressure and flow conditions change. The example cannot establish the real vehicle's burn duration or prove that a reported five-second interval represents five seconds at peak thrust.</p>
+          <p>The equation does show why a peak-thrust number is not enough to determine operating time. A meaningful propellant budget needs the measured thrust-versus-time profile, exhaust characteristics, operating pressure, gas temperature, tank volume, and usable pressure range. The gas inventory must also be calculated using appropriate real-gas properties.</p>
+        </section>
+        <section>
+          <h2>4. The Refill Cycle Is the Product</h2>
+          <p>A compressed-gas propulsion system has an operating cycle: fill the pressure vessels, store the gas, discharge it during operation, and replenish the supply before the next run. The duration and infrastructure required for each stage matter as much as the peak thrust if the system is expected to be used repeatedly.</p>
+          <p>Public interview coverage has attributed refill estimates of two to six hours to a 200-liter Thrust configuration using an external high-pressure nitrogen supply, and six to seven hours for a reported 600-liter system. The same coverage describes a future target of reducing refill time. These figures should be treated as reported statements rather than independently measured results. They may also refer to different configurations or development stages.</p>
+          <p>Other reporting has discussed onboard compressors. An external high-pressure supply and an onboard compressor are not the same refill architecture. Their achievable fill rates, power demands, thermal limits, and infrastructure requirements differ. Before comparing the reported times, the actual configuration and fill procedure need to be established.</p>
+          <h3>Why tank volume does not determine gas mass</h3>
+          <p>Knowing that a system has a stated tank volume does not tell us how much usable nitrogen it contains. A defensible calculation needs at least:</p>
+          <ul>
+            <li>The internal volume of each pressure vessel.</li>
+            <li>The actual fill pressure and gas temperature.</li>
+            <li>The gas composition and compressibility factor at those conditions.</li>
+            <li>The minimum residual pressure at which the system can still deliver the required thrust.</li>
+            <li>Pressure losses, regulator behaviour, flow limits, and the usable gas inventory across the discharge.</li>
+          </ul>
+          <p>For a real gas, the relationship between pressure, volume, temperature, and amount of gas can be expressed as:</p>
+          <p><strong>p × V = Z × n × R × T</strong></p>
+          <p>Here, p is absolute pressure, V is gas volume, Z is the compressibility factor, n is the amount of gas in moles, R is the universal gas constant, and T is absolute temperature. The ideal-gas approximation sets Z = 1. At high pressure, Z can differ materially from 1 and depends on the gas and the operating conditions.</p>
+          <p>A maximum vessel pressure rating is not proof of the normal fill pressure. Nor does a rating quoted for one 200-liter vessel establish that all vessels in a reported 600-liter system share the same rating or operating conditions. The amount of gas that can actually be discharged while retaining useful thrust can also be smaller than the total stored inventory.</p>
+          <h3>Refill energy needs verified inputs</h3>
+          <p>Compressing gas requires work. A simplified reversible, isothermal model for an ideal gas is:</p>
+          <p><strong>W = n × R × T × ln(P<sub>2</sub> ÷ P<sub>1</sub>)</strong></p>
+          <p>In this expression, n is the amount of gas in moles, R is the universal gas constant, T is absolute temperature, and P<sub>1</sub> and P<sub>2</sub> are the initial and final absolute pressures. This equation describes an idealized compression path. It is not a complete estimate of real compressor electricity consumption.</p>
+          <p>A realistic estimate needs the actual gas inventory, initial and final pressures, temperatures, compressor efficiency, cooling requirements, and the compression process. The amount of gas must itself be established using the real tank conditions and appropriate gas properties. If those inputs are unknown, selecting a gas mass first and calculating an energy figure from it only hides the uncertainty.</p>
+          <p>For that reason, this audit does not assert a definitive refill-energy total, a guaranteed refill duration, or a compressor power requirement. The engineering question is whether the complete system can repeatedly deliver its required performance, how long replenishment takes under documented conditions, what equipment is needed, and how those constraints fit actual vehicle use.</p>
+          <p>Noise is another unresolved practical consideration. High-speed gas discharge can be loud, but a specific sound-pressure level depends on the nozzle, flow, geometry, distance, and surroundings. Reporting that a demonstration required spectators to stand far away does not establish a decibel value. A measured noise result would require documented instrumentation, distance, and operating conditions.</p>
+        </section>
+        <section>
+          <h2>5. The Regulatory Boundary</h2>
+          <p>A road vehicle equipped with high-pressure gas propulsion raises engineering and compliance questions beyond thrust. These can include pressure-vessel qualification, mounting and crash loads, line and valve integrity, thermal exposure, safe venting, maintenance procedures, and the consequences of a leak or component failure.</p>
+          <p>The applicable requirements depend on the final design, the jurisdiction, and whether a particular configuration is intended and permitted for road use, aviation use, or neither. General discussion of pressure-vessel rules is not enough to establish that a specific vehicle has passed the relevant tests.</p>
+          <p>Fortune's reporting, citing CBS News and Politico, described the FAA's view that the vehicle did not meet its definition of an aircraft. The same reporting discussed the US Department of Transportation's response and NHTSA's role in vehicle safety. Those accounts should be read as descriptions of the statements and regulatory context reported at the time, not as a universal determination covering every possible design or future configuration.</p>
+          <p>European reporting likewise quoted EASA explaining that a vehicle intended to operate as an aircraft would need to meet applicable aviation safety requirements, potentially including pilot qualifications, and that classification depends on design, capabilities, and intended operation. That general explanation is not an approval or rejection of a specific Roadster configuration.</p>
+          <p>Tesla's reported statement that the Rocket configuration is not approved for public-road use is an important qualification. But a company's label does not replace the certification, test documentation, or legal analysis needed for a particular configuration and jurisdiction. A demonstration does not establish road-vehicle certification or production readiness.</p>
+        </section>
+        <figure class="article-figure">
+          <img loading="lazy" decoding="async" src="../images/articles/roadster-regulator-map.svg" alt="Three-panel overview of reported regulatory positions concerning the Roadster: US vehicle self-certification context, the FAA aircraft-definition question, and EASA's general explanation of requirements for vehicles intended to operate as aircraft." width="1200" height="680">
+          <figcaption>Figure 2. The regulatory boundary as described in public reporting in October 2026. The positions are not interchangeable: an agency's general explanation or reported response is not a certification for a specific vehicle. The FAA and DOT wording is reported via Fortune; the NHTSA description is Fortune's summary of the agency's standard posture; the EASA explanation is reported by Euronews Business.</figcaption>
+        </figure>
+        <section>
+          <h2>6. The Promises Ledger</h2>
+          <p>The original Roadster announcement provides context for evaluating the latest targets. Tesla unveiled the earlier Roadster in <a href="https://fortune.com/2017/11/17/tesla-truck-200000-roadster/" target="_blank" rel="noopener noreferrer">November 2017</a>, with claims including 1.9 seconds to 60 mph, a 620-mile range, a top speed above 250 mph, seating for four, a $200,000 price, and deliveries targeted for 2020. These were announced targets, not proof that a vehicle meeting every specification was delivered on that schedule.</p>
+          <p>The October 2026 reporting describes revised configurations and performance targets. Since the figures are attributed to interviews, product material, and media coverage, they should be understood as reported claims until the final production specification and independent tests are available.</p>
+          <table>
+            <thead><tr><th scope="col">Spec</th><th scope="col">November 2017 claim</th><th scope="col">October 2026 reported state</th></tr></thead>
+            <tbody>
+              <tr><td>0–60 mph</td><td>1.9 s target</td><td>Under 1.6 s for Performance; 0.85 s and 0.55 s figures attributed to the Thrust and Rocket configurations in interview coverage; 0.81 s reported for a demonstration</td></tr>
+              <tr><td>Range</td><td>620 mi target</td><td>300+ mi claimed; reported executive comments discuss approximately 310–320 mi in real-world use</td></tr>
+              <tr><td>Top speed</td><td>250+ mph target</td><td>210 mph for Performance and 230 mph for Thrust/Rocket, as reported from interview material</td></tr>
+              <tr><td>Seating</td><td>2+2</td><td>Two seats for Performance and Thrust; one seat for Rocket, according to reporting</td></tr>
+              <tr><td>Money</td><td>$200K target price, $50K deposits</td><td>Reported reservation amounts and payment terms vary by configuration; review the current reservation agreement for exact terms</td></tr>
+              <tr><td>Deliveries</td><td>2020 target</td><td>2028 production/delivery target reported in October 2026 coverage</td></tr>
+            </tbody>
+          </table>
+          <p>The reservation agreement is a separate source of evidence. InsideEVs reported that the current agreement describes the listed price as an estimate and states that Tesla cannot guarantee when a vehicle will be delivered or whether it will be delivered. Anyone considering a reservation should read the live agreement and confirm the current price, refund terms, and delivery language directly before paying.</p>
+          <p>A revised target or a refundable reservation is meaningful commercial information, but neither is the same as a completed delivery. The final production configuration, verified specifications, and customer delivery record remain the relevant evidence for execution.</p>
+        </section>
+        <section>
+          <h2>7. Claimed vs. Proved</h2>
+          <p><strong>Claimed: the fastest car ever made.</strong> Public statements have described the Roadster as capable of extraordinary acceleration and performance. The available demonstration reports are not enough to establish a production car's repeatable acceleration or prove that it has broken a track record. That would require independently documented tests, clearly defined conditions, and comparable timing methodology.</p>
+          <p><strong>Claimed: a road-ready car with an unusual propulsion system.</strong> Interview coverage has attributed substantial power, high-voltage architecture, fast charging, and other specifications to the proposed vehicle. These figures may be useful indicators of the intended design, but they remain reported claims unless confirmed for the final production configuration. A conventional electric drivetrain's specifications also do not verify the performance or safety of the cold-gas system.</p>
+          <p><strong>Claimed: extreme performance is worth the trade-offs.</strong> Public comments have framed the Roadster as an engineering statement rather than a safety-optimized conventional car. That positioning is not crash-test data. Neither the marketing language nor the presence of a thruster system proves or disproves crash performance, occupant protection, or the safety of high-pressure components in a collision.</p>
+          <p><strong>Claimed: it will ship.</strong> A public target, a product page, a reservation agreement, and a stated lineup are evidence of announced commercial intent. They do not guarantee delivery. The agreement's actual language, the final vehicle specifications, and independently verifiable production and delivery records are stronger evidence of execution.</p>
+          <p>The same discipline applies to market commentary and regulatory statements: identify who said what, when they said it, and whether the statement is a measured result, a reported opinion, a company target, or an independent finding. Mixing those categories creates certainty the underlying evidence does not support.</p>
+        </section>
+        <section>
+          <h2>8. The Verdict</h2>
+          <p>Cold-gas propulsion is a real engineering technique. Its thrust can be described by momentum and pressure terms, and its implications for acceleration can be evaluated with Newtonian mechanics. None of that requires assuming that every public Roadster claim is either true or false.</p>
+          <p>If a vehicle reaches 60 mph from rest in 0.81 seconds, the implied average acceleration is approximately 33.11 m/s², or 3.38 g. Under an illustrative 1,800 kg mass assumption, its kinetic energy at that speed is approximately 647 kJ, and its net momentum change is about 48.3 kN.s. Those are calculations from stated inputs, not independent confirmation that the reported run occurred under those exact conditions.</p>
+          <p>The propellant budget is a separate problem. A simplified example using 80 kN of thrust and 700 m/s exhaust velocity implies about 114.3 kg/s of mass flow if the momentum-thrust approximation is appropriate. Holding those values for five seconds would correspond to approximately 571 kg of discharged gas. That is a conditional result, not a measured Roadster gas-consumption rate. It cannot be compared reliably with a tank's capacity until the actual gas inventory and operating conditions are established.</p>
+          <p>The available information does not justify presenting a precise tank mass, burn duration, refill-energy total, or guaranteed refill time as verified fact. Those quantities depend on the actual pressure vessels, fill conditions, gas properties, usable residual pressure, measured thrust profile, and refill equipment.</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The acceleration claim has calculable physical implications. The complete propellant budget does not close until the actual tank inventory and thrust profile are known. The decisive evidence is measured performance and a reproducible operating cycle—not a headline number.</strong></p>
+        </section>
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit separates reported claims, statements attributed to interviews, and calculations made under explicit assumptions. The equations below use standard mechanics and propulsion relationships. The 1,800 kg vehicle mass, 80 kN thrust, 700 m/s exhaust velocity, and five-second interval are illustrative inputs where stated; they are not verified Roadster measurements. This article does not treat unverified real-gas tank masses, burn durations, compression-energy totals, or refill times as established specifications.</p>
+          <table>
+            <thead><tr><th scope="col">Class</th><th scope="col">Items in this file</th></tr></thead>
+            <tbody>
+              <tr><td>Reported claims</td><td>Roadster configuration descriptions, acceleration targets, tank volumes and ratings, refill estimates, production targets, and regulatory statements attributed to the cited reporting or interviews</td></tr>
+              <tr><td>Calculated from stated inputs</td><td>0–60 mph velocity conversion; average acceleration for 0.81 seconds; illustrative kinetic energy and momentum change for a 1,800 kg vehicle; conditional mass-flow estimate for 80 kN at 700 m/s</td></tr>
+              <tr><td>Illustrative assumptions</td><td>1,800 kg vehicle mass; 80 kN thrust; 700 m/s effective exhaust velocity; five seconds at the assumed thrust and exhaust velocity</td></tr>
+              <tr><td>Unresolved</td><td>Verified vehicle mass for the demonstration; measured thrust curve; actual gas mass; operating and residual pressures; real-gas tank inventory; noise level; crash data; independently measured refill energy and duration; final production configuration and applicable certification</td></tr>
+            </tbody>
+          </table>
+          <h3>Calculation method</h3>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><strong>Speed conversion:</strong> 60 mph × 0.44704 = 26.8224 m/s.</li>
+            <li><strong>Average acceleration:</strong> a<sub>avg</sub> = Δv ÷ Δt = 26.8224 m/s ÷ 0.81 s ≈ 33.11 m/s², equivalent to about 3.38 times standard gravitational acceleration.</li>
+            <li><strong>Kinetic energy:</strong> E<sub>k</sub> = ½ × m × v². With an illustrative mass of 1,800 kg, E<sub>k</sub> ≈ 647 kJ.</li>
+            <li><strong>Momentum change:</strong> Δp = m × Δv. With the same illustrative mass, Δp ≈ 48.3 kN.s. This is net vehicle momentum change, not automatically thruster impulse.</li>
+            <li><strong>Simplified mass flow:</strong> ṁ ≈ F ÷ v<sub>e</sub>. With the illustrative inputs F = 80,000 N and v<sub>e</sub> = 700 m/s, ṁ ≈ 114.3 kg/s. The estimate neglects the nozzle pressure-thrust term.</li>
+            <li><strong>Conditional five-second gas use:</strong> m<sub>gas</sub> ≈ ṁ × t. Holding the assumed mass flow for five seconds gives approximately 571 kg. This does not establish the actual Roadster's thrust history or propellant consumption.</li>
+            <li><strong>Gas inventory:</strong> p × V = Z × n × R × T. Tank volume alone cannot determine gas mass; the fill conditions, gas properties, compressibility factor, and usable pressure range are required.</li>
+            <li><strong>Idealized compression work:</strong> W = n × R × T × ln(P<sub>2</sub> ÷ P<sub>1</sub>). A numerical estimate requires a verified gas inventory and pressure/temperature conditions. This idealized equation does not by itself determine real compressor electricity consumption.</li>
+          </ul>
+          <h3>Reporting and product references</h3>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://www.caranddriver.com/news/a74145531/tesla-roadster-revealed/" target="_blank" rel="noopener noreferrer">Car and Driver: Roadster reveal reporting — demonstration runs and the reported thrust figure (October 2026)</a></li>
+            <li><a href="https://techcrunch.com/2026/10/15/tesla-reveals-spacex-powered-roadster-that-flies-and-falls-with-style/" target="_blank" rel="noopener noreferrer">TechCrunch: Tesla reveals SpaceX-powered Roadster (October 15, 2026)</a></li>
+            <li><a href="https://www.wired.com/story/how-tesla-made-its-new-230-mph-car-fly/" target="_blank" rel="noopener noreferrer">WIRED: Reporting on the proposed Roadster propulsion system (October 2026)</a></li>
+            <li><a href="https://www.youtube.com/watch?v=22rvpUecLts" target="_blank" rel="noopener noreferrer">Hagerty: Henry Catchpole's Roadster engineering walkthrough with Lars Moravy (published October 2026)</a></li>
+            <li><a href="https://teslanorth.com/2026/10/16/tesla-roadster-moravy-hagerty-engineering-interview" target="_blank" rel="noopener noreferrer">TeslaNorth: Summary of the Hagerty engineering interview (October 16, 2026)</a></li>
+            <li><a href="https://fortune.com/2026/10/17/tesla-flying-roadster-spacex-thrusters-2028-production-price/" target="_blank" rel="noopener noreferrer">Fortune: Roadster, production target, and reported regulatory responses (October 17, 2026)</a></li>
+            <li><a href="https://insideevs.com/news/812205/tesla-roadster-replenishes-air-tanks/" target="_blank" rel="noopener noreferrer">InsideEVs: Reported tank-replenishment estimates and propulsion details (October 2026)</a></li>
+            <li><a href="https://insideevs.com/news/812242/tesla-roadster-2026-specs" target="_blank" rel="noopener noreferrer">InsideEVs: Reported Roadster specifications (October 2026)</a></li>
+            <li><a href="https://insideevs.com/news/812247/tesla-roadster-preorder-delivery-guarantee" target="_blank" rel="noopener noreferrer">InsideEVs: Roadster reservation agreement and delivery language (October 2026)</a></li>
+            <li><a href="https://insideevs.com/news/812151/2027-tesla-roadster-price-specs-release-date" target="_blank" rel="noopener noreferrer">InsideEVs: Roadster price, trim, and release-date reporting (2026)</a></li>
+            <li><a href="https://electrek.co/2026/10/15/tesla-unveils-cyberfied-new-roadster-kickflip/" target="_blank" rel="noopener noreferrer">Electrek: Roadster reveal and reported configuration details (October 15, 2026)</a></li>
+            <li><a href="https://www.euronews.com/2026/10/16/could-teslas-flying-car-send-sales-and-shares-soaring" target="_blank" rel="noopener noreferrer">Euronews Business: EASA explanation and analyst reactions (October 16, 2026)</a></li>
+            <li><a href="https://electrek.co/2026/08/14/tesla-flying-roadster-demo-this-month-no-driver/" target="_blank" rel="noopener noreferrer">Electrek, reporting on The Information: proposed unmanned Roadster demonstration (August 14, 2026)</a></li>
+            <li><a href="https://fortune.com/2017/11/17/tesla-truck-200000-roadster/" target="_blank" rel="noopener noreferrer">Fortune: Original 2017 Roadster announcement and targets (November 17, 2017)</a></li>
+            <li><a href="https://webbook.nist.gov/chemistry/fluid/" target="_blank" rel="noopener noreferrer">NIST Chemistry WebBook: Fluid thermophysical properties. Consult gas-specific data at the relevant conditions before estimating tank inventory.</a></li>
+            <li><a href="https://www.nasa.gov/wp-content/uploads/2026/05/soa-2026.pdf" target="_blank" rel="noopener noreferrer">NASA: State-of-the-Art Small Spacecraft Technology (May 2026), propulsion survey including cold-gas systems and nitrogen devices</a></li>
+            <li><a href="https://www.tesla.com/roadster" target="_blank" rel="noopener noreferrer">Tesla: Official Roadster product page</a></li>
+          </ul>
+          <p>This article is an independent engineering analysis, not a statement from Tesla or SpaceX. Reported product claims and specifications may change as further technical details become available. The calculations show the consequences of stated assumptions; they do not replace measurements of the actual vehicle.</p>
+        </section>
+      </article>
+      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;">
+        <span>Rook . Editorial profile</span>
+        <div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+          <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
+          <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
+          <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
+          <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank">LinkedIn</a>
+          <a class="chip" data-share="copy" href="#">Copy link</a>
+        </div>
+        <script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){var o=a.textContent;a.textContent='Copied';setTimeout(function(){a.textContent=o;},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a>
+      </footer>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span><a href="../about.html">About</a> . <a href="../about.html#work-with-me">Contact</a></span>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
