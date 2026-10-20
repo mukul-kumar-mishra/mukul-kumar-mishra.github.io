@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">RAG in Production: 15 Lessons From the Retrieval Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Your demo answers from three perfect documents. Production answers from three million messy ones, half stale, one poisoned. This course builds the pipeline between those worlds. Chunk it, ground it, price it. Every lesson ships an artifact you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for shipping retrieval pipelines, from chunking to eval gates plus tenant isolation. Built from production postmortems with live diagrams plus calculators.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated September 19, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 20, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -373,7 +373,7 @@
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Adversarial · Retrieval as attack path</div>
           <h2>Poisoned Retrieval</h2>
-          <p class="lesson-story">Thursday. A candidate uploads a CV. The summary comes back with your API keys inside a rendered image. Retrieved documents are untrusted input wearing a trusted uniform. Your pipeline reads the room. The room reads your secrets.</p>
+          <p class="lesson-story">Thursday. A user uploads a document. The summary comes back with your API keys inside a rendered image. Retrieved documents are untrusted input wearing a trusted uniform. Your pipeline reads the room. The room reads your secrets.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Poisoned document sneaking toward the model while a scanner gate blinks and blocks it">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">poisoned doc</text>
             <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">hidden orders</text>
@@ -386,7 +386,7 @@
           <ul class="lesson-ideas">
             <li>Treat every retrieved passage as untrusted input. Documents, pages, plus uploads can all carry instructions.</li>
             <li>Scope secrets so theft buys little. Short TTLs plus least privilege turn breaches into footnotes.</li>
-            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the CV that downloaded keys.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the document that downloaded keys.</li>
           </ul>
           <p>Your artifact: three poisoned-document cases, one injection plus one exfil plus one instruction override, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
           <div class="lesson-questions">

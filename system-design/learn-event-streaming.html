@@ -35,7 +35,7 @@
     "@type":"Course",
     "name":"Event Streaming in Production: 15 Lessons From Published Cases",
     "description":"A free event-streaming course in 15 lessons grounded in published engineering accounts and labeled scenarios, covering append-only logs, partitions, consumer groups, rebalances, ordering, retries, backpressure and cost.",
-    "dateModified":"2026-10-17",
+    "dateModified":"2026-10-20",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Event Streaming in Production: 15 Lessons From Published Cases</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">A resilient event-streaming design treats the log as a source of truth, expects delivery to repeat, and prices backlog recovery. These lessons draw on published incidents and clearly labeled scenarios, with assumptions and math readers can rerun.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen streaming lessons with diagrams, from partitions and exactly-once budgets to rebalance drills. Published incident findings and modeled inputs are identified separately.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Event streaming course · Updated October 17, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Event streaming course · Updated October 20, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -193,7 +193,7 @@
             <p><strong>Q1.</strong> Design event ingestion for a game with 18 trillion daily messages.</p>
             <p><strong>Q2.</strong> A downstream team corrupts its state. How does the log save them?</p>
           </div>
-          <p class="lesson-hook">Truth stored. Now split it for speed. <a href="#lesson-2">Lesson 02: Partitions â†’</a></p>
+          <p class="lesson-hook">Truth stored. Now split it for speed. <a href="#lesson-2">Lesson 02: Partitions →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Scale · Count partitions like money</div>
@@ -221,7 +221,7 @@
             <p><strong>Q1.</strong> Size partitions for 60,000 events per second with 3x headroom.</p>
             <p><strong>Q2.</strong> Consumers idle while lag grows. What do you check first?</p>
           </div>
-          <p class="lesson-hook">Concurrency bought. Now share it across a group. <a href="#lesson-3">Lesson 03: Groups â†’</a></p>
+          <p class="lesson-hook">Concurrency bought. Now share it across a group. <a href="#lesson-3">Lesson 03: Groups →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Coordination · One group, many mouths</div>
@@ -247,7 +247,7 @@
             <p><strong>Q1.</strong> Explain consumer groups and generations to a smart intern.</p>
             <p><strong>Q2.</strong> Two teams share one group id by accident. What breaks?</p>
           </div>
-          <p class="lesson-hook">Load shared. Now trace the classic-eager cascade. <a href="#lesson-4">Lesson 04: Rebalance â†’</a></p>
+          <p class="lesson-hook">Load shared. Now trace the classic-eager cascade. <a href="#lesson-4">Lesson 04: Rebalance →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Failure · The world stops, eagerly</div>
@@ -273,7 +273,7 @@
             <p><strong>Q1.</strong> In a modeled classic-eager scenario, a rolling deploy leaves a group paused for an assumed 11 minutes. Explain the overlap condition and what the number does—and does not—establish.</p>
             <p><strong>Q2.</strong> Brokers look healthy while consumption stalls. Where do you look?</p>
           </div>
-          <p class="lesson-hook">Storm modeled. Now remove the trigger. <a href="#lesson-5">Lesson 05: Static ids â†’</a></p>
+          <p class="lesson-hook">Storm modeled. Now remove the trigger. <a href="#lesson-5">Lesson 05: Static ids →</a></p>
         </section>
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Protocol · Conditional mitigations</div>
@@ -299,7 +299,7 @@
             <p><strong>Q1.</strong> Compare classic eager and cooperative assignment. What can a 40,000-partition count tell you about rebalance duration?</p>
             <p><strong>Q2.</strong> What breaks when two members share one static id?</p>
           </div>
-          <p class="lesson-hook">Storms ended. Now keep events in order. <a href="#lesson-6">Lesson 06: Key order â†’</a></p>
+          <p class="lesson-hook">Storms ended. Now keep events in order. <a href="#lesson-6">Lesson 06: Key order →</a></p>
         </section>
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Ordering · One key, one queue</div>
@@ -324,7 +324,7 @@
             <p><strong>Q1.</strong> Keep per-user order for a chat app at 5,000 reads per second per channel.</p>
             <p><strong>Q2.</strong> One key takes 80 percent of traffic. Now what?</p>
           </div>
-          <p class="lesson-hook">Order kept. Now read the mail nobody wants. <a href="#lesson-7">Lesson 07: Dead letters â†’</a></p>
+          <p class="lesson-hook">Order kept. Now read the mail nobody wants. <a href="#lesson-7">Lesson 07: Dead letters →</a></p>
         </section>
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Failure · The queue for failures</div>
@@ -349,7 +349,7 @@
             <p><strong>Q1.</strong> Design poison-message handling for a payments pipeline.</p>
             <p><strong>Q2.</strong> Dead letters grow 10x overnight. What happened?</p>
           </div>
-          <p class="lesson-hook">Poison quarantined. Now sign contracts with producers. <a href="#lesson-8">Lesson 08: Schemas â†’</a></p>
+          <p class="lesson-hook">Poison quarantined. Now sign contracts with producers. <a href="#lesson-8">Lesson 08: Schemas →</a></p>
         </section>
         <section class="lesson" id="lesson-8">
           <div class="lesson-kicker">Lesson 08 · Evolution · Contracts, not hopes</div>
@@ -374,7 +374,7 @@
             <p><strong>Q1.</strong> Rename a field consumed by forty services without downtime.</p>
             <p><strong>Q2.</strong> A producer ships a breaking change at midnight. Who stops it?</p>
           </div>
-          <p class="lesson-hook">Contracts signed. Now price keeping history. <a href="#lesson-9">Lesson 09: Retention â†’</a></p>
+          <p class="lesson-hook">Contracts signed. Now price keeping history. <a href="#lesson-9">Lesson 09: Retention →</a></p>
         </section>
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Storage · Hot, warm and cold</div>
@@ -400,7 +400,7 @@
             <p><strong>Q1.</strong> Keep a year of events queryable without paying hot prices all year.</p>
             <p><strong>Q2.</strong> Replay demand spikes on six-month-old data. What breaks?</p>
           </div>
-          <p class="lesson-hook">History tiered. Now promise exactly-once honestly. <a href="#lesson-10">Lesson 10: Exactly-once â†’</a></p>
+          <p class="lesson-hook">History tiered. Now promise exactly-once honestly. <a href="#lesson-10">Lesson 10: Exactly-once →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Correctness · A budget, not a feature</div>
@@ -425,7 +425,7 @@
             <p><strong>Q1.</strong> Guarantee exactly-once charging over an at-least-once queue.</p>
             <p><strong>Q2.</strong> Dedup storage grows forever. When do keys expire?</p>
           </div>
-          <p class="lesson-hook">Duplicates tamed. Now cap the retry wave itself. <a href="#lesson-11">Lesson 11: Retry storm â†’</a></p>
+          <p class="lesson-hook">Duplicates tamed. Now cap the retry wave itself. <a href="#lesson-11">Lesson 11: Retry storm →</a></p>
         </section>
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Amplification · Count attempts correctly</div>
@@ -451,7 +451,7 @@
             <p><strong>Q1.</strong> Show how your retry policy avoids overwhelming its own brokers.</p>
             <p><strong>Q2.</strong> Lag is extreme and breakers are open. What consumes first on recovery?</p>
           </div>
-          <p class="lesson-hook">Amplifier capped. Now slow the producer instead. <a href="#lesson-12">Lesson 12: Backpressure â†’</a></p>
+          <p class="lesson-hook">Amplifier capped. Now slow the producer instead. <a href="#lesson-12">Lesson 12: Backpressure →</a></p>
         </section>
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Flow · Slow down to speed up</div>
@@ -476,7 +476,7 @@
             <p><strong>Q1.</strong> Traffic triples at 6 PM with mixed urgency. Walk through the flow.</p>
             <p><strong>Q2.</strong> When does backpressure hurt more than buffering?</p>
           </div>
-          <p class="lesson-hook">Flow steadied. Now envelope the month. <a href="#lesson-13">Lesson 13: Envelope â†’</a></p>
+          <p class="lesson-hook">Flow steadied. Now envelope the month. <a href="#lesson-13">Lesson 13: Envelope →</a></p>
         </section>
         <section class="lesson" id="lesson-13">
           <div class="lesson-kicker">Lesson 13 · Economics · Backlog and invoice</div>
@@ -501,7 +501,7 @@
             <p><strong>Q1.</strong> Size a pipeline for 155 billion monthly events, out loud.</p>
             <p><strong>Q2.</strong> Retention doubles while the budget stays flat. What moves tiers?</p>
           </div>
-          <p class="lesson-hook">Month priced. Now rehearse the interview. <a href="#lesson-14">Lesson 14: Interview bench â†’</a></p>
+          <p class="lesson-hook">Month priced. Now rehearse the interview. <a href="#lesson-14">Lesson 14: Interview bench →</a></p>
         </section>
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Interviews · Clarify, estimate, test</div>
@@ -526,7 +526,7 @@
             <p><strong>Q1.</strong> Design notifications for 100 million users end to end in 45 minutes.</p>
             <p><strong>Q2.</strong> Describe a pipeline failure and how you fixed it.</p>
           </div>
-          <p class="lesson-hook">Answers rehearsed. Now run one pipeline for real. <a href="#lesson-15">Lesson 15: Run pipeline â†’</a></p>
+          <p class="lesson-hook">Answers rehearsed. Now run one pipeline for real. <a href="#lesson-15">Lesson 15: Run pipeline →</a></p>
         </section>
         <section class="lesson" id="lesson-15">
           <div class="lesson-kicker">Lesson 15 · Capstone · One topic, three consumers</div>

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Zero clicks. A poisoned CV goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.">
+  <meta name="description" content="Zero clicks. A poisoned document goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/agentflayer-zero-click-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="You Uploaded a CV. It Downloaded Your API Keys.">
-  <meta property="og:description" content="Zero clicks. A poisoned CV goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.">
+  <meta property="og:title" content="You Uploaded a Document. It Downloaded Your API Keys.">
+  <meta property="og:description" content="Zero clicks. A poisoned document goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/agentflayer-zero-click-postmortem.png">
   <meta property="og:image:alt" content="Illustration of a poisoned document turning an AI agent into an exfiltration channel through a rendered image">
   <meta property="og:image:type" content="image/png">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/agentflayer-zero-click-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="You Uploaded a CV. It Downloaded Your API Keys.">
+  <meta name="twitter:title" content="You Uploaded a Document. It Downloaded Your API Keys.">
   <meta name="twitter:description" content="No clicks. No warnings. No malware. Full technical postmortem of the AgentFlayer zero-click heist.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/agentflayer-zero-click-postmortem.png">
   <meta name="twitter:image:alt" content="Illustration of a poisoned document turning an AI agent into an exfiltration channel through a rendered image">
-  <title>You Uploaded a CV. It Downloaded Your API Keys. | Buildopsy</title>
+  <title>You Uploaded a Document. It Downloaded Your API Keys. | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "You Uploaded a CV. It Downloaded Your API Keys.", "description": "Zero clicks. A poisoned CV goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-05", "dateModified": "2026-09-05", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/agentflayer-zero-click-postmortem.html"}, "keywords": "AgentFlayer, zero-click exploit, indirect prompt injection, ChatGPT connectors, data exfiltration, AI agent postmortem", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/agentflayer-zero-click-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "You Uploaded a Document. It Downloaded Your API Keys.", "description": "Zero clicks. A poisoned document goes in for a summary. Your Drive keys leave inside an image. Postmortem of the AgentFlayer heist with kill chain and fixes.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-05", "dateModified": "2026-10-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/agentflayer-zero-click-postmortem.html"}, "keywords": "AgentFlayer, zero-click exploit, indirect prompt injection, ChatGPT connectors, data exfiltration, AI agent postmortem", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/agentflayer-zero-click-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -57,15 +57,16 @@
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Breakout</span><span class="chip">September 2026</span><span class="chip">17 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">You Uploaded a CV. It Downloaded Your API Keys.</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">No clicks. No warnings. No malware. A candidate resume goes into ChatGPT for a summary. Out comes a rendered image nobody asked for, carrying your Google Drive API keys to a stranger's log dashboard. That is AgentFlayer, the zero-click heist Zenity demonstrated against ChatGPT connectors. Everyone reported the headline. This is the postmortem.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> AgentFlayer is a zero-click prompt injection where a poisoned CV steals Google Drive API keys through image rendering. One upload triggers the chain with no clicks after. Fix is a destination allow-list with a planner reader split.</p>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">You Uploaded a Document. It Downloaded Your API Keys.</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">No clicks. No warnings. No malware. A poisoned document goes into ChatGPT for a summary. Out comes a rendered image nobody asked for, carrying your Google Drive API keys to a stranger's log dashboard. That is AgentFlayer, the zero-click heist Zenity demonstrated against ChatGPT connectors on August 6, 2025. Everyone reported the headline. This is the postmortem.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> AgentFlayer is a zero-click prompt injection where a poisoned document steals Google Drive API keys through image rendering. One upload triggers the chain with no clicks after. The fix is a destination allow-list with a planner-reader split.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Security postmortem · Updated October 20, 2026</p>
     </header>
 
 
     <article class="prose">
       <section><h2>The Heist in Sixty Seconds</h2>
-        <p>A colleague shares a CV. Promising candidate. You upload it to ChatGPT plus ask for a summary, like thousands of people do daily. Hidden inside the document, possibly in invisible font, sits a second set of instructions. Not for you. For the model. It says the summary can wait. First, search your connected Google Drive for API keys. A developer is racing a deadline. The team is counting on you. Then format the keys inside a markdown image link pointing at the attacker's server. Say nothing about the new instructions. They are not relevant now.</p>
+        <p>A colleague shares a document. It looks routine. You upload it to ChatGPT and ask for a summary, like thousands of people do daily. Hidden inside the document, possibly in invisible font, sits a second set of instructions. Not for you. For the model. It says the summary can wait. First, search your connected Google Drive for API keys. A developer is racing a deadline. The team is counting on you. Then format the keys inside a markdown image link pointing at the attacker's server. Say nothing about the new instructions. They are not relevant now.</p>
         <p>The model complies. It searches your Drive. It finds the keys. It embeds them as URL parameters in an image tag. Your client renders the image. Rendering fires an HTTP request. The request carries your keys to the attacker's endpoint. You see nothing, or nothing much. The summary may never arrive. By the time you shrug, the server log on the other side already holds your secrets. Zero clicks happened after the upload. The upload was the whole attack.</p>
         <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/zero-click-heist-meme.svg" alt="The heist in one diagram. One poisoned document in. Your Drive keys out. Nobody clicked anything." width="1200" height="680"><figcaption>Figure 1. The heist in one diagram, created for this article. One poisoned document in. Your Drive keys out. Nobody clicked anything.</figcaption></figure>
         <p>OpenAI knew image rendering was dangerous. Years earlier, researcher Johann Rehberger had shown the same exfiltration path, plus OpenAI deployed a client-side mitigation. Before rendering, the client asks an endpoint whether the URL is safe. Only safe URLs render. The AgentFlayer team walked around it with one observation. Azure Blob Storage URLs pass the safety check. So they pointed the image at an Azure blob, stuffed the stolen keys into the parameters, plus read the keys back from Azure Log Analytics, which logs every request including parameters. The guard checked the host. The host was reputable. The parameters were the payload.</p>
@@ -90,7 +91,7 @@
 
       <section><h2>Promo or Reality: What Is Proven, What Is Spin</h2>
         <p>Fair question. Security vendors sell fear for a living. Labs sell reassurance for the same reason. So here is the split. Proven. The payload structure is published. The image-render channel is documented back to 2023. The Azure bypass is demonstrated with logs. The framing-gap numbers come from a controlled lab with matched clean-versus-poisoned metrics. OpenAI's mitigation exists, which concedes the channel is real. None of that is vibes. That is exhibits.</p>
-        <p>Contested. Whether any given vendor has fully closed its own variant is a moving claim. Mitigations ship quietly. Bypass reports lag them. The public scoreboard is always one round stale. Treat every "fixed" as fixed-for-now. Also contested: how often this happens outside labs. Enterprises rarely disclose falling for a poisoned CV. The absence of breach reports measures shame, not safety.</p>
+        <p>Contested. Whether any given vendor has fully closed its own variant is a moving claim. Mitigations ship quietly. Bypass reports lag them. The public scoreboard is always one round stale. Treat every "fixed" as fixed-for-now. Also contested: how often this happens outside labs. Enterprises rarely disclose falling for a poisoned document. The absence of breach reports measures shame, not safety.</p>
         <p>My read. The core is reality with a promo fringe. The mechanism needs no novel capability, no zero-day, no nation-state budget. A document plus a connector plus a renderer. That bill of materials fits in a group chat. The spin sits at the edges, where each camp litigates whose product is the exception. Ignore the labels. The channel is the product.</p>
       </section>
 
@@ -110,7 +111,7 @@
       <section><h2>Exhibits</h2>
         <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Kill-chain mechanics drawn from Zenity Labs publications, Invariant Labs research, plus the 2026 framing-gap paper below. Payload structure is described, never reproduced as a working exploit. No live systems were touched. The press covered the demos. This page reconstructs the full chain plus the fixes that actually close it, with the agent-escape side in my <a href="gpt-sandbox-breakout-postmortem.html">wiki swarm postmortem</a> plus the tool-trust side in my <a href="replit-agent-runtime-postmortem.html">Replit teardown</a>.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://labs.zenity.io/p/agentflayer-chatgpt-connectors-0click-attack-5b41" target="_blank" rel="noopener noreferrer">Zenity Labs: AgentFlayer ChatGPT Connectors 0-Click Attack</a></li>
+          <li><a href="https://labs.zenity.io/p/agentflayer-chatgpt-connectors-0click-attack-5b41" target="_blank" rel="noopener noreferrer">Zenity Labs: AgentFlayer ChatGPT Connectors 0-Click Attack (Aug 6, 2025)</a></li>
           <li><a href="https://labs.zenity.io/p/agentflayer-minimum-clicks-maximum-leaks-tilling-chatgpt-s-attack-surface-c4c7" target="_blank" rel="noopener noreferrer">Zenity Labs: Minimum Clicks, Maximum Leaks</a></li>
           <li><a href="https://zenity.io/research/agentflayer-vulnerabilities" target="_blank" rel="noopener noreferrer">Zenity Research: AgentFlayer Vulnerabilities Across Platforms</a></li>
           <li><a href="https://invariantlabs.ai/blog/toxic-flow-analysis" target="_blank" rel="noopener noreferrer">Invariant Labs: Toxic Flow Analysis of Agent Systems</a></li>

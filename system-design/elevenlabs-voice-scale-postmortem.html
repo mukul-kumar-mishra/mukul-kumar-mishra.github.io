@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ElevenLabs: The $11B Voice That Bills Per Hello", "description": "A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"}, "keywords": "ElevenLabs, TTS, voice AI, latency, cost", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/elevenlabs-voice-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ElevenLabs: The $11B Voice That Bills Per Hello", "description": "A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-10-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"}, "keywords": "ElevenLabs, TTS, voice AI, latency, cost", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/elevenlabs-voice-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Audio Generated</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1,000 yrs</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Fortune 500</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">60%+</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 10, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 20, 2026</p>
     </header>
 
 
@@ -82,8 +82,8 @@
 
       <section><h2>2. Why ElevenLabs Is the Right Unicorn Autopsy</h2>
         <p>Founded in 2022 by Mati Staniszewski and Piotr Dabkowski, ElevenLabs became Europe's third largest AI unicorn by early 2026. It raised $19M Series A in June 2023 at $100M, $80M Series B in Jan 2024 at $1.1B, $180M Series C in Jan 2025 at $3.3B led by a16z and ICONIQ Growth and $500M Series D in Feb 2026 at $11B led by Sequoia. Total funding $779M ($19M plus $80M plus $180M plus $500M). Customers include employees at over 60% of Fortune 500. That is not a research demo. That is critical audio plumbing.</p>
-        <p>The company also publishes its trade. It offers three latency tiers. Multilingual v2 at 1000ms plus excellent quality and 1x cost. Turbo v2.5 at 250ms and good quality. Flash v2.5 at 75ms and acceptable quality at 0.5x cost. One minute of audio maps to about 1000 characters. Flash sacrifices prosodic range for speed and is priced for high volume conversation. The roadmap tells you the burn. The money raised goes to shrinking Flash to 50MB on iPhone NPU and to new music and dubbing models. The fastest model is still a centralized cloud model with 1 to 4 second jitter reports.</p>
-        <blockquote>"We started by building a voice that could sound human - and we did. Today we are building foundational models across the full audio stack" — reported remarks attributed to Piotr Dabkowski at the $11B round (speech link needed). The human voice was chapter one. Billing for it forever is chapter two.</blockquote>
+        <p>The company also publishes its trade. It offers three latency tiers. Multilingual v2 at 1000ms, excellent quality, and 1x cost. Turbo v2.5 at 250ms and good quality. Flash v2.5 at 75ms and acceptable quality at 0.5x cost. One minute of audio maps to about 1000 characters. Flash sacrifices prosodic range for speed and is priced for high volume conversation. The roadmap tells you the burn. The money raised goes to shrinking Flash to 50MB on iPhone NPU and to new music and dubbing models. The fastest model is still a centralized cloud model with 1 to 4 second jitter reports.</p>
+        <blockquote>Coverage of the $11B round describes Dabkowski's arc for the company the same way: first a voice that could sound human, then foundational models across the full audio stack. The human voice was chapter one. Billing for it forever is chapter two.</blockquote>
       </section>
 
       <section><h2>3. Reconstructing the Machine</h2>

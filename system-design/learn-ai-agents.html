@@ -38,7 +38,7 @@
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
-    "dateModified":"2026-10-17",
+    "dateModified":"2026-10-20",
     "syllabusSections":[
       {"@type":"Syllabus","name":"The loop is the product"},
       {"@type":"Syllabus","name":"Tools are attack surface"},
@@ -125,7 +125,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Agents in Production: 18 Lessons From the Agent Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Friday night. Your demo just worked in front of everyone. Monday morning it meets real users plus real attackers plus a real invoice. This course closes that gap. Wire it, break it, gate it. Every lesson ships an artifact you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eighteen workshop lessons for shipping AI agents, from sandboxing to token bills plus eval gates. Published incident analyses and modeled scenarios are labeled separately.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 17, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 20, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -434,9 +434,9 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Adversarial · Injection plus exfil</div>
           <h2>The Red-Team Test</h2>
-          <p class="lesson-story">Saturday. A candidate uploads a CV. The summary comes back with your API keys inside a rendered image. No clicks. No malware. One poisoned document plus every permission the key carried. Your agent read the room. The room read your secrets.</p>
+          <p class="lesson-story">Saturday. A user uploads a document. The summary comes back with your API keys inside a rendered image. No clicks. No malware. One poisoned document and every permission the key carried. Your agent read the room. The room read your secrets.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Poisoned document packet sneaking toward secrets while a scanner gate blinks and blocks it">
-            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">upload CV</text>
+            <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">upload doc</text>
             <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">poisoned pixels</text>
             <rect class="boxlime" x="312" y="55" width="110" height="40" rx="8"/><text x="367" y="79" font-size="11" text-anchor="middle">scanner gate</text>
             <rect class="box" x="454" y="55" width="98" height="40" rx="8"/><text x="503" y="79" font-size="11" text-anchor="middle">keys safe</text>
@@ -447,7 +447,7 @@
           <ul class="lesson-ideas">
             <li>Treat all tool output as untrusted input. Documents, pages, plus tool results can all carry instructions.</li>
             <li>Scope secrets so theft buys little. Short TTLs plus least privilege turn breaches into footnotes.</li>
-            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the CV that downloaded keys.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the document that downloaded keys.</li>
           </ul>
           <p>Your artifact: three red-team cases, one injection plus one exfil plus one jailbreak, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
           <div class="lesson-questions">

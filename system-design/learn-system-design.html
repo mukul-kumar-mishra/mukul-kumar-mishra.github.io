@@ -116,7 +116,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Course: 15 Lessons From Real Outages</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, plus points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen story-driven system design lessons with diagrams, from request paths to interview playbooks. Built from production postmortems, with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 14, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 20, 2026</p>
     </header>
     <section class="sec" id="newsletter" style="margin-bottom:32px;">
       <div class="newsletter-band">
@@ -208,7 +208,7 @@
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Security · Secrets that leak</div>
           <h2>Keys Are Load-Bearing Walls</h2>
-          <p class="lesson-story">A candidate uploads a CV. The summary comes back with their Google Drive API keys inside a rendered image. No clicks. No malware. One poisoned document plus every permission the key carried.</p>
+          <p class="lesson-story">A user uploads a document. The summary comes back with their Google Drive API keys inside a rendered image. No clicks. No malware. One poisoned document and every permission the key carried.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Scoped short-lived key flowing through a vault to a service beside a leaked god-key with wide blast radius">
             <rect class="boxlime" x="8" y="20" width="150" height="40" rx="8"/><text x="83" y="44" font-size="11" text-anchor="middle">scoped key: 1h</text>
             <rect class="boxlime" x="8" y="90" width="150" height="40" rx="8"/><text x="83" y="114" font-size="11" text-anchor="middle">vault issues it</text>
@@ -220,7 +220,7 @@
           <ul class="lesson-ideas">
             <li>Scope every key to one surface plus one permission set. Least privilege is a blast-radius budget.</li>
             <li>Short TTLs plus rotation beat long-lived secrets. Stolen keys should die alone.</li>
-            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a CV. It Downloaded Your API Keys.</a></li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a Document. It Downloaded Your API Keys.</a></li>
           </ul>
           <p>Lesson 2 taught safe retries. Keys decide who retries as whom. A leaked admin token turns every retry endpoint into an attacker tool, which is why signing plus verification belong beside idempotency in every API design.</p>
           <div class="lesson-questions">
