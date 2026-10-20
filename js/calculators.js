@@ -638,9 +638,9 @@
       disc: num('ec2-disc', 0)
     };
     var r = Calcs.computeCost(o);
-    set('ec2-monthly', money(r.monthly, 0));
-    set('ec2-ondemand', money(r.onDemand, 0) + ' before discount');
-    set('ec2-savings', money(r.savings, 0) + ' saved');
+    set('ec2-monthly', money(r.monthly, 2));
+    set('ec2-ondemand', money(r.onDemand, 2) + ' before discount');
+    set('ec2-savings', money(r.savings, 2) + ' saved');
     donut('ec2-donut', [[r.monthly, CYAN], [r.savings, LIME]],
       pct(r.monthly, r.onDemand));
   }
@@ -693,7 +693,7 @@
       backupPrice: num('rds-backupp', 0.095)
     };
     var r = Calcs.rdsCost(o);
-    set('rds-monthly', money(r.monthly, 0));
+    set('rds-monthly', money(r.monthly, 2));
     set('rds-instance', money(r.instance, 2) + ' instances');
     set('rds-storagecost', money(r.storage + r.backup, 2) + ' storage');
     donut('rds-donut', [[r.instance, CYAN], [r.storage, LIME], [r.backup, ROSE]],
@@ -707,7 +707,7 @@
       freeReqM: num('lm-free-req', 1), freeGbSeconds: num('lm-free-gbs', 400000)
     };
     var r = Calcs.lambdaCost(o);
-    set('lm-monthly', money(r.monthly, 0));
+    set('lm-monthly', money(r.monthly, 2));
     set('lm-reqcost', money(r.reqCost, 2) + ' requests');
     set('lm-computecost', money(r.compute, 2) + ' compute');
     donut('lm-donut', [[r.compute, CYAN], [r.reqCost, LIME]], pct(r.compute, r.monthly));
