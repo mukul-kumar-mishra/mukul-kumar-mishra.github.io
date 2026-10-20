@@ -182,6 +182,16 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/cloudflare-r2-credential-rotation-outage.html">
+          <img loading="lazy" decoding="async" src="images/articles/cloudflare-r2-rotation-meme.png" alt="Diagram of two Workers during Cloudflare R2's March 2025 credential rotation: the default Worker receives the new credential while production keeps the old one until 22:45" width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">October 2026</span></div>
+          <h3>Cloudflare R2's 67-Minute Outage: Wrong Worker, Old Credentials</h3>
+          <p class="fl-desc">A secret written without --env landed on the default Worker. When Cloudflare deleted the old R2 credential, 100% of writes failed for 67 minutes.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Cloudflare</span><span class="chip">R2</span><span class="chip">Credential Rotation</span><span class="chip">Postmortem</span></div>
+          <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/tesla-roadster-thruster-claims-audit.html">
           <img loading="lazy" decoding="async" src="images/articles/roadster-boost-budget.png" alt="Boost budget poster: an illustrative Roadster sketch and a chart of modeled burn times of about 1.5 to 2.6 seconds per full tank against a reported five-second boost" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">

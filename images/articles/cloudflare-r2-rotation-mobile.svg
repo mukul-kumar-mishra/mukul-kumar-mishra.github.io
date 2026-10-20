@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 700" width="390" height="700">
+  <title>Cloudflare R2 credential rotation targeting failure</title>
+  <desc>Timeline of the March 21, 2025 R2 outage. Commands at 20:19 UTC without --env install the new credential on the default Worker. Production keeps the old credential when it is removed from storage at 20:37. Writes fail at 21:38 and recover after the correct production deploy at 22:45.</desc>
+  <rect width="390" height="700" fill="#080d15"/>
+  <rect x="0.5" y="0.5" width="389" height="699" fill="none" stroke="#223249"/>
+  <rect x="0" y="0" width="390" height="6" fill="#f2a13b"/>
+
+  <text x="20" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="800" fill="#f5f8fc" letter-spacing="0.4">TWO WORKERS,</text>
+  <text x="20" y="62" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="800" fill="#f5f8fc" letter-spacing="0.4">ONE ROTATION</text>
+  <text x="20" y="82" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#8ea3bb">Cloudflare R2 | 21 March 2025 | all times UTC</text>
+
+  <rect x="246" y="16" width="124" height="52" rx="10" fill="rgba(239,68,68,0.09)" stroke="#ef4444" stroke-opacity="0.75"/>
+  <text x="308" y="33" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="8" font-weight="700" fill="#f5b0ae" letter-spacing="0.8">IMPACT WINDOW</text>
+  <text x="308" y="54" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="800" fill="#ef4444">67 MINUTES</text>
+
+  <line x1="40" y1="108" x2="40" y2="390" stroke="#35506d" stroke-width="2"/>
+  <circle cx="40" cy="118" r="5.5" fill="#080d15" stroke="#2dd4bf" stroke-width="2.5"/>
+  <text x="58" y="110" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#2dd4bf">19:49</text>
+  <text x="58" y="125" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f8fc">Rotation starts</text>
+  <text x="58" y="140" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#8ea3bb">new pair created; old pair retained</text>
+
+  <circle cx="40" cy="180" r="5.5" fill="#080d15" stroke="#f2a13b" stroke-width="2.5"/>
+  <text x="58" y="172" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#f2a13b">20:19</text>
+  <text x="58" y="187" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f8fc">secret put + deploy</text>
+  <text x="58" y="202" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#f2c46d">no --env | default Worker targeted</text>
+
+  <circle cx="40" cy="242" r="5.5" fill="#080d15" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="58" y="234" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#ef4444">20:37</text>
+  <text x="58" y="249" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f8fc">Old credential removed</text>
+  <text x="58" y="264" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#8ea3bb">production still holds the old pair</text>
+
+  <circle cx="40" cy="304" r="5.5" fill="#080d15" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="58" y="296" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#ef4444">21:38</text>
+  <text x="58" y="311" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f8fc">Writes fail</text>
+  <text x="58" y="326" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#f5b0ae">61 minutes after deletion</text>
+
+  <circle cx="40" cy="366" r="5.5" fill="#080d15" stroke="#86efac" stroke-width="2.5"/>
+  <text x="58" y="358" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#86efac">22:45</text>
+  <text x="58" y="373" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f8fc">Correct production deploy</text>
+  <text x="58" y="388" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#8ea3bb">service recovers</text>
+
+  <text x="20" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="9" font-weight="700" fill="#8ea3bb" letter-spacing="0.8">WHERE THE CREDENTIAL LANDED</text>
+
+  <text x="20" y="446" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" fill="#f5f8fc">DEFAULT WORKER</text>
+  <text x="20" y="458" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#7f92ac">not production</text>
+  <rect x="20" y="465" width="60" height="30" fill="#1a2433" stroke="#35506d"/>
+  <rect x="80" y="465" width="290" height="30" fill="rgba(242,161,59,0.09)" stroke="#f2a13b" stroke-opacity="0.7"/>
+  <text x="36" y="484" font-family="Segoe UI, Arial, sans-serif" font-size="8.5" fill="#8ea3bb">OLD</text>
+  <text x="99" y="484" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#f2a13b">NEW | installed 20:20</text>
+
+  <text x="20" y="525" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" fill="#f5f8fc">PRODUCTION WORKER</text>
+  <text x="20" y="537" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#7f92ac">serves R2 APIs | never targeted</text>
+  <rect x="20" y="544" width="310" height="30" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-opacity="0.65"/>
+  <rect x="330" y="544" width="40" height="30" fill="rgba(134,239,172,0.12)" stroke="#86efac"/>
+  <text x="39" y="563" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#f5b0ae">OLD CREDENTIAL STILL CONFIGURED</text>
+  <text x="350" y="563" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="8" font-weight="700" fill="#86efac">NEW</text>
+
+  <path d="M80 598 L80 578" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <path d="M76 582 L80 575 L84 582" fill="none" stroke="#ef4444" stroke-width="1.6"/>
+  <text x="90" y="595" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#f5b0ae">deleted from storage at 20:37</text>
+
+  <path d="M350 632 L350 602" stroke="#86efac" stroke-width="1.6"/>
+  <path d="M346 607 L350 599 L354 607" fill="none" stroke="#86efac" stroke-width="1.6"/>
+  <text x="358" y="646" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="9" font-weight="700" fill="#86efac">22:45 production deploy</text>
+
+  <line x1="20" y1="662" x2="20" y2="676" stroke="#f2a13b" stroke-width="3"/>
+  <text x="34" y="672" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#f5f8fc">Both commands completed.</text>
+  <text x="34" y="686" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#f5f8fc">The production Worker was never the target.</text>
+  <text x="20" y="696" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#66768c">Source: Cloudflare incident report, 25 Mar 2025. Buildopsy reconstruction.</text>
+</svg>
