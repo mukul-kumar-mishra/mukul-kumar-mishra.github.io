@@ -78,6 +78,7 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="k8s-bill">
+      <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = worker nodes × cost per node + control-plane fee + storage GB × storage rate. Defaults: 6 × $140 + $73 + 500 × $0.10 = $840 + $73 + $50 = <strong>$963</strong> before credits.</aside>
       <p class="fl-desc" style="margin:0 0 14px;">Price a cluster from its node pool, its control plane fee and its persistent storage. Starts from a six-node EKS cluster.</p>
       <section class="radar-card">
         <div class="radar-main">

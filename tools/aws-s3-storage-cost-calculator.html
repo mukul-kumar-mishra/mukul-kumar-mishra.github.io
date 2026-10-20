@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free AWS S3 cost calculator for storage, PUT/GET requests and retrieval. Enter your rates; storage-class minimums, lifecycle charges and data transfer are not modeled.">
+  <meta name="description" content="Free S3 cost calculator: enter storage, PUT/GET requests and retrieval. Defaults use $0.023/GB-month, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta property="og:description" content="Estimate S3 pricing for storage, PUT/GET requests and retrieval with editable rates. Storage-class minimums, lifecycle charges and data transfer are not modeled.">
+  <meta property="og:description" content="Defaults use the US East S3 Standard list prices: $0.023/GB-month storage, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs. Edit every rate.">
   <meta property="og:url" content="https://buildopsy.com/tools/aws-s3-storage-cost-calculator.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta property="og:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
@@ -18,7 +18,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS S3 Storage Cost Calculator With Request Fees | Buildopsy">
-  <meta name="twitter:description" content="Estimate S3 pricing for storage, PUT/GET requests and retrieval with editable rates. Storage-class minimums, lifecycle charges and data transfer are not modeled.">
+  <meta name="twitter:description" content="Defaults use the US East S3 Standard list prices: $0.023/GB-month storage, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs. Edit every rate.">
   <meta name="twitter:image:alt" content="Worked S3 Standard estimate: 1,024 billable GB, one million PUTs and ten million GETs total $32.55 before transfer and management charges">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <title>AWS S3 Storage Cost Calculator With Request Fees | Buildopsy</title>
@@ -37,7 +37,8 @@
     "mainEntity":[
       {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost per month?","acceptedAnswer":{"@type":"Answer","text":"At the modeled example US East list price of $0.023 per billable GB-month, 1,024 billable GB for 1 TiB costs $23.55 a month before request and retrieval fees. This calculator adds PUT and GET fees on top."}},
       {"@type":"Question","name":"Do S3 PUT and GET requests add much to the bill?","acceptedAnswer":{"@type":"Answer","text":"They can. At the modeled example US East Standard rates, one million PUT requests cost $5 at $0.005 per thousand. Ten million GET requests cost $4 at $0.0004 per thousand. Rates vary by storage class and Region."}},
-      {"@type":"Question","name":"What costs are not included in this S3 estimate?","acceptedAnswer":{"@type":"Answer","text":"The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for the selected region and class."}}
+      {"@type":"Question","name":"What costs are not included in this S3 estimate?","acceptedAnswer":{"@type":"Answer","text":"The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for the selected region and class."}},
+      {"@type":"Question","name":"How is the monthly S3 cost calculated?","acceptedAnswer":{"@type":"Answer","text":"The calculator multiplies billable GB by the storage rate, divides PUT and GET counts by 1,000 before applying each request rate, and adds retrieval GB times its rate. The defaults follow S3 Standard US East list prices; transfer, lifecycle transitions, minimum durations and other request types are excluded."}}
     ]
   }
   </script>
@@ -80,6 +81,7 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the <a href="../system-design/aws-s3-pricing-model.html">AWS S3 pricing model</a>.</p></noscript>
 
     <section class="sec" id="s3-bill">
+      <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = (billable GB × storage rate) + (PUTs ÷ 1,000 × PUT rate) + (GETs ÷ 1,000 × GET rate) + (retrieval GB × retrieval rate). The other S3 meters — transfer, lifecycle transitions, minimum durations and extra request types — are not included.</aside>
       <p class="fl-desc" style="margin:0 0 14px;">Enter the storage rate, request rates and retrieval volume for your selected class and region. The defaults describe S3 Standard only.</p>
       <section class="radar-card">
         <div class="radar-main">
@@ -142,7 +144,23 @@
           </div>
         </div>
       </section>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Pricing model</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/aws-s3-pricing-model.html">AWS S3 Pricing Model: Storage, Requests and Egress</a></h3><p class="fl-desc">Trace storage, request, retrieval and transfer costs from billable bytes to a monthly estimate.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Pricing model</span> <span class="chip">Data Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/aws-s3-pricing-model.html">AWS S3 Pricing and Billing: Storage, Request Fees and Egress Costs Explained</a></h3><p class="fl-desc">Trace storage, request, retrieval and transfer costs from billable bytes to a monthly estimate.</p></article>
+
+      <div style="margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card);">
+        <p style="margin:0 0 10px;font-family:var(--font-body);font-size:0.88rem;color:var(--paper);"><strong>Rates used by the defaults</strong> — S3 Standard, US East (N. Virginia), list prices re-checked October 20, 2026:</p>
+        <div style="overflow-x:auto;">
+          <table class="claimtable" style="margin:0;">
+            <thead><tr><th>Meter</th><th>Default rate</th></tr></thead>
+            <tbody>
+              <tr><td>Storage, first 50 TB</td><td>$0.023 per GB-month</td></tr>
+              <tr><td>PUT, COPY, POST, LIST</td><td>$0.005 per 1,000 requests</td></tr>
+              <tr><td>GET and other requests</td><td>$0.0004 per 1,000 requests</td></tr>
+              <tr><td>Retrieval</td><td>$0 per GB — S3 Standard has no retrieval fee; enter a rate for other classes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fl-desc" style="margin:10px 0 0;">Source: AWS Price List API snapshot published October 15, 2026 (offer version 20261015173540), re-checked October 20, 2026. See the <a href="../system-design/aws-s3-pricing-model.html#s3-rates">full S3 rate table</a> for volume tiers, storage classes and egress.</p>
+      </div>
     </section>
 
     <section class="sec" id="s3-faq">
@@ -153,6 +171,8 @@
       <p class="fl-desc">They can. At the modeled example US East Standard rates, one million PUT requests cost $5.00 at $0.005 per thousand. Ten million GET requests cost $4.00 at $0.0004 per thousand. Rates vary by storage class and Region.</p>
       <h3>What costs are not included in this S3 estimate?</h3>
       <p class="fl-desc">The calculator adds storage, entered PUT/GET request fees and entered retrieval. It does not model other request types such as COPY, LIST or SELECT, class-specific minimum object sizes or storage durations, early deletion, lifecycle transitions, versioning or data transfer. Check the current AWS S3 price for your Region and class.</p>
+      <h3>How is the monthly S3 cost calculated?</h3>
+      <p class="fl-desc">The calculator multiplies billable GB by the storage rate, divides PUT and GET counts by 1,000 before applying each request rate, and adds retrieval GB times its rate. The defaults follow S3 Standard US East list prices; transfer, lifecycle transitions, minimum durations and other request types are excluded.</p>
     </section>
 
     <section class="sec" id="more-tools">

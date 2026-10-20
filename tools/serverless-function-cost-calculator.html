@@ -78,6 +78,7 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="serverless-bill">
+      <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = max(0, requests − free requests) × request price + max(0, requests × duration seconds × GB per invocation − free GB-seconds) × GB-second rate. Defaults: 99M billable requests × $0.20/M = $19.80; 100M × 0.2 s × 0.5 GB = 10M GB-seconds, minus 400,000 free, gives $160.00; total <strong>about $179.80</strong>.</aside>
       <p class="fl-desc" style="margin:0 0 14px;">Price a function from request volume, duration and memory, then subtract the remaining monthly account-level grants (defaults: one million requests and 400,000 GB-seconds).</p>
       <section class="radar-card">
         <div class="radar-main">
