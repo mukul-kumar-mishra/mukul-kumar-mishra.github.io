@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="1010" viewBox="0 0 360 1010" role="img" aria-labelledby="title desc">
+  <title id="title">Roadster refill reports differ by configuration; separate modeled gas-flow example</title>
+  <desc id="desc">InsideEVs reports 2–6 hours and an under-30-minute goal for the 200-liter Thrust tank, with about five seconds of boost. WIRED reports 6–7 hours and a 30-minute goal for the 600-liter Rocket. A separate scenario assumes 80 kilonewtons for five seconds at 700 meters per second, yielding about 571 kilograms; the thrust and duration come from separate reports and are not one measured configuration. No tank mass is inferred.</desc>
+  <rect width="360" height="1010" fill="#101a2c"/>
+  <rect width="360" height="5" fill="#7dd3c7"/>
+  <text x="16" y="28" font-family="Arial,Helvetica,sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.2" fill="#7dd3c7">TESLA ROADSTER / REFILL REPORTS</text>
+  <text x="16" y="58" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" fill="#eaf1fa">REFILL WINDOWS DIFFER</text>
+  <text x="16" y="81" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" fill="#eaf1fa">BY CONFIGURATION.</text>
+  <text x="16" y="101" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#a8bad0">Reported times; separate modeled flow below.</text>
+
+  <rect x="16" y="120" width="328" height="205" rx="13" fill="#102534" stroke="#2d5b6b"/>
+  <rect x="16" y="120" width="4" height="205" rx="2" fill="#58c7e8"/>
+  <text x="32" y="148" font-family="Arial,Helvetica,sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.1" fill="#58c7e8">INSIDEEVS · OCT 16</text>
+  <text x="32" y="178" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#eaf1fa">THRUST / 200 L TANK</text>
+  <text x="32" y="204" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#eaf1fa">4 rear thrusters · about 5 s boost</text>
+  <text x="32" y="250" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700" fill="#eaf1fa">2–6 h</text>
+  <text x="136" y="241" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" fill="#eaf1fa">reported refill</text>
+  <text x="136" y="262" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#a8bad0">goal: under 30 min</text>
+  <text x="32" y="294" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#a8bad0">External high-pressure nitrogen supply, per report.</text>
+
+  <rect x="16" y="343" width="328" height="205" rx="13" fill="#2a2119" stroke="#6b5534"/>
+  <rect x="16" y="343" width="4" height="205" rx="2" fill="#f6a94a"/>
+  <text x="32" y="371" font-family="Arial,Helvetica,sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.1" fill="#f6a94a">WIRED · OCT 16</text>
+  <text x="32" y="401" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#eaf1fa">ROCKET / 600 L TOTAL</text>
+  <text x="32" y="427" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#eaf1fa">10 thrusters · single-seat setup</text>
+  <text x="32" y="473" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700" fill="#eaf1fa">6–7 h</text>
+  <text x="136" y="464" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" fill="#eaf1fa">reported refill</text>
+  <text x="136" y="485" font-family="Arial,Helvetica,sans-serif" font-size="11" fill="#c8b491">goal: 30 min</text>
+  <text x="32" y="517" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#c8b491">No tank pressure or mass is inferred here.</text>
+
+  <rect x="16" y="566" width="328" height="342" rx="13" fill="#101a29" stroke="#31435e"/>
+  <rect x="16" y="566" width="4" height="342" rx="2" fill="#7dd3c7"/>
+  <text x="32" y="596" font-family="Arial,Helvetica,sans-serif" font-size="9.5" font-weight="700" letter-spacing="1" fill="#7dd3c7">SEPARATE MODELED SCENARIO</text>
+  <text x="32" y="634" font-family="Consolas,monospace" font-size="13" fill="#eaf1fa">ṁ = F / vₑ</text>
+  <text x="32" y="658" font-family="Consolas,monospace" font-size="13" fill="#eaf1fa">80,000 N / 700 m/s</text>
+  <text x="32" y="682" font-family="Consolas,monospace" font-size="13" fill="#7dd3c7">≈ 114.3 kg/s</text>
+  <text x="32" y="724" font-family="Consolas,monospace" font-size="12.5" fill="#eaf1fa">80,000 N / 700 m/s × 5 s</text>
+  <text x="32" y="748" font-family="Consolas,monospace" font-size="13" fill="#7dd3c7">≈ 571.4 kg of gas</text>
+  <text x="32" y="789" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#eaf1fa">80 kN and about 5 s come from separate</text>
+  <text x="32" y="807" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#eaf1fa">reports. Their pairing is a scenario, not a</text>
+  <text x="32" y="825" font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#eaf1fa">measured run or a specific configuration.</text>
+  <text x="32" y="861" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="#a8bad0">Tank inventory needs fill pressure, temperature,</text>
+  <text x="32" y="879" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="#a8bad0">real-gas properties and usable residual pressure.</text>
+
+  <text x="16" y="941" font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#7dd3c7">Sources: InsideEVs and WIRED, October 16, 2026.</text>
+  <text x="16" y="960" font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#a8bad0">Refill figures reported; flow calculation modeled.</text>
+  <text x="344" y="992" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="8.5" font-weight="700" fill="#7dd3c7">BUILDOPSY / ROOK</text>
+</svg>

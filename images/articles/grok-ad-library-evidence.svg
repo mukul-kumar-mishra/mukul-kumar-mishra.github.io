@@ -1,94 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="grokTitle grokDesc">
-  <title id="grokTitle">Three unreconciled Grok ad counts: 171, 91, and 2,064</title>
-  <desc id="grokDesc">Sprites' September 21, 2026 Grok snapshot reports 171 detectable ads, a 91-ad Meta set Sprites labels newest, and 2,064 Meta ads with 932 still delivering. The page does not reconcile the three scopes. The 91-ad set lists 80 new that week, 43 ads across 20 creator and publisher pages, 29 tagged SpaceXAIpartner, and a 14-day longest observed run. The 80 Google ads list 64 text, 11 video, and 5 image across eight markets; six public cards lack a product label and destination. The page reports no CTR, conversions, CAC, or ROAS.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1220"/>
-      <stop offset="1" stop-color="#121c2e"/>
-    </linearGradient>
-    <linearGradient id="metaGlow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#123b4a"/>
-      <stop offset="1" stop-color="#102534"/>
-    </linearGradient>
-    <linearGradient id="googleGlow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3a2b1b"/>
-      <stop offset="1" stop-color="#2a2119"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="680" fill="url(#bg)"/>
-  <rect width="1200" height="6" fill="#f6a94a"/>
-  <text x="50" y="40" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#f6a94a" letter-spacing="1.8">SPRITES GROK SNAPSHOT | UPDATED 21 SEP 2026</text>
-  <text x="50" y="84" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="800" fill="#f5f8fc" letter-spacing="0.2">THREE COUNTS. ONE UNRECONCILED PAGE.</text>
-  <text x="50" y="110" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#9fb0c9">Vendor-reported observations, not a library census.</text>
-  <rect x="930" y="26" width="220" height="60" rx="10" fill="#2a2119" stroke="#f6a94a" stroke-width="1.2"/>
-  <text x="1040" y="48" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="800" fill="#f6a94a" letter-spacing="1">NO OUTCOMES PUBLISHED</text>
-  <text x="1040" y="68" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#c8b491">CTR | conversions | CAC</text>
+  <title id="grokTitle">Sprites' Grok Meta ad read: 3,349 ads, 1,526 running, and a 35-versus-36 creative count gap</title>
+  <desc id="grokDesc">Sprites says its October 6, 2026 read found 3,349 Grok ads in Meta's library and 1,526 running, a calculated 45.6 percent. The page reports 35 creatives read and explained in one place and 36 creatives read in another. Twenty-one of 36 were reported as video. The counts are vendor-reported, not independently verified.</desc>
+  <rect width="1200" height="680" fill="#0b1220"/>
+  <rect width="1200" height="7" fill="#f6a94a"/>
+  <text x="52" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#f6a94a" letter-spacing="1.6">SPRITES META READ · 6 OCT 2026</text>
+  <text x="52" y="96" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="800" fill="#f5f8fc">INVENTORY RECOMPUTES. SAMPLE SIZE DOESN'T.</text>
+  <text x="52" y="126" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#9fb0c9">Vendor-reported counts; 45.6% is Buildopsy arithmetic, not an outcome measure.</text>
 
-  <rect x="50" y="130" width="340" height="118" rx="14" fill="#101a29" stroke="#31435e" stroke-width="1.4"/>
-  <rect x="50" y="130" width="340" height="5" rx="2" fill="#9fb0c9"/>
-  <text x="72" y="186" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="800" fill="#f5f8fc">171</text>
-  <text x="72" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#9fb0c9" letter-spacing="1">PAGE TOTAL</text>
-  <text x="72" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">91 Meta + 80 Google</text>
+  <rect x="52" y="158" width="340" height="122" rx="14" fill="#101a29" stroke="#31435e" stroke-width="1.5"/>
+  <rect x="52" y="158" width="340" height="6" rx="3" fill="#9fb0c9"/>
+  <text x="78" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="47" font-weight="800" fill="#f5f8fc">3,349</text>
+  <text x="78" y="253" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#9fb0c9" letter-spacing="1.2">ADS IN META LIBRARY</text>
 
-  <rect x="430" y="130" width="340" height="118" rx="14" fill="#102534" stroke="#2d5b6b" stroke-width="1.4"/>
-  <rect x="430" y="130" width="340" height="5" rx="2" fill="#58c7e8"/>
-  <text x="452" y="186" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="800" fill="#f5f8fc">91</text>
-  <text x="452" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#58c7e8" letter-spacing="1">91-AD META SET</text>
-  <text x="452" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#9fb0c9">80 new / 43 ads / 29 tagged</text>
+  <rect x="430" y="158" width="340" height="122" rx="14" fill="#102534" stroke="#2d5b6b" stroke-width="1.5"/>
+  <rect x="430" y="158" width="340" height="6" rx="3" fill="#58c7e8"/>
+  <text x="456" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="47" font-weight="800" fill="#f5f8fc">1,526</text>
+  <text x="456" y="253" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#58c7e8" letter-spacing="1.2">RUNNING IN OCTOBER 6 READ</text>
 
-  <rect x="810" y="130" width="340" height="118" rx="14" fill="#101a29" stroke="#6b5534" stroke-width="1.4"/>
-  <rect x="810" y="130" width="340" height="5" rx="2" fill="#f6a94a"/>
-  <text x="832" y="186" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="800" fill="#f5f8fc">2,064</text>
-  <text x="832" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#f6a94a" letter-spacing="1">META ADS REPORTED</text>
-  <text x="832" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#c8b491">932 still delivering</text>
+  <rect x="808" y="158" width="340" height="122" rx="14" fill="#2a2119" stroke="#6b5534" stroke-width="1.5"/>
+  <rect x="808" y="158" width="340" height="6" rx="3" fill="#f6a94a"/>
+  <text x="834" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="47" font-weight="800" fill="#f5f8fc">45.6%</text>
+  <text x="834" y="253" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#f6a94a" letter-spacing="1.2">1,526 ÷ 3,349</text>
 
-  <rect x="50" y="272" width="530" height="294" rx="16" fill="url(#metaGlow)" stroke="#2d5b6b" stroke-width="1.4"/>
-  <rect x="50" y="272" width="530" height="6" rx="3" fill="#58c7e8"/>
-  <text x="76" y="306" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="800" fill="#58c7e8" letter-spacing="1.4">META</text>
-  <text x="126" y="306" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="800" fill="#f5f8fc">/ THE 91-AD SET</text>
-  <text x="76" y="338" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="800" fill="#f5f8fc">80 new that week = 87.9%</text>
-  <text x="76" y="360" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#9fb0c9">of the 91-ad set, not of the 2,064-ad Meta count.</text>
+  <rect x="52" y="306" width="530" height="238" rx="16" fill="#101a29" stroke="#31435e" stroke-width="1.5"/>
+  <text x="80" y="346" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="800" fill="#9fb0c9" letter-spacing="1.4">THE INVENTORY RATIO</text>
+  <text x="80" y="398" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="800" fill="#f5f8fc">45.6% rounds to 46%</text>
+  <text x="80" y="434" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#cbd5e1">3,349 − 1,526 = 1,823 not in the</text>
+  <text x="80" y="460" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#cbd5e1">“running now” count at that read.</text>
+  <text x="80" y="506" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#8fa7b8">A single stock ratio does not show why ads stopped.</text>
 
-  <rect x="76" y="376" width="230" height="62" rx="10" fill="#0d1a24" stroke="#2d5b6b"/>
-  <text x="92" y="402" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="800" fill="#f5f8fc">43 ads</text>
-  <text x="92" y="423" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">20 creator &amp; publisher pages</text>
+  <rect x="618" y="306" width="530" height="238" rx="16" fill="#102534" stroke="#2d5b6b" stroke-width="1.5"/>
+  <text x="646" y="346" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="800" fill="#58c7e8" letter-spacing="1.4">THE CREATIVE READ</text>
+  <text x="646" y="398" font-family="Segoe UI, Arial, sans-serif" font-size="31" font-weight="800" fill="#f5f8fc">35 read · 36 read</text>
+  <text x="646" y="434" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#cbd5e1">One heading says 35; the metric and</text>
+  <text x="646" y="460" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#cbd5e1">video count use 36. No reconciliation.</text>
+  <text x="646" y="506" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#8fa7b8">21 ÷ 36 = 58.3%, consistent with reported 58%.</text>
 
-  <rect x="322" y="376" width="232" height="62" rx="10" fill="#0d1a24" stroke="#2d5b6b"/>
-  <text x="338" y="402" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="800" fill="#f5f8fc">29 tagged</text>
-  <text x="338" y="423" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">#SpaceXAIpartner</text>
-
-  <rect x="76" y="452" width="230" height="62" rx="10" fill="#0d1a24" stroke="#2d5b6b"/>
-  <text x="92" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="800" fill="#f5f8fc">14 days</text>
-  <text x="92" y="499" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">longest observed run</text>
-
-  <rect x="322" y="452" width="232" height="62" rx="10" fill="#0d1a24" stroke="#2d5b6b"/>
-  <text x="338" y="478" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" fill="#f5f8fc">75 / 10 / 15%</text>
-  <text x="338" y="499" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">video / static / carousel</text>
-
-          <text x="76" y="536" font-family="Segoe UI, Arial, sans-serif" font-size="14.5" fill="#8fa7b8">Reviewed Meta creatives with a reported destination:</text>
-          <text x="76" y="554" font-family="Segoe UI, Arial, sans-serif" font-size="14.5" fill="#8fa7b8">x.ai/bot. Product claim is read-level.</text>
-
-  <rect x="620" y="272" width="530" height="294" rx="16" fill="url(#googleGlow)" stroke="#6b5534" stroke-width="1.4"/>
-  <rect x="620" y="272" width="530" height="6" rx="3" fill="#f6a94a"/>
-  <text x="646" y="306" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="800" fill="#f6a94a" letter-spacing="1.4">GOOGLE</text>
-  <text x="716" y="306" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="800" fill="#f5f8fc">80 ADS</text>
-  <text x="646" y="338" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="800" fill="#f5f8fc">64 text | 11 video | 5 image</text>
-  <text x="646" y="360" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#c8b491">8 markets: US | FR | PL | NL | ES | DE | RO | IT</text>
-
-  <rect x="646" y="376" width="478" height="98" rx="10" fill="#241b12" stroke="#8a6b3e"/>
-  <text x="664" y="402" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="800" fill="#f6a94a" letter-spacing="0.8">PRODUCT LABEL UNRESOLVED</text>
-  <text x="664" y="426" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#f5f8fc">Six public cards: destination empty,</text>
-  <text x="664" y="446" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#f5f8fc">advertiser and product fields absent.</text>
-  <text x="664" y="466" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#c8b491">The other 74 headlines are gated.</text>
-
-  <text x="646" y="502" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#c8b491">A missing preview field does not mean</text>
-  <text x="646" y="522" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#c8b491">the underlying Google record lacks it.</text>
-  <text x="646" y="548" font-family="Segoe UI, Arial, sans-serif" font-size="16.5" font-weight="800" fill="#f5f8fc">The 80 are not proven Grok Bot.</text>
-
-  <rect x="50" y="584" width="1100" height="58" rx="12" fill="#101a29" stroke="#31435e"/>
-  <rect x="50" y="584" width="6" height="58" rx="3" fill="#f6a94a"/>
-  <text x="76" y="608" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#f5f8fc">Sprites publishes creative examples for the 91-ad set. Its scope is unresolved.</text>
-  <text x="76" y="630" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#8fa7b8">171 = 91 + 80. 91 and 2,064 are not reconciled.</text>
-  <text x="1128" y="622" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="800" fill="#f6a94a">BUILDOPSY / ROOK</text>
-  <text x="50" y="666" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#6f8199">Source: Sprites Grok Ads Library, updated 21 Sep 2026. Counts are vendor-reported; no CTR, conversions, CAC, or ROAS are published.</text>
+  <rect x="52" y="570" width="1096" height="66" rx="12" fill="#2a2119" stroke="#6b5534"/>
+  <rect x="52" y="570" width="6" height="66" rx="3" fill="#f6a94a"/>
+  <text x="78" y="600" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="800" fill="#f5f8fc">Inventory is not performance.</text>
+  <text x="78" y="624" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#c8b491">No per-ad spend, reach, conversions, or outcome data appear in the public page inspected.</text>
+  <text x="52" y="665" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#6f8199">Source: Sprites, “Grok ads &amp; commercials,” inspected 22 Oct 2026; page dates read to 6 Oct 2026. Buildopsy reconstruction.</text>
 </svg>

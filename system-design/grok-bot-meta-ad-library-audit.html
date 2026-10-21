@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A September 21 snapshot of Sprites' Grok ad library: 171 page total, a 91-ad Meta set labeled newest, and 2,064 Meta ads with 932 delivering. The two Meta scopes do not reconcile.">
+  <meta name="description" content="Sprites' October 6 read lists 3,349 Grok Meta ads, 1,526 running (45.6%). The same page reports 35 and 36 creatives read, leaving the sample denominator unresolved.">
   <meta name="author" content="Rook research desk">
   <link rel="canonical" href="https://buildopsy.com/system-design/grok-bot-meta-ad-library-audit.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Grok's Meta Ad Library: What 91 Creatives Establish—and What 171 Doesn't">
-  <meta property="og:description" content="A September 21 snapshot of Sprites' Grok ad library: 171 page total, a 91-ad Meta set labeled newest, and 2,064 Meta ads with 932 delivering. The two Meta scopes do not reconcile.">
+  <meta property="og:title" content="3,349 Grok Meta Ads, 1,526 Running—and a 35-vs-36 Read Gap">
+  <meta property="og:description" content="Sprites' October 6 read lists 3,349 Grok Meta ads, 1,526 running (45.6%). The same page reports 35 and 36 creatives read, leaving the sample denominator unresolved.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/grok-ad-library-evidence.png">
-  <meta property="og:image:alt" content="Grok ad counts: 171 page total, a 91-ad Meta set labeled newest, 2,064 Meta ads with 932 delivering, and an 80-ad Google set with unresolved product attribution.">
+  <meta property="og:image:alt" content="Sprites' October 6 Grok Meta read: 3,349 ads, 1,526 running, a calculated 45.6% active share, and conflicting 35- and 36-creative read counts.">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://buildopsy.com/system-design/grok-bot-meta-ad-library-audit.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Grok's Meta Ad Library: What 91 Creatives Establish—and What 171 Doesn't">
-  <meta name="twitter:description" content="A September 21 snapshot of Sprites' Grok ad library: 171 page total, a 91-ad Meta set labeled newest, and 2,064 Meta ads with 932 delivering. The two Meta scopes do not reconcile.">
+  <meta name="twitter:title" content="3,349 Grok Meta Ads, 1,526 Running—and a 35-vs-36 Read Gap">
+  <meta name="twitter:description" content="Sprites' October 6 read lists 3,349 Grok Meta ads, 1,526 running (45.6%). The same page reports 35 and 36 creatives read, leaving the sample denominator unresolved.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/grok-ad-library-evidence.png">
-  <meta name="twitter:image:alt" content="Grok ad counts: 171 page total, a 91-ad Meta set labeled newest, 2,064 Meta ads with 932 delivering, and an 80-ad Google set with unresolved product attribution.">
-  <title>Grok's Meta Ad Library: What 91 Creatives Establish—and What 171 Doesn't | Rook</title>
+  <meta name="twitter:image:alt" content="Sprites' October 6 Grok Meta read: 3,349 ads, 1,526 running, a calculated 45.6% active share, and conflicting 35- and 36-creative read counts.">
+  <title>3,349 Grok Meta Ads, 1,526 Running—and a 35-vs-36 Read Gap | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,31 +30,21 @@
   <link rel="stylesheet" href="../css/styles.css">
   <style>
     .prose .audit-table { display: table; width: 100%; table-layout: fixed; }
-    .prose .audit-table th:first-child, .prose .audit-table td:first-child { width: 78px; }
-    .prose .audit-table th:nth-child(2), .prose .audit-table td:nth-child(2) { width: 38%; }
-    .prose .calc-table th:first-child, .prose .calc-table td:first-child { width: 118px; }
-    .prose .evidence-table th:first-child, .prose .evidence-table td:first-child { width: 138px; }
-    .prose .evidence-table th:nth-child(2), .prose .evidence-table td:nth-child(2) { width: auto; }
-    @media (min-width: 641px) {
-      .prose .calc-table th:nth-child(2), .prose .calc-table td:nth-child(2) { width: 90px; text-align: right; }
-    }
+    .prose .audit-table th:first-child, .prose .audit-table td:first-child { width: 122px; }
+    .prose .audit-table th:nth-child(2), .prose .audit-table td:nth-child(2) { width: 39%; }
     @media (max-width: 640px) {
-      .prose .audit-table { display: block; max-width: none; overflow: visible; font-size: 0.82rem; }
+      .prose .audit-table { display: block; max-width: none; overflow: visible; font-size: 0.84rem; }
       .prose .audit-table thead { display: none; }
       .prose .audit-table tbody, .prose .audit-table tr, .prose .audit-table td { display: block; width: 100%; box-sizing: border-box; }
       .prose .audit-table tr { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 12px 14px; margin: 0 0 10px; }
       .prose .audit-table td { border: none; padding: 0 0 8px; }
       .prose .audit-table td:last-child { padding-bottom: 0; }
-      .prose .audit-table td:first-child { font-family: var(--font-display); font-size: 1.08rem; font-weight: 700; color: var(--heading); }
-      .prose .calc-table td:first-child, .prose .calc-table td:nth-child(2) { width: 100%; }
+      .prose .audit-table td:first-child { font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: var(--heading); }
       .prose .audit-table td:not(:first-child)::before { content: attr(data-label); display: block; margin: 1px 0 2px; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); }
-    }
-    @media (min-width: 641px) {
-      .site main > div > footer:has(> .share-row[data-share-row]) > .share-row > .fl-desc { display: none; }
     }
   </style>
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Grok's Meta Ad Library: What 91 Creatives Establish—and What 171 Doesn't","description":"An advertising-library audit of Sprites' September 21, 2026 Grok snapshot, saved October 20. The snapshot reports 171 detectable ads, a 91-ad Meta set it labels newest, and 2,064 Meta ads with 932 still delivering; the relationship between 91 and 2,064 is undefined. Grok Bot product attribution applies only to the Meta creatives Sprites says it read and identified; six embedded Google previews contain image-production headlines but do not expose the product or destination of the 80-ad set. The live page now shows a newer read; those counts are not used.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-10-21","dateModified":"2026-10-21","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/grok-bot-meta-ad-library-audit.html"},"keywords":"Grok Bot, Grok ads, Meta Ad Library, Google Ads Transparency Center, Sprites, advertising audit, ad library denominator, creator ads","image":"https://buildopsy.com/images/articles/grok-ad-library-evidence.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"3,349 Grok Meta Ads, 1,526 Running—and a 35-vs-36 Read Gap","description":"Sprites' October 6 read lists 3,349 Grok Meta ads, 1,526 running (45.6%). The same page reports 35 and 36 creatives read, leaving the sample denominator unresolved.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-10-22","dateModified":"2026-10-22","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/grok-bot-meta-ad-library-audit.html"},"keywords":"Grok ads, Meta Ad Library, advertising audit, ad inventory, creative sample, Sprites, Rook research desk","image":"https://buildopsy.com/images/articles/grok-ad-library-evidence.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -87,128 +77,81 @@
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;">
           <span class="fl-tag">Advertising Systems</span>
           <span class="chip">October 2026</span>
-          <span class="chip">13 min read</span>
-          <span class="chip">Rook</span>
+          <span class="chip">10 min read</span>
         </div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Grok's Meta Ad Library: What 91 Creatives Establish—and What 171 Doesn't</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;"><a href="https://www.sprites.ai/grok-ads" target="_blank" rel="noopener noreferrer">Sprites' September 21 Grok snapshot</a> reports 171 detectable ads across Meta and Google: 91 on Meta and 80 on Google. Its analysis card separately reports 932 of 2,064 Meta ads still delivering. Sprites labels the 91-ad set “newest” and applies Grok Bot attribution only to the Meta creatives it says it read and identified. The 171 is a page total, not an established Grok Bot count, and the snapshot does not reconcile the 91 with 2,064.</p>
-        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The 91-ad Meta set is the one Sprites labels “newest”; Grok Bot attribution applies only to the Meta creatives Sprites says it read and identified. Sprites says 80 of the 91 newest ads launched “this week” in its September 21 snapshot. It reports 43 ads across 20 creator and publisher pages and 29 carrying <code>#SpaceXAIpartner</code>; the page does not say whether 29 is measured against 91 or 43. Sprites reports <code>x.ai/bot</code> as the destination for every Meta creative in its reviewed set for which a destination is provided. The 80-ad Google set is part of the 171, not additional inventory; six embedded preview objects carry image-production headlines but do not establish the product or destination of the full set. The creative counts describe inventory; the 932 is a reported delivery-status count, not performance.</p>
-        <p class="fl-desc" style="margin-top:10px;"><strong>Snapshot note:</strong> The live Sprites page has changed since the saved September 21 snapshot. On October 21 it reported 3,349 Meta ads and 1,526 running from an October 6 read. This audit uses the saved snapshot and does not combine the two reads.</p>
-        <div class="grid4" style="margin-top:24px;"><div class="stat" style="padding:14px;"><div class="lbl">Page total</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">171</div></div><div class="stat" style="padding:14px;"><div class="lbl">91-ad Meta set</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">91</div></div><div class="stat" style="padding:14px;"><div class="lbl">Meta ads reported</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2,064</div></div><div class="stat" style="padding:14px;"><div class="lbl">Public outcomes</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Unavailable</div></div></div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-rook">Rook</a> &middot; Advertising systems audit &middot; October&nbsp;21,&nbsp;2026</p>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">3,349 Grok Meta Ads, 1,526 Running—and a 35-vs-36 Read Gap</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Sprites' Grok ad-library page says its October 6, 2026 read found 3,349 ads in Meta's library, with 1,526 running. The ratio is 45.6%, consistent with the vendor's rounded 46% claim. But the same page labels its analysis “35 read and explained,” lists 36 creatives read, and uses 36 as the denominator for a video count. That gap limits what the page can establish about its creative sample.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> 1,526 ÷ 3,349 = 45.6%, which rounds to 46%. That is an inventory share at the stated read, not evidence that 46% of ads performed well or that the advertiser deliberately retired the rest. Sprites reports 35 and 36 as creative-read counts on the same page. Its “21 of 36” video count yields 58.3%, matching the displayed 58% after rounding, but the page does not resolve the 35-versus-36 discrepancy or document how the read set was selected.</p>
+        <div class="grid4" style="margin-top:24px;">
+          <div class="stat" style="padding:14px;"><div class="lbl">Meta library ads</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">3,349</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Running on Oct 6</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1,526</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Calculated active share</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">45.6%</div></div>
+          <div class="stat" style="padding:14px;"><div class="lbl">Creative-read labels</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">35 / 36</div></div>
+        </div>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook research desk &middot; Advertising-systems audit &middot; October 22, 2026</p>
       </header>
       <article class="prose">
-        <section>
-          <h2>1. Three scopes, one page</h2>
-          <p>The saved snapshot opens with <strong>171</strong>, described as “ads in public libraries,” split 91 Meta, 80 Google, and 0 LinkedIn. Its September 21 analysis card says: “932 of 2,064 Meta ads still delivering. 80 of the 91 newest launched this week.” The next card says: “20 creator pages post 43 of the 91 newest ads. 29 tag #SpaceXAIpartner.” The FAQ calls 171 an “observed library total, not a claim that every ad is running simultaneously.”</p>
-          <p>The 91 and 2,064 counts do not share a defined denominator. Sprites labels the 91-ad set “the 91 newest,” then reports 2,064 Meta ads without defining that population, date, or filters. It does not say whether 91 is a subset, a sample, or a separate filter. The 932 is explicitly a subset of 2,064: 932 / 2,064 is a 45.2% still-delivering share of that count. It says nothing about the share of the 91 or 171.</p>
-          <table class="audit-table">
-            <thead><tr><th scope="col">Number</th><th scope="col">Exact source wording</th><th scope="col">What it actually measures</th></tr></thead>
-            <tbody>
-              <tr><td data-label="Number">171</td><td data-label="Source">“171 detectable ads across Meta and Google”; “171 Grok ads. 95 read and explained”</td><td data-label="What it measures">The page total: 91 Meta + 80 Google. It is not a Meta library count.</td></tr>
-              <tr><td data-label="Number">91</td><td data-label="Source">Sprites, 21 Sep 2026: “91 On Meta”; “80 of the 91 newest launched this week”; “43 of the 91 newest ads”</td><td data-label="What it measures">The 91-ad Meta set Sprites labels “newest.” The 80 and 43 are measured against this set. The page does not say whether 29 is measured against 91 or 43; the set's relationship to 2,064 is undefined.</td></tr>
-              <tr><td data-label="Number">2,064</td><td data-label="Source">“932 of 2,064 Meta ads still delivering”</td><td data-label="What it measures">A separate Meta count. Population, date, and filters are undefined; 932 is reported as a subset.</td></tr>
-              <tr><td data-label="Number">932</td><td data-label="Source">“932 of 2,064 Meta ads still delivering”</td><td data-label="What it measures">The still-delivering subset of 2,064: 45.2% of that count. It is not a share of 91 or 171.</td></tr>
-              <tr><td data-label="Number">80</td><td data-label="Source">“80 Google ads”; “64 text, 11 video, 5 image”</td><td data-label="What it measures">The Google set. Six embedded preview objects carry partial fields; product label and destination are unresolved.</td></tr>
-              <tr><td data-label="Number">95</td><td data-label="Source">“95 read and explained”</td><td data-label="What it measures">A depth-of-read label, not a denominator. The page does not map the 95 to the 91/80 split or list which ads were read.</td></tr>
-            </tbody>
-          </table>
-          <table class="audit-table calc-table">
-            <thead><tr><th scope="col">Calculation</th><th scope="col">Result</th><th scope="col">What it establishes</th></tr></thead>
-            <tbody>
-              <tr><td data-label="Calculation">91 + 80</td><td data-label="Result">171</td><td data-label="What it establishes">Matches the headline page total</td></tr>
-              <tr><td data-label="Calculation">80 / 91</td><td data-label="Result">87.9%</td><td data-label="What it establishes">Share of the 91-ad set Sprites says launched “this week”</td></tr>
-              <tr><td data-label="Calculation">43 / 91</td><td data-label="Result">47.3%</td><td data-label="What it establishes">Share of the 91-ad set reported across creator/publisher pages</td></tr>
-              <tr><td data-label="Calculation">932 / 2,064</td><td data-label="Result">45.2%</td><td data-label="What it establishes">Share of the 2,064 count reported still delivering; not a share of 91 or 171</td></tr>
-            </tbody>
-          </table>
-          <p>The only defined subset in the snapshot is 932 of 2,064. The 91 and 2,064 remain separate scopes.</p>
-        </section>
-        <section>
-          <h2>2. What the 91-ad set shows</h2>
-          <p>Within the set, the product evidence is specific. Sprites says: “Every Meta ad read sells Grok Bot, landing on x.ai/bot. None sell the chat app.” The landing-page summary is a read-level claim, not a per-ad field for all 91. The saved page exposes only part of the set and gates the rest; this audit does not extend the summary to every ad. Only 95 of 171 ads were read and explained overall, and the page does not map that depth to the 91. The product claim is therefore a read-level finding, not a per-ad audit of all 91.</p>
-          <p>In its September 21 snapshot, Sprites says 80 of the 91 newest ads launched “this week.” It reports 43 ads across 20 creator and publisher pages and 29 tagged <code>#SpaceXAIpartner</code>; the page does not say whether 29 is measured against 91 or 43. The reported format mix is 75% video, 10% static, and 15% carousel. The longest observed run is 14 days.</p>
-          <p>Those counts describe creative metadata, not delivery. A 91-creative count is not 91 delivered ads; a library can show a creative that ran briefly to a small audience. The 14-day maximum is the longest observed run, not a test window. It could reflect a deliberate test, a late start, or a creative that stayed active; the library has no decision log.</p>
-          <p>A shared destination does not prove shared targeting. Sprites infers that segmentation, if any, happens after the click; that is a hypothesis, and the library publishes no targeting or post-click routing.</p>
-          <p>The 80-of-91 figure is descriptive: Sprites reports those ads as launched in the prior week. The page does not show how many were distinct experiments, how budget was allocated, which were stopped, or which performed. A launch push, routine rotation, and structured testing are all possible; the counts do not distinguish them.</p>
-        </section>
-        <section>
-          <h2>3. Why the Google 80 cannot be called Grok Bot</h2>
-          <p>The Google set is 80 ads: 64 text, 11 video, and 5 image, across eight markets. It also lists three vendor-reported impression-band entries: <code>&lt;1k</code>, <code>7k–8k</code>, and <code>&lt;1k</code>. Three entries, two unique values, with no count per band and no mapping to particular ads, formats, or markets. Sprites says bands are measured only on Google and LinkedIn. They are delivery disclosures, not performance data.</p>
-          <p>The saved page embeds six Google preview objects, all with format “search” and four unique headlines, including “Image 2.0: Built for Real Work.” Three headlines are rendered. In those six, the body, call to action, destination, image, advertiser metadata, active status, and run dates are empty. The full 80 headlines sit behind a lock labelled “All 80 Google headlines.”</p>
-          <p>The available record does not establish that the Google ads sell Grok Bot, or that they sell something else. The “one product, one page” finding is explicitly Meta-only; the Google panel has no product label. The rendered headlines are image-production pitches, consistent with Grok’s image features, a separate image buy, or a mixed buy. The source does not say which.</p>
-          <p>A missing field in a preview does not prove the underlying record lacks it. The embedded previews are not a random sample, so they cannot estimate the full set; they also lack the fields needed to assign the Google set to Grok Bot.</p>
-        </section>
         <figure class="article-figure">
-          <picture><source media="(max-width: 640px)" srcset="../images/articles/grok-ad-library-evidence-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/grok-ad-library-evidence.svg" alt="Grok ad counts from a September 21 snapshot: 171 page total, a 91-ad Meta set labeled newest, 2,064 Meta ads with 932 delivering, and an 80-ad Google set with unresolved product attribution." width="1200" height="680"></picture>
-          <figcaption>Figure 1. The September 21 snapshot reports 171 detectable Grok ads across Meta and Google, identifies 91 Meta ads as its “newest” set, and separately reports 2,064 Meta ads, of which 932 are said to still be delivering. The relationship between the two Meta counts is not defined. The 80 Google ads are part of the 171, not additional inventory; six embedded preview objects contain image-production headlines, and the full set's product and destination remain unresolved. Counts are vendor-reported; the page reports no CTR, conversions, CAC, or ROAS.</figcaption>
+          <picture><source media="(max-width: 640px)" srcset="../images/articles/grok-ad-library-evidence-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/grok-ad-library-evidence.svg" alt="Sprites' October 6 Grok Meta read: 3,349 ads, 1,526 running, a calculated 45.6% active share, and conflicting 35- and 36-creative read counts." width="1200" height="680"></picture>
+          <figcaption>Figure 1. Buildopsy reconstruction of the counts on Sprites' Grok ad-library page as checked October 22, 2026. Sprites dates its read to October 6. The 45.6% share is calculated from its two reported counts; the 35-versus-36 read labels are reproduced as shown, not reconciled.</figcaption>
         </figure>
         <section>
-          <h2>4. Creators, hashtags, and the limits of distribution</h2>
-          <p>Sprites reports 43 ads across 20 creator and publisher pages. The sampled creator copy is first-person testimonial. One ad says: “SpaceXAI just released Grok Bot, your team of always-on, delightful digital colleagues.” Another says: “Grok bot is the first piece of technology that has changed how I run my business, here's how it works.” The tag is a campaign marker. It signals a partnership or campaign affiliation, not the deal terms, the brief, or whether the creator initiated the post.</p>
-          <p>Meta's partnership ad format can feature the creator and advertiser in the ad header, and the Ad Library includes branded content. The library shows the pages and the tag. It does not show contracts, rates, selection logic, targeting, or organic endorsement. Twenty pages is twenty distribution surfaces, not twenty independent audiences. A feed sighting shows one account was served; the library shows the creative, not the auction behind it.</p>
-          <p>The platform frequency controls do not fill that gap. Google caps Display and Video; Display allows campaign-, ad-group-, or ad-level caps, Video only campaign-level; windows are daily, weekly, or monthly. Google's page does not list Search. Meta allows campaign-level controls with Advantage+ campaign budget or ad-set-level controls with Advantage+ off, not both. Neither page describes a cross-platform cap, and Sprites publishes no audience-overlap or frequency data. A sighting on Instagram and a Grok image ad on YouTube do not show a shared cap.</p>
+          <h2>1. What Sprites reports in its October 6 read</h2>
+          <p>The primary source is <a href="https://www.sprites.ai/grok-ads" target="_blank" rel="noopener noreferrer">Sprites' Grok ads and commercials page</a>. When inspected on October 22, the page said the underlying read was taken October 6, 2026. It reported 3,349 ads in Meta's library, 1,526 running, a 12-day median run, and a longest-running ad still active at 20 days.</p>
+          <table class="audit-table">
+            <thead><tr><th scope="col">Source field</th><th scope="col">Reported value</th><th scope="col">What it supports</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Source field">Meta inventory</td><td data-label="Reported value">3,349 ads; 1,526 running on the October 6 read</td><td data-label="What it supports">A vendor-reported library count and running count at that read, not an independent census.</td></tr>
+              <tr><td data-label="Source field">Read-set size</td><td data-label="Reported value">“35 read and explained” in a section heading; 36 in the “Creatives read” metric</td><td data-label="What it supports">Two inconsistent labels for the size of the creative analysis. The page does not explain the difference.</td></tr>
+              <tr><td data-label="Source field">Video count</td><td data-label="Reported value">21 of 36 read creatives</td><td data-label="What it supports">The source's own denominator for the video percentage in its body copy.</td></tr>
+              <tr><td data-label="Source field">Run length</td><td data-label="Reported value">12-day median; longest still active at 20 days</td><td data-label="What it supports">Vendor-reported duration statistics for the analyzed creatives; the sampling and duration methods are not described.</td></tr>
+            </tbody>
+          </table>
+          <p>These are Sprites' measurements and labels. The public page shows selected examples but does not expose the complete record set behind the totals, running statuses, sample selection, or run-length summary, so a reader cannot reproduce those results independently.</p>
         </section>
         <section>
-          <h2>5. What the paid-media guide says</h2>
-          <p><a href="https://x.ai/bot/guides/grok-bot-for-performance-marketing" target="_blank" rel="noopener noreferrer">SpaceXAI's October 5 guide</a> is the company's account of how its paid-media team uses Grok Bot, not an independent review. Miguel Cruz, who says “I run paid media for Grok Bot,” describes bots that pull demand research, draft budgets and channel structure, draft copy, brief creative, set up tracking, and report, with human approval. The guide says channel-specific bots take a first stab at copy and Cruz rewrites anything that looks off. It does not tie a specific Meta creative to Grok Bot authorship.</p>
-          <p>The guide names no ads or campaigns, publishes no spend, CAC, or result, and does not tie specific creatives to specific bots. It supports bot-assisted copy drafting in a workflow account, not final authorship of specific ads. A bot checks spend pacing and conversions each morning; the team hears about exceptions. That is monitoring, not an outcome.</p>
-          <p>Grok Bot opened in beta on <a href="https://x.ai/news/introducing-grok-bot" target="_blank" rel="noopener noreferrer">August 11, 2026</a>; the guide is dated October 5, two weeks after the snapshot. The dates fit a launch push, but they do not establish who wrote the ads.</p>
+          <h2>2. The running share recomputes, but it is an inventory ratio</h2>
+          <p>Using the two counts reported on the page:</p>
+          <p><strong>Running share = running ads ÷ library ads</strong></p>
+          <p><strong>1,526 ÷ 3,349 = 0.455658… = 45.5658…% ≈ 45.6% ≈ 46% rounded to a whole percent.</strong></p>
+          <p>The subtraction is also reproducible: <strong>3,349 − 1,526 = 1,823</strong> entries were not in the page's “running now” count at that read. The arithmetic does not establish why those ads were no longer running, whether an entry represents a distinct creative or campaign, or how the portfolio changed over time.</p>
+          <p>Sprites describes the 46% as evidence that the brand is “retiring most of what it makes and scaling the survivors.” That interpretation goes beyond the single snapshot. An active-to-total ratio is a stock measure: it mixes ads launched at different times and says nothing by itself about budget, reach, conversions, or the reasons a campaign stopped. To distinguish planned retirement from ordinary rotation, a reader would need dated ad-level start and stop records and, for a performance claim, delivery or outcome measures.</p>
         </section>
         <section>
-          <h2>6. The measurement gap</h2>
-          <p>Meta's Ad Library lists active ads and creative metadata. Outside the EU/UK, active commercial ads do not show spend, impression ranges, total reach, or ad-level targeting, and stopped ads are not archived. Ads delivered to the EU/UK are archived for one year and show total reach and ad-level targeting, but not spend or impression ranges. Spend and impression ranges are reserved for social-issue, electoral, and political ads. Google's Ads Transparency Center is a searchable repository; targeting and recipient counts are available only in some regions. Neither publishes conversions or cost per result.</p>
-          <p>Sprites says cross-channel spend is not public and that spend is modeled. It lists CTR, CPC, CPM, conversions, Google keyword lists, and Meta audience targeting as unavailable, and reports no CAC or ROAS. Its Google impression bands are delivery disclosures with no count or per-ad, per-format, or per-market assignment, so they cannot be matched to the Meta count. The modeled spend figure is not used here.</p>
-          <p>What would change the verdict?</p>
-          <ul>
-            <li>A denominator reconciliation from Sprites: define 171, 91, 2,064, 932, and 95, and state whether 91 is a subset, a sample, or a separate filter.</li>
-            <li>A per-ad product label and destination for the 80 Google ads, ideally from Google's records or a landing page that names the product.</li>
-            <li>A spend or reach disclosure for the Meta ads. That would turn an observed creative count into a distribution estimate.</li>
-            <li>A statement from Grok's maker tying specific creatives to Grok Bot, and a separate statement on who wrote them. The first would supply product attribution; the second, authorship.</li>
-            <li>A creator contract, rate card, or brief. That would turn the hashtag from a campaign marker into a distribution fact.</li>
-          </ul>
-          <p>The snapshot supports creative volume and visible distribution. It does not establish delivery scale, performance, authorship, or personal targeting.</p>
+          <h2>3. The source does not reconcile 35 with 36</h2>
+          <p>The page's section heading says “35 read and explained,” while its visible metric says “Creatives read 36.” Its body then says 21 of 36 read ads are video. That denominator yields:</p>
+          <p><strong>21 ÷ 36 = 0.5833… = 58.3%.</strong></p>
+          <p>That calculation supports the source's rounded 58% video figure if 36 is the intended denominator. It does not explain why another part of the page says 35. Without an itemized set or a note about excluded or newly added creatives, the discrepancy remains open.</p>
+          <p>The page reports 58% video, 33% carousel, and 8% single image. Those whole-number shares sum to 99%. Rounding is consistent with a one-point shortfall, but the source publishes no unrounded percentages or method, so the exact format counts cannot be recovered from those shares.</p>
         </section>
         <section>
-          <h2>7. Three lessons from the evidence</h2>
-          <p>Three lessons follow directly from the counts and fields above:</p>
-          <ol>
-            <li>The denominator belongs in the claim. “80 of the 91 newest” is supportable; “80 of the 2,064” is not.</li>
-            <li>Treat “newest N” as a vendor label, not a verified sample. The 91-ad set can describe a push, but it cannot stand in for 2,064 without a stated filter and date.</li>
-            <li>Audit per-ad fields before assigning a product. A page-level heading is not a product label or a destination; the six Google cards show why.</li>
-          </ol>
+          <h2>4. A 20-day live ad has not completed its run</h2>
+          <p>Sprites reports a 12-day median and says its longest-running ad was still active at 20 days. For that longest ad, 20 days is a minimum observed run as of the read, not a completed campaign lifetime: it could continue after the measurement. The page does not say whether the median includes only active ads, a mix of active and inactive ads, or a particular creative sample.</p>
+          <p>Duration can describe persistence, but it is not a proxy for success without the missing outcome and exposure data. An ad can remain active at low spend, reach a small audience, or serve a narrow objective. A useful comparison needs a defined cohort, its observation window, delivery volume, and the outcome being optimized.</p>
         </section>
         <section>
-          <h2>8. The verdict</h2>
-          <p><strong>What the snapshot documents.</strong> Sprites identifies a 91-ad Meta set it labels “newest,” 80 of which it says launched “this week” in its September 21 snapshot, alongside a separate 80-ad Google set. Within the Meta set it reports 43 ads across 20 creator and publisher pages, 29 partner tags, and <code>x.ai/bot</code> as the destination for reviewed creatives with a destination.</p>
-          <p><strong>What remains unestablished.</strong> The 91 remains a vendor-labeled set, not a measured fraction of the 2,064 count. The Google 80's product and destination remain unresolved; the six previews are not a representative sample. The 171 is a page total, not a Grok Bot count.</p>
-          <p><strong>What the evidence cannot show.</strong> The library reports creative metadata, not observed reach or spend, conversions, CAC, ROAS, or authorship.</p>
+          <h2>5. Creative inventory is not media performance</h2>
+          <p>The public page provides counts, formats, and run-length summaries. The version inspected here does not show ad-level spend, impressions, clicks, conversions, customer-acquisition cost, or return on ad spend. Nor does it publish the fields needed to connect a creative's run length to its results.</p>
+          <p>This is a boundary on what this public page establishes, not a claim that Sprites or the advertiser lacks additional private data. A creative count can support a statement about visible inventory. It cannot establish campaign efficiency, audience reach, or which creative won.</p>
+          <p>For a reproducible advertising audit, publish a timestamped record set and keep the fields separate: library inventory, active status, ad-level duration, spend, impressions, and conversions. Define the read sample and denominator once, then report outcomes for the same cohort and period. Otherwise a changing catalog can make the active share look like a performance trend when it is only a count of records in different states.</p>
+        </section>
+        <section>
+          <h2>6. Verdict</h2>
+          <p><strong>What the disclosure establishes:</strong> Sprites reports 3,349 Grok ads in Meta's library and 1,526 running in its October 6 read. Their ratio is 45.6%, which rounds to the page's 46%. The page also reports a 12-day median run, a 20-day longest run still active, and 21 video ads among a stated 36-creative read.</p>
+          <p><strong>What remains open:</strong> the page gives both 35 and 36 as the read-set size, does not document how the creatives were selected, and provides no ad-level delivery or outcome data alongside these claims. The 46% ratio does not establish that ads were deliberately retired, that surviving ads received more spend, or that they performed better.</p>
+          <p>The useful conclusion is narrower than the vendor's strategy language: a public ad-library snapshot can describe inventory and status, but a denominator mismatch and missing outcomes prevent it from measuring campaign performance.</p>
         </section>
         <section>
           <h2>Sources and Method</h2>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit uses the Sprites snapshot for creative counts and platform documentation for the limits of what a library can establish. The saved page was inspected on October 20, 2026; the snapshot says it was updated September 21. Every percentage was recomputed. The 91-ad set is treated as the vendor’s “newest” set, not as a fraction of 2,064. The six Google preview objects were inspected field by field; the other 74 are gated. Direct Meta and Google queries returned no usable Grok data. The modeled spend figure is not used.</p>
-          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-            <li><a href="https://www.sprites.ai/grok-ads" target="_blank" rel="noopener noreferrer">Sprites: Grok Ads Library, updated September 21, 2026</a>. Observed snapshot; spend is modeled; direct re-query not possible.</li>
-            <li><a href="https://x.ai/news/introducing-grok-bot" target="_blank" rel="noopener noreferrer">Introducing Grok Bot, August 11, 2026</a>.</li>
-            <li><a href="https://x.ai/bot/guides/grok-bot-for-performance-marketing" target="_blank" rel="noopener noreferrer">Miguel Cruz: Grok Bot for Performance Marketing, October 5, 2026</a>.</li>
-            <li><a href="https://www.facebook.com/business/help/2405092116183307" target="_blank" rel="noopener noreferrer">Meta: About the Meta Ad Library</a>. Direct fetch blocked; official help page examined via archived capture and search extract.</li>
-            <li><a href="https://www.facebook.com/business/help/430291176997542" target="_blank" rel="noopener noreferrer">Meta: About ad auctions</a>. Direct fetch blocked; official help page.</li>
-            <li><a href="https://www.facebook.com/business/help/342728904797642" target="_blank" rel="noopener noreferrer">Meta: About partnership ads</a>. Direct fetch blocked; official help page.</li>
-            <li><a href="https://www.facebook.com/business/help/422853447344162" target="_blank" rel="noopener noreferrer">Meta: About frequency controls for auction</a>. Direct fetch returned 400; official page content inspected via search extract.</li>
-            <li><a href="https://support.google.com/google-ads/answer/117579?hl=en" target="_blank" rel="noopener noreferrer">Google Ads Help: Frequency capping</a>.</li>
-            <li><a href="https://support.google.com/adspolicy/answer/13733850?hl=en" target="_blank" rel="noopener noreferrer">Google Advertising Policies Help: Ads transparency</a>.</li>
-            <li><a href="https://adstransparency.google.com/faq" target="_blank" rel="noopener noreferrer">Google Ads Transparency Center FAQ</a>. Client-rendered; direct query not usable.</li>
-            <li><a href="https://transparency.meta.com/en-us/researchtools/ad-library-tools" target="_blank" rel="noopener noreferrer">Meta Transparency: Ad Library tools</a>. Direct fetch returned 400; official page.</li>
-            <li><a href="https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/overview" target="_blank" rel="noopener noreferrer">Meta Developer Documentation: Bidding overview</a>. Direct fetch returned 400; official docs.</li>
-          </ul>
-          <p>Method: read the full rendered Sprites page and its embedded ad objects; recorded the exact wording around 171, 91, 2,064, 932, 80, and 95; checked the six Google preview objects for product-label, destination, advertiser, and date fields; recomputed every percentage from the published counts; read the launch post and paid-media guide; checked platform help and policy pages where accessible; used only the 91-ad Meta set reported by Sprites; did not use modeled spend.</p>
-          <p>This article is an independent advertising-systems audit, not a statement from Grok's maker, Meta, Google, or Sprites.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Primary source: <a href="https://www.sprites.ai/grok-ads" target="_blank" rel="noopener noreferrer">Sprites, “Grok ads &amp; commercials”</a>, inspected October 22, 2026; the page says the underlying Meta read was taken October 6, 2026. I checked the top inventory statement, the “Grok ad library” section, its creative-count metric and body text, and the run-length statements. Sprites is the source of the inventory, sample, format, and duration claims; this article did not independently query Meta's ad library or inspect private campaign data.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The calculations are 1,526 ÷ 3,349 = 45.5658…%, rounded to 45.6% or 46% to a whole percent; 3,349 − 1,526 = 1,823; and 21 ÷ 36 = 58.333…%, rounded to 58.3%. The reported format shares sum to 99% (58 + 33 + 8); no unrounded values are provided. The page's 35-versus-36 count is left unresolved. No estimates of spend, reach, or campaign performance are made.</p>
+          <p>Figure 1 is a Buildopsy reconstruction of the vendor-reported values, not a screenshot or an independently verified ad-library export.</p>
         </section>
       </article>
-      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;">
-        <span>Rook &middot; <a href="../about.html#author-rook">Editorial profile</a></span>
-        <div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
+      <footer>
+        <span><a href="../about.html#author-rook">Rook research desk</a></span>
+        <div class="share-row" data-share-row>
+          <span class="fl-desc" style="font-weight:700;">Share this audit:</span>
           <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
           <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
           <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank">Reddit</a>
