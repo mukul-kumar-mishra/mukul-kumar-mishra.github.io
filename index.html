@@ -40,15 +40,30 @@
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://buildopsy.com/#website",
     "name": "Buildopsy",
     "alternateName": "Buildopsy — Engineering Case Studies With Cost Models",
     "url": "https://buildopsy.com/",
     "description": "Independent engineering case studies that connect public evidence to explicit assumptions and runnable cost models.",
     "publisher": {
       "@type": "Organization",
+      "@id": "https://buildopsy.com/#organization",
       "name": "Buildopsy",
       "url": "https://buildopsy.com/",
-      "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://buildopsy.com/images/logo.png",
+        "width": 2078,
+        "height": 757
+      },
+      "description": "Independent engineering publication covering distributed systems, AI infrastructure, data pipelines, APIs, and cloud economics.",
+      "founder": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"},
+      "sameAs": [
+        "https://x.com/BuildOpsy",
+        "https://www.linkedin.com/company/buildopsy/",
+        "https://www.instagram.com/buildopsy/",
+        "https://dev.to/buildopsy"
+      ]
     }
   }
   </script>
@@ -67,17 +82,6 @@
       {"@type": "ListItem", "position": 5, "url": "https://buildopsy.com/system-design/learn-search-systems.html", "name": "Search Systems in Production: The Index Room"},
       {"@type": "ListItem", "position": 6, "url": "https://buildopsy.com/system-design/learn-cloud-networking.html", "name": "Cloud Networking: Every Millisecond Has a Route"}
     ]
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Buildopsy",
-    "url": "https://buildopsy.com/",
-    "logo": "https://buildopsy.com/images/logo.png",
-    "founder": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"},
-    "sameAs": ["https://github.com/slimdestro", "https://x.com/BuildOpsy", "https://www.linkedin.com/company/buildopsy/", "https://www.instagram.com/buildopsy/", "https://dev.to/buildopsy"]
   }
   </script>
 </head>
@@ -182,6 +186,16 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/grok-bot-meta-ad-library-audit.html">
+          <img loading="lazy" decoding="async" src="images/articles/grok-ad-library-evidence.png" alt="Three Grok ad counts: 171 page total, a 91-ad Meta set, and 2,064 Meta ads with 932 still delivering" width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Advertising Systems</span><span class="chip">October 2026</span></div>
+          <h3>Grok Bot's Meta Ads: What 91 Creatives Establish—and What 171 Doesn't</h3>
+          <p class="fl-desc">Sprites reports 171 detectable Grok ads, a 91-ad Meta set it labels newest, and 2,064 Meta ads with 932 still delivering. The scopes do not reconcile.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Grok Bot</span><span class="chip">Meta Ad Library</span><span class="chip">Sprites</span></div>
+          <span class="article-read">Read the audit <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/openrouter-cache-thundering-herd-postmortem.html">
           <img loading="lazy" decoding="async" src="images/articles/openrouter-cache-thundering-herd-meme.svg" alt="Timeline of OpenRouter's Feb 17 and Feb 19, 2026 outages: cache drops database connections, recovers cold, database saturates, users see 401 User not found" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">

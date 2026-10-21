@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A physics-led audit of the Tesla Roadster's cold-gas thruster claims. Calculate the acceleration implied by 0.81 seconds to 60 mph, examine thrust and propellant equations, and identify the missing data needed to verify tank capacity and refill time.">
+  <meta name="description" content="Reported Tesla Roadster thruster refill: 2–6 hours for the 200-liter Thrust tank, 6–7 hours for the 600-liter Rocket, and a sub-30-minute target. Not independently measured.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math">
-  <meta property="og:description" content="A technical audit of the Roadster's cold-gas propulsion claims, using Newtonian mechanics, the rocket thrust equation, and explicit assumptions instead of unverified tank-mass estimates.">
+  <meta property="og:description" content="Reported Tesla Roadster thruster refill: 2–6 hours for the 200-liter Thrust tank, 6–7 hours for the 600-liter Rocket, and a sub-30-minute target. Not independently measured.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/roadster-boost-budget.png">
-  <meta property="og:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Its burn-time and refill figures are model assumptions, not verified Tesla specifications.">
+  <meta property="og:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Burn times are modeled; refill figures are reported estimates, not independently measured.">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -19,9 +19,9 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math">
-  <meta name="twitter:description" content="What does a 0.81-second 0–60 claim imply physically? An engineering audit of acceleration, thrust, propellant use, and the missing refill data.">
+  <meta name="twitter:description" content="Reported Tesla Roadster thruster refill: 2–6 hours for the 200-liter Thrust tank, 6–7 hours for the 600-liter Rocket, and a sub-30-minute target. Not independently measured.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/roadster-boost-budget.png">
-  <meta name="twitter:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Its burn-time and refill figures are model assumptions, not verified Tesla specifications.">
+  <meta name="twitter:image:alt" content="Illustrative Roadster cold-gas thruster propellant-budget graphic. Burn times are modeled; refill figures are reported estimates, not independently measured.">
   <title>0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math","description":"A physics-led audit of the Tesla Roadster's reported cold-gas propulsion claims. It calculates the acceleration implied by a 0.81-second 0–60 mph run and explains why verified tank, gas-property, thrust-profile, and refill data are needed to establish propellant use and operating time.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-10-18","dateModified":"2026-10-18","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html"},"keywords":"Tesla Roadster, cold-gas thrusters, SpaceX, acceleration, thrust equation, nitrogen, propellant mass, refill energy, engineering claims audit","image":"https://buildopsy.com/images/articles/roadster-boost-budget.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math","description":"A physics-led audit of the Tesla Roadster's reported cold-gas propulsion claims. It calculates the acceleration implied by a 0.81-second 0–60 mph run and explains why verified tank, gas-property, thrust-profile, and refill data are needed to establish propellant use and operating time.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-10-18","dateModified":"2026-10-21","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/tesla-roadster-thruster-claims-audit.html"},"keywords":"Tesla Roadster, cold-gas thrusters, SpaceX, acceleration, thrust equation, nitrogen, propellant mass, refill energy, engineering claims audit","image":"https://buildopsy.com/images/articles/roadster-boost-budget.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -68,8 +68,9 @@
         </div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tesla has described a Roadster equipped with SpaceX-derived cold-gas thrusters and made extraordinary acceleration claims. The engineering question is not whether compressed gas can produce thrust. It can. The question is whether the public evidence establishes the complete vehicle's performance, propellant budget, operating envelope, and refill cycle.</p>
+        <p style="font-family:var(--font-serif);font-size:1.02rem;line-height:1.7;color:var(--mist);margin:12px 0 0;">Public reporting attributes a two-to-six-hour refill to the 200-liter Thrust tank and six to seven hours to the 600-liter Rocket; Tesla's stated target is under 30 minutes. Those are reported figures, not independent measurements.</p>
         <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A run from rest to 60 mph in 0.81 seconds implies an average acceleration of about 33.1 m/s², or 3.38 g. That calculation is straightforward. The propellant calculation is not: tank volume and a pressure rating alone do not establish usable gas mass or burn duration. A simplified 80 kN thrust example at 700 m/s exhaust velocity implies about 114 kg/s of mass flow, but that is a conditional model, not a measured Roadster result. Without the actual thrust profile, operating conditions, usable tank inventory, and refill-system data, a definitive burn time or refill-energy figure would be false precision.</p>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook . Engineering claims audit . Updated October 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook . Engineering claims audit . Updated October 21, 2026</p>
       </header>
       <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> This audit distinguishes reported claims, statements attributed to interviews, and calculations made under explicit assumptions. The equations below establish what follows mathematically from their inputs; they do not independently verify Tesla's specifications. A complete assessment needs measured thrust-versus-time data, confirmed gas and tank properties, usable operating pressure, and independently documented test conditions.</aside>
       <article class="prose">
@@ -103,8 +104,8 @@
           <p>Tesla's reported descriptions have also discussed carbon-fibre-overwrapped pressure vessels (COPVs), tire-force limits, and fan-generated suction. Those are separate engineering claims that need their own evidence. A vessel's pressure rating does not, on its own, establish its operating pressure, stored gas mass, crashworthiness in the vehicle, or the amount of gas that can be used while maintaining a required thrust.</p>
         </section>
         <figure class="article-figure">
-          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/roadster-boost-budget.svg" alt="Illustrative Roadster cold-gas propellant-budget graphic comparing modeled burn times and refill estimates. The displayed values depend on assumptions and are not verified Tesla tank capacities, measured burn times, or confirmed refill specifications." width="1200" height="680">
-          <figcaption>Figure 1. The boost-budget graphic is an illustrative model, not a set of verified Tesla specifications. Its displayed burn-time and refill labels depend on assumptions about usable gas mass, pressure, exhaust velocity, thrust history, and refill equipment. The public information cited here does not establish those inputs well enough to confirm the graphic's numerical burn-time or refill estimates. Treat its figures as hypotheses to check, not as measured Roadster data.</figcaption>
+          <img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/roadster-boost-budget.svg" alt="Illustrative Roadster cold-gas propellant-budget graphic comparing modeled burn times with reported refill estimates. Burn times depend on assumptions; refill figures are reported estimates, not independent measurements or confirmed Tesla specifications." width="1200" height="680">
+          <figcaption>Figure 1. The boost-budget graphic is an illustrative model, not a set of verified Tesla specifications. Its burn-time labels are modeled; its refill labels are reported estimates. The public information cited here does not establish the inputs needed to confirm the modeled burn times. Treat the modeled burn times as hypotheses, not measured Roadster data.</figcaption>
         </figure>
         <section>
           <h2>3. The Tank Arithmetic</h2>
