@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">OpenRouter Feb 17 and Feb 19, 2026 outages: cold cache, saturated database</title>
+  <desc id="desc">Two timelines. Feb 17: 5:20 occasional errors, 5:27 cache drops DB connections with 500s, 5:40 cache recovers cold and database saturates with 401 User not found, 6:05 restored after 38 minutes. Feb 19: 7:16 occasional errors, 7:36 drop with 500s, 7:42 cold recovery and 401s, 8:11 restored after 35 minutes. Peak failure 80 to 90 percent.</desc>
+  <rect width="1200" height="680" fill="#0f172a"/>
+  <text x="60" y="58" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="#f8fafc">OpenRouter: how a cold cache overwhelmed the database</text>
+  <text x="60" y="86" font-family="Montserrat, sans-serif" font-size="14" fill="#94a3b8">Feb 17 and Feb 19, 2026. Cache drops DB connections, recovers empty, database saturates, timeouts surface as 401 "User not found."</text>
+
+  <!-- Feb 17 row -->
+  <text x="60" y="150" font-family="Sora, sans-serif" font-size="18" font-weight="700" fill="#38bdf8">Feb 17 (UTC) - 38 min</text>
+  <line x1="60" y1="180" x2="1140" y2="180" stroke="#334155" stroke-width="2"/>
+  <!-- ticks -->
+  <g font-family="Montserrat, sans-serif" font-size="12" fill="#cbd5e1">
+    <line x1="120" y1="170" x2="120" y2="190" stroke="#475569" stroke-width="2"/><text x="120" y="208" text-anchor="middle">5:20</text>
+    <line x1="260" y1="170" x2="260" y2="190" stroke="#475569" stroke-width="2"/><text x="260" y="208" text-anchor="middle">5:27</text>
+    <line x1="520" y1="170" x2="520" y2="190" stroke="#475569" stroke-width="2"/><text x="520" y="208" text-anchor="middle">5:40</text>
+    <line x1="760" y1="170" x2="760" y2="190" stroke="#475569" stroke-width="2"/><text x="760" y="208" text-anchor="middle">5:50</text>
+    <line x1="980" y1="170" x2="980" y2="190" stroke="#475569" stroke-width="2"/><text x="980" y="208" text-anchor="middle">6:05</text>
+  </g>
+  <!-- phase blocks Feb17 -->
+  <rect x="120" y="120" width="140" height="40" rx="6" fill="#1e293b" stroke="#475569"/>
+  <text x="190" y="145" font-family="Montserrat, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">occasional errors</text>
+  <rect x="260" y="120" width="260" height="40" rx="6" fill="#7f1d1d" stroke="#ef4444"/>
+  <text x="390" y="145" font-family="Montserrat, sans-serif" font-size="12" fill="#fecaca" text-anchor="middle">cache drops DB conns: ~20% 500s</text>
+  <rect x="520" y="120" width="460" height="40" rx="6" fill="#7c2d12" stroke="#f97316"/>
+  <text x="750" y="145" font-family="Montserrat, sans-serif" font-size="12" fill="#fed7aa" text-anchor="middle">cold recovery: DB saturates, 80-90% 401 "User not found"</text>
+  <rect x="980" y="120" width="160" height="40" rx="6" fill="#14532d" stroke="#22c55e"/>
+  <text x="1060" y="145" font-family="Montserrat, sans-serif" font-size="12" fill="#bbf7d0" text-anchor="middle">restored</text>
+
+  <!-- Feb 19 row -->
+  <text x="60" y="290" font-family="Sora, sans-serif" font-size="18" font-weight="700" fill="#38bdf8">Feb 19 (UTC) - 35 min</text>
+  <line x1="60" y1="320" x2="1140" y2="320" stroke="#334155" stroke-width="2"/>
+  <g font-family="Montserrat, sans-serif" font-size="12" fill="#cbd5e1">
+    <line x1="120" y1="310" x2="120" y2="330" stroke="#475569" stroke-width="2"/><text x="120" y="348" text-anchor="middle">7:16</text>
+    <line x1="260" y1="310" x2="260" y2="330" stroke="#475569" stroke-width="2"/><text x="260" y="348" text-anchor="middle">7:36</text>
+    <line x1="360" y1="310" x2="360" y2="330" stroke="#475569" stroke-width="2"/><text x="360" y="348" text-anchor="middle">7:42</text>
+    <line x1="980" y1="310" x2="980" y2="330" stroke="#475569" stroke-width="2"/><text x="980" y="348" text-anchor="middle">8:11</text>
+  </g>
+  <rect x="120" y="260" width="140" height="40" rx="6" fill="#1e293b" stroke="#475569"/>
+  <text x="190" y="285" font-family="Montserrat, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">occasional errors</text>
+  <rect x="260" y="260" width="100" height="40" rx="6" fill="#7f1d1d" stroke="#ef4444"/>
+  <text x="310" y="285" font-family="Montserrat, sans-serif" font-size="12" fill="#fecaca" text-anchor="middle">500s (partial)</text>
+  <rect x="360" y="260" width="620" height="40" rx="6" fill="#7c2d12" stroke="#f97316"/>
+  <text x="670" y="285" font-family="Montserrat, sans-serif" font-size="12" fill="#fed7aa" text-anchor="middle">cold recovery: DB saturates, near-total 401s</text>
+  <rect x="980" y="260" width="160" height="40" rx="6" fill="#14532d" stroke="#22c55e"/>
+  <text x="1060" y="285" font-family="Montserrat, sans-serif" font-size="12" fill="#bbf7d0" text-anchor="middle">restored</text>
+
+  <!-- mechanism note -->
+  <rect x="60" y="390" width="1080" height="120" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="80" y="420" font-family="Sora, sans-serif" font-size="16" font-weight="700" fill="#f8fafc">Why the recovery caused the damage</text>
+  <text x="80" y="448" font-family="Montserrat, sans-serif" font-size="13" fill="#cbd5e1">1. Cache drops DB connections -> ~20% 500s (cache errors, not DB load).</text>
+  <text x="80" y="472" font-family="Montserrat, sans-serif" font-size="13" fill="#cbd5e1">2. Cache recovers but every entry is invalidated -> all requests fall through to the database.</text>
+  <text x="80" y="496" font-family="Montserrat, sans-serif" font-size="13" fill="#cbd5e1">3. Database sized for the small fallback fraction saturates -> timeouts returned as 401 "User not found."</text>
+
+  <rect x="60" y="530" width="1080" height="110" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="80" y="560" font-family="Sora, sans-serif" font-size="16" font-weight="700" fill="#f8fafc">Remediations shipped</text>
+  <text x="80" y="588" font-family="Montserrat, sans-serif" font-size="13" fill="#cbd5e1">Circuit breakers + controlled cache repopulation (no thundering herd)  |  503 instead of 401 (accurate error codes)</text>
+  <text x="80" y="612" font-family="Montserrat, sans-serif" font-size="13" fill="#cbd5e1">Provider-side fixes  |  Planned fallback cache (not yet shipped at postmortem time)</text>
+
+  <text x="60" y="660" font-family="Montserrat, sans-serif" font-size="11" fill="#64748b">Source: OpenRouter postmortem, published Feb 20, 2026, updated Jun 24, 2026. Buildopsy reconstruction; not OpenRouter's internal topology.</text>
+</svg>
