@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Replit Agent: The Dashboard That Deployed Itself", "description": "A system design postmortem of Replit Agent, sandbox execution, deployment infrastructure, RPS math, and cloud cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-02", "dateModified": "2026-09-02", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/replit-agent-runtime-postmortem.html"}, "keywords": "Replit system design, AI coding agent, sandbox, multi-tenant infrastructure", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/replit-agent-runtime-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Replit Agent: The Dashboard That Deployed Itself", "description": "A system design postmortem of Replit Agent, sandbox execution, deployment infrastructure, RPS math, and cloud cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-02", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/replit-agent-runtime-postmortem.html"}, "keywords": "Replit system design, AI coding agent, sandbox, multi-tenant infrastructure", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/replit-agent-runtime-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,7 +56,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Runtime</span><span class="chip">September 2026</span><span class="chip">19 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Agent Runtime</span><span class="chip">September 2026</span><span class="chip">11 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Dashboard That Deployed Itself</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The prompt was innocent. Build me a dashboard. Then the agent wrote code, ran migrations, installed packages, opened ports, called an API, tried to ship. A toy with root privileges in a hurry. This is what prompt-to-production really costs to contain.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Replit Agent turns a dashboard prompt into production via sandbox execution. Failed attempts rebill every retry and the demo becomes production. Fix is a retry budget with isolation.</p>
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1M RPS</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Key Risk</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Untrusted Code</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 2, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
 
 
@@ -163,7 +163,7 @@
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://replit.com/blog/replit-raises-400-million-dollars" target="_blank" rel="noopener noreferrer">Replit: Replit Raises $400 Million at a $9B Valuation</a></li>
           <li><a href="https://replit.com/news/funding-announcement-series-c" target="_blank" rel="noopener noreferrer">Replit: $250M Series C at a $3B Valuation</a></li>
-          <li><a href="https://www.georgian.io/news/georgian-leads-400m-series-d-investment-in-replit" target="_blank" rel="noopener noreferrer">Georgian Partners: Series D Investment in Replit</a></li>
+          <li><a href="https://www.prnewswire.com/news-releases/georgian-leads-400m-series-d-investment-in-replit-to-support-continued-investment-in-replit-agent-302711218.html" target="_blank" rel="noopener noreferrer">PR Newswire: Georgian Leads $400M Series D Investment in Replit</a></li>
           <li><a href="https://replit.com/news" target="_blank" rel="noopener noreferrer">Replit News and Product Announcements</a></li>
         </ul>
       </section>

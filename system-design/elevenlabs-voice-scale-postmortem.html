@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ElevenLabs: The $11B Voice That Bills Per Hello", "description": "A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-10-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"}, "keywords": "ElevenLabs, TTS, voice AI, latency, cost", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/elevenlabs-voice-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ElevenLabs: The $11B Voice That Bills Per Hello", "description": "A system design postmortem of ElevenLabs voice AI scale, TTS models, per character billing and 1M RPS cost without phoneme cache.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/elevenlabs-voice-scale-postmortem.html"}, "keywords": "ElevenLabs, TTS, voice AI, latency, cost", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/elevenlabs-voice-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,7 +56,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Audio Infrastructure</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Audio Infrastructure</span><span class="chip">September 2026</span><span class="chip">11 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The $11B Voice That Bills Per Hello</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">ElevenLabs closed 2025 at $330 million ARR and $11 billion valuation by teaching machines to say hello better than humans. The trick is that every hello costs a GPU, bills per character and could have been cached. One hello is art. One billion hellos is a margin call.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> ElevenLabs bills per character while repeated greetings wake a GPU every time. At 1M RPS phoneme caching cuts the modeled voice bill 66 percent. Fix is edge audio reuse before a model call.</p>
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Audio Generated</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1,000 yrs</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Fortune 500</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">60%+</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 20, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
 
 
@@ -81,15 +81,15 @@
       </section>
 
       <section><h2>2. Why ElevenLabs Is the Right Unicorn Autopsy</h2>
-        <p>Founded in 2022 by Mati Staniszewski and Piotr Dabkowski, ElevenLabs became Europe's third largest AI unicorn by early 2026. It raised $19M Series A in June 2023 at $100M, $80M Series B in Jan 2024 at $1.1B, $180M Series C in Jan 2025 at $3.3B led by a16z and ICONIQ Growth and $500M Series D in Feb 2026 at $11B led by Sequoia. Total funding $779M ($19M plus $80M plus $180M plus $500M). Customers include employees at over 60% of Fortune 500. That is not a research demo. That is critical audio plumbing.</p>
+        <p>Founded in 2022 by Mati Staniszewski and Piotr Dabkowski, ElevenLabs became Europe's third largest AI unicorn by early 2026. It raised $19M Series A in June 2023 at $100M, $80M Series B in Jan 2024 at $1.1B, $180M Series C in Jan 2025 at $3.3B led by a16z and ICONIQ Growth and $500M Series D in Feb 2026 at $11B led by Sequoia. Total funding $779M ($19M and $80M and $180M and $500M). Customers include employees at over 60% of Fortune 500. That is not a research demo. That is critical audio plumbing.</p>
         <p>The company also publishes its trade. It offers three latency tiers. Multilingual v2 at 1000ms, excellent quality, and 1x cost. Turbo v2.5 at 250ms and good quality. Flash v2.5 at 75ms and acceptable quality at 0.5x cost. One minute of audio maps to about 1000 characters. Flash sacrifices prosodic range for speed and is priced for high volume conversation. The roadmap tells you the burn. The money raised goes to shrinking Flash to 50MB on iPhone NPU and to new music and dubbing models. The fastest model is still a centralized cloud model with 1 to 4 second jitter reports.</p>
         <blockquote>Coverage of the $11B round describes Dabkowski's arc for the company the same way: first a voice that could sound human, then foundational models across the full audio stack. The human voice was chapter one. Billing for it forever is chapter two.</blockquote>
       </section>
 
       <section><h2>3. Reconstructing the Machine</h2>
         <p>A request hits the ElevenAPI with text and a voice id. Routing picks the model. Scribe handles speech to text on the way in for agents, the LLM brain runs either pass through or custom mode, then Flash or Turbo renders audio. Streaming uses HTTP or WebSocket. The platform advertises up to 40% latency cut by routing through closer data centers. The voice still comes from a centralized cloud that must be warm, loaded and paid per character.</p>
-        <p>Billing is a three way split. TTS bills per character. Agents bill per minute of connection. LLM bills per token pass through. One conversational turn bills all three. A hello that uses Flash plus an LLM greeting plus a minute of holding bills characters plus tokens plus minutes for the same five character word. It is a beautiful pricing page and a black box invoice.</p>
-        <p>The reuse gap is where money evaporates. Hello plus hold music plus your help is on the way plus the same IVR menu is spoken identically for every caller. The phoneme sequence is identical. The mel spectrogram is identical. The audio bytes are identical. Yet each call renders fresh. No phoneme cache sits in front of the model. No edge cache serves the same utterance near the caller. No content hash dedupes identical prompts across tenants. The system treats identical input as a new creative act.</p>
+        <p>Billing is a three way split. TTS bills per character. Agents bill per minute of connection. LLM bills per token pass through. One conversational turn bills all three. A hello that uses Flash and an LLM greeting and a minute of holding bills characters and tokens and minutes for the same five character word. It is a beautiful pricing page and a black box invoice.</p>
+        <p>The reuse gap is where money evaporates. Hello, hold music, the help-is-on-the-way message, and the same IVR menu is spoken identically for every caller. The phoneme sequence is identical. The mel spectrogram is identical. The audio bytes are identical. Yet each call renders fresh. No phoneme cache sits in front of the model. No edge cache serves the same utterance near the caller. No content hash dedupes identical prompts across tenants. The system treats identical input as a new creative act.</p>
         <div class="tip"><strong>Architecture tip:</strong> Draw the cache before the model. If you can serve hello from a hash, you should never wake a GPU to prove you can still say it.</div>
       </section>
 
@@ -125,13 +125,13 @@
           <tr><td>Wasted repeats at 40%</td><td>$5.4M</td><td>repeat rate</td></tr>
         </tbody></table>
         <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/elevenlabs-cache-meme.svg" alt="Diagram comparing a cached text-to-speech response with a new GPU inference request" width="1200" height="680"><figcaption>Figure 2. Cache vs render in one diagram, created for this article. Cached hello hits in 5ms. Fresh hello bills a GPU for 75ms. Guess which one you shipped by default.</figcaption></figure>
-        <div class="tip"><strong>What went wrong vs what should be:</strong> Wrong was treating every hello as a new render with no hash. Right is a phoneme cache keyed by text plus voice plus prosody that serves 60% from edge and only wakes Flash for truly novel sentences.</div>
+        <div class="tip"><strong>What went wrong vs what should be:</strong> Wrong was treating every hello as a new render with no hash. Right is a phoneme cache keyed by text and voice and prosody that serves 60% from edge and only wakes Flash for truly novel sentences.</div>
       </section>
 
       <section id="one-million-rps"><h2>7. The One Million RPS Thought Experiment</h2>
-        <p>Normalize to one million TTS requests per second for one month. A month holds 2,592,000 seconds. Assume each request carries 20 characters average inbound plus 50kb audio outbound after compression.</p>
-        <p>In the current no cache shape, assume origin cost of $0.000000015 per request for GPU time plus platform overhead for a short utterance. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.000000015 equals $38.88M per month</strong>.</p>
-        <p>My cached shape dedupes by phoneme hash and serves 60% from an edge phoneme cache with 5ms lookup before any model wake. Keep Flash for truly novel sentences only. Assume 40% reaches origin and origin rate falls to $0.00000001 after smaller GPU class for cache misses. Core origin work becomes <strong>400,000 times 2,592,000 times $0.00000001 equals $10.37M per month</strong>. Add $2M for edge cache plus $1M for connection and LLM buffer. Proposed envelope is about <strong>$13.37M per month</strong>.</p>
+        <p>Normalize to one million TTS requests per second for one month. A month holds 2,592,000 seconds. Assume each request carries 20 characters average inbound and 50kb audio outbound after compression.</p>
+        <p>In the current no cache shape, assume origin cost of $0.000000015 per request for GPU time and platform overhead for a short utterance. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.000000015 equals $38.88M per month</strong>.</p>
+        <p>My cached shape dedupes by phoneme hash and serves 60% from an edge phoneme cache with 5ms lookup before any model wake. Keep Flash for truly novel sentences only. Assume 40% reaches origin and origin rate falls to $0.00000001 after smaller GPU class for cache misses. Core origin work becomes <strong>400,000 times 2,592,000 times $0.00000001 equals $10.37M per month</strong>. Add $2M for edge cache and $1M for connection and LLM buffer. Proposed envelope is about <strong>$13.37M per month</strong>.</p>
         <table><thead><tr><th>At 1M RPS</th><th>Render every time</th><th>Phoneme cached</th></tr></thead><tbody>
           <tr><td>Origin renders</td><td>1,000,000 per sec</td><td>400,000 per sec after cache</td></tr>
           <tr><td>Modeled rate</td><td>$0.000000015 per req</td><td>$0.00000001 per req</td></tr>
@@ -144,7 +144,7 @@
         <div class="live-diagram" aria-label="ElevenLabs cached voice architecture diagram">
           <div class="diagram-flow"></div>
           <div class="live-diagram-grid">
-            <div class="diagram-node green">Phoneme hash<small>text plus voice id<br>5ms lookup</small></div>
+            <div class="diagram-node green">Phoneme hash<small>text and voice id<br>5ms lookup</small></div>
             <div class="diagram-node gold">Edge audio cache<small>hello = hit<br>no GPU wake</small></div>
             <div class="diagram-node">Novel sentence<small>only truly new text<br>reaches model</small></div>
             <div class="diagram-node hot">Flash model<small>75ms for novelty<br>not for repeats</small></div>
@@ -158,10 +158,10 @@
       </section>
 
       <section><h2>8. How I Would Cut the Bill Without Cutting the Voice</h2>
-        <p><strong>Hash the utterance and never render twice.</strong> Use text plus voice id plus prosody tags plus language as cache key. Store phoneme plus mel plus compressed audio. A held IVR prompt should be a hash hit, not a model call. At 40% repeat you save $5.4M per month before you touch model price.</p>
+        <p><strong>Hash the utterance and never render twice.</strong> Use text and voice id and prosody tags and language as cache key. Store phoneme and mel and compressed audio. A held IVR prompt should be a hash hit, not a model call. At 40% repeat you save $5.4M per month before you touch model price.</p>
         <p><strong>Move the cache to the edge, not the model.</strong> Push hot phonemes to CDNs near callers. Central cache adds 40ms and still bills egress. Edge cache adds 5ms and kills the GPU wake entirely. The fastest voice is not Flash. It is a cache hit.</p>
         <p><strong>Keep Flash for novelty, not for greetings.</strong> Route only novel sentences to Flash or Turbo. Route canned prompts to cache. Your pricing page calls both voice. Your margin should treat them as different products with different costs.</p>
-        <p><strong>Make the meter obvious.</strong> Today TTS plus per minute plus tokens is a black box bill. Expose characters plus cache hit ratio plus GPU seconds per request. Teams cannot optimize what the dashboard hides behind credits. Show hello as a line item. Watch how fast hello gets cached.</p>
+        <p><strong>Make the meter obvious.</strong> Today TTS, per-minute connections, and tokens form a black box bill. Expose characters, cache hit ratio, and GPU seconds per request. Teams cannot optimize what the dashboard hides behind credits. Show hello as a line item. Watch how fast hello gets cached.</p>
         <p><strong>Push the model to the phone where hello lives.</strong> The Series D pitch is 50MB Flash on iPhone NPU. Do it for the top 200 prompts and pay zero network for hello. Central GPU is for the long tail of truly new speech. Hello lives on the device and the margin stays on your books.</p>
         <div class="tip"><strong>Ops tip:</strong> Alert on cache hit ratio and repeated prompt rate before you alert on GPU util. By the time GPUs spike at voice scale the cache already told you hello was rendered twice ten minutes ago.</div>
       </section>

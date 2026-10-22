@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Cursor and Claude Code: Token Limits Postmortem", "description": "A composite 11:47 AM limit hit frames Cursor and Claude Code token walls. Teardown of context rot, 575K-to-4.3K compaction, and the real cost.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-04", "dateModified": "2026-10-20", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html"}, "keywords": "Cursor token limit, Claude Code rate limits, context rot, prompt caching, developer productivity", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/cursor-claude-token-exhaustion-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Cursor and Claude Code: Token Limits Postmortem", "description": "A composite 11:47 AM limit hit frames Cursor and Claude Code token walls. Teardown of context rot, 575K-to-4.3K compaction, and the real cost.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-04", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cursor-claude-token-exhaustion-postmortem.html"}, "keywords": "Cursor token limit, Claude Code rate limits, context rot, prompt caching, developer productivity", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/cursor-claude-token-exhaustion-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,7 +56,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Developer Tools</span><span class="chip">September 2026</span><span class="chip">19 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Developer Tools</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Your $20 Subscription Meets a Paywall at 11:47 AM</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Tuesday, 11:47 AM. You are mid refactor, the agent finally holds the whole plan in its head, the screen prints five words every developer now hates. Limit reached. Come back later. Behind that message sits a meter that replays your entire session on every turn, rots what it remembers, and bills you for the forgetting. The scene is a composite. The mechanism is not. This is the postmortem.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A composite 11:47 AM limit hit shows how Cursor and Claude Code hit token walls when 575K context compacts to 4.3K. Context rot and compaction cliffs force full re-reads. The fix is cache-aware turns with survival math.</p>
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Compaction Survival</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Under 1 percent</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Core Flaw</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Context Rot</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 20, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
 
 

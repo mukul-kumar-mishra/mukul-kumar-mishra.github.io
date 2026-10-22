@@ -10,7 +10,7 @@
   <meta property="og:title" content="GCP us-central1 Fiber Isolation: 4h11 Customer Impact | Buildopsy">
   <meta property="og:description" content="Google's final report gives a 4h11 customer-impact window; the status header gives 4h08. Incompatible transceivers and missing maintenance safeguards isolated network capacity in parts of two zones.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta property="og:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, plus the reported 13-minute fiber disconnection sequence">
+  <meta property="og:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, and the reported 13-minute fiber disconnection sequence">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
   <meta name="twitter:title" content="GCP us-central1 Fiber Isolation: 4h11 Customer Impact">
   <meta name="twitter:description" content="Google's final report gives a 4h11 customer-impact window; the status header gives 4h08. Incompatible transceivers and missing maintenance safeguards isolated network capacity in parts of two zones.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/gcp-central1-zone-meme.png">
-  <meta name="twitter:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, plus the reported 13-minute fiber disconnection sequence">
+  <meta name="twitter:image:alt" content="Comparison of Google's 4h11 detailed customer-impact window and 4h08 status-header window, and the reported 13-minute fiber disconnection sequence">
   <title>GCP us-central1 Fiber Isolation: 4h11 Customer Impact | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Fiber Isolation: 4h11 Customer Impact", "description": "Google's final report gives a 4h11 detailed customer-impact window, while the incident header gives 4h08; incompatible transceivers and missing maintenance safeguards isolated capacity in parts of two zones.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-17", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "GCP us-central1 Fiber Isolation: 4h11 Customer Impact", "description": "Google's final report gives a 4h11 detailed customer-impact window, while the incident header gives 4h08; incompatible transceivers and missing maintenance safeguards isolated capacity in parts of two zones.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-30", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/gcp-us-central1-outage-postmortem.html"}, "keywords": "GCP outage, us-central1 outage, fiber isolation, network maintenance, transceiver compatibility, zonal resilience", "image": "https://buildopsy.com/images/articles/gcp-central1-zone-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -67,7 +67,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">September 2026</span><span class="chip">5 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">GCP us-central1 Fiber Isolation: 4h11 Customer Impact</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On September 1, 2026, incompatible optical transceivers and a maintenance sequence without required checks isolated compute capacity in specific clusters in us-central1-b and us-central1-f. Google's final report gives customer impact from 07:41 to 11:52 US/Pacific (4h11); the status-page header starts at 07:44 (4h08) and ends at 11:52.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The final report records a 4h11 customer-impact window; the status header records 4h08, and Google does not reconcile the three-minute start difference. The failure was physical network isolation during maintenance, not a demonstrated regional control-plane queue.</p>
@@ -77,7 +77,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">All paths disconnected</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Within 13m</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Status-header window</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">4h 08m</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 17, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 30, 2026 · Updated October 23, 2026</p>
       </header>
 
 
@@ -86,7 +86,7 @@
       <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-central1-zone-mobile.svg"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/gcp-central1-zone-meme.svg" alt="Timeline comparison: Google's detailed report gives customer impact from 07:41 to 11:52 PT (4h11); the status-page header gives 07:44 to 11:52 (4h08). Fiber paths were disconnected within 13 minutes." width="1200" height="680"></picture><figcaption>Figure 1. Google gives different start times in the detailed customer-impact report (07:41) and incident header (07:44); both end at 11:52 PT. The report says fiber paths were disconnected within 13 minutes.</figcaption></figure>
 
       <section><h2>1. What Google's report establishes</h2>
-        <p>On September 1, a scheduled capacity upgrade replaced optical transceivers on network routers supporting parts of us-central1-b and us-central1-f. The replacement transceivers were incompatible with equipment remaining in the network fabric. A manually orchestrated work list omitted the required one-router-at-a-time sequence plus the normal human and software verification steps. Fiber paths were disconnected across the affected devices within 13 minutes.</p>
+        <p>On September 1, a scheduled capacity upgrade replaced optical transceivers on network routers supporting parts of us-central1-b and us-central1-f. The replacement transceivers were incompatible with equipment remaining in the network fabric. A manually orchestrated work list omitted the required one-router-at-a-time sequence and the normal human and software verification steps. Fiber paths were disconnected across the affected devices within 13 minutes.</p>
         <p>The loss isolated compute capacity from the network. Virtual machines in the affected clusters could not reach external resources, nor could outside clients reach those machines. This was a physical connectivity failure. Google's report does not attribute the event to a slow disk, a regional control-plane queue or a measured retry storm.</p>
         <div class="callout"><strong>Failure boundary:</strong> physical work crossed device boundaries faster than safeguards could catch it. The design question is how maintenance sequencing, independent verification and traffic diversion should constrain that boundary.</div>
       </section>
@@ -96,7 +96,7 @@
         <p>The September 29 addendum adds important detail: traffic diversion reduced the impact to regional products, while Cloud Run and App Engine saw a later thundering herd as workloads initialized on replacement capacity. GKE control-plane requests also experienced errors and delays. Those are reported outcomes. They do not establish the invented per-minute queue and retry counts previously shown here.</p>
       </section>
 
-      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-central1-coupling-mobile.svg"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Google's reported sequence: scheduled router upgrade, incompatible optical transceivers, a manual work list without one-router-at-a-time checks, then fiber-path loss and network isolation" width="1200" height="680"></picture><figcaption>Figure 2. The final report links incompatible transceivers and missing maintenance sequencing and verification to fiber-path loss and network isolation.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width:700px)" srcset="../images/articles/gcp-central1-coupling-mobile.svg"><img loading="lazy" decoding="async" src="../images/articles/gcp-central1-coupling-flow.svg" alt="Google's reported sequence: scheduled router upgrade, incompatible optical transceivers, a manual work list without one-router-at-a-time checks, then fiber-path loss and network isolation" width="1200" height="680"></picture><figcaption>Figure 2. The final report links incompatible transceivers, missing maintenance sequencing, verification to fiber-path loss, and network isolation.</figcaption></figure>
 
       <section><h2>3. Timeline from the primary report</h2>
         <ul>
@@ -111,7 +111,7 @@
 
       <section><h2>4. Resilience lessons supported by the evidence</h2>
         <p><strong>Sequence hazardous work in the tooling.</strong> The report says the procedure intended one router at a time, but the work list did not carry that instruction. Encode ordering constraints in the workflow rather than relying on an operator to infer them from a long list.</p>
-        <p><strong>Require independent confirmation.</strong> The final report describes missing human and software checks plus a standing stop-work procedure that was not followed. A safe workflow should pause when a live signal remains on a cable after disconnection, require a second confirmation and make the next step unavailable until checks pass.</p>
+        <p><strong>Require independent confirmation.</strong> The final report describes missing human and software checks and a standing stop-work procedure that was not followed. A safe workflow should pause when a live signal remains on a cable after disconnection, require a second confirmation and make the next step unavailable until checks pass.</p>
         <p><strong>Automate traffic diversion with a bounded blast radius.</strong> Google says diversion took about 19 minutes in this event and describes a target near five minutes for its automated system. That is Google's stated remediation target, not a measured result. Applications should still tolerate partial network isolation with explicit timeouts, bounded retries and gradual traffic shifts.</p>
         <p><strong>Test recovery behavior, not only replica placement.</strong> Rehearse how services discover healthy capacity, how retries behave during packet loss and how cold caches respond when traffic shifts. The report documents a thundering herd after restoration. It does not publish request-rate measurements, so any load test should use your own service telemetry.</p>
       </section>

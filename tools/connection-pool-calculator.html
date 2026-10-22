@@ -82,7 +82,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Pool size</span>
-              <span class="radar-count-description"> · p99-based concurrency estimate plus safety factor.</span>
+              <span class="radar-count-description"> · p99-based concurrency estimate and safety factor.</span>
             <div class="radar-filters" aria-label="Latency presets">
               <button class="radar-filter" data-set="pool-lat:20">20MS P99</button>
               <button class="radar-filter active" data-set="pool-lat:45">45MS P99</button>
@@ -132,7 +132,7 @@
           </div>
         </div>
       </section>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Payment Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka: 3,000 Connections Too Many</a></h3><p class="fl-desc">Partition and connector issues, plus the IAM connection limit Razorpay says it encountered during an Asia Cup surge.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Payment Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka: 3,000 Connections Too Many</a></h3><p class="fl-desc">Partition and connector issues, and the IAM connection limit Razorpay says it encountered during an Asia Cup surge.</p></article>
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">AI Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/azure-openai-sweden-central-cache-restart-postmortem.html">Azure OpenAI Sweden Central: Cache Misses and a Restart Loop</a></h3><p class="fl-desc">Microsoft reports exhausted outbound connection capacity after a cache-miss surge. Its PIR does not disclose the node limits or connection counts.</p></article>
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/openrouter-cache-thundering-herd-postmortem.html">OpenRouter's February 2026 Outages: How a Cold Cache Overwhelmed the Database</a></h3><p class="fl-desc">OpenRouter's third-party cache dropped its database connections on Feb 17 and 19, 2026. When it recovered cold, every API key lookup hit the database at once and came back as 401 User not found.</p></article>
     </section>

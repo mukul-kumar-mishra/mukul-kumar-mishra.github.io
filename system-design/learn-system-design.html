@@ -114,9 +114,9 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Diagrams included</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Course: 15 Lessons From Real Outages</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, plus points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, and points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen story-driven system design lessons with diagrams, from request paths to interview playbooks. Built from production postmortems, with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 20, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 23, 2026</p>
     </header>
     <section class="sec" id="newsletter" style="margin-bottom:32px;">
       <div class="newsletter-band">
@@ -176,7 +176,7 @@
 <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Design TinyURL end to end, from API to storage. <span class="q-seen">Seen at: Amazon-style and Google-style loops.</span></p>
-            <p><strong>Q2.</strong> What happens, packet by packet, when you type a URL and press enter? <span class="q-seen">Seen at: Meta-style loops plus early-stage startups.</span></p>
+            <p><strong>Q2.</strong> What happens, packet by packet, when you type a URL and press enter? <span class="q-seen">Seen at: Meta-style loops and early-stage startups.</span></p>
           </div>
           <p class="lesson-hook">The next lesson looks at how an API makes retries safe. <a href="#lesson-2">Lesson 02: APIs that survive →</a></p>
         </section>
@@ -194,10 +194,10 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Idempotency keys let eligible retries reuse an earlier result; they do not make a distributed workflow globally exactly once.</li>
-            <li>Store the key plus the result together, atomically, or the check lies.</li>
+            <li>Store the key and the result together, atomically, or the check lies.</li>
             <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>.</li>
           </ul>
-                    <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates plus reordering, then designing so none of them matter.</p>
+                    <p>Notice what the diagram never shows. No step asks the network to behave. Reliability comes from assuming retries, duplicates and reordering, then designing so none of them matter.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Design a payments charge API that survives client retries. <span class="q-seen">Seen at: Stripe-style and Amazon-style loops.</span></p>
@@ -218,14 +218,14 @@
             <text class="lbl" x="8" y="145" font-size="11">blast radius equals scope, nothing less</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Scope every key to one surface plus one permission set. Least privilege is a blast-radius budget.</li>
-            <li>Short TTLs plus rotation beat long-lived secrets. Stolen keys should die alone.</li>
+            <li>Scope every key to one surface and one permission set. Least privilege is a blast-radius budget.</li>
+            <li>Short TTLs and rotation beat long-lived secrets. Stolen keys should die alone.</li>
             <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a Document. It Downloaded Your API Keys.</a></li>
           </ul>
-          <p>Lesson 2 taught safe retries. Keys decide who retries as whom. A leaked admin token turns every retry endpoint into an attacker tool, which is why signing plus verification belong beside idempotency in every API design.</p>
+          <p>Lesson 2 taught safe retries. Keys decide who retries as whom. A leaked admin token turns every retry endpoint into an attacker tool, which is why signing and verification belong beside idempotency in every API design.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Where do you store third-party API keys, plus what happens the hour one leaks? <span class="q-seen">Seen at: fintech and developer-platform loops.</span></p>
+            <p><strong>Q1.</strong> Where do you store third-party API keys, and what happens the hour one leaks? <span class="q-seen">Seen at: fintech and developer-platform loops.</span></p>
             <p><strong>Q2.</strong> Design scoped tokens for a developer API from scratch. <span class="q-seen">Seen at: Stripe-style and Google-style loops.</span></p>
           </div>
           <p class="lesson-hook">Secrets locked. Now the database itself dies. <a href="#lesson-4">Lesson 04: Databases that live →</a></p>
@@ -254,10 +254,10 @@
             <li>Garbage collection must never delete what it cannot prove dead.</li>
             <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">The Backup That Forgot the Data</a>.</li>
           </ul>
-                    <p>Replicas lag. That lag is a promise with fine print. Reads from a replica can return yesterday, which is fine for dashboards plus fatal for balances. Know which reads need the primary.</p>
+                    <p>Replicas lag. That lag is a promise with fine print. Reads from a replica can return yesterday, which is fine for dashboards and fatal for balances. Know which reads need the primary.</p>
 <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design backup plus restore for a 10 TB Postgres database. <span class="q-seen">Seen at: AWS-style and fintech loops.</span></p>
+            <p><strong>Q1.</strong> Design backup and restore for a 10 TB Postgres database. <span class="q-seen">Seen at: AWS-style and fintech loops.</span></p>
             <p><strong>Q2.</strong> Your replica lags 30 seconds. Which reads break first? <span class="q-seen">Seen at: Meta-style data loops.</span></p>
           </div>
           <p class="lesson-hook">Data survives. Now connections run out at 3 AM. <a href="#lesson-5">Lesson 05: Postgres at scale →</a></p>
@@ -265,7 +265,7 @@
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Postgres · Connection pooling</div>
           <h2>Ten Thousand Friends, One Door</h2>
-          <p class="lesson-story">Supabase runs two million Postgres databases behind one pooling promise. Razorpay nearly died on a 3,000-connection cap nobody had read. Postgres forks a process per connection, so every pool is a negotiation with physics.</p>
+          <p class="lesson-story">Supabase's GA page reports 44M+ databases managed behind one pooling promise. Razorpay nearly died on a 3,000-connection cap nobody had read. Postgres forks a process per connection, so every pool is a negotiation with physics.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Ten thousand app connections funnel through a pooler into a small pool of Postgres backends">
             <rect class="box" x="8" y="30" width="110" height="40" rx="8"/><text x="63" y="54" font-size="11" text-anchor="middle">10k app conns</text>
             <rect class="boxlime" x="180" y="55" width="110" height="40" rx="8"/><text x="235" y="79" font-size="11" text-anchor="middle">pooler: 675</text>
@@ -276,7 +276,7 @@
           <ul class="lesson-ideas">
             <li>Pool size is math, not vibes. Try the <a href="../calculators.html#pool-size">pool sizer</a> with your own RPS.</li>
             <li>Serverless does not remove caps. It relocates them into docs nobody reads.</li>
-            <li>Deep dives: <a href="supabase-postgres-scale-postmortem.html">Serverless Postgres</a> plus <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</li>
+            <li>Deep dives: <a href="supabase-postgres-scale-postmortem.html">Serverless Postgres</a> and <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>.</li>
           </ul>
                     <p>Watch for the pooler becoming the bottleneck itself. One proxy in front of Postgres is a single point with a nice dashboard. Pair it, or shard past it, before traffic does.</p>
 <div class="lesson-questions">
@@ -302,7 +302,7 @@
           <ul class="lesson-ideas">
             <li>Separate urgent from patient traffic or one surge starves everything.</li>
             <li>Partitions buy concurrency but tax brokers. Count them like money.</li>
-            <li>Deep dives: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> plus <a href="roblox-kafka-ingestion-postmortem.html">Roblox tiers</a>.</li>
+            <li>Deep dives: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="roblox-kafka-ingestion-postmortem.html">Roblox tiers</a>.</li>
           </ul>
                     <p>Dead letters deserve readers. Every message in the red box is a bug report from production. Teams that review them weekly find failures before customers do.</p>
 <div class="lesson-questions">
@@ -348,7 +348,7 @@
             <rect class="box" x="344" y="55" width="80" height="40" rx="8"/><text x="384" y="79" font-size="11" text-anchor="middle">wait 4s</text>
             <rect class="boxhot" x="456" y="55" width="96" height="40" rx="8"/><text x="504" y="79" font-size="11" text-anchor="middle">breaker</text>
             <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="200" y1="75" x2="232" y2="75"/><line x1="312" y1="75" x2="344" y2="75"/><line x1="424" y1="75" x2="456" y2="75"/></g>
-            <text class="lbl" x="8" y="135" font-size="11">backoff x2 plus jitter, then stop knocking</text>
+            <text class="lbl" x="8" y="135" font-size="11">backoff x2 and jitter, then stop knocking</text>
           </svg>
           <svg class="cdiagram" viewBox="0 0 560 120" role="img" aria-label="Circuit breaker states cycling from closed to open to half-open">
             <rect class="boxlime" x="8" y="30" width="140" height="40" rx="8"/><text x="78" y="54" font-size="11" text-anchor="middle">closed: flowing</text>
@@ -358,9 +358,9 @@
             <text class="lbl" x="8" y="100" font-size="11">failures trip it, one probe resets it</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Exponential backoff plus jitter plus a hard stop. Miss any of the three and retries amplify.</li>
+            <li>Exponential backoff and jitter and a hard stop. Miss any of the three and retries amplify.</li>
             <li>Circuit breakers convert repeated failure into fast failure. Fast failure is a feature.</li>
-            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit retries</a> plus the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
+            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit retries</a> and the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
           </ul>
                     <p>Idempotency from Lesson 2 is what makes retries safe to attempt. Without it, backoff only spaces out the damage. The two lessons compose. Design them together.</p>
 <div class="lesson-questions">
@@ -429,7 +429,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Performance · Caching that pays</div>
           <h2>Never Pay Twice for Hello</h2>
-          <p class="lesson-story">Voice AI bills every hello at 75 milliseconds of GPU. The cached hello answers in 5. Same word. Fifteen times cheaper. Somewhere a quarter of all greetings repeat, which means a quarter of the invoice is optional.</p>
+          <p class="lesson-story">Voice AI bills every hello at 75 milliseconds of GPU. The cached hello answers in 5. Same word, 15× lower latency. The linked ElevenLabs teardown assumes 40% repeats in its cost model; its separate 1M RPS scenario assumes a 60% cache hit.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cache hit path answering in 5 milliseconds beside a miss path billing 75 milliseconds of GPU">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">request</text>
             <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">hit: 5ms, $0</text>
@@ -439,8 +439,8 @@
             <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="102" x2="312" y2="82"/><line x1="432" y1="75" x2="464" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Cache repeated work first. Greetings, prefills plus hot keys pay for the whole layer.</li>
-            <li>Every entry needs a TTL plus an invalidation story. Stale money spends like real money.</li>
+            <li>Cache repeated work first. Greetings, prefills and hot keys pay for the whole layer.</li>
+            <li>Every entry needs a TTL and an invalidation story. Stale money spends like real money.</li>
             <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a>, <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Compute</a> and <a href="cloudflare-edge-outage-postmortem.html">Cloudflare's Bot-Feature File Outage</a>.</li>
           </ul>
           <p>Lesson 10 taught convergence. Caches are replicas that converge lazily by design. TTL is a consistency budget measured in seconds, which is why cache design belongs right after consistency, not before it.</p>
@@ -490,11 +490,11 @@
             <text class="lbl" x="8" y="130" font-size="11">find the red box first, optimize second</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Price one request before scaling to millions. Try the <a href="../calculators.html#token-bill">token bill</a> plus <a href="../calculators.html#rps-bill">RPS envelope</a> calculators.</li>
+            <li>Price one request before scaling to millions. Try the <a href="../calculators.html#token-bill">token bill</a> and <a href="../calculators.html#rps-bill">RPS envelope</a> calculators.</li>
             <li>Caching is margin engineering. Every repeated hello should be nearly free.</li>
-            <li>Deep dives: <a href="perplexity-answer-engine-postmortem.html">Perplexity</a> plus <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor tokens</a>.</li>
+            <li>Deep dives: <a href="perplexity-answer-engine-postmortem.html">Perplexity</a> and <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor tokens</a>.</li>
           </ul>
-                    <p>Revisit the bill quarterly. Traffic shapes drift, prices change, plus yesterday's optimization rots. The waterfall from the diagram deserves a standing meeting.</p>
+                    <p>Revisit the bill quarterly. Traffic shapes drift, prices change, and yesterday's optimization rots. The waterfall from the diagram deserves a standing meeting.</p>
 <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Price this architecture monthly, line by line, out loud. <span class="q-seen">Seen at: Startup and CTO-round loops.</span></p>
@@ -515,11 +515,11 @@
             <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="68"/><line x1="118" y1="77" x2="180" y2="75"/><line x1="118" y1="110" x2="180" y2="82"/><line x1="310" y1="75" x2="372" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Alert on symptoms users feel, not causes you guess. Latency plus error rate first, CPU last.</li>
+            <li>Alert on symptoms users feel, not causes you guess. Latency and error rate first, CPU last.</li>
             <li>Sample smart. Keep every error, sample the boring middle. Try the <a href="../calculators.html#obs-sample">sampling fitter</a>.</li>
             <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, with a reported defect and distinct recovery windows.</li>
           </ul>
-          <p>Lesson 8 taught surviving blasts. Blasts you cannot see, you cannot survive. Game days plus failover drills are blind without signals, which is why observability closes the resilience arc, not the cost chapter.</p>
+          <p>Lesson 8 taught surviving blasts. Blasts you cannot see, you cannot survive. Game days and failover drills are blind without signals, which is why observability closes the resilience arc, not the cost chapter.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> p99 latency triples at 2 AM with no deploy. Walk through it live. <span class="q-seen">Seen at: Google-style and Meta-style SRE loops.</span></p>
@@ -530,7 +530,7 @@
         <section class="lesson" id="lesson-15">
           <div class="lesson-kicker">Lesson 15 · Capstone · Interview performance</div>
           <h2>The 45-Minute Performance</h2>
-          <p class="lesson-story">Pastebin. Forty-five minutes. The interviewer is not testing knowledge. They are testing whether you ask about scale before drawing boxes, name failure domains before features, plus price the design before praising it.</p>
+          <p class="lesson-story">Pastebin. Forty-five minutes. The interviewer is not testing knowledge. They are testing whether you ask about scale before drawing boxes, name failure domains before features, and price the design before praising it.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview timeline: clarify, estimate, design, deep dive, review across 45 minutes">
             <rect class="boxlime" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">0-5: clarify</text>
             <rect class="box" x="140" y="55" width="120" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">5-10: estimate</text>
@@ -550,10 +550,10 @@
           <ul class="lesson-ideas">
             <li>Clarify scope first. Pastebin for 100 users is a weekend project. For 100 million it is lessons 1 through 11.</li>
             <li>Estimate out loud. Writes per second, storage per year, bandwidth per day. Interviewers score the math.</li>
-            <li>Close by breaking it. Name three failures plus their fixes before they ask. That is the hire signal.</li>
+            <li>Close by breaking it. Name three failures and their fixes before they ask. That is the hire signal.</li>
           </ul>
-          <p class="lesson-hook">Course complete. The shelf keeps growing: <a href="index.html">all case studies</a> plus <a href="ai-slop.html">AI Slop Watch</a>. New failures arrive weekly. So will new lessons.</p>
-          <p>Bring one failure story of your own. Interviewers remember candidates who broke production plus fixed it. This course gave you fifteen borrowed ones. Earn one.</p>
+          <p class="lesson-hook">Course complete. The shelf keeps growing: <a href="index.html">all case studies</a> and <a href="ai-slop.html">AI Slop Watch</a>. New failures arrive weekly. So will new lessons.</p>
+          <p>Bring one failure story of your own. Interviewers remember candidates who broke production and fixed it. This course gave you fifteen borrowed ones. Earn one.</p>
         </section>
       </div>
     </div>

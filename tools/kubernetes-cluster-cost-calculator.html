@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta name="description" content="Free Kubernetes cluster cost calculator. Price worker nodes and the control plane fee and persistent volume storage, then read the monthly total and the node share.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/kubernetes-cluster-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy">
-  <meta property="og:description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta property="og:description" content="Free Kubernetes cluster cost calculator. Price worker nodes and the control plane fee and persistent volume storage, then read the monthly total and the node share.">
   <meta property="og:url" content="https://buildopsy.com/tools/kubernetes-cluster-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Kubernetes Cluster Cost Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy">
-  <meta name="twitter:description" content="Free Kubernetes cluster cost calculator. Price worker nodes plus the control plane fee plus persistent volume storage, then read the monthly total and the node share.">
+  <meta name="twitter:description" content="Free Kubernetes cluster cost calculator. Price worker nodes and the control plane fee and persistent volume storage, then read the monthly total and the node share.">
   <meta name="twitter:image:alt" content="Kubernetes Cluster Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Kubernetes Cluster Cost Calculator (EKS, GKE, AKS) | Buildopsy</title>
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How much does an EKS cluster cost per month?","acceptedAnswer":{"@type":"Answer","text":"Standard-support EKS charges $0.10 per cluster-hour, about $73 for a 730-hour month. Six worker nodes at $140 each plus that fee cost $913 before storage. This model adds entered persistent storage; networking, load balancers, logging and other services are excluded."}},
+      {"@type":"Question","name":"How much does an EKS cluster cost per month?","acceptedAnswer":{"@type":"Answer","text":"Standard-support EKS charges $0.10 per cluster-hour, about $73 for a 730-hour month. Six worker nodes at $140 each and that fee cost $913 before storage. This model adds entered persistent storage; networking, load balancers, logging and other services are excluded."}},
       {"@type":"Question","name":"Do managed Kubernetes control planes cost money?","acceptedAnswer":{"@type":"Answer","text":"Standard-support EKS and eligible non-Enterprise GKE clusters cost $0.10 per cluster-hour. GKE provides a $74.40 monthly credit for one eligible zonal Standard or Autopilot cluster; regional clusters are not eligible. AKS Free has no management fee but no financially backed SLA; AKS Standard is about $73 per 730-hour month and Premium about $438. The GKE preset shows the gross fee before its credit."}},
       {"@type":"Question","name":"Why is most of the Kubernetes bill worker nodes?","acceptedAnswer":{"@type":"Answer","text":"Worker nodes run your workloads, so they scale with demand. The control plane is a flat fee. In the default model nodes are about 87 percent of the bill, which is why rightsizing nodes matters more than the cluster fee."}}
     ]
@@ -70,7 +70,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Kubernetes Cluster Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A cluster bill is worker nodes plus control-plane fees plus persistent volumes. This example prices six nodes at $140 each, a gross $73 EKS control-plane fee and 500 GB of storage at $0.10/GB-month, for $963 before credits. GKE's credit can offset one eligible cluster.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A cluster bill is worker nodes and control-plane fees and persistent volumes. This example prices six nodes at $140 each, a gross $73 EKS control-plane fee and 500 GB of storage at $0.10/GB-month, for $963 before credits. GKE's credit can offset one eligible cluster.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
@@ -85,7 +85,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly cluster bill</span>
-              <span class="radar-count-description"> · Nodes plus control plane plus storage, priced for a full month.</span>
+              <span class="radar-count-description"> · Nodes and control plane and storage, priced for a full month.</span>
             <div class="radar-filters" aria-label="Platform presets">
               <button class="radar-filter active" data-set="k8s-cp:73">EKS STANDARD</button>
               <button class="radar-filter" data-set="k8s-cp:73">GKE GROSS</button>

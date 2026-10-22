@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Notion system architecture: how 200B+ blocks scale across 480 Postgres shards, Kafka CDC, Hudi on S3, search plus vector tiers. Includes a source-backed design, modeled 100k RPS workload plus cost assumptions.">
+  <meta name="description" content="Notion system architecture: how 200B+ blocks scale across 480 Postgres shards, Kafka CDC, Hudi on S3, search and vector tiers. Includes a source-backed design, modeled 100k RPS workload and cost assumptions.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/notion-architecture.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search">
-  <meta property="og:description" content="Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search plus vector tiers. See the sourced design, modeled 100k RPS workload and cost assumptions.">
+  <meta property="og:description" content="Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search and vector tiers. See the sourced design, modeled 100k RPS workload and cost assumptions.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/notion-architecture-guide.png">
   <meta property="og:image:alt" content="Notion data architecture diagram">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search">
-  <meta name="twitter:description" content="480 Postgres shards, Kafka CDC, Hudi/S3, search plus vector tiers. Source-backed Notion system design with modeled 100k RPS and cost assumptions.">
+  <meta name="twitter:description" content="480 Postgres shards, Kafka CDC, Hudi/S3, search and vector tiers. Source-backed Notion system design with modeled 100k RPS and cost assumptions.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/notion-architecture-guide.png">
   <meta name="twitter:image:alt" content="Notion data architecture diagram">
   <title>Notion Architecture: Scaling to 200 Billion Blocks | Buildopsy</title>
@@ -29,16 +29,16 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search plus vector tiers. Includes a source-backed design, modeled 100k RPS workload plus cost assumptions.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-09-18", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search and vector tiers. Includes a source-backed design, modeled 100k RPS workload and cost assumptions.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"What database does Notion use?","acceptedAnswer":{"@type":"Answer","text":"PostgreSQL. Notion runs 96 physical instances holding 480 logical shards as the transactional source of truth, with caches, search, lake plus vector tiers beside it."}},
-      {"@type":"Question","name":"How does Notion scale to 200 billion blocks?","acceptedAnswer":{"@type":"Answer","text":"Tenant-shaped Postgres sharding carries online traffic while a CDC pipeline through Debezium, Kafka, Hudi plus S3 feeds search, analytics plus AI from separate materialized copies."}},
-      {"@type":"Question","name":"Why did Notion build a data lake instead of querying Postgres?","acceptedAnswer":{"@type":"Answer","text":"Online traffic needs predictable latency plus transactional permissions, while analytics needs cheap replayable history plus AI needs chunks plus embeddings. One store cannot serve all four without hurting each."}},
-      {"@type":"Question","name":"How did Notion cut vector search costs?","acceptedAnswer":{"@type":"Answer","text":"By decoupling vector storage from compute in a serverless design, tiering hot, warm plus cold indexes separately, plus shrinking indexed volume. Notion reports roughly 90 percent lower cost over two years."}}
+      {"@type":"Question","name":"What database does Notion use?","acceptedAnswer":{"@type":"Answer","text":"PostgreSQL. Notion runs 96 physical instances holding 480 logical shards as the transactional source of truth, with caches, search, lake and vector tiers beside it."}},
+      {"@type":"Question","name":"How does Notion scale to 200 billion blocks?","acceptedAnswer":{"@type":"Answer","text":"Tenant-shaped Postgres sharding carries online traffic while a CDC pipeline through Debezium, Kafka, Hudi and S3 feeds search, analytics and AI from separate materialized copies."}},
+      {"@type":"Question","name":"Why did Notion build a data lake instead of querying Postgres?","acceptedAnswer":{"@type":"Answer","text":"Online traffic needs predictable latency and transactional permissions, while analytics needs cheap replayable history and AI needs chunks and embeddings. One store cannot serve all four without hurting each."}},
+      {"@type":"Question","name":"How did Notion cut vector search costs?","acceptedAnswer":{"@type":"Answer","text":"By decoupling vector storage from compute in a serverless design, tiering hot, warm and cold indexes separately, and shrinking indexed volume. Notion reports roughly 90 percent lower cost over two years."}}
     ]
   }
   </script>
@@ -69,10 +69,10 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Forensic Architecture</span><span class="chip">September 2026</span><span class="chip">14 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Forensic Architecture</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search</h1>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every block looks free. Behind each one sits a sharded database, a change stream, an index, a permission graph plus a meter that never sleeps. This postmortem explains how Notion turned notes into a 200-billion-block data platform without letting the warehouse eat the product.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion stores blocks in 480 Postgres shards. CDC through Kafka feeds a decoupled lake plus search. Vector search runs tiered. One edit fans into six workloads, priced below.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Every block looks free. Behind each one sits a sharded database, a change stream, an index, a permission graph and a meter that never sleeps. This postmortem explains how Notion turned notes into a 200-billion-block data platform without letting the warehouse eat the product.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion stores blocks in 480 Postgres shards. CDC through Kafka feeds a decoupled lake and search. Vector search runs tiered. One edit fans into six workloads, priced below.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100M+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Logical Shards</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">480</div></div>
@@ -82,42 +82,42 @@
         <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
       </header>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete workload tables plus the 1M RPS test: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>. This postmortem answers how the system works, where the money goes plus what to steal.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete workload tables and the 1M RPS test: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>. This postmortem answers how the system works, where the money goes and what to steal.</aside>
 
 
       <article class="prose">
-      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-architecture-guide.svg" alt="Notion system design diagram showing clients, API, Postgres shards, Kafka CDC, lake, search plus vector tiers" width="1200" height="680"><figcaption>Figure 1. One block in, six workloads out. The art of Notion architecture is giving each workload its own home.</figcaption></figure>
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/notion-architecture-guide.svg" alt="Notion system design diagram showing clients, API, Postgres shards, Kafka CDC, lake, search and vector tiers" width="1200" height="680"><figcaption>Figure 1. One block in, six workloads out. The art of Notion architecture is giving each workload its own home.</figcaption></figure>
 
       <section><h2>1. How Notion Works in 60 Seconds</h2>
-        <p>A page is a tree of blocks. Text, headings, checkboxes, database rows, relations, child pages: every one is a block with identity plus parentage plus ordering plus permissions plus history. Change one word and the system may update the canonical row, publish a change event, refresh search, rebuild a permission path, refresh a cache plus regenerate an embedding.</p>
-        <p>Notion grew that model from roughly 20 billion blocks in 2021 to more than 200 billion by 2024, serving over 100 million users at an $11 billion valuation. The architecture that survived is a study in separation: online traffic on sharded Postgres, offline history in a lake, retrieval in search plus vector tiers, each priced on its own terms.</p>
+        <p>A page is a tree of blocks. Text, headings, checkboxes, database rows, relations, child pages: every one is a block with identity and parentage and ordering and permissions and history. Change one word and the system may update the canonical row, publish a change event, refresh search, rebuild a permission path, refresh a cache and regenerate an embedding.</p>
+        <p>Notion grew that model from roughly 20 billion blocks in 2021 to more than 200 billion by 2024, serving over 100 million users at an $11 billion valuation. The architecture that survived is a study in separation: online traffic on sharded Postgres, offline history in a lake, retrieval in search and vector tiers, each priced on its own terms.</p>
         <div class="callout"><strong>The mental model:</strong> the blank page is a lie told beautifully. Underneath, every keystroke is a fan-out event looking for six different homes.</div>
       </section>
 
       <section><h2>2. The Components of Notion Architecture</h2>
-        <p><strong>Browser clients</strong> edit optimistically over HTTPS plus WebSockets. <strong>An API layer</strong> checks workspace membership plus permissions before touching data. <strong>480 Postgres shards</strong> hold canonical blocks with WAL-backed transactions. <strong>Caches</strong> absorb hot reads. <strong>Object storage</strong> keeps images plus attachments. <strong>CDC</strong> turns WAL records into Kafka traffic through Debezium. <strong>Hudi on S3</strong> lands durable lake copies for Spark jobs. <strong>A search index</strong> serves denormalized text. <strong>A vector tier</strong> serves embeddings at hot, warm plus cold prices. <strong>An AI path</strong> retrieves, reranks, infers plus streams.</p>
+        <p><strong>Browser clients</strong> edit optimistically over HTTPS and WebSockets. <strong>An API layer</strong> checks workspace membership and permissions before touching data. <strong>480 Postgres shards</strong> hold canonical blocks with WAL-backed transactions. <strong>Caches</strong> absorb hot reads. <strong>Object storage</strong> keeps images and attachments. <strong>CDC</strong> turns WAL records into Kafka traffic through Debezium. <strong>Hudi on S3</strong> lands durable lake copies for Spark jobs. <strong>A search index</strong> serves denormalized text. <strong>A vector tier</strong> serves embeddings at hot, warm and cold prices. <strong>An AI path</strong> retrieves, reranks, infers and streams.</p>
         <p>Each copy exists because forcing one store to do everything would be worse. The online path needs predictable latency. The lake needs cheap replay. Search needs text. AI needs chunks. Different questions, different homes.</p>
       </section>
 
       <section><h2>3. Why 480 Postgres Shards</h2>
         <p>By 2023 Notion ran 96 physical Postgres instances with five logical shards on each, preserving 480 logical shards. Sharding follows tenant-shaped units, so unrelated workspaces never share a lock. That ended the single-database era.</p>
-        <p>It also imposed a permanent tax. Routing, migrations, backups, rebalancing, schema changes, CDC fan-in plus operational tooling all multiply by the shard count. Sharding is not a victory. It is a trade: bounded blast radius in exchange for multiplied operations. Any team copying this shape should budget the tax before celebrating the isolation.</p>
+        <p>It also imposed a permanent tax. Routing, migrations, backups, rebalancing, schema changes, CDC fan-in and operational tooling all multiply by the shard count. Sharding is not a victory. It is a trade: bounded blast radius in exchange for multiplied operations. Any team copying this shape should budget the tax before celebrating the isolation.</p>
         <div class="tip"><strong>Interview line:</strong> when asked how to scale Postgres past one machine, answer with the sharding key first. Notion shards by tenant-shaped units because workspace data is naturally partitionable. The key decides everything downstream.</div>
       </section>
 
       <section><h2>4. The CDC Data Lake: Kafka Between Postgres and Everything</h2>
-        <p>The first lake design used Fivetran connectors from Postgres WAL into Snowflake: 480 connectors, update-heavy block data plus expensive tree-traversal transforms. Roughly 90 percent of block upserts are updates, not inserts. Warehouses prefer append-only streams. The shape fought the tool.</p>
-        <p>The redesign streams incremental changes through Debezium plus Kafka, lands them in S3 with Apache Hudi plus processes raw data separately from cleaned data. S3 becomes the durable truth for offline work. Spark computes on schedule, including on spot capacity: Notion reports its Spot Balancer cut Spark compute costs by 60 to 90 percent across workloads. Snowflake plus product stores receive only curated data.</p>
+        <p>The first lake design used Fivetran connectors from Postgres WAL into Snowflake: 480 connectors, update-heavy block data and expensive tree-traversal transforms. Roughly 90 percent of block upserts are updates, not inserts. Warehouses prefer append-only streams. The shape fought the tool.</p>
+        <p>The redesign streams incremental changes through Debezium and Kafka, lands them in S3 with Apache Hudi and processes raw data separately from cleaned data. S3 becomes the durable truth for offline work. Spark computes on schedule, including on spot capacity: Notion reports its Spot Balancer cut Spark compute costs by 60 to 90 percent across workloads. Snowflake and product stores receive only curated data.</p>
       </section>
 
       <section><h2>5. Vector Search: From Millions a Year to 90 Percent Less</h2>
-        <p>The first vector architecture bundled storage plus compute into pods. Fast, familiar plus dangerous: capacity gets purchased for the peak while most workspaces sleep. A quiet index still occupies a machine. Notion says the old design reached a cost run rate in the millions per year.</p>
-        <p>The fix decoupled vector storage from compute in a serverless design, good for an immediate 50 percent cut from peak usage. Later work tiered hot, warm plus cold indexes, cut search-engine spend 60 percent, cut EMR compute 35 percent plus shrank indexed volume 70 percent. Total reduction landed near 90 percent over two years. The lesson is matching cost ownership to access patterns, not declaring any single hosting model the winner.</p>
+        <p>The first vector architecture bundled storage and compute into pods. Fast, familiar and dangerous: capacity gets purchased for the peak while most workspaces sleep. A quiet index still occupies a machine. Notion says the old design reached a cost run rate in the millions per year.</p>
+        <p>The fix decoupled vector storage from compute in a serverless design, good for an immediate 50 percent cut from peak usage. Later work tiered hot, warm and cold indexes, cut search-engine spend 60 percent, cut EMR compute 35 percent and shrank indexed volume 70 percent. Total reduction landed near 90 percent over two years. The lesson is matching cost ownership to access patterns, not declaring any single hosting model the winner.</p>
       </section>
 
       <section><h2>6. Scale Math and the Bill</h2>
         <p>A transparent scenario: 10 million daily users at 20 minutes each, one request every ten seconds, gives 13,900 average RPS. An eight-times busy hour pushes the design target to 100,000 RPS. Writes run near 694 per second on average with peaks near 5,600. AI adds 100,000 requests a day whose token bill can dominate the database bill at barely 1 request per second.</p>
-        <p>The modeled envelope lands near <strong>$975,000 to $2.2M per month</strong>: sharded database estate, lake plus batch compute, search plus vectors, edge plus egress, AI inference. At the 1M RPS stress test, an unoptimized origin bills about <strong>$5.18M per month</strong> while edge caching plus coalescing plus tiering cut it to about <strong>$768k</strong>. Run your own throughput against the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. Full tables live in the <a href="notion-data-lake-cost-postmortem.html">deep postmortem</a>.</p>
+        <p>The modeled envelope lands near <strong>$975,000 to $2.2M per month</strong>: sharded database estate, lake and batch compute, search and vectors, edge and egress, AI inference. At the 1M RPS stress test, an unoptimized origin bills about <strong>$5.18M per month</strong> while edge caching and coalescing and tiering cut it to about <strong>$768k</strong>. Run your own throughput against the <a href="../calculators.html#rps-bill">RPS envelope calculator</a>. Full tables live in the <a href="notion-data-lake-cost-postmortem.html">deep postmortem</a>.</p>
         <table><thead><tr><th>Workload</th><th>Scenario</th><th>Result</th></tr></thead><tbody>
           <tr><td>Daily users</td><td>10 percent of 100M</td><td>10M DAU</td></tr>
           <tr><td>API traffic</td><td>1 request per 10 sec</td><td>13.9k avg RPS</td></tr>
@@ -135,17 +135,17 @@
 
       <section><h2>8. Frequently Asked Questions</h2>
         <h3>What database does Notion use?</h3>
-        <p>PostgreSQL. Notion runs 96 physical instances holding 480 logical shards as the transactional source of truth, with caches, search, lake plus vector tiers beside it.</p>
+        <p>PostgreSQL. Notion runs 96 physical instances holding 480 logical shards as the transactional source of truth, with caches, search, lake and vector tiers beside it.</p>
         <h3>How does Notion scale to 200 billion blocks?</h3>
-        <p>Tenant-shaped Postgres sharding carries online traffic while a CDC pipeline through Debezium, Kafka, Hudi plus S3 feeds search, analytics plus AI from separate materialized copies.</p>
+        <p>Tenant-shaped Postgres sharding carries online traffic while a CDC pipeline through Debezium, Kafka, Hudi and S3 feeds search, analytics and AI from separate materialized copies.</p>
         <h3>Why did Notion build a data lake instead of querying Postgres?</h3>
-        <p>Online traffic needs predictable latency plus transactional permissions, while analytics needs cheap replayable history plus AI needs chunks plus embeddings. One store cannot serve all four without hurting each.</p>
+        <p>Online traffic needs predictable latency and transactional permissions, while analytics needs cheap replayable history and AI needs chunks and embeddings. One store cannot serve all four without hurting each.</p>
         <h3>How did Notion cut vector search costs?</h3>
-        <p>By decoupling vector storage from compute in a serverless design, tiering hot, warm plus cold indexes separately plus shrinking indexed volume. Notion reports roughly 90 percent lower cost over two years.</p>
+        <p>By decoupling vector storage from compute in a serverless design, tiering hot, warm and cold indexes separately and shrinking indexed volume. Notion reports roughly 90 percent lower cost over two years.</p>
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Architecture facts come from Notion engineering plus company posts. Workload and cost figures are the labeled scenario model from the companion teardown, not Notion disclosures. For the complete tables, see <a href="notion-data-lake-cost-postmortem.html">the full postmortem</a>.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Architecture facts come from Notion engineering and company posts. Workload and cost figures are the labeled scenario model from the companion teardown, not Notion disclosures. For the complete tables, see <a href="notion-data-lake-cost-postmortem.html">the full postmortem</a>.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://www.notion.com/blog/100-million-of-you" target="_blank" rel="noopener noreferrer">Notion: 100 Million of You</a></li>
           <li><a href="https://www.notion.com/blog/gic-sequoia-index-purchase-notion-shares" target="_blank" rel="noopener noreferrer">Notion: $270M tender at an $11B valuation</a></li>

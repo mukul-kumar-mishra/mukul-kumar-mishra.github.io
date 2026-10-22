@@ -52,7 +52,7 @@
       "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}
     },
     "datePublished": "2026-10-06",
-    "dateModified": "2026-10-06",
+    "dateModified": "2026-10-23",
     "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/jiohotstar-eks-ip-shortage-postmortem.html"},
     "image": "https://buildopsy.com/images/articles/jiohotstar-eks-ip-ceiling-meme.png",
     "keywords": "JioHotstar system design, Hotstar EKS IP shortage, live cricket streaming, CDN QoS, Kubernetes subnet capacity"
@@ -116,7 +116,7 @@
         <section>
           <h2>2. The Capacity Incident Happened Before the Match</h2>
           <p>Disney+ Hotstar's 2024 engineering retrospective describes the preparation for the 2023 Asia Cup and World Cup. The team had previously managed about 25 million concurrent streams across two Kubernetes clusters. A new mobile offering increased the scale they needed to plan for, so the engineers modeled capacity near 50 million concurrent streams on a newer architecture.</p>
-          <p>A 2019 Hotstar engineering post described the shift from manually stepped capacity ladders to Kubernetes plus a custom autoscaler. The company reported twice the concurrency with one tenth of its earlier compute. That comparison came from its own workload, not a ratio another platform can copy. It shows the 2023 IP issue arose inside a capacity strategy already evolving toward workload-aware scaling.</p>
+          <p>A 2019 Hotstar engineering post described the shift from manually stepped capacity ladders to Kubernetes and a custom autoscaler. The company reported twice the concurrency with one tenth of its earlier compute. That comparison came from its own workload, not a ratio another platform can copy. It shows the 2023 IP issue arose inside a capacity strategy already evolving toward workload-aware scaling.</p>
           <p>The first constraint was not a video codec or a CDN price. During cluster creation, the team hit a shortage of pod IP addresses. Their report says the environment needed more than 400 worker nodes but could not scale beyond roughly 350. The issue was caught while cluster creation was beginning. The source says the team added subnet capacity and adjusted CNI allocation before major disruption.</p>
           <p>The IP shortage was fixed during cluster setup. The source does not report an outage during the later 72.5 million-viewer final or say that the same cluster served it.</p>
           <p>The same 2024 post opens by describing a later 59 million concurrent-stream peak. It also details separate work on CDN API segregation, NAT gateway scaling, worker-node throughput and phased cluster scaling. That overall peak should not be attributed to the IP-pool fix alone.</p>
@@ -126,7 +126,7 @@
           <h2>3. The IP Arithmetic Behind the Ceiling</h2>
           <p>The report describes three /20 subnets. A /20 contains 4,096 IPv4 addresses before AWS reservations. Hotstar rounded the usable pool to about 4,090 addresses per subnet, or roughly 12,300 across the three subnets.</p>
           <p>The VPC CNI settings included a <code>MINIMUM_IP_TARGET</code> of 35 and a <code>WARM_IP_TARGET</code> of 10. The first value sets a floor for IP allocation per node. The second maintains a pool of unassigned IPs for pod placement. Warm addresses improve assignment speed, but they still consume subnet space.</p>
-          <p>A back-of-envelope check divides 12,300 addresses by the 35-IP minimum, giving about 351 node-equivalents before other reservations. The 10-IP warm target plus primary ENIs, host workloads and subnet reservations can reduce practical capacity. This is not a full EKS max-pods calculation. Hotstar reported that its cluster stopped near 350 nodes.</p>
+          <p>A back-of-envelope check divides 12,300 addresses by the 35-IP minimum, giving about 351 node-equivalents before other reservations. The 10-IP warm target and primary ENIs, host workloads and subnet reservations can reduce practical capacity. This is not a full EKS max-pods calculation. Hotstar reported that its cluster stopped near 350 nodes.</p>
           <p>The team added larger /19 subnets, which it reported increased the pool to about 48,000 addresses. It later lowered <code>MINIMUM_IP_TARGET</code> to 20 and <code>WARM_IP_TARGET</code> to 5. Hotstar reported about 40 percent IP utilization during the World Cup. The important move was to treat subnet address space as a planned capacity resource, not as leftover configuration.</p>
           <table>
             <thead><tr><th>Preparation state</th><th>Reported value</th><th>Operational meaning</th></tr></thead>
@@ -135,10 +135,10 @@
               <tr><td>Initial CNI floor</td><td>35 minimum IPs per node</td><td>Roughly 350 node-equivalents from the pool</td></tr>
               <tr><td>Planned cluster</td><td>400+ worker nodes</td><td>Required more address headroom</td></tr>
               <tr><td>Revised pool</td><td>About 48K IPs</td><td>More subnet room for the event plan</td></tr>
-              <tr><td>Later CNI targets</td><td>20 minimum plus 5 warm IPs</td><td>Less unused reservation</td></tr>
+              <tr><td>Later CNI targets</td><td>20 minimum and 5 warm IPs</td><td>Less unused reservation</td></tr>
             </tbody>
           </table>
-          <div class="tip"><strong>Operator check:</strong> estimate pod IP demand from node count, pods per node and CNI warm-pool settings before the event load test. Compare that demand with usable subnet addresses plus addresses reserved for infrastructure.</div>
+          <div class="tip"><strong>Operator check:</strong> estimate pod IP demand from node count, pods per node and CNI warm-pool settings before the event load test. Compare that demand with usable subnet addresses and addresses reserved for infrastructure.</div>
         </section>
 
         <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/jiohotstar-eks-ip-ceiling-meme.svg" alt="Three panels show the subnet IP budget, CNI minimum allocation and reported node ceiling" width="1200" height="680"><figcaption>Figure 2. The address pool became a hard ceiling before the planned node count.</figcaption></figure>
@@ -152,7 +152,7 @@
 
         <section>
           <h2>5. The CDN Was Also an API Gateway</h2>
-          <p>Hotstar's 2024 post explains that its CDNs also served as the external API gateway. They handled cacheable and non-cacheable API requests plus security and routing work. Under event traffic, that request processing consumed edge compute. The team grouped APIs by behavior and moved cacheable paths to a separately configured CDN domain, reducing unnecessary work in the critical path.</p>
+          <p>Hotstar's 2024 post explains that its CDNs also served as the external API gateway. They handled cacheable and non-cacheable API requests and security and routing work. Under event traffic, that request processing consumed edge compute. The team grouped APIs by behavior and moved cacheable paths to a separately configured CDN domain, reducing unnecessary work in the critical path.</p>
           <p>The same post describes network bottlenecks in NAT Gateways and worker nodes. One cluster used half its NAT network throughput at roughly one tenth of expected peak traffic. Some services used 8 to 9 Gbps on worker nodes. Hotstar introduced higher-throughput nodes and topology-spread constraints for its internal gateway pods, which brought per-node traffic into the 2 to 3 Gbps range in its tests.</p>
           <p>Those findings are specific to the reported architecture. They do not prove that every streaming platform should put its API gateway on a CDN or use the same node topology. The transferable method is to test every layer at realistic user-journey load before choosing a scaling lever.</p>
         </section>
@@ -164,7 +164,7 @@
           <p>In a 2026 engineering post, JioHotstar describes a QoS Routing Manager that selects CDN traffic weights for a granular cohort. The cohort combines autonomous system number, country, state, city and user type. That can distinguish a poor last-mile route in one city from healthy service elsewhere on the same provider.</p>
           <p>The service scores Playback Failure Rate, rebuffering and Round-Trip Time. The article says it smooths noisy telemetry with an Exponentially Weighted Moving Average using an alpha near 0.6. Its two-phase capacity steering throttles a CDN approaching its utilization threshold, then aims to exhaust available CDN capacity more uniformly once the threshold is crossed. A healthy CDN keeps a minimum traffic share (typically 5 percent) to remain ready for failover. Hard network constraints prevent routing a cohort to a CDN that cannot serve it.</p>
           <p>JioHotstar reports an A/B rollout on ASN-State cohorts during a T20 match. The treatment group saw an 11 percent improvement in Playback Failure Rate, while rebuffering and RTT latency each improved by 2 percent. These are company-reported results for that experiment, not universal gains or a measurement of the later 72.5 million-viewer final.</p>
-          <p>The architecture lesson is that global CDN health is not enough. Routing needs a local view of playback quality plus a controller that changes weights slowly enough to avoid creating new oscillations.</p>
+          <p>The architecture lesson is that global CDN health is not enough. Routing needs a local view of playback quality and a controller that changes weights slowly enough to avoid creating new oscillations.</p>
         </section>
 
         <section>
@@ -194,7 +194,7 @@
             <li>Keep EndpointSlice support in the service-discovery plan. A legacy Endpoints dependency has a documented 1,000-address ceiling.</li>
             <li>Define a safe degradation mode before kickoff. JioHotstar's earlier scaling post describes a deliberate sequence for jettisoning non-critical features while protecting playback.</li>
           </ul>
-          <p>The calculation is useful only when it has an owner. Add a dashboard for free subnet addresses, node IP reservations, API gateway throughput, PFR, rebuffering and RTT. Run the test before event day. If the fallback is a spreadsheet plus an on-call engineer, document who acts and what gets switched off.</p>
+          <p>The calculation is useful only when it has an owner. Add a dashboard for free subnet addresses, node IP reservations, API gateway throughput, PFR, rebuffering and RTT. Run the test before event day. If the fallback is a spreadsheet and an on-call engineer, document who acts and what gets switched off.</p>
         </section>
 
         <div class="course-promo">

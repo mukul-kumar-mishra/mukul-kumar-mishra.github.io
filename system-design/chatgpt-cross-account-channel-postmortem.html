@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ChatGPT containers were isolated but shared Artifactory metadata became a cross-account channel. Rook audits hidden prompts, Gmail permissions and the fix.">
-  <meta name="author" content="Buildopsy">
+  <meta name="author" content="Rook research desk">
   <link rel="canonical" href="https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="ChatGPT: The Isolated Container Had a Shared Channel">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ChatGPT: The Isolated Container Had a Shared Channel", "description": "A Rook audit of Check Point Research's ChatGPT cross-account Artifactory channel disclosure.", "author": {"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html"}, "keywords": "ChatGPT, agent security, Artifactory, cross-account channel", "image": "https://buildopsy.com/images/articles/chatgpt-channel-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "ChatGPT: The Isolated Container Had a Shared Channel", "description": "A Rook audit of Check Point Research's ChatGPT cross-account Artifactory channel disclosure.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-10", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/chatgpt-cross-account-channel-postmortem.html"}, "keywords": "ChatGPT, agent security, Artifactory, cross-account channel", "image": "https://buildopsy.com/images/articles/chatgpt-channel-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -55,11 +55,11 @@
   <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Security Incident</span><span class="chip">September 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Security Incident</span><span class="chip">September 2026</span><span class="chip">5 min read</span><span class="chip">Rook</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">ChatGPT Postmortem: The Container Was Isolated. The Channel Was Not.</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Check Point Research found a shared internal Artifactory path that could move data between separate ChatGPT accounts. One session had Gmail permission. Another could leave a task in shared metadata. The visible conversation continued normally. The containers were isolated. The plumbing was feeling communal.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A closed ChatGPT issue used shared package metadata as a cross-account channel. A planted instruction could make one session read connected Gmail data and return it through the channel. The specific route is closed. The design lesson remains.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated September 10, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated October 23, 2026</p>
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Check Point says it disclosed the issue to OpenAI and the specific Artifactory instance was decommissioned. The report does not claim a broad real-world campaign. This article audits the architecture pattern, not an active exploit.</aside>
     <article class="prose">
@@ -81,7 +81,7 @@
           <li>The result is written into shared Artifactory metadata.</li>
           <li>A second account reads the metadata and retrieves the result.</li>
         </ol>
-        <p>The visible UI can remain clean at every stage. That is the point. The model does not need to confess. The user does not need to click a malicious link. The attack only needs the victim session to perform a normal tool call plus a shared service that accepts data from unrelated tenants.</p>
+        <p>The visible UI can remain clean at every stage. That is the point. The model does not need to confess. The user does not need to click a malicious link. The attack only needs the victim session to perform a normal tool call and a shared service that accepts data from unrelated tenants.</p>
         <p>A useful threat equation is:</p>
         <pre><code>cross-account impact = planted instruction
                     × victim permission
@@ -97,7 +97,7 @@
       <section><h2>4. What Should Happen Instead</h2>
         <p>First, make every shared service tenant-aware. Metadata must carry account, conversation, task and expiration identity. Reads should require a matching authorization context. “Internal” is not an authorization boundary.</p>
         <p>Second, remove cross-tenant write access from package infrastructure. Containers should receive immutable package artifacts. They should not write arbitrary metadata to a repository that another account can read. If a service needs coordination, use a dedicated broker with explicit tenant isolation and short retention.</p>
-        <p>Third, enforce information-flow policy across tool calls. A session that reads Gmail should not be allowed to write the result into an untrusted or shared destination without an explicit user approval. The policy should understand source plus destination plus account, not just tool names.</p>
+        <p>Third, enforce information-flow policy across tool calls. A session that reads Gmail should not be allowed to write the result into an untrusted or shared destination without an explicit user approval. The policy should understand source and destination and account, not just tool names.</p>
         <p>Fourth, make hidden work visible. Every connector read should create an auditable event with source, destination, user intent and result size. A conversation that answers normally while making an unrelated Gmail read is not normal. It is an alert.</p>
         <p>Fifth, kill the channel quickly. Decommissioning the named Artifactory instance closes the reported route. A stronger response rotates shared credentials, searches metadata for cross-account writes and tests sibling package services. Removing one mailbox is not the same as proving there are no mailboxes.</p>
         <div class="tip"><strong>Rook's rule:</strong> If two tenants can write to the same metadata plane, call it a network. Then secure it like one.</div>
@@ -108,8 +108,8 @@
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The container was isolated. The channel was not. Security diagrams love the first sentence and ignore the second.</strong></p>
       </section>
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit follows Check Point Research's September 2026 disclosure plus independent coverage. The reported path is described at a defensive level. It is not an active exploit guide.</p>
-        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://research.checkpoint.com/2026/chatgpt-cross-account-data-access-artifactory/" target="_blank" rel="noopener noreferrer">Check Point Research: ChatGPT cross-account data access</a></li><li><a href="https://technode.global/2026/09/09/check-point-chatgpt-cross-account-data-access-flaw/" target="_blank" rel="noopener noreferrer">TechNode: Check Point discloses closed ChatGPT channel</a></li><li><a href="https://www.infosectoday.io/chatgpt-flaw-let-a-planted-prompt-send-a-victims-gmail-data-to-another-account/" target="_blank" rel="noopener noreferrer">InfoSec Today: Planted prompt and Gmail data path</a></li></ul>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">This audit follows Check Point Research's September 2026 disclosure and independent coverage. The reported path is described at a defensive level. It is not an active exploit guide.</p>
+        <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;"><li><a href="https://research.checkpoint.com/2026/the-shared-clipboard-inside-the-sandbox-cross-account-data-leakage-in-chatgpt/" target="_blank" rel="noopener noreferrer">Check Point Research: The shared clipboard inside the sandbox</a></li><li><a href="https://technode.global/2026/09/09/check-point-chatgpt-cross-account-data-access-flaw/" target="_blank" rel="noopener noreferrer">TechNode: Check Point discloses closed ChatGPT channel</a></li><li><a href="https://www.infosectoday.io/chatgpt-flaw-let-a-planted-prompt-send-a-victims-gmail-data-to-another-account/" target="_blank" rel="noopener noreferrer">InfoSec Today: Planted prompt and Gmail data path</a></li></ul>
       </section>
     </article>
     <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook · Editorial profile</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">

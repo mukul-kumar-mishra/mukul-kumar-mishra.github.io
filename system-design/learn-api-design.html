@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free API design course in 15 forensic lessons from Mukul. Contracts, versioning, idempotency, rate limits, OpenAPI, gateways, webhooks plus deprecation math, priced from production postmortems.">
+  <meta name="description" content="A free API design course in 15 forensic lessons from Mukul. Contracts, versioning, idempotency, rate limits, OpenAPI, gateways, webhooks and deprecation math, priced from production postmortems.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-api-design.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="API Design in Production: 15 Lessons From the Gateway">
-  <meta property="og:description" content="Contracts plus idempotency plus rate limits priced. Fifteen forensic API lessons with live diagrams plus calculators from the gateway.">
+  <meta property="og:description" content="Contracts, idempotency, and rate limits priced. Fifteen forensic API lessons with live diagrams and calculators from the gateway.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-api-gateway-meme.png">
-  <meta property="og:image:alt" content="Three panels showing idempotency key plus rate limit error plus replay window">
+  <meta property="og:image:alt" content="Three panels showing idempotency key, rate limit error, and replay window">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,8 +18,8 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="API Design in Production: 15 Lessons From the Gateway">
-  <meta name="twitter:description" content="Fifteen API lessons with live diagrams plus bills. The bill hides in the boundary, with Mukul.">
-  <meta name="twitter:image:alt" content="Three panels showing idempotency key plus rate limit error plus replay window">
+  <meta name="twitter:description" content="Fifteen API lessons with live diagrams and bills. The bill hides in the boundary, with Mukul.">
+  <meta name="twitter:image:alt" content="Three panels showing idempotency key, rate limit error, and replay window">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-api-gateway-meme.png">
   <title>API Design in Production: 15 Lessons From the Gateway | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"Course",
     "name":"API Design in Production: 15 Lessons From the Gateway",
-    "description":"A free API design course in 15 forensic lessons covering contracts, versioning, idempotency keys, rate limits, OpenAPI, gateway versus mesh, auth, webhooks, pagination, errors, deprecation, gateway bills, pact drills plus a capstone API.",
+    "description":"A free API design course in 15 forensic lessons covering contracts, versioning, idempotency keys, rate limits, OpenAPI, gateway versus mesh, auth, webhooks, pagination, errors, deprecation, gateway bills, pact drills and a capstone API.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
@@ -119,18 +119,18 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">API Design in Production: 15 Lessons From the Gateway</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: name the promise, price the boundary, plus retire versions before they retire you. Each lesson starts from a real production failure, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic API lessons with live diagrams, from contracts to idempotency plus rate limits plus deprecation math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 17, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Golang on AWS taught me one discipline: name the promise, price the boundary, and retire versions before they retire you. Each lesson starts from a real production failure, states its assumptions up front, and ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic API lessons with live diagrams, from contracts to idempotency and rate limits and deprecation math. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Backend and SRE course · Updated October 23, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
-        <li>Write contracts clients can code against, version them without casualties, plus retire old versions on published dates.</li>
-        <li>Make retries safe with idempotency keys, cap floods with token buckets, plus fail with errors clients can act on.</li>
-        <li>Place policy correctly across gateway plus mesh, prove identity at the edge, plus deliver webhooks that survive the night.</li>
-        <li>Page through millions at constant cost, run pact drills per commit, plus price the gateway month as a modeled invoice.</li>
-        <li>Answer API interviews with clarified scope, out-loud bucket math, plus three ways you would break your own contract.</li>
+        <li>Write contracts clients can code against, version them without casualties, and retire old versions on published dates.</li>
+        <li>Make retries safe with idempotency keys, cap floods with token buckets, and fail with errors clients can act on.</li>
+        <li>Place policy correctly across gateway and mesh, prove identity at the edge, and deliver webhooks that survive the night.</li>
+        <li>Page through millions at constant cost, run pact drills per commit, and price the gateway month as a modeled invoice.</li>
+        <li>Answer API interviews with clarified scope, out-loud bucket math, and three ways you would break your own contract.</li>
       </ul>
       <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: clarify scope first, estimate out loud second, break your own design third. Lesson 14 rehearses the bench.</p>
     </section>
@@ -180,7 +180,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Name resources as nouns plus actions as verbs. Verbs in URLs age into lies the moment a second client arrives.</li>
+            <li>Name resources as nouns and actions as verbs. Verbs in URLs age into lies the moment a second client arrives.</li>
             <li>One contract, many handlers. Keep the client-visible promise stable while implementation details change.</li>
             <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, with documented API behavior and explicitly modeled rates.</li>
           </ul>
@@ -194,7 +194,7 @@
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Evolution · Change without casualties</div>
           <h2>Version Without Breakage</h2>
-          <p class="lesson-story">Every breaking change is a migration you force on strangers. Salesforce once queued logins behind one shared path on conference day two, which is what a forced migration feels like at scale. Ship v2 beside v1. Measure adoption. Sunset with dates plus headers, never with surprises.</p>
+          <p class="lesson-story">Every breaking change is a migration you force on strangers. Salesforce once queued logins behind one shared path on conference day two, which is what a forced migration feels like at scale. Ship v2 beside v1. Measure adoption. Sunset with dates and headers, never with surprises.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="two versions live beats one flag day">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">v1 live</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">v2 beside</text>
@@ -204,8 +204,8 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Prefer URL versions for public APIs plus header versions for partners who negotiate. Either works when the sunset date is contractual.</li>
-            <li>Emit Sunset plus Deprecation headers on every old response. Clients that can see the deadline meet the deadline.</li>
+            <li>Prefer URL versions for public APIs and header versions for partners who negotiate. Either works when the sunset date is contractual.</li>
+            <li>Emit Sunset and Deprecation headers on every old response. Clients that can see the deadline meet the deadline.</li>
             <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall</a>, with a reported service symptom and an explicitly modeled queue explanation.</li>
           </ul>
           <div class="lesson-questions">
@@ -229,7 +229,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Keys ride in headers, never in bodies. The key identifies intent while the body carries details.</li>
-            <li>Store key plus response for at least 24 hours. A retry inside the window replays. Outside it starts fresh.</li>
+            <li>Store key and response for at least 24 hours. A retry inside the window replays. Outside it starts fresh.</li>
             <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, the API guarantee and its scenario limits.</li>
           </ul>
           <div class="lesson-questions">
@@ -252,8 +252,8 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Gate per key plus per route plus per region. One bucket per dimension, each with its own refill math.</li>
-            <li>Return 429 with Retry-After plus a limit-policy header. Clients that can compute backoff will back off.</li>
+            <li>Gate per key and per route and per region. One bucket per dimension, each with its own refill math.</li>
+            <li>Return 429 with Retry-After and a limit-policy header. Clients that can compute backoff will back off.</li>
             <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure West US Route Withdrawal</a>, admission math at 1.4M offered RPS.</li>
           </ul>
           <div class="lesson-questions">
@@ -266,7 +266,7 @@
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Contracts · Specs that generate trust</div>
           <h2>OpenAPI Turns Promises Into Artifacts</h2>
-          <p class="lesson-story">Thirteen thousand postings in ninety days ask for REST API skill, plus five thousand ask for OpenAPI by name. The spec is the contract clients code against, mocks run from, plus gateways enforce. A spec reviewed like code prevents the drift that becomes the midnight page.</p>
+          <p class="lesson-story">Thirteen thousand postings in ninety days ask for REST API skill, and five thousand ask for OpenAPI by name. The spec is the contract clients code against, mocks run from, and gateways enforce. A spec reviewed like code prevents the drift that becomes the midnight page.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="spec first, drift never">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">spec review</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">codegen out</text>
@@ -277,7 +277,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Lint specs in CI: no verb URLs, no unpaged lists, no undocumented errors. Red spec blocks the merge.</li>
-            <li>Generate server stubs plus client SDKs plus mocks from one source. Three artifacts, zero drift.</li>
+            <li>Generate server stubs and client SDKs and mocks from one source. Three artifacts, zero drift.</li>
             <li>Deep dive: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a>, what happens when client contracts meet partition limits.</li>
           </ul>
           <div class="lesson-questions">
@@ -290,8 +290,8 @@
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Topology · Where the policy lives</div>
           <h2>Gateway Versus Mesh</h2>
-          <p class="lesson-story">A gateway enforces at the border. A mesh enforces between every pair of services. Use the gateway for client-facing policy such as auth plus limits plus versioning. Use the mesh for service-to-service policy such as mTLS plus per-route budgets. One border, many interiors. Confusing the two buys two bills plus one gap.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="border policy plus interior policy">
+          <p class="lesson-story">A gateway enforces at the border. A mesh enforces between every pair of services. Use the gateway for client-facing policy such as auth and limits and versioning. Use the mesh for service-to-service policy such as mTLS and per-route budgets. One border, many interiors. Confusing the two buys two bills and one gap.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="border policy and interior policy">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">edge in</text>
             <rect class="boxlime" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">gateway</text>
             <rect class="box" x="302" y="20" width="110" height="34" rx="8"/><text x="357" y="42" font-size="11" text-anchor="middle">mesh inside</text>
@@ -301,8 +301,8 @@
             <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Terminate TLS plus validate auth plus apply limits at the gateway. Fail fast before interior spend.</li>
-            <li>Run mTLS plus retries plus timeouts in the mesh. Interior policy travels with the call, not the docs.</li>
+            <li>Terminate TLS and validate auth and apply limits at the gateway. Fail fast before interior spend.</li>
+            <li>Run mTLS and retries and timeouts in the mesh. Interior policy travels with the call, not the docs.</li>
             <li>Deep dive: <a href="cell-based-control-plane.html">Cell-Based Control Planes</a>, bulkheads that hold when maps fail.</li>
           </ul>
           <div class="lesson-questions">
@@ -315,7 +315,7 @@
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Identity · Every call proves itself</div>
           <h2>Auth at the Edge</h2>
-          <p class="lesson-story">None of your handlers should parse credentials. The edge validates tokens, checks scopes, plus forwards identity downstream as headers services can trust. OAuth scopes carry permission. mTLS carries workload identity. IAM carries cloud permission. Mix them deliberately or attackers will mix them for you.</p>
+          <p class="lesson-story">None of your handlers should parse credentials. The edge validates tokens, checks scopes, and forwards identity downstream as headers services can trust. OAuth scopes carry permission. mTLS carries workload identity. IAM carries cloud permission. Mix them deliberately or attackers will mix them for you.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="handlers trust, edge verifies">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">call arrives</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">token checked</text>
@@ -350,7 +350,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M58,75 L205,75 L357,77 L490,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>HMAC-sign payloads with rotating secrets plus versioned signatures. Unsigned callbacks are rumors.</li>
+            <li>HMAC-sign payloads with rotating secrets and versioned signatures. Unsigned callbacks are rumors.</li>
             <li>Set a retry policy that fits your service. Stripe documents retries for up to three days in live mode; its public docs do not specify an eight-attempt schedule.</li>
             <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</a>, including webhook delivery limits and modeled load.</li>
           </ul>
@@ -374,9 +374,9 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Encode cursor as opaque token with sort key plus tiebreaker. Clients iterate, never compute.</li>
-            <li>Cap page size plus enforce max window. A client asking for a million rows is asking for your outage.</li>
-            <li>Deep dive: <a href="discord-messaging-system-design.html">Discord message storage</a>, hot partitions plus quorum fan-in.</li>
+            <li>Encode cursor as opaque token with sort key and tiebreaker. Clients iterate, never compute.</li>
+            <li>Cap page size and enforce max window. A client asking for a million rows is asking for your outage.</li>
+            <li>Deep dive: <a href="discord-messaging-system-design.html">Discord message storage</a>, hot partitions and quorum fan-in.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -399,7 +399,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Mark every error retryable or terminal. Ambiguous errors breed the retry storms of Lesson 04.</li>
-            <li>Echo a request ID in every response plus every log line. Correlation without IDs is archaeology.</li>
+            <li>Echo a request ID in every response and every log line. Correlation without IDs is archaeology.</li>
             <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall: 16 Instance IDs, 7h36m</a>, with the status record separated from the queue model.</li>
           </ul>
           <div class="lesson-questions">
@@ -412,7 +412,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Economics · Retiring versions for profit</div>
           <h2>Deprecation Economics</h2>
-          <p class="lesson-story">Every live version bills forever: test matrices plus docs plus support plus incident surface. Deprecation converts that annuity into a project with a date. Announce early, header every response, offer a migration sandbox, then delete. Versions are inventory. Inventory rots.</p>
+          <p class="lesson-story">Every live version bills forever: test matrices and docs and support and incident surface. Deprecation converts that annuity into a project with a date. Announce early, header every response, offer a migration sandbox, then delete. Versions are inventory. Inventory rots.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="old versions are inventory">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">announce date</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">headers warn</text>
@@ -422,7 +422,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Price each live version per quarter: CI minutes plus support tickets plus incident share. Publish the number internally.</li>
+            <li>Price each live version per quarter: CI minutes and support tickets and incident share. Publish the number internally.</li>
             <li>Give migration sandboxes with diff tooling. The version that is easy to leave is the version clients actually leave.</li>
             <li>Deep dive: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer</a>, per-document isolation as versioning discipline.</li>
           </ul>
@@ -436,7 +436,7 @@
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Money · The gateway invoice</div>
           <h2>The Gateway Bill</h2>
-          <p class="lesson-story">Assume 1M RPS through gateway plus auth plus limits at a modeled $0.0000012 per origin request. That is about $1.20 per second, or about $103,700 per day, before data plus support (1M x 86,400 x $0.0000012; illustrative scenario, not a measured invoice). Shedding 65 percent of a modeled ~5M RPS storm for five hours saves about $70,000 in origin compute at the same unit rate (0.65 x 5M x 18,000s x $0.0000012). Run the RPS Envelope calculator with your own numbers. The bill hides in the boundary. Here the boundary has a rate limit.</p>
+          <p class="lesson-story">Assume 1M RPS through gateway and auth and limits at a modeled $0.0000012 per origin request. That is about $1.20 per second, or about $103,700 per day, before data and support (1M x 86,400 x $0.0000012; illustrative scenario, not a measured invoice). Shedding 65 percent of a modeled ~5M RPS storm for five hours saves about $70,000 in origin compute at the same unit rate (0.65 x 5M x 18,000s x $0.0000012). Run the RPS Envelope calculator with your own numbers. The bill hides in the boundary. Here the boundary has a rate limit.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits cut the invoice by three quarters">
             <rect class="box" x="60" y="70" width="110" height="55" rx="8"/><text x="115" y="102" font-size="11" text-anchor="middle">steady 12k</text>
             <rect class="boxhot" x="225" y="40" width="110" height="85" rx="8"/><text x="280" y="102" font-size="11" text-anchor="middle">burst 148k</text>
@@ -444,7 +444,7 @@
             <text class="lbl" x="8" y="140" font-size="11">modeled bars, not invoices</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Model per-request cost as gateway plus auth plus origin. Three lines, no mysteries.</li>
+            <li>Model per-request cost as gateway and auth and origin. Three lines, no mysteries.</li>
             <li>Hold headroom as insurance with a published price. Unpriced headroom gets cut the quarter before the storm.</li>
             <li>Deep dive: <a href="azure-wan-route-withdrawal-postmortem.html">Azure West US</a>, the full invoice model.</li>
           </ul>
@@ -469,7 +469,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Collect pacts from top consumers first. Ten pacts catch more breakage than ten thousand unit tests of shape.</li>
-            <li>Verify pacts in CI plus canary. A pact that only runs nightly is a history book.</li>
+            <li>Verify pacts in CI and canary. A pact that only runs nightly is a history book.</li>
             <li>Deep dive: <a href="kafka-consumer-rebalance.html">Kafka Rebalance Explained</a>, contract discipline under protocol change.</li>
           </ul>
           <div class="lesson-questions">
@@ -482,8 +482,8 @@
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Careers · The API interview bench</div>
           <h2>The Interview Bench</h2>
-          <p class="lesson-story">API interviews test three moves: clarify scope first, estimate out loud second, break your own design third. Rate-limiting questions want bucket math. Webhook questions want retry horizons. Versioning questions want sunset plans. Answer with numbers plus tradeoffs plus one story from these lessons. Panels hire engineers who price their own designs.</p>
-          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="numbers plus stories hire">
+          <p class="lesson-story">API interviews test three moves: clarify scope first, estimate out loud second, break your own design third. Rate-limiting questions want bucket math. Webhook questions want retry horizons. Versioning questions want sunset plans. Answer with numbers and tradeoffs and one story from these lessons. Panels hire engineers who price their own designs.</p>
+          <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="numbers and stories hire">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">clarify scope</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">estimate aloud</text>
             <rect class="box" x="272" y="55" width="100" height="40" rx="8"/><text x="322" y="79" font-size="11" text-anchor="middle">break it</text>
@@ -492,8 +492,8 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Open with throughput plus latency plus consistency asks. Five minutes of questions saves forty of redesign.</li>
-            <li>Close every answer with failure modes plus cost. Designs without prices are sketches.</li>
+            <li>Open with throughput and latency and consistency asks. Five minutes of questions saves forty of redesign.</li>
+            <li>Close every answer with failure modes and cost. Designs without prices are sketches.</li>
             <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, Lesson 01 starts from outages.</li>
           </ul>
           <div class="lesson-questions">
@@ -515,7 +515,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Run the fourteen drills from lessons 1 through 13 against one real contract. Gaps show at a glance.</li>
-            <li>Kill a version mid-week plus measure migration. Untested sunsets are rumors with headers.</li>
+            <li>Kill a version mid-week and measure migration. Untested sunsets are rumors with headers.</li>
             <li>Close with the invoice. Requests per month times modeled unit price, labeled as estimates.</li>
           </ul>
           <div class="lesson-questions">
@@ -528,8 +528,8 @@
       </div>
     </div>
     <section class="sec" style="margin-top:28px;">
-      <h2 class="sec-title">Sources plus method</h2>
-      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Stripe idempotency, Razorpay client contracts, Salesforce queues, Azure admission math, Discord pagination, Figma isolation, Kafka protocol discipline, plus the gateway invoice model. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+      <h2 class="sec-title">Sources and method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Stripe idempotency, Razorpay client contracts, Salesforce queues, Azure admission math, Discord pagination, Figma isolation, Kafka protocol discipline, and the gateway invoice model. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>

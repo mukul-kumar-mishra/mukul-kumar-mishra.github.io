@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion: The Workspace That Ate the Warehouse", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-10-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion: The Workspace That Ate the Warehouse", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -71,16 +71,16 @@
           The Workspace That Ate the Warehouse
         </h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">
-          Every block looks free. Behind each one sits a distributed database, a change stream, an index, a permission graph, plus a meter that never sleeps. Notion turned notes into a 200-billion-block data platform. This is the bill hiding inside the blank page.
+          Every block looks free. Behind each one sits a distributed database, a change stream, an index, a permission graph, and a meter that never sleeps. Notion turned notes into a 200-billion-block data platform. This is the bill hiding inside the blank page.
         </p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion scaled to 200 billion blocks on 480 Postgres shards with CDC via Kafka and Hudi. A blank page fans into search plus vector plus permission work.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Notion scaled to 200 billion blocks on 480 Postgres shards with CDC via Kafka and Hudi. A blank page fans into search, vector, and permission work.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Public Users</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100M+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Logical Shards</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">480</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
         </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 10, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;">

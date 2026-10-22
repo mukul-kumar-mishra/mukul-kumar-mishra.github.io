@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Supabase runs 2M Postgres databases behind Supavisor. Teardown of connection limits, pooling, RLS tax and the 1M RPS cost that proves pooling is margin.">
+  <meta name="description" content="Supabase's GA page reports 44M+ databases managed. Teardown of connection limits, pooling, RLS tax and the 1M RPS cost that proves pooling is margin.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/supabase-postgres-scale-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Supabase: The Postgres You Called Serverless">
-  <meta property="og:description" content="Supabase runs 2M Postgres databases behind one pooling promise. Teardown of Supavisor, transaction mode, RLS tax and the 1M RPS math.">
+  <meta property="og:description" content="Supabase's GA page reports 44M+ databases managed behind one pooling promise. Teardown of Supavisor, transaction mode, RLS tax and the 1M RPS math.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/supabase-pool-meme.png">
   <meta property="og:image:alt" content="Supabase Postgres pooling architecture and RLS cost illustration">
   <meta property="og:image:type" content="image/png">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Supabase Postmortem: The Postgres You Called Serverless", "description": "A system design postmortem of Supabase Postgres scale, Supavisor pooling, RLS overhead and cost at 1M RPS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-08", "dateModified": "2026-09-08", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/supabase-postgres-scale-postmortem.html"}, "keywords": "Supabase, Postgres, Supavisor, connection pooling, RLS", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/supabase-pool-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Supabase Postmortem: The Postgres You Called Serverless", "description": "A system design postmortem of Supabase Postgres scale, Supavisor pooling, RLS overhead and cost at 1M RPS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-08", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/supabase-postgres-scale-postmortem.html"}, "keywords": "Supabase, Postgres, Supavisor, connection pooling, RLS", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/supabase-pool-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -58,15 +58,15 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Database Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Serverless Postgres That Was Not Serverless at 3 AM</h1>
-      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Supabase runs more than two million Postgres databases and calls the result serverless. Postgres still caps connections at roughly one hundred per instance. At 3 AM your serverless function opens ten thousand of them at once and learns what a pooler really costs.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Supabase puts 2M Postgres databases behind Supavisor. Transaction pooling reduces backend pressure while RLS still costs per row. Fix is indexed policies plus workload-aware routing.</p>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Supabase's General Availability page reports more than forty-four million databases managed, and the company calls the result serverless. Postgres still caps connections at roughly one hundred per instance. At 3 AM your serverless function opens ten thousand of them at once and learns what a pooler really costs.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Supabase's GA page reports 44M+ databases managed and 200K+ launched daily. Transaction pooling reduces backend pressure while RLS still costs per row. Fix is indexed policies and workload-aware routing.</p>
       <div class="grid4" style="margin-top:24px;">
-        <div class="stat" style="padding:14px;"><div class="lbl">Databases</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2M+</div></div>
-        <div class="stat" style="padding:14px;"><div class="lbl">Weekly API reqs</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">30B+</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Databases managed</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">44M+</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Daily launches</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200K+</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Realtime</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">WAL + slots</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Hard Limit</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~100 conns</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 8, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
 
 
@@ -80,14 +80,14 @@
       </section>
 
       <section><h2>2. Why Supabase Is the Right Autopsy</h2>
-        <p>Supabase crossed two million provisioned Postgres databases in 2025 and reported more than thirty billion weekly API requests across the platform. It raised roughly three hundred ninety eight million dollars as a venture backed database company and published its architecture decisions instead of hiding them behind a status page.</p>
+        <p>Supabase's General Availability page reports more than forty-four million databases managed and more than two hundred thousand databases launched daily. It has raised multiple venture rounds, including a $500 million Series F in June 2026, and it publishes its architecture decisions instead of hiding them behind a status page.</p>
         <p>That openness is rare. Supabase explained why it replaced PgBouncer with Supavisor, a pooler written in Elixir for multi tenant scale. It documented transaction mode, session mode, prepared statement limits, realtime replication slots and Row Level Security. It also shipped branching, read replicas, connection string variants and a dashboard that makes the pool visible. A vendor that explains the pooler is a vendor that expects you to understand the trade.</p>
-        <blockquote>"PgBouncer was never designed for a million Postgres connections across thousands of tenants" Supabase wrote when it launched Supavisor. At that scale pooling is not a config tweak. It is a product.</blockquote>
+        <blockquote>Supabase described PgBouncer as "single-threaded, making it difficult to scale" when it introduced Supavisor, a pooler built for multi-tenant workloads. At that scale pooling is not a config tweak. It is a product.</blockquote>
         <p>Supabase is also honest about the tension. Postgres is transactional and durable. Serverless workloads are bursty and forgetful. Putting a Postgres wire protocol directly behind an autoscaling fleet without a pooler is how a side project becomes a postmortem. This teardown follows the pooler to find the cost.</p>
       </section>
 
       <section><h2>3. Reconstructing the Machine</h2>
-        <p>A request reaches Supabase through PostgREST for table APIs or through the realtime service for subscriptions. Auth resolves the JWT and then enforces Row Level Security. Supavisor sits in front of Postgres and decides which backend gets the query. Edge Functions run near the user and reuse connections through the pooler rather than holding private ones. Storage plus vector plus queue workloads fan out from the same logical database but often travel separate paths.</p>
+        <p>A request reaches Supabase through PostgREST for table APIs or through the realtime service for subscriptions. Auth resolves the JWT and then enforces Row Level Security. Supavisor sits in front of Postgres and decides which backend gets the query. Edge Functions run near the user and reuse connections through the pooler rather than holding private ones. Storage and vector and queue workloads fan out from the same logical database but often travel separate paths.</p>
         <p>The pool has three modes that matter. Session mode gives each client a dedicated backend for the lifetime of the session. Transaction mode assigns a backend per transaction and returns it afterwards. Statement pooling is stricter still. Supabase defaults and guidance push most serverless workloads toward transaction mode because it reuses backends far more aggressively. The cost is feature loss. Anything that assumes sticky session state like prepared statements, advisory locks or temp tables breaks in transaction mode unless reworked.</p>
         <p>Realtime listens to the Postgres write ahead log through replication slots. Each subscribed table creates logical decoding work. Ten thousand realtime subscribers do not look like ten thousand idle WebSockets. They look like ten thousand consumers of change events that must be filtered and fanned out without letting one slot stall the primary. The most expensive WebSocket is the one tied to a lagging slot.</p>
         <div class="tip"><strong>Architecture tip:</strong> Draw the connection budget before the feature list. Max connections, pool size, transaction rate and replication slot lag are a shared resource. Features that ignore that budget pay interest as p95 latency at 3 AM.</div>
@@ -115,9 +115,9 @@
 
       <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/supabase-rls-meme.svg" alt="The RLS check in one diagram. Every row asks permission. The tax hides in plain sight." width="1200" height="680"><figcaption>Figure 2. The RLS check in one diagram, created for this article. Every row asks permission. The tax hides in plain sight.</figcaption></figure>
       <section id="cost-model"><h2>6. The Cost Model: What Pooling Actually Saves</h2>
-        <p>Host a Postgres fleet for this model. Assume eight hundred provisioned databases spread across regions with primary plus replica, backups and observability. At one hundred fifty dollars per month blended for a small project, platform base compute is one hundred twenty thousand dollars per month. Add pooler fleet, routing, auth and edge capacity at seventy thousand per month.</p>
+        <p>Host a Postgres fleet for this model. Assume eight hundred provisioned databases spread across regions with primary and replica, backups and observability. At one hundred fifty dollars per month blended for a small project, platform base compute is one hundred twenty thousand dollars per month. Add pooler fleet, routing, auth and edge capacity at seventy thousand per month.</p>
         <p>Database memory drives the pooled bill. Postgres backends consume resident memory. Assume one hundred thousand concurrent transactions touching hot data with buffer hits. Allocate managed memory pool at two hundred thousand dollars per month including cache. Add replication and storage IO at ninety thousand per month. Add realtime fan out and WebSocket layer at sixty thousand per month. Total scenario envelope lands around five hundred forty thousand dollars per month or roughly eighteen thousand per day.</p>
-        <p>Without pooling, directly provisioned backends would force larger instance classes to fit the same concurrency. Doubling backend capacity plus larger buffer pools could raise memory and compute by three hundred thousand to five hundred thousand dollars per month while still failing at peak connection burst. Pooling does not make Postgres cheap. It decides how much Postgres you need to run at all.</p>
+        <p>Without pooling, directly provisioned backends would force larger instance classes to fit the same concurrency. Doubling backend capacity and larger buffer pools could raise memory and compute by three hundred thousand to five hundred thousand dollars per month while still failing at peak connection burst. Pooling does not make Postgres cheap. It decides how much Postgres you need to run at all.</p>
         <table><thead><tr><th>Cost center</th><th>Modeled monthly</th><th>What moves it</th></tr></thead><tbody>
           <tr><td>Postgres base fleet</td><td>$120k</td><td>instance class and count</td></tr>
           <tr><td>Supavisor and routing</td><td>$70k</td><td>pool size and regions</td></tr>
@@ -167,20 +167,22 @@
         <div class="tip"><strong>Ops tip:</strong> Alert on pool wait time, active backend count and replication slot lag before you alert on CPU. By the time CPU moves at pooling scale the incident was already queuing at the pooler ten minutes ago.</div>
       </section>
 
-      <div class="tip"><strong>Operator rule:</strong> Measure the tax before scaling the system. RLS, pooling plus auth multiply per query, silently.</div>
+      <div class="tip"><strong>Operator rule:</strong> Measure the tax before scaling the system. RLS, pooling and auth multiply per query, silently.</div>
       <section><h2>9. The Verdict</h2>
-        <p>Supabase earned its fleet the hard way. It gives every project a real Postgres, a real extension market and a real wire protocol, then accepts the burden of pooling that fleet for a world that spawns functions like confetti. Supavisor is the admission that hosted Postgres plus autoscaling functions needs a bouncer, a queue and a shared vocabulary for connections.</p>
-        <p>The cost is not Postgres itself. It is the mismatch between serverless burst and transactional backends plus policy work evaluated per row at platform scale. Pooling decides how many backends you run. WAL pressure decides whether they stay up — CircleCI's full volume is the log-side companion: <a href="circleci-wal-autovacuum-postmortem.html">one transaction log holding 3,500 job starts hostage</a>. Indexed RLS decides how much work each backend does. Replica routing decides whether the primary pays for everything. Get those three right and the bill reflects value rather than waste.</p>
+        <p>Supabase earned its fleet the hard way. It gives every project a real Postgres, a real extension market and a real wire protocol, then accepts the burden of pooling that fleet for a world that spawns functions like confetti. Supavisor is the admission that hosted Postgres and autoscaling functions needs a bouncer, a queue and a shared vocabulary for connections.</p>
+        <p>The cost is not Postgres itself. It is the mismatch between serverless burst and transactional backends and policy work evaluated per row at platform scale. Pooling decides how many backends you run. WAL pressure decides whether they stay up — CircleCI's full volume is the log-side companion: <a href="circleci-wal-autovacuum-postmortem.html">one transaction log holding 3,500 job starts hostage</a>. Indexed RLS decides how much work each backend does. Replica routing decides whether the primary pays for everything. Get those three right and the bill reflects value rather than waste.</p>
         <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>Serverless Postgres is not a database without limits. It is Postgres with a pooler you finally respect.</strong></p>
       </section>
 
       <section><h2>Sources and Method</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Supabase fleet size, Supavisor origin and feature notes come from Supabase blog posts and docs linked below. Postgres connection limits and pooling behavior are documented Postgres mechanics. The RPS and cost model is my own scenario math, not Supabase telemetry or invoices. Use production measurements before capacity decisions.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Fleet size and launch-rate figures come from Supabase's General Availability page, fetched October 23, 2026; funding context comes from the Series F post. Supavisor origin and feature notes come from Supabase blog posts and docs linked below. Postgres connection limits and pooling behavior are documented Postgres mechanics. The RPS and cost model is my own scenario math, not Supabase telemetry or invoices. Use production measurements before capacity decisions.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
-          <li><a href="https://supabase.com/blog/supavisor" target="_blank" rel="noopener noreferrer">Supabase: Supavisor, the Postgres Connection Pooler</a></li>
-          <li><a href="https://supabase.com/blog/supavisor-1-million-connections" target="_blank" rel="noopener noreferrer">Supabase: Supavisor and 1M Connections</a></li>
+          <li><a href="https://supabase.com/blog/supavisor-postgres-connection-pooler" target="_blank" rel="noopener noreferrer">Supabase: Supavisor 1.0, a scalable connection pooler for Postgres</a></li>
+          <li><a href="https://supabase.com/blog/supavisor-1-million" target="_blank" rel="noopener noreferrer">Supabase: Scaling Postgres to 1 Million Connections</a></li>
           <li><a href="https://supabase.com/docs/guides/realtime" target="_blank" rel="noopener noreferrer">Supabase Docs: Realtime and Replication Slots</a></li>
           <li><a href="https://supabase.com/docs/guides/database/postgres/row-level-security" target="_blank" rel="noopener noreferrer">Supabase Docs: Row Level Security</a></li>
+          <li><a href="https://supabase.com/ga" target="_blank" rel="noopener noreferrer">Supabase: General Availability page (counters fetched October 23, 2026), 44M+ databases managed and 200K+ launched daily</a></li>
+          <li><a href="https://supabase.com/blog/supabase-series-f" target="_blank" rel="noopener noreferrer">Supabase: Series F (June 2026)</a></li>
           <li><a href="https://supabase.com/blog" target="_blank" rel="noopener noreferrer">Supabase Blog: Fleet and Product Updates</a></li>
           <li><a href="circleci-wal-autovacuum-postmortem.html">Buildopsy: CircleCI WAL saturation — pressure from the log side</a></li>
           <li><a href="doltgres-data-loss-postmortem.html">Buildopsy: Doltgres backup verification — restore proof before destructive GC</a></li>

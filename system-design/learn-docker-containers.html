@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free Docker course in 15 forensic lessons from Mukul. Layers, Dockerfiles, multi-stage builds, registries, tags, CVE scans, secrets, volumes, networks plus Kubernetes handoff, priced from production postmortems.">
+  <meta name="description" content="A free Docker course in 15 forensic lessons from Mukul. Layers, Dockerfiles, multi-stage builds, registries, tags, CVE scans, secrets, volumes, networks and Kubernetes handoff, priced from production postmortems.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-docker-containers.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
-  <meta property="og:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
+  <meta property="og:description" content="Layers cached, bytes billed. Fifteen Docker lessons with live diagrams, and registry math from the layer ledger.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
   <meta property="og:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
-  <meta name="twitter:description" content="Layers cached plus bytes billed. Fifteen Docker lessons with live diagrams plus registry math from the layer ledger.">
+  <meta name="twitter:description" content="Layers cached, bytes billed. Fifteen Docker lessons with live diagrams, and registry math from the layer ledger.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
   <meta name="twitter:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
   <title>Docker Containers in Production: 15 Lessons From the Layer Ledger | Buildopsy</title>
@@ -31,10 +31,10 @@
   <script src="https://unpkg.com/lucide@latest" defer></script>
 <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Course","name":"Docker Containers in Production: 15 Lessons From the Layer Ledger",
-    "description":"A free Docker course in 15 forensic lessons covering image layers, Dockerfile ordering, multi-stage builds, registry economics, tag pinning, CVE scanning, secrets, volumes, networks, logging, healthchecks, resource limits, Compose parity, Kubernetes handoff plus a capstone ship.",
+    "description":"A free Docker course in 15 forensic lessons covering image layers, Dockerfile ordering, multi-stage builds, registry economics, tag pinning, CVE scanning, secrets, volumes, networks, logging, healthchecks, resource limits, Compose parity, Kubernetes handoff and a capstone ship.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-10",
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-23",
     "syllabusSections":[{"@type":"Syllabus","name":"Image Layers"},{"@type":"Syllabus","name":"Dockerfile Order"},{"@type":"Syllabus","name":"Multi-Stage Builds"},{"@type":"Syllabus","name":"Registry Bills"},{"@type":"Syllabus","name":"Tags Versus Pins"},{"@type":"Syllabus","name":"CVE Scans"},{"@type":"Syllabus","name":"Secrets Discipline"},{"@type":"Syllabus","name":"Volumes"},{"@type":"Syllabus","name":"Networks"},{"@type":"Syllabus","name":"Log Discipline"},{"@type":"Syllabus","name":"Healthchecks"},{"@type":"Syllabus","name":"Resource Limits"},{"@type":"Syllabus","name":"Compose Parity"},{"@type":"Syllabus","name":"Kubernetes Handoff"},{"@type":"Syllabus","name":"Ship One Container"}]}
   </script>
   <script type="application/ld+json">
@@ -103,19 +103,19 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Docker Containers in Production: 15 Lessons From the Layer Ledger</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of containers under deploy pressure taught me one discipline: layers cached, bytes billed, plus verdicts per push. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen Docker lessons with live diagrams, from layers to registries plus scans plus the Kubernetes handoff. Built from production postmortems with registry math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated October 10, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of containers under deploy pressure taught me one discipline: layers cached, bytes billed, and verdicts per push. Each lesson starts from a real production postmortem, states its assumptions up front, and ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen Docker lessons with live diagrams, from layers to registries and scans and the Kubernetes handoff. Built from production postmortems with registry math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated October 23, 2026</p>
     </header>
     <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment" width="1200" height="680"><figcaption class="fl-desc">A reproducible container release starts with stable layers, scans the pinned artifact, and deploys the same image everywhere.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
-        <li>Read image ledgers, order Dockerfiles for cache hits, plus ship multi-stage builds a tenth of the size.</li>
-        <li>Price registry pushes per node, pin digests for repeatability, scan every push with owners plus dates, plus keep secrets out of layers.</li>
-        <li>Persist state in volumes, name networks before addresses, stream logs with trace IDs, plus gate rollouts with probes plus limits.</li>
-        <li>Mirror prod in Compose, hand off cleanly to Kubernetes, plus ship one container with dashboards plus runbooks.</li>
-        <li>Answer container interviews with layer math out loud, pull budgets second, plus rollback timings third.</li>
+        <li>Read image ledgers, order Dockerfiles for cache hits, and ship multi-stage builds a tenth of the size.</li>
+        <li>Price registry pushes per node, pin digests for repeatability, scan every push with owners and dates, and keep secrets out of layers.</li>
+        <li>Persist state in volumes, name networks before addresses, stream logs with trace IDs, and gate rollouts with probes and limits.</li>
+        <li>Mirror prod in Compose, hand off cleanly to Kubernetes, and ship one container with dashboards and runbooks.</li>
+        <li>Answer container interviews with layer math out loud, pull budgets second, and rollback timings third.</li>
       </ul>
       <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: layer math out loud first, security discipline second, handoff planning third. Lesson 15 ships the proof.</p>
     </section>
@@ -155,7 +155,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · Images are ledgers</div>
           <h2>Image Layers</h2>
-          <p class="lesson-story">Assumption first: an image is a stack of immutable layers, not a box. Each instruction adds a layer. Identical layers share storage plus download once. Bloated layers download on every node forever. Read layer history before trusting any image. Bytes without ledgers compound silently.</p>
+          <p class="lesson-story">Assumption first: an image is a stack of immutable layers, not a box. Each instruction adds a layer. Identical layers share storage and download once. Bloated layers download on every node forever. Read layer history before trusting any image. Bytes without ledgers compound silently.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="layer arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">base set</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -166,21 +166,21 @@
 <rect class="boxlime" x="130" y="106" width="300" height="22" rx="8"/><text x="280" y="121" font-size="11" text-anchor="middle">bytes billed</text>
 </svg>
           <ul class="lesson-ideas">
-            <li>Inspect history plus sizes per layer. Mystery gigabytes usually hide in one RUN step.</li>
-            <li>Prefer slim bases plus explicit versions. Latest plus full toolchains tax every pull.</li>
+            <li>Inspect history and sizes per layer. Mystery gigabytes usually hide in one RUN step.</li>
+            <li>Prefer slim bases and explicit versions. Latest and full toolchains tax every pull.</li>
             <li>Deep dive: <a href="replit-agent-runtime-postmortem.html">Replit Agent Runtime</a>, sandbox images with install bills.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Image pulls take 4 minutes per node. Which layer dominates? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Two services share 80 percent of layers. What does the registry charge? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Image pulls take 4 minutes per node. Which layer dominates? <span class="q-seen">Seen at: backend and platform loops.</span></p>
+            <p><strong>Q2.</strong> Two services share 80 percent of layers. What does the registry charge? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Ledger read. Now order the file. <a href="#lesson-2">Lesson 02: Dockerfile →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Caching · Order prints money</div>
           <h2>Dockerfile Order</h2>
-          <p class="lesson-story">Layer cache reuses every unchanged step plus rebuilds everything below the first change. Stable steps belong early. Churning source belongs last. Dependency manifests before code cuts rebuilds tenfold. Order without cache math rebuilds the world per commit.</p>
+          <p class="lesson-story">Layer cache reuses every unchanged step and rebuilds everything below the first change. Stable steps belong early. Churning source belongs last. Dependency manifests before code cuts rebuilds tenfold. Order without cache math rebuilds the world per commit.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="dockerfile arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stable first</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">deps early</text>
@@ -196,15 +196,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Builds rerun npm install on every commit. What two lines move? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Cache hit ratio sits at 20 percent. What reorder lifts it past 80? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Builds rerun npm install on every commit. What two lines move? <span class="q-seen">Seen at: backend and full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Cache hit ratio sits at 20 percent. What reorder lifts it past 80? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Order set. Now shrink the ship. <a href="#lesson-3">Lesson 03: Multi-Stage →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Size · Ship runtime, not toolchain</div>
           <h2>Multi-Stage Builds</h2>
-          <p class="lesson-story">Build stages compile with full toolchains. Final stages carry binaries plus runtime only. A Go service drops from 900MB to 25MB when the compiler stays behind. Smaller images pull faster plus scan faster plus patch faster. Toolchains in production are freight, not features.</p>
+          <p class="lesson-story">Build stages compile with full toolchains. Final stages carry binaries and runtime only. A Go service drops from 900MB to 25MB when the compiler stays behind. Smaller images pull faster and scan faster and patch faster. Toolchains in production are freight, not features.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="multistage arithmetic">
 <polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
 <text x="280" y="26" font-size="11" text-anchor="middle">build stage</text>
@@ -222,15 +222,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Node image ships at 1.2GB with a 60MB app. What stages fix it? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Distroless breaks debugging at 3 AM. What compromise holds? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Node image ships at 1.2GB with a 60MB app. What stages fix it? <span class="q-seen">Seen at: backend and full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Distroless breaks debugging at 3 AM. What compromise holds? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Ship shrunk. Now price the push. <a href="#lesson-4">Lesson 04: Registry →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Economics · Pushes bill twice</div>
           <h2>Registry Bills</h2>
-          <p class="lesson-story">Registries charge storage plus data transfer per pull. Every node pulls every image on deploy plus scale plus restart. A 1GB image across 200 nodes moves 200GB per rollout. Retention without lifecycle rules stores every experiment forever. Pull math decides image budgets.</p>
+          <p class="lesson-story">Registries charge storage and data transfer per pull. Every node pulls every image on deploy and scale and restart. A 1GB image across 200 nodes moves 200GB per rollout. Retention without lifecycle rules stores every experiment forever. Pull math decides image budgets.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="registry arithmetic">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
 <text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
@@ -246,20 +246,20 @@
 </svg>
           <ul class="lesson-ideas">
             <li>Multiply image size by node count by deploys per month. That product is the invoice.</li>
-            <li>Set lifecycle rules for dev tags plus keep release tags pinned. Infinite retention is slow debt.</li>
+            <li>Set lifecycle rules for dev tags and keep release tags pinned. Infinite retention is slow debt.</li>
             <li>Deep dive: <a href="vercel-fluid-compute-cost-postmortem.html">Vercel Fluid Bill</a>, waiting billed by the same math.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Two hundred nodes pull 800MB ten times daily. What is the monthly transfer? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Registry stores 4,000 untagged dev images. What policy clears them? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Two hundred nodes pull 800MB ten times daily. What is the monthly transfer? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Registry stores 4,000 untagged dev images. What policy clears them? <span class="q-seen">Seen at: SRE and backend loops.</span></p>
           </div>
           <p class="lesson-hook">Pushes priced. Now pin the tag. <a href="#lesson-5">Lesson 05: Tags →</a></p>
         </section>
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Releases · Tags lie, digests hold</div>
           <h2>Tags Versus Pins</h2>
-          <p class="lesson-story">Mutable tags move under deploys while digests freeze bytes forever. Latest in production means unrepeatable incidents plus undebuggable rollbacks. Pin digests in manifests plus promote tags through environments. Repeatability without pins is luck with YAML.</p>
+          <p class="lesson-story">Mutable tags move under deploys while digests freeze bytes forever. Latest in production means unrepeatable incidents and undebuggable rollbacks. Pin digests in manifests and promote tags through environments. Repeatability without pins is luck with YAML.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pinning arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">tag moved</text>
@@ -269,13 +269,13 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Count deploys that cannot name their bytes. Each is an incident without a suspect.</li>
-            <li>Resolve tags to digests at deploy time plus record them. Promotion carries hashes, not hopes.</li>
-            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Proof Check</a>, pin versions plus recheck outside.</li>
+            <li>Resolve tags to digests at deploy time and record them. Promotion carries hashes, not hopes.</li>
+            <li>Deep dive: <a href="lean-proof-check-postmortem.html">Lean Proof Check</a>, pin versions and recheck outside.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Latest redeploys a broken build at midnight. What pinning prevents repeat? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Rollback must restore exact bytes. What artifact names them? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Latest redeploys a broken build at midnight. What pinning prevents repeat? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
+            <p><strong>Q2.</strong> Rollback must restore exact bytes. What artifact names them? <span class="q-seen">Seen at: backend and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Bytes frozen. Now scan them. <a href="#lesson-6">Lesson 06: Scans →</a></p>
         </section>
@@ -292,20 +292,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Track mean time from CVE publish to patched deploy. Weeks of lag are exposure with dashboards.</li>
-            <li>Rebuild bases monthly plus fail closed on scanner outage. Silent skips ship holes.</li>
+            <li>Rebuild bases monthly and fail closed on scanner outage. Silent skips ship holes.</li>
             <li>Deep dive: <a href="chatgpt-cross-account-channel-postmortem.html">ChatGPT Channel</a>, boundaries priced per leak.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Base carries 12 critical CVEs. What rebuilds first? <span class="q-seen">Seen at: platform plus security loops.</span></p>
-            <p><strong>Q2.</strong> Scanner goes dark Friday. Do pushes proceed? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+            <p><strong>Q1.</strong> Base carries 12 critical CVEs. What rebuilds first? <span class="q-seen">Seen at: platform and security loops.</span></p>
+            <p><strong>Q2.</strong> Scanner goes dark Friday. Do pushes proceed? <span class="q-seen">Seen at: SRE and security loops.</span></p>
           </div>
           <p class="lesson-hook">Verdicts filed. Now guard secrets. <a href="#lesson-7">Lesson 07: Secrets →</a></p>
         </section>
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Secrets · Never bake the key</div>
           <h2>Secrets Discipline</h2>
-          <p class="lesson-story">Baked secrets live in layers forever, readable by anyone with pull access. Build args plus env files leak through history plus inspect. Inject secrets at runtime from vaults plus mount short-lived tokens. Rotation without rebuilds proves the design.</p>
+          <p class="lesson-story">Baked secrets live in layers forever, readable by anyone with pull access. Build args and env files leak through history and inspect. Inject secrets at runtime from vaults and mount short-lived tokens. Rotation without rebuilds proves the design.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="secrets arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">vault holds</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">runtime mounts</text>
@@ -315,21 +315,21 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Audit history plus inspect output for key shapes. One match means rebuild plus rotate.</li>
-            <li>Scope tokens per service plus expire hourly. Broad forever-keys are breach multipliers.</li>
-            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">Agentflayer Heist</a>, one document out plus keys with it.</li>
+            <li>Audit history and inspect output for key shapes. One match means rebuild and rotate.</li>
+            <li>Scope tokens per service and expire hourly. Broad forever-keys are breach multipliers.</li>
+            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">Agentflayer Heist</a>, one document out and keys with it.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Key appears in layer history. What are the first three moves? <span class="q-seen">Seen at: security plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Service needs DB passwords at boot. What delivers them? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Key appears in layer history. What are the first three moves? <span class="q-seen">Seen at: security and backend loops.</span></p>
+            <p><strong>Q2.</strong> Service needs DB passwords at boot. What delivers them? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Keys safe. Now persist data. <a href="#lesson-8">Lesson 08: Volumes →</a></p>
         </section>
         <section class="lesson" id="lesson-8">
           <div class="lesson-kicker">Lesson 08 · State · Boxes forget by design</div>
           <h2>Volumes</h2>
-          <p class="lesson-story">Containers lose writable layers on restart by design. Volumes persist databases plus uploads plus caches outside the box lifecycle. Binds suit dev files. Named volumes suit prod data. Backups cover volumes, not containers. State without volumes is amnesia with uptime.</p>
+          <p class="lesson-story">Containers lose writable layers on restart by design. Volumes persist databases and uploads and caches outside the box lifecycle. Binds suit dev files. Named volumes suit prod data. Backups cover volumes, not containers. State without volumes is amnesia with uptime.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="volume arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">box forgets</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -346,15 +346,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Database container restarts nightly plus loses rows. What persists them? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Volume fills at 2 AM. What alerts before writes halt? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Database container restarts nightly and loses rows. What persists them? <span class="q-seen">Seen at: backend and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Volume fills at 2 AM. What alerts before writes halt? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Data kept. Now wire the network. <a href="#lesson-9">Lesson 09: Networks →</a></p>
         </section>
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Networks · Names before addresses</div>
           <h2>Networks Are DNS</h2>
-          <p class="lesson-story">Compose plus overlay networks give each service a DNS name. Hardcoded IPs rot on every reschedule. Publish only edge ports plus keep east-west traffic on internal networks. Exposed databases invite the internet to dinner. Names scale, addresses expire.</p>
+          <p class="lesson-story">Compose and overlay networks give each service a DNS name. Hardcoded IPs rot on every reschedule. Publish only edge ports and keep east-west traffic on internal networks. Exposed databases invite the internet to dinner. Names scale, addresses expire.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="network arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">names set</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">ports edged</text>
@@ -370,15 +370,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Service reaches DB by container IP. What breaks on reschedule? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
-            <p><strong>Q2.</strong> Which ports stay published on a three-tier app? <span class="q-seen">Seen at: SRE plus security loops.</span></p>
+            <p><strong>Q1.</strong> Service reaches DB by container IP. What breaks on reschedule? <span class="q-seen">Seen at: backend and platform loops.</span></p>
+            <p><strong>Q2.</strong> Which ports stay published on a three-tier app? <span class="q-seen">Seen at: SRE and security loops.</span></p>
           </div>
           <p class="lesson-hook">Names wired. Now free the logs. <a href="#lesson-10">Lesson 10: Logs →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Observability · Logs leave the box</div>
           <h2>Log Discipline</h2>
-          <p class="lesson-story">Stdout plus stderr stream to collectors while files inside boxes die with restarts. JSON lines with trace IDs join logs to requests. Unbounded logs fill disks plus drown signals. Rotation plus sampling keep the stream affordable. Debugging without centralized logs is archaeology.</p>
+          <p class="lesson-story">Stdout and stderr stream to collectors while files inside boxes die with restarts. JSON lines with trace IDs join logs to requests. Unbounded logs fill disks and drown signals. Rotation and sampling keep the stream affordable. Debugging without centralized logs is archaeology.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="log arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">stdout streams</text>
@@ -388,20 +388,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Budget log bytes per request times RPS. Verbose debug at peak is a second bill.</li>
-            <li>Sample health plus debug logs at 1 percent. Keep 100 percent of errors.</li>
+            <li>Sample health and debug logs at 1 percent. Keep 100 percent of errors.</li>
             <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, write-heavy discipline.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Logs fill the node disk weekly. What three knobs stop it? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Trace a failed checkout across six services. What joins the lines? <span class="q-seen">Seen at: backend plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Logs fill the node disk weekly. What three knobs stop it? <span class="q-seen">Seen at: SRE and backend loops.</span></p>
+            <p><strong>Q2.</strong> Trace a failed checkout across six services. What joins the lines? <span class="q-seen">Seen at: backend and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Stream flowing. Now gate rollouts. <a href="#lesson-11">Lesson 11: Health →</a></p>
         </section>
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Rollouts · Probes decide truth</div>
           <h2>Healthchecks Gate Rollouts</h2>
-          <p class="lesson-story">Health endpoints tell orchestrators when to send traffic plus when to restart. Liveness restarts the stuck. Readiness gates the unready. Startup guards slow boots. Missing probes promote broken boxes with full traffic. Truth needs endpoints, not hopes.</p>
+          <p class="lesson-story">Health endpoints tell orchestrators when to send traffic and when to restart. Liveness restarts the stuck. Readiness gates the unready. Startup guards slow boots. Missing probes promote broken boxes with full traffic. Truth needs endpoints, not hopes.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="probe arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">live restarts</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">ready gates</text>
@@ -410,21 +410,21 @@
             <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Time p99 startup plus add headroom for thresholds. Hair triggers flap healthy boxes.</li>
+            <li>Time p99 startup and add headroom for thresholds. Hair triggers flap healthy boxes.</li>
             <li>Separate liveness from readiness strictly. Shared probes restart the merely busy.</li>
             <li>Deep dive: <a href="discord-voice-thundering-herd-postmortem.html">Discord Voice Herd</a>, checks outran grace.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Deploys send traffic before warmup ends. Which probe fixes it? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Liveness kills busy workers mid-request. What separates the signals? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Deploys send traffic before warmup ends. Which probe fixes it? <span class="q-seen">Seen at: SRE and backend loops.</span></p>
+            <p><strong>Q2.</strong> Liveness kills busy workers mid-request. What separates the signals? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Truth gated. Now sign contracts. <a href="#lesson-12">Lesson 12: Limits →</a></p>
         </section>
         <section class="lesson" id="lesson-12">
-          <div class="lesson-kicker">Lesson 12 · Contracts · Requests plus limits</div>
+          <div class="lesson-kicker">Lesson 12 · Contracts · Requests and limits</div>
           <h2>Resource Limits Are Contracts</h2>
-          <p class="lesson-story">CPU shares plus memory limits turn noisy neighbors into budgeted tenants. Requests reserve scheduling. Limits cap bursts. OOM kills punish the limitless first. Unbounded boxes tax every neighbor at 3 AM. Contracts keep the host honest.</p>
+          <p class="lesson-story">CPU shares and memory limits turn noisy neighbors into budgeted tenants. Requests reserve scheduling. Limits cap bursts. OOM kills punish the limitless first. Unbounded boxes tax every neighbor at 3 AM. Contracts keep the host honest.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="limits arithmetic">
             <text class="lbl" x="10" y="52" font-size="10">before</text>
             <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">requests reserved</text>
@@ -435,21 +435,21 @@
             <g stroke-width="2"><line x1="290" y1="46" x2="310" y2="46"/><line x1="290" y1="110" x2="310" y2="110"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Size requests from p50 plus limits from p99 with headroom. Guesses become evictions.</li>
-            <li>Set JVM plus runtime heaps below container limits. Unaware runtimes invite the killer.</li>
+            <li>Size requests from p50 and limits from p99 with headroom. Guesses become evictions.</li>
+            <li>Set JVM and runtime heaps below container limits. Unaware runtimes invite the killer.</li>
             <li>Deep dive: <a href="nats-outage-postmortem.html">NATS Flight-Data Incident</a>, a preliminary report with distinct restriction and passenger-recovery windows.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> One box starves twelve neighbors at peak. What contract fixes it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
-            <p><strong>Q2.</strong> OOM kills the payment worker nightly. Requests or limits move? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> One box starves twelve neighbors at peak. What contract fixes it? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
+            <p><strong>Q2.</strong> OOM kills the payment worker nightly. Requests or limits move? <span class="q-seen">Seen at: backend and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Contracts signed. Now match environments. <a href="#lesson-13">Lesson 13: Compose →</a></p>
         </section>
         <section class="lesson" id="lesson-13">
           <div class="lesson-kicker">Lesson 13 · Parity · Dev mirrors prod</div>
           <h2>Compose for Dev Parity</h2>
-          <p class="lesson-story">Compose files declare the same services plus networks plus volumes developers run locally. Parity kills works-on-my-machine before review. Override files carry dev-only ports plus volumes. Drift without linting returns within a quarter. Mirrors need wiping schedules.</p>
+          <p class="lesson-story">Compose files declare the same services and networks and volumes developers run locally. Parity kills works-on-my-machine before review. Override files carry dev-only ports and volumes. Drift without linting returns within a quarter. Mirrors need wiping schedules.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="parity arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">services declared</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -466,15 +466,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Bug reproduces in prod but never locally. What differs first? <span class="q-seen">Seen at: backend plus full-stack loops.</span></p>
-            <p><strong>Q2.</strong> Dev compose drifts quarterly. What automation pins it? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Bug reproduces in prod but never locally. What differs first? <span class="q-seen">Seen at: backend and full-stack loops.</span></p>
+            <p><strong>Q2.</strong> Dev compose drifts quarterly. What automation pins it? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Mirrors clean. Now hand off. <a href="#lesson-14">Lesson 14: Handoff →</a></p>
         </section>
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Orchestration · Docker packs, Kubernetes runs</div>
           <h2>Kubernetes Handoff</h2>
-          <p class="lesson-story">Docker packages plus Kubernetes schedules: registries feed clusters, probes become pod checks, limits become requests, Compose services become Deployments. Handoff checklists carry digests plus secrets paths plus health endpoints. Rework without a list repeats every lesson expensively.</p>
+          <p class="lesson-story">Docker packages and Kubernetes schedules: registries feed clusters, probes become pod checks, limits become requests, Compose services become Deployments. Handoff checklists carry digests and secrets paths and health endpoints. Rework without a list repeats every lesson expensively.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="handoff arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">images pinned</text>
@@ -483,21 +483,21 @@
             <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">deploys green</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Verify every Compose service has a Deployment plus Service plus limit before migration week.</li>
-            <li>Migrate stateless first plus stateful last. Data moves slower than boxes.</li>
+            <li>Verify every Compose service has a Deployment and Service and limit before migration week.</li>
+            <li>Migrate stateless first and stateful last. Data moves slower than boxes.</li>
             <li>Deep dive: <a href="learn-kubernetes.html">Kubernetes Course</a>, fifteen on-call lessons.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Move twelve Compose services to a cluster. What migrates first? <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Probes differ between Compose plus pods. What maps to what? <span class="q-seen">Seen at: SRE plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Move twelve Compose services to a cluster. What migrates first? <span class="q-seen">Seen at: platform and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Probes differ between Compose and pods. What maps to what? <span class="q-seen">Seen at: SRE and backend loops.</span></p>
           </div>
           <p class="lesson-hook">Handoff mapped. Now ship it. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
         </section>
         <section class="lesson" id="lesson-15">
           <div class="lesson-kicker">Lesson 15 · Capstone · Ship one container</div>
           <h2>Ship One Container</h2>
-          <p class="lesson-story">Capstone: containerize one service in four weeks. Week one shrinks the image plus pins digests. Week two wires probes plus limits plus logs. Week three scans plus rotates secrets plus rehearses rollback. Week four ships with dashboards plus runbooks. Graduates carry pulls, not slides.</p>
+          <p class="lesson-story">Capstone: containerize one service in four weeks. Week one shrinks the image and pins digests. Week two wires probes and limits and logs. Week three scans and rotates secrets and rehearses rollback. Week four ships with dashboards and runbooks. Graduates carry pulls, not slides.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
 <polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
 <text x="280" y="26" font-size="11" text-anchor="middle">image slim</text>
@@ -509,14 +509,14 @@
 <text x="280" y="122" font-size="11" text-anchor="middle">ship live</text>
 </svg>
           <ul class="lesson-ideas">
-            <li>Exit criteria: pulls under 30 seconds plus zero critical CVEs plus rollback timed plus bill shown.</li>
-            <li>Present registry cost before plus after. Savings fund the next migration.</li>
+            <li>Exit criteria: pulls under 30 seconds and zero critical CVEs and rollback timed and bill shown.</li>
+            <li>Present registry cost before and after. Savings fund the next migration.</li>
             <li>Deep dive: <a href="learn-kubernetes.html">Kubernetes Course</a>, the orchestration companion.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Cut our image pulls from 4 minutes to 30 seconds. Show the plan. <span class="q-seen">Seen at: platform plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Rollback drill missed its window. What ships Monday? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Cut our image pulls from 4 minutes to 30 seconds. Show the plan. <span class="q-seen">Seen at: platform and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Rollback drill missed its window. What ships Monday? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Course complete. Start the companion. <a href="learn-kubernetes.html">Kubernetes Course →</a></p>
         </section>

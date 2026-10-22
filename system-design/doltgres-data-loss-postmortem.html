@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Doltgres lost values when adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and safer recovery design.">
+  <meta name="description" content="Doltgres lost values when adaptive encoding metadata escaped backup, garbage collection. Postmortem of the upgrade failure, and safer recovery design.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Doltgres: The Backup That Forgot the Data">
-  <meta property="og:description" content="Doltgres lost values after adaptive encoding metadata escaped backup and garbage collection. Postmortem of the upgrade failure and recovery design.">
+  <meta property="og:description" content="Doltgres lost values after adaptive encoding metadata escaped backup, garbage collection. Postmortem of the upgrade failure, and recovery design.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/doltgres-loss-meme.png">
   <meta property="og:image:alt" content="Doltgres backup losing metadata during garbage collection">
   <meta property="og:image:type" content="image/png">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Doltgres: The Backup That Forgot the Data", "description": "A technical postmortem of Doltgres adaptive encoding metadata loss during upgrade, backup and garbage collection.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-09-10", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html"}, "keywords": "Doltgres, data loss, backup integrity, garbage collection", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/doltgres-loss-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Doltgres: The Backup That Forgot the Data", "description": "A technical postmortem of Doltgres adaptive encoding metadata loss during upgrade, backup and garbage collection.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-10", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/doltgres-data-loss-postmortem.html"}, "keywords": "Doltgres, data loss, backup integrity, garbage collection", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/doltgres-loss-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -55,11 +55,11 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Database Infrastructure</span><span class="chip">September 2026</span><span class="chip">13 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Database Infrastructure</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Doltgres Postmortem: The Backup That Forgot the Data</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A Doltgres customer upgraded a database. The backup completed. Garbage collection completed. The values did not survive. The bug lived in adaptive encoding metadata stored outside the obvious row path. The backup copied the row and forgot what made the row readable. Very efficient. Very final.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Doltgres lost values when old out-of-band metadata was missing from backup and garbage collection removed the remaining references. The fix is integrity checking, fail-safe backup and no destructive GC until restore has proved the data.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated September 10, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
     <article class="prose">
       <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/doltgres-loss-meme.svg" alt="Diagram showing backup data without the metadata needed to reconstruct encoded values" width="1200" height="680"><figcaption>Figure 1. The Doltgres loss in one diagram. The backup copied the row. The missing metadata copied the disaster.</figcaption></figure>
@@ -69,9 +69,9 @@
         <div class="callout"><strong>The uncomfortable truth:</strong> A successful backup operation proves that bytes moved. It does not prove that logical data survived the move.</div>
       </section>
       <section><h2>2. The Hidden Metadata Bug</h2>
-        <p>Doltgres supports adaptively encoded values. Some larger values use out-of-band storage plus bookkeeping that tells the engine where the value lives. The logical row still looks normal to a query. The physical representation is split between the row and a side structure.</p>
+        <p>Doltgres supports adaptively encoded values. Some larger values use out-of-band storage and bookkeeping that tells the engine where the value lives. The logical row still looks normal to a query. The physical representation is split between the row and a side structure.</p>
         <p>The bug wrote tuples without the required out-of-band metadata in releases from the adaptive encoding change through 0.56.3. Data movement and garbage collection were introduced later. Testing missed the interaction because the original bug existed before the operations that would expose it.</p>
-        <p>This is a classic temporal failure. Feature A ships in isolation. Feature B ships later. Feature C makes cleanup automatic. The system never tests A plus B plus C against a real upgrade path. Years later the combination meets a customer who upgrades at exactly the wrong moment. The code did not suddenly become wrong. The assumptions finally met.</p>
+        <p>This is a classic temporal failure. Feature A ships in isolation. Feature B ships later. Feature C makes cleanup automatic. The system never tests A and B and C against a real upgrade path. Years later the combination meets a customer who upgrades at exactly the wrong moment. The code did not suddenly become wrong. The assumptions finally met.</p>
         <p>The sequence was roughly:</p>
         <ol>
           <li>Old releases write values whose metadata is incomplete.</li>

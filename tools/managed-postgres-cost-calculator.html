@@ -70,7 +70,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Managed Postgres Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">A managed Postgres bill is instances plus storage plus billable backups. This example uses two Single-AZ db.m5.large PostgreSQL instances at $0.178 an hour for 730 hours, 100 GB of gp3 storage and 50 GB of billable backups, totaling $276.13. Rates and included backup allowances vary by provider, region and storage type.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">A managed Postgres bill is instances and storage and billable backups. This example uses two Single-AZ db.m5.large PostgreSQL instances at $0.178 an hour for 730 hours, 100 GB of gp3 storage and 50 GB of billable backups, totaling $276.13. Rates and included backup allowances vary by provider, region and storage type.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
@@ -85,7 +85,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly database bill</span>
-              <span class="radar-count-description"> · Instances plus storage plus backups, priced for a full month.</span>
+              <span class="radar-count-description"> · Instances and storage and backups, priced for a full month.</span>
             <div class="radar-filters" aria-label="Instance presets">
               <button class="radar-filter" data-set="rds-hr:0.072">db.t3.medium · PG</button>
               <button class="radar-filter active" data-set="rds-hr:0.178">db.m5.large · PG</button>
@@ -134,7 +134,7 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">Storage cost</div>
               <div class="radar-trend-value" id="rds-storagecost">$16.25 storage</div>
-              <div class="radar-trend-sub">data plus backups</div>
+              <div class="radar-trend-sub">data and backups</div>
             </div>
           </div>
         </div>

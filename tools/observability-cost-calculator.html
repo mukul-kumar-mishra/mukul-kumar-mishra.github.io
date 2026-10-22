@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Estimate host-based observability plus log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
+  <meta name="description" content="Estimate host-based observability and log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/observability-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Observability Cost Calculator: Hosts and Log Ingest | Buildopsy">
-  <meta property="og:description" content="Estimate host-based observability plus log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
+  <meta property="og:description" content="Estimate host-based observability and log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
   <meta property="og:url" content="https://buildopsy.com/tools/observability-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Observability Cost Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Observability Cost Calculator: Hosts and Log Ingest | Buildopsy">
-  <meta name="twitter:description" content="Estimate host-based observability plus log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
+  <meta name="twitter:description" content="Estimate host-based observability and log-ingest costs with editable rates. This simple model excludes retention, indexing and other add-ons.">
   <meta name="twitter:image:alt" content="Observability Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Observability Cost Calculator: Hosts and Log Ingest | Buildopsy</title>
@@ -35,7 +35,7 @@
     "@type":"FAQPage",
     "mainEntity":[
       {"@type":"Question","name":"How is this observability estimate calculated?","acceptedAnswer":{"@type":"Answer","text":"The model multiplies hosts by a monthly host rate, then adds log-ingest GB times the entered price. Its Datadog examples use annual Infrastructure Pro and Enterprise starting prices checked on October 2, 2026."}},
-      {"@type":"Question","name":"Does this model calculate a New Relic bill?","acceptedAnswer":{"@type":"Answer","text":"No. New Relic uses usage-based user, data-ingest and compute pricing rather than a simple per-host price. This host-plus-ingest model is not a New Relic quote."}},
+      {"@type":"Question","name":"Does this model calculate a New Relic bill?","acceptedAnswer":{"@type":"Answer","text":"No. New Relic uses usage-based user, data-ingest and compute pricing rather than a simple per-host price. This host-and-ingest model is not a New Relic quote."}},
       {"@type":"Question","name":"What observability charges are excluded?","acceptedAnswer":{"@type":"Answer","text":"The model uses paid host list prices and does not deduct free-plan host allowances, discounts or bundles. It covers entered host fees and log ingestion only; indexed log retention, traces, custom metrics, user fees, support and other add-ons are not included."}}
     ]
   }
@@ -70,7 +70,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Observability Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">This host-based example prices 20 hosts at $23 each plus 1,000 GB of log ingest at $0.10 per GB, for $560 a month. It models two lines only. Enter your rates then add retention or indexing separately.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This host-based example prices 20 hosts at $23 each and 1,000 GB of log ingest at $0.10 per GB, for $560 a month. It models two lines only. Enter your rates then add retention or indexing separately.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
@@ -79,13 +79,13 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="observability-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price a monitoring bill from the host fleet and its per-host rate plus log ingest volume and its price per gigabyte.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price a monitoring bill from the host fleet, its per-host rate, log ingest volume, and its price per gigabyte.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly observability estimate</span>
-              <span class="radar-count-description"> · Host charges plus entered log-ingest costs.</span>
+              <span class="radar-count-description"> · Host charges and entered log-ingest costs.</span>
             <div class="radar-filters" aria-label="Datadog host-price examples">
               <button class="radar-filter" data-set="ob-hostp:15">DATADOG PRO · $15 ANNUAL</button>
               <button class="radar-filter active" data-set="ob-hostp:23">DATADOG ENTERPRISE · $23 ANNUAL</button>
@@ -134,7 +134,7 @@
           </div>
         </div>
       </section>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Observability</span></div><h3><a class="feature-link-title" href="../system-design/datadog-observability-bill-postmortem.html">Coinbase's $65M Datadog Bill: Three Meters, One Invoice</a></h3><p class="fl-desc">How per-host, per-GB, and per-event meters compounded into a $65M invoice, plus the guardrails that price the meter down.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Observability</span></div><h3><a class="feature-link-title" href="../system-design/datadog-observability-bill-postmortem.html">Coinbase's $65M Datadog Bill: Three Meters, One Invoice</a></h3><p class="fl-desc">How per-host, per-GB, and per-event meters compounded into a $65M invoice, and the guardrails that price the meter down.</p></article>
     </section>
 
     <section class="sec" id="more-tools">

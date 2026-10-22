@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://buildopsy.com/system-design/kafka-consumer-rebalance.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
-  <meta property="og:description" content="Protocol guide to classic eager and cooperative rebalancing, with a labeled 120-member model. Two retries plus the original are three attempts per affected call.">
+  <meta property="og:description" content="Protocol guide to classic eager and cooperative rebalancing, with a labeled 120-member model. Two retries and the original are three attempts per affected call.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
   <meta property="og:image:alt" content="Protocol diagram showing classic eager revocation of all current assignments, cooperative transfer of moved partitions, and conditional static membership">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes">
-  <meta name="twitter:description" content="Classic eager vs cooperative assignment, conditional static membership and a labeled 120-member model. One call plus two retries is three attempts, not six.">
+  <meta name="twitter:description" content="Classic eager vs cooperative assignment, conditional static membership and a labeled 120-member model. One call and two retries make three attempts, not six.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/kafka-rebalance-guide.png">
   <meta name="twitter:image:alt" content="Protocol diagram showing classic eager revocation of all current assignments, cooperative transfer of moved partitions, and conditional static membership">
   <title>Kafka Rebalance Explained: Consumer Storms and Fixes | Buildopsy</title>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "description": "Protocol guide to classic eager and cooperative rebalancing, conditional static membership and a labeled 120-member, 40,000-partition scenario. The model assumes an 11-minute pause; two retries plus the original are three attempts per affected call.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-17", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/kafka-consumer-rebalance.html"}, "keywords": "Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, KIP-848", "image": "https://buildopsy.com/images/articles/kafka-rebalance-guide.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes", "description": "Protocol guide to classic eager and cooperative rebalancing, conditional static membership and a labeled 120-member, 40,000-partition scenario. The model assumes an 11-minute pause; two retries and the original are three attempts per affected call.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/kafka-consumer-rebalance.html"}, "keywords": "Kafka rebalance, Kafka consumer group, cooperative rebalancing, static membership, KIP-429, KIP-848", "image": "https://buildopsy.com/images/articles/kafka-rebalance-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -69,17 +69,17 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Event Infrastructure</span><span class="chip">September 2026</span><span class="chip">6 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Kafka Consumer Rebalance Explained: Storms, Cascades and Fixes</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A Kafka group reassigns partitions when membership or subscription changes require it. Under the classic eager protocol, members revoke their current assignments before receiving the new assignment, creating a group-wide pause in record processing. This guide explains the protocol and uses a labeled 120-member, 40,000-partition scenario; its 11-minute duration is assumed, not a reported incident or a duration derived from partition count.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Classic eager rebalancing pauses the group while assignments are revoked. Cooperative assignment moves only partitions that need to change owners; static membership can avoid a rebalance during a brief restart, before session expiry. In the modeled retry example, 1 original attempt plus 2 retries equals 3 attempts per affected call.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Classic eager rebalancing pauses the group while assignments are revoked. Cooperative assignment moves only partitions that need to change owners; static membership can avoid a rebalance during a brief restart, before session expiry. In the modeled retry example, 1 original attempt and 2 retries make 3 attempts per affected call.</p>
         <div class="grid4" style="margin-top:24px;">
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Consumers</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">120</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Partitions</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">40,000</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Assumed pause</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">660 s</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Attempts per call</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1 + 2 = 3</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Protocol guide with a modeled scenario · Published September 18, 2026 · Updated October 17, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Protocol guide with a modeled scenario · Published September 18, 2026 · Updated October 23, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion scenario:</strong> the separate <a href="kafka-rebalance-storm-postmortem.html">modeled Kafka rebalance cascade</a> shows one 120-member, 40,000-partition example. Its timings are assumptions, not a report of a customer outage.</aside>
@@ -109,10 +109,10 @@
         <p>The modeled failure path uses the <em>classic eager</em> rebalance protocol. Apache Kafka's KIP-429 adds cooperative incremental revocation: partitions that keep the same owner can remain assigned, while moved partitions are revoked before a later round assigns them. That can keep unaffected partitions consuming, but an assignment that moves many partitions still needs work and follow-up rounds.</p>
         <p>Static membership (KIP-345) uses a stable <code>group.instance.id</code> so a brief restart can return as the same member before its session expires; it can avoid a rebalance for that temporary absence. It does not make longer outages or membership changes rebalance-free. Kafka 4.0+ also offers the KIP-848 consumer protocol, which is GA but must be enabled with <code>group.protocol=consumer</code>; in Kafka 4.2, <code>classic</code> remains the default.</p>
         <table><thead><tr><th>Approach</th><th>What changes</th><th>Effect</th></tr></thead><tbody>
-          <tr><td>Static membership</td><td>Stable instance ID plus suitable session timeout</td><td>May avoid removal during transient unavailability</td></tr>
+          <tr><td>Static membership</td><td>Stable instance ID and suitable session timeout</td><td>May avoid removal during transient unavailability</td></tr>
           <tr><td>Cooperative assignor</td><td>Incremental revocation</td><td>Partitions that stay with their owner may remain assigned</td></tr>
-          <tr><td>Group-aware deploys</td><td>Settle windows plus caps</td><td>Triggers stop overlapping</td></tr>
-          <tr><td>Budgeted retries</td><td>Backoff plus jitter plus caps</td><td>Recovery stays near 1x</td></tr>
+          <tr><td>Group-aware deploys</td><td>Settle windows and caps</td><td>Triggers stop overlapping</td></tr>
+          <tr><td>Budgeted retries</td><td>Backoff and jitter and caps</td><td>Recovery stays near 1x</td></tr>
         </tbody></table>
       </section>
 
@@ -122,7 +122,7 @@
 
       <section><h2>6. The Verdict: Boring Is the Fix</h2>
         <p>Nothing here is novel. That is the point. Stable instance IDs, incremental revocation, settle windows, backoff with jitter and protocol-level alerts are ordinary controls. In the modeled cascade, overlapping membership changes keep restarting group coordination; the inputs do not establish that a particular customer outage occurred. Review these controls on the same schedule as capacity.</p>
-        <p>The pattern travels past Kafka. Every system has a coordination cost that grows with membership, a rollout strategy that ignores it plus a retry policy priced at calm-weather load. Find yours before Tuesday does.</p>
+        <p>The pattern travels past Kafka. Every system has a coordination cost that grows with membership, a rollout strategy that ignores it and a retry policy priced at calm-weather load. Find yours before Tuesday does.</p>
       </section>
 
       <section><h2>7. Frequently Asked Questions</h2>

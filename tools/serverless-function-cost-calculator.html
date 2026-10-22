@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta name="description" content="Free serverless cost calculator. Price requests and compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/serverless-function-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Serverless Function Cost Calculator (AWS Lambda) | Buildopsy">
-  <meta property="og:description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta property="og:description" content="Free serverless cost calculator. Price requests and compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
   <meta property="og:url" content="https://buildopsy.com/tools/serverless-function-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Serverless Function Cost Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Serverless Function Cost Calculator (AWS Lambda) | Buildopsy">
-  <meta name="twitter:description" content="Free serverless cost calculator. Price requests plus compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
+  <meta name="twitter:description" content="Free serverless cost calculator. Price requests and compute time in GB-seconds for AWS Lambda with the monthly free tier applied, then read the bill.">
   <meta name="twitter:image:alt" content="Serverless Function Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Serverless Function Cost Calculator (AWS Lambda) | Buildopsy</title>
@@ -70,7 +70,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Serverless Function Cost Calculator (AWS Lambda)</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests plus GB-seconds of compute. This example prices 100 million requests at 200 ms and 512 MB at about $179.80 after the full monthly free tier. That free tier is shared across the AWS account. Enter what remains after other functions.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Lambda bills requests and GB-seconds of compute. This example prices 100 million requests at 200 ms and 512 MB at about $179.80 after the full monthly free tier. That free tier is shared across the AWS account. Enter what remains after other functions.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
@@ -85,7 +85,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly function bill</span>
-              <span class="radar-count-description"> · Requests plus compute, priced for a full month.</span>
+              <span class="radar-count-description"> · Requests and compute, priced for a full month.</span>
             <div class="radar-filters" aria-label="Memory presets">
               <button class="radar-filter" data-set="lm-mem:128">128 MB</button>
               <button class="radar-filter active" data-set="lm-mem:512">512 MB</button>

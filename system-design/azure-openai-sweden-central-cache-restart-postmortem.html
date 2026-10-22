@@ -39,7 +39,7 @@
     "description":"Microsoft's PIR traces a cache-clearing deployment, about 20× normal traffic to a regional backend, connection exhaustion and a database-dependent restart loop in Sweden Central.",
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "datePublished":"2026-10-17",
-    "dateModified":"2026-10-17",
+    "dateModified":"2026-10-23",
     "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/azure-openai-sweden-central-cache-restart-postmortem.html"},
     "keywords":"Azure OpenAI, Azure AI Foundry, Sweden Central, cache misses, connection exhaustion, health checks, retries, Microsoft incident review",
     "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
@@ -52,7 +52,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">12 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">7 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Azure OpenAI Sweden Central: ~20× Normal Backend Traffic, 5h55 of Impact</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Microsoft says a September 29, 2026 deployment cleared an internal cache used in the Sweden Central AI service path. Two cache-read defects sent most lookups to a regional backend instead, where the PIR reports traffic reaching about 20 times normal. Longer calls, retries, exhausted outbound connection capacity and a database-dependent health check then prolonged the incident.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Microsoft's PIR describes intermittent failures and increased latency for a subset of Sweden Central customers from 10:03 to 15:58 UTC, a 5h55 window calculated from its endpoints. The report says a database-dependent health check caused instances to restart when outbound connections were exhausted. It publishes no customer count, absolute request rate, retry count or per-node connection limit.</p>

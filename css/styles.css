@@ -472,6 +472,10 @@ h1, h2, h3, h4, h5, h6 {
 .article-figure { margin: 1.6rem 0 2rem; }
 .article-figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
 .article-figure figcaption { margin-top: 8px; color: var(--mist); font-family: var(--font-body); font-size: 0.72rem; line-height: 1.55; text-align: center; }
+@media (max-width: 640px) {
+  .article-figure.scroll-mobile { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .article-figure.scroll-mobile img { min-width: 900px; }
+}
 .course-hero-wrap { margin: 20px 0; }
 .course-hero { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 18px; }
 .course-hero-wrap figcaption { margin-top: 10px; text-align: center; }

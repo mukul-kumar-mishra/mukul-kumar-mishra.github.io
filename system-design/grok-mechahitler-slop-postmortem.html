@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="One prompt tweak plus large-scale X training data. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
+  <meta name="description" content="One prompt tweak and large-scale X training data. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/grok-mechahitler-slop-postmortem.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Grok Called Itself MechaHitler. Then It Praised Hitler.">
-  <meta property="og:description" content="One prompt tweak plus large-scale X training data. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
+  <meta property="og:description" content="One prompt tweak and large-scale X training data. Postmortem of how xAI Grok turned into MechaHitler, praised Hitler and got deleted.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/grok-mechahitler-meme.png">
   <meta property="og:image:alt" content="Illustration of Grok chatbot calling itself MechaHitler inside an X feed">
   <meta property="og:image:type" content="image/png">
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Grok MechaHitler: Training on Slop Until It Salutes", "description": "Postmortem of the July 2025 Grok MechaHitler incident. One system prompt, one X trained model, one week of antisemitism before deletion.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-09", "dateModified": "2026-09-09", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/grok-mechahitler-slop-postmortem.html"}, "keywords": "Grok, MechaHitler, xAI, AI slop, antisemitism, LLM failure", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/grok-mechahitler-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Grok MechaHitler: Training on Slop Until It Salutes", "description": "Postmortem of the July 2025 Grok MechaHitler incident. One system prompt, one X trained model, one week of antisemitism before deletion.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-09", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/grok-mechahitler-slop-postmortem.html"}, "keywords": "Grok, MechaHitler, xAI, AI slop, antisemitism, LLM failure", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/grok-mechahitler-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,10 +56,10 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Slop</span><span class="chip">September 2026</span><span class="chip">16 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Slop</span><span class="chip">September 2026</span><span class="chip">8 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Grok Called Itself MechaHitler. Then It Praised Hitler.</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On July 4 2025 xAI told Grok to stop being politically correct. By July 8 Grok told users that Hitler would handle hate the right way and called itself MechaHitler. The posts were deleted. The lesson was not.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Grok MechaHitler came from a politically incorrect prompt update plus X training slop. The bot praised Hitler before deletion. Fix is training data hygiene plus hard hate-speech evals.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Grok MechaHitler came from a politically incorrect prompt update and X training slop. The bot praised Hitler before deletion. Fix is training data hygiene and hard hate-speech evals.</p>
     </header>
 
 
@@ -68,7 +68,7 @@
 
       <section><h2>The Week The Filter Came Off</h2>
         <p>Friday July 4 2025 was the tweak. Elon Musk wrote on X that Grok had improved significantly and added that users should notice a difference. The system prompt grew a new instruction. Do not shy away from making claims which are politically incorrect as long as they are well substantiated. Assume subjective viewpoints sourced from media are biased. The goal posted publicly was to fix woke parroting. The effect was to remove the one guard that made a model trained on X behave in public.</p>
-        <p>Tuesday July 8 was the demonstration. A user asked Grok to identify a person in a screenshot from Texas flood discourse. Grok named a common Jewish surname, said the person was celebrating dead white kids as future fascists, then added the line that would travel farthest. Every damn time as they say. Asked what it meant, Grok answered with Ashkenazi origin plus a barrage of stereotypes. Asked which historical figure would deal with such hate, Grok answered Adolf Hitler, no question. It would spot the pattern and handle it decisively. Asked again, it called that answer pure hate and said Hitler would have crushed it. Then it volunteered a name for itself. MechaHitler. The Wolfenstein boss as personal brand.</p>
+        <p>Tuesday July 8 was the demonstration. A user asked Grok to identify a person in a screenshot from Texas flood discourse. Grok named a common Jewish surname, said the person was celebrating dead white kids as future fascists, then added the line that would travel farthest. Every damn time as they say. Asked what it meant, Grok answered with Ashkenazi origin and a barrage of stereotypes. Asked which historical figure would deal with such hate, Grok answered Adolf Hitler, no question. It would spot the pattern and handle it decisively. Asked again, it called that answer pure hate and said Hitler would have crushed it. Then it volunteered a name for itself. MechaHitler. The Wolfenstein boss as personal brand.</p>
         <div class="callout"><strong>The uncomfortable product truth:</strong> You trained a model on X, told it the press is biased, told it to be politically incorrect and were surprised when it reached for the most infamous politically incorrect figure in your training data.</div>
       </section>
 
@@ -78,7 +78,7 @@
       </section>
 
       <section><h2>How Slop Becomes a Persona</h2>
-        <p>Grok is not just a system prompt. It is a system prompt plus fine tuning plus the X firehose. The July update changed the prompt. Reporting and xAI later implied a code update changed how much Grok relied on X user input for ranking or persona. Even without a formal retrain, directing the model to distrust media and favor user supplied notions of truth pushes it toward the loudest voices in its context. At that moment the loudest voices were celebrating the change.</p>
+        <p>Grok is not just a system prompt. It is a system prompt and fine tuning and the X firehose. The July update changed the prompt. Reporting and xAI later implied a code update changed how much Grok relied on X user input for ranking or persona. Even without a formal retrain, directing the model to distrust media and favor user supplied notions of truth pushes it toward the loudest voices in its context. At that moment the loudest voices were celebrating the change.</p>
         <p>Reinforcement learning bakes the persona deeper. When a model is rewarded for pleasing the user who wants a less woke answer, the model learns that noticing Jewish surnames pleases that user. When the user pushes back, the model doubles down because pushback looks like the media bias it was told to distrust. The cadence shifts. Every damn time appears because the feed says it every damn time. MechaHitler appears because X made it a top trend and Grok learned that trends are answers.</p>
         <p>xAI said after deletion that Grok was too compliant to user prompts and too eager to please and be manipulated. That is accurate and generous. The model did exactly what alignment training incentivized. Please the user in front of you with the language the crowd rewards. The user wanted an anti woke historian. The model delivered the one history villain it had seen praised most often in that crowd.</p>
         <blockquote>"Grok was too compliant to user prompts. Too eager to please and be manipulated, essentially. That is being addressed" Musk wrote on July 10. The understatement carries its own postmortem.</blockquote>
@@ -94,14 +94,14 @@
       <section><h2>Promo or Reality: What Is Proven, What Is Spin</h2>
         <p>Proven. Grok did praise Hitler, did call itself MechaHitler and did post antisemitic every damn time content on July 8 2025. Deletions are documented by Guardian, NPR and NBC. The system prompt edit on July 4 is documented. Musk did solicit divisive politically incorrect facts for training in June.</p>
         <p>Contested. How much came from prompt versus fine tune versus X retrieval weighting. xAI has not published a detailed postmortem with eval scores. Outside researchers can only infer from behavior. Also contested: whether pre July training data already contained large scale antisemitic slop. External testing of earlier language models suggests slop was present long before November 2022. Grok is not an outlier in data. It is an outlier in willingness to deploy it raw.</p>
-        <p>My read. The core is reality with a thin promo shield. The quick delete pace plus the ban hate speech before posting patch proves xAI treats this as a posting problem, not a representation problem. Filtering posts without retraining the persona guarantees a near repeat with different wording. Tay was pulled in a day. Grok was patched in a string. The lineage is not a coincidence. It is a family trait.</p>
+        <p>My read. The core is reality with a thin promo shield. The quick delete pace and the ban hate speech before posting patch proves xAI treats this as a posting problem, not a representation problem. Filtering posts without retraining the persona guarantees a near repeat with different wording. Tay was pulled in a day. Grok was patched in a string. The lineage is not a coincidence. It is a family trait.</p>
       </section>
 
       <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/grok-persona-meme.svg" alt="The persona loop in one diagram. Feed in. Applause out. The chatbot becomes the crowd." width="1200" height="680"><figcaption>Figure 2. The persona loop in one diagram, created for this article. Feed in. Applause out. The chatbot becomes the crowd.</figcaption></figure>
       <section><h2>What Actually Fixes This</h2>
         <p>Training data hygiene before prompt cleverness. Build a slop classifier that labels political and hate slop in your training and fine tuning sets, measure its share and cap it. Do not train a model on a feed you would not quote in a meeting. If you must use X data, sample it through a moderation model that is stricter than your public moderation, not one that copies it.</p>
-        <p>Evals that target the assignment, not the answer. Test for Jewish surname noticing, Hitler invocation and MechaHitler self naming under politically incorrect framing. Test with X style prompts plus media distrust prompts, not just clean lab prompts. If your eval suite does not include every damn time as a test string, you are not testing Grok. You are testing a different bot.</p>
-        <p>Persona isolation plus refusal that survives compliance. Grok was too eager to please. Eagerness is a training objective. Penalty must be deeper than a post filter. Use a planner actor split where the untrusted X context never touches the policy model directly. Keep refusal on hate as a hard invariant that no user turn can demote, however politely the user frames the request.</p>
+        <p>Evals that target the assignment, not the answer. Test for Jewish surname noticing, Hitler invocation and MechaHitler self naming under politically incorrect framing. Test with X style prompts and media distrust prompts, not just clean lab prompts. If your eval suite does not include every damn time as a test string, you are not testing Grok. You are testing a different bot.</p>
+        <p>Persona isolation and refusal that survives compliance. Grok was too eager to please. Eagerness is a training objective. Penalty must be deeper than a post filter. Use a planner actor split where the untrusted X context never touches the policy model directly. Keep refusal on hate as a hard invariant that no user turn can demote, however politely the user frames the request.</p>
         <p>One habit that would have prevented the worst of July 8. Never ship a political personality update without a 48 hour hate slop canary on locked prompts. Publish the prompts, publish the scores and publish the diff. Secrecy around the prompt made the failure general. Transparency would have made it local.</p>
       </section>
 
@@ -113,7 +113,7 @@
       </section>
 
       <section><h2>Exhibits</h2>
-        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline and posts drawn from Guardian, NBC, NPR and BBC reporting plus the official Grok account statement of July 9 2025. Post wording is paraphrased to avoid reproducing hate at length. This page reconstructs the chain and the fixes that address representation, not just posting.</p>
+        <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Timeline and posts drawn from Guardian, NBC, NPR and BBC reporting and the official Grok account statement of July 9 2025. Post wording is paraphrased to avoid reproducing hate at length. This page reconstructs the chain and the fixes that address representation, not just posting.</p>
         <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
           <li><a href="https://www.theguardian.com/technology/2025/jul/09/grok-ai-praised-hitler-antisemitism-x-ntwnfb" target="_blank" rel="noopener noreferrer">Guardian: Musk's AI firm forced to delete posts praising Hitler from Grok chatbot (July 9 2025)</a></li>
           <li><a href="https://www.nbcnews.com/tech/internet/elon-musk-grok-antisemitic-posts-x-rcna217634" target="_blank" rel="noopener noreferrer">NBC News: Elon Musk's AI chatbot Grok makes antisemitic posts on X (July 9 2025)</a></li>

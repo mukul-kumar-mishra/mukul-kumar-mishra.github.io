@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
+  <meta name="description" content="Estimate float32 vector storage, serving-pod costs with editable rates, index overhead. Managed per-vector, and query charges are not included.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/vector-database-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Vector Database Cost Calculator: Storage and Serving | Buildopsy">
-  <meta property="og:description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
+  <meta property="og:description" content="Estimate float32 vector storage, serving-pod costs with editable rates, index overhead. Managed per-vector, and query charges are not included.">
   <meta property="og:url" content="https://buildopsy.com/tools/vector-database-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/logo.png">
   <meta property="og:image:alt" content="Vector Database Cost Calculator">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="757">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Vector Database Cost Calculator: Storage and Serving | Buildopsy">
-  <meta name="twitter:description" content="Estimate float32 vector storage and serving-pod costs with editable rates and index overhead. Managed per-vector and query charges are not included.">
+  <meta name="twitter:description" content="Estimate float32 vector storage, serving-pod costs with editable rates, index overhead. Managed per-vector, and query charges are not included.">
   <meta name="twitter:image:alt" content="Vector Database Cost Calculator">
   <meta name="twitter:image" content="https://buildopsy.com/images/logo.png">
   <title>Vector Database Cost Calculator: Storage and Serving | Buildopsy</title>
@@ -70,11 +70,11 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Vector Database Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">This scenario estimates float32 vector storage plus a serving-pod fleet. Ten million 1,536-dimension vectors with 2x index overhead and three $70 pods model to about $224 a month. Change the assumed rates to match your setup.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This scenario estimates float32 vector storage and a serving-pod fleet. Ten million 1,536-dimension vectors with 2x index overhead and three $70 pods model to about $224 a month. Change the assumed rates to match your setup.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
     </header>
 
-    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> Raw storage assumes four bytes per dimension (float32) and decimal GB (1 GB = 1 billion bytes), then applies the chosen index-overhead multiplier. This includes storage plus serving pods only. Query charges, backups, replicas and managed per-vector pricing are not included.</aside>
+    <aside class="tip" style="margin-bottom:24px;"><strong>Model limits:</strong> Raw storage assumes four bytes per dimension (float32) and decimal GB (1 GB = 1 billion bytes), then applies the chosen index-overhead multiplier. This includes storage and serving pods only. Query charges, backups, replicas and managed per-vector pricing are not included.</aside>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
@@ -85,7 +85,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly vector bill</span>
-              <span class="radar-count-description"> · Storage plus serving pods, priced for a full month.</span>
+              <span class="radar-count-description"> · Storage and serving pods, priced for a full month.</span>
             <div class="radar-filters" aria-label="Fleet presets">
               <button class="radar-filter" data-set="vec-pods:1">1 POD</button>
               <button class="radar-filter active" data-set="vec-pods:3">3 PODS</button>

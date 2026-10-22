@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown">
-  <meta name="twitter:description" content="Stripe reported $1.4T in 2024 total payment volume. Documented retry behavior and explicitly modeled load and cost scenarios.">
+  <meta name="twitter:description" content="Stripe reported $1.4T in 2024 total payment volume. Documented retry behavior, explicitly modeled load, and cost scenarios.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/stripe-ledger-meme.png">
   <meta name="twitter:image:alt" content="Illustrative payment retry flow using an idempotency key and a saved result; not a diagram of Stripe's private architecture">
   <title>Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown | Buildopsy</title>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown", "description": "Stripe reported $1.4T in 2024 total payment volume. This article summarizes documented idempotency and webhook behavior, then models request rates and costs using stated assumptions rather than Stripe telemetry.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-07", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/stripe-ledger-scale-postmortem.html"}, "keywords": "Stripe, ledger, idempotency, webhooks, financial infrastructure, modeled scale", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/stripe-ledger-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown", "description": "Stripe reported $1.4T in 2024 total payment volume. This article summarizes documented idempotency and webhook behavior, then models request rates and costs using stated assumptions rather than Stripe telemetry.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-07", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/stripe-ledger-scale-postmortem.html"}, "keywords": "Stripe, ledger, idempotency, webhooks, financial infrastructure, modeled scale", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/stripe-ledger-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,7 +56,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Financial Infrastructure</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Financial Infrastructure</span><span class="chip">September 2026</span><span class="chip">9 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Stripe's $1.4T 2024 Volume: Idempotency and a Modeled Scale Teardown</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;"><a href="https://stripe.com/newsroom/news/stripe-2024-update" target="_blank" rel="noopener noreferrer">Stripe reported $1.4 trillion in total payment volume for 2024</a>. Its public API documentation describes idempotent retries and webhook delivery behavior; it does not disclose a full ledger topology or per-request infrastructure costs. The calculations below are scenarios with stated assumptions, not Stripe operating data.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Stripe's reported volume is dollar value, not a published transaction count. Under an assumed $50 average payment, $1.4T over 2024's 366 days implies about 885 payments per second on average. A separate 60× peak and the retry fan-out are modeled inputs, not Stripe telemetry. Stripe documents idempotency keys and webhook retries that can continue for up to three days.</p>
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Live webhook retries</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Up to 3 days</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Idempotency</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Safe request retries</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 14, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
     </header>
 
 
@@ -117,7 +117,7 @@
 
       <section id="one-million-rps"><h2>7. The One Million RPS Thought Experiment</h2>
         <p>This is a modeled scenario, not a Stripe cost estimate. Use one million requests per second for 30 days (2,592,000 seconds). Assume a baseline origin cost of $0.0000015/request: 1,000,000 × 2,592,000 × $0.0000015 = $3.888M/month. These unit costs are scenario inputs, not provider quotes or Stripe data.</p>
-        <p>For a second modeled shape, assume only 40% of requests reach the origin, at an assumed $0.0000011 per origin request, and add an assumed $400,000/month for edge and safety services. The arithmetic is 400,000 × 2,592,000 × $0.0000011 = $1.14048M, plus $400,000, or $1.54048M/month. The 40% origin rate and all costs are assumptions, not measured deduplication or capacity results.</p>
+        <p>For a second modeled shape, assume only 40% of requests reach the origin, at an assumed $0.0000011 per origin request, and add an assumed $400,000/month for edge and safety services. The arithmetic is 400,000 × 2,592,000 × $0.0000011 = $1.14048M, and $400,000, or $1.54048M/month. The 40% origin rate and all costs are assumptions, not measured deduplication or capacity results.</p>
         <table><thead><tr><th>At 1M RPS</th><th>Retry naive shape</th><th>Idempotency first shape</th></tr></thead><tbody>
           <tr><td>Origin requests</td><td>1,000,000 per sec</td><td>400,000 per sec after edge dedupe</td></tr>
           <tr><td>Modeled rate</td><td>$0.0000015 per req</td><td>$0.0000011 per req</td></tr>

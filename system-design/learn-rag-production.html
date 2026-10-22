@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free RAG engineering course in 15 workshop lessons from Mukul Kumar Mishra. Chunking, hybrid search, reranking, caching, grounding plus eval gates, priced from production postmortems.">
+  <meta name="description" content="A free RAG engineering course in 15 workshop lessons from Mukul Kumar Mishra. Chunking, hybrid search, reranking, caching, grounding and eval gates, priced from production postmortems.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-rag-production.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="RAG in Production: 15 Lessons From the Retrieval Bench">
-  <meta property="og:description" content="Chunking plus hybrid search plus rerank bills priced. Fifteen workshop lessons with live diagrams plus calculators from the retrieval bench.">
+  <meta property="og:description" content="Chunking, hybrid search, rerank bills priced. Fifteen workshop lessons with live diagrams, and calculators from the retrieval bench.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/perplexity-bill-meme.png">
-  <meta property="og:image:alt" content="Diagram showing one question billed twice, once for retrieval plus once for inference">
+  <meta property="og:image:alt" content="Diagram showing one question billed twice, once for retrieval and once for inference">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,9 +18,9 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="RAG in Production: 15 Lessons From the Retrieval Bench">
-  <meta name="twitter:description" content="Fifteen RAG lessons with live diagrams plus bills. Chunk it, ground it, price it, with Mukul Kumar Mishra.">
+  <meta name="twitter:description" content="Fifteen RAG lessons with live diagrams and bills. Chunk it, ground it, price it, with Mukul Kumar Mishra.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/perplexity-bill-meme.png">
-  <meta name="twitter:image:alt" content="Diagram showing one question billed twice, once for retrieval plus once for inference">
+  <meta name="twitter:image:alt" content="Diagram showing one question billed twice, once for retrieval and once for inference">
   <title>RAG in Production: 15 Lessons From the Retrieval Bench | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
     "@context":"https://schema.org",
     "@type":"Course",
     "name":"RAG in Production: 15 Lessons From the Retrieval Bench",
-    "description":"A free RAG engineering course in 15 workshop lessons covering chunking, embeddings, hybrid search, reranking, caching, grounding, tenant isolation, freshness, retrieval evals, context budgets plus a priced pilot.",
+    "description":"A free RAG engineering course in 15 workshop lessons covering chunking, embeddings, hybrid search, reranking, caching, grounding, tenant isolation, freshness, retrieval evals, context budgets and a priced pilot.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
@@ -121,17 +121,17 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">RAG in Production: 15 Lessons From the Retrieval Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Your demo answers from three perfect documents. Production answers from three million messy ones, half stale, one poisoned. This course builds the pipeline between those worlds. Chunk it, ground it, price it. Every lesson ships an artifact you can run.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for shipping retrieval pipelines, from chunking to eval gates plus tenant isolation. Built from production postmortems with live diagrams plus calculators.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 20, 2026</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for shipping retrieval pipelines, from chunking to eval gates and tenant isolation. Built from production postmortems with live diagrams and calculators.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 23, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
-        <li>Chunk plus index a messy corpus so real questions find whole answers, not confident fragments.</li>
-        <li>Combine vector search with keyword search plus reranking inside a latency budget you measured.</li>
+        <li>Chunk and index a messy corpus so real questions find whole answers, not confident fragments.</li>
+        <li>Combine vector search with keyword search and reranking inside a latency budget you measured.</li>
         <li>Ground every answer in cited passages while treating retrieved text as untrusted input.</li>
-        <li>Isolate tenants in shared indexes, stream freshness without full rebuilds, plus price every query.</li>
-        <li>Answer RAG interviews with a drawn pipeline, priced math, a poisoning story, plus one shipped pilot.</li>
+        <li>Isolate tenants in shared indexes, stream freshness without full rebuilds, and price every query.</li>
+        <li>Answer RAG interviews with a drawn pipeline, priced math, a poisoning story, and one shipped pilot.</li>
       </ul>
       <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: draw first, price second, confess one retrieval failure third. Lesson 14 rehearses the bench.</p>
     </section>
@@ -171,7 +171,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · The retrieval pipeline</div>
           <h2>Retrieval Is the Product</h2>
-          <p class="lesson-story">Friday night. Your demo answers brilliantly from three hand-picked documents. Monday morning it meets three million real ones. An answer engine once paid for every question twice, retrieval plus inference, because the pipeline is the product now. The model is the last step, never the first.</p>
+          <p class="lesson-story">Friday night. Your demo answers brilliantly from three hand-picked documents. Monday morning it meets three million real ones. An answer engine once paid for every question twice, retrieval and inference, because the pipeline is the product now. The model is the last step, never the first.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Query flowing through retrieval then inference with cached repeats bypassing both steps">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
             <rect class="box" x="130" y="20" width="120" height="40" rx="8"/><text x="190" y="44" font-size="11" text-anchor="middle">retrieval $0.02</text>
@@ -182,14 +182,14 @@
             <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M53,70 L180,50 L330,65 L490,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Draw the pipeline before the demo. Query plus retrieval plus rerank plus generation plus citations, with the skip path priced first.</li>
+            <li>Draw the pipeline before the demo. Query and retrieval and rerank and generation and citations, with the skip path priced first.</li>
             <li>Price one query end to end with the <a href="../calculators.html#token-bill">token bill calculator</a>. Retrieval you skip is margin you keep.</li>
             <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, paying twice per question with receipts.</li>
           </ul>
           <p>Your artifact this lesson: one pipeline diagram with a price tag on every arrow. No price, no ship. The demo answered. Production is the exam.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Sketch a RAG pipeline for refund policies with citations. <span class="q-seen">Seen at: AI product plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Sketch a RAG pipeline for refund policies with citations. <span class="q-seen">Seen at: AI product and platform loops.</span></p>
             <p><strong>Q2.</strong> Retrieval returns nothing useful. What does the user see? <span class="q-seen">Seen at: applied AI loops.</span></p>
           </div>
           <p class="lesson-hook">Pipeline drawn. Now the documents themselves need cutting. <a href="#lesson-2">Lesson 02: Chunking →</a></p>
@@ -197,7 +197,7 @@
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Chunking · Cut for questions</div>
           <h2>Chunk Like the Question Asks</h2>
-          <p class="lesson-story">Tuesday. Your retriever returns half a procedure plus half a warning from the next section. The answer stitches both into confident nonsense. Chunks cut for storage serve the index. Chunks cut for questions serve the user. Only one of them answers correctly.</p>
+          <p class="lesson-story">Tuesday. Your retriever returns half a procedure and half a warning from the next section. The answer stitches both into confident nonsense. Chunks cut for storage serve the index. Chunks cut for questions serve the user. Only one of them answers correctly.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Long document split into overlapping chunks with one whole answer chunk highlighted against two fragments">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">long doc</text>
             <rect class="boxhot" x="150" y="20" width="120" height="34" rx="8"/><text x="210" y="42" font-size="11" text-anchor="middle">frag A</text>
@@ -208,11 +208,11 @@
             <g stroke-width="2"><line x1="118" y1="68" x2="150" y2="40"/><line x1="118" y1="75" x2="150" y2="77"/><line x1="118" y1="82" x2="150" y2="110"/><line x1="270" y1="75" x2="302" y2="75"/><line x1="422" y1="75" x2="454" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Split by meaning, not by length. Headings plus procedures plus tables stay whole or answers fracture.</li>
+            <li>Split by meaning, not by length. Headings and procedures and tables stay whole or answers fracture.</li>
             <li>Overlap generously at boundaries. The sentence that matters always sits on the cut line.</li>
-            <li>Tag every chunk with source plus date. Stale chunks answer with fresh confidence otherwise.</li>
+            <li>Tag every chunk with source and date. Stale chunks answer with fresh confidence otherwise.</li>
           </ul>
-          <p>Your artifact: a chunking spec, target size plus overlap plus splitter plus metadata fields. Run ten real questions against two chunk shapes. The shape with whole answers wins, whatever the theory says.</p>
+          <p>Your artifact: a chunking spec, target size and overlap and splitter and metadata fields. Run ten real questions against two chunk shapes. The shape with whole answers wins, whatever the theory says.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Chunk a 200-page policy manual for refund questions. <span class="q-seen">Seen at: AI engineering loops.</span></p>
@@ -221,7 +221,7 @@
           <p class="lesson-hook">Chunks cut. Now the vectors themselves start to rot. <a href="#lesson-3">Lesson 03: Drift →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
-          <div class="lesson-kicker">Lesson 03 · Embeddings · Version plus reindex</div>
+          <div class="lesson-kicker">Lesson 03 · Embeddings · Version and reindex</div>
           <h2>Embeddings Drift</h2>
           <p class="lesson-story">Wednesday. The vendor ships a better embedding model overnight. Your index still speaks the old dialect. Queries in the new tongue match nothing, because vectors from two models share a space the way two cities share a street name. Same words, different map.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Old embedding space beside new embedding space with a reindex bridge moving vectors across">
@@ -237,18 +237,18 @@
             <li>Budget the reindex before adopting the model. Millions of chunks re-embed on your invoice, not theirs.</li>
             <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Exhaustion</a>, what version moves cost in practice.</li>
           </ul>
-          <p>Your artifact: an embedding manifest, model name plus version plus dimension plus reindex date. Watch the packet cross the bridge above, then schedule your own crossing. Drift you plan is migration. Drift you discover is an outage.</p>
+          <p>Your artifact: an embedding manifest, model name and version and dimension and reindex date. Watch the packet cross the bridge above, then schedule your own crossing. Drift you plan is migration. Drift you discover is an outage.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> The embedding vendor deprecates your model. Walk through the migration. <span class="q-seen">Seen at: AI platform loops.</span></p>
-            <p><strong>Q2.</strong> Half the index is v1 plus half is v2. What do users notice? <span class="q-seen">Seen at: backend plus AI loops.</span></p>
+            <p><strong>Q2.</strong> Half the index is v1 and half is v2. What do users notice? <span class="q-seen">Seen at: backend and AI loops.</span></p>
           </div>
           <p class="lesson-hook">Vectors versioned. Now stop trusting vectors alone. <a href="#lesson-4">Lesson 04: Hybrid search →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Retrieval · Keywords meet vectors</div>
           <h2>Vector Search Is Not Search</h2>
-          <p class="lesson-story">Thursday. A user asks about form 1099-B. Vector search returns a soulful essay about tax anxiety. Keyword search would have found the exact form in milliseconds. Meaning matches intent. Tokens match names, codes, plus error strings. Production questions carry both.</p>
+          <p class="lesson-story">Thursday. A user asks about form 1099-B. Vector search returns a soulful essay about tax anxiety. Keyword search would have found the exact form in milliseconds. Meaning matches intent. Tokens match names, codes, and error strings. Production questions carry both.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Query splitting into vector lane and keyword lane merging through fusion into one ranked list">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
             <rect class="box" x="130" y="20" width="140" height="40" rx="8"/><text x="200" y="44" font-size="11" text-anchor="middle">vector: meaning</text>
@@ -262,18 +262,18 @@
             <li>Fuse with weights you measured, not defaults you inherited. The mix is a dial, not a doctrine.</li>
             <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Warehouse</a>, where vector tiering meets keyword truth.</li>
           </ul>
-          <p>Your artifact: a hybrid test with twenty queries, ten semantic plus ten exact-token. Score each lane separately, then the fusion. Ship the mix that wins both halves, not the lane with the louder vendor.</p>
+          <p>Your artifact: a hybrid test with twenty queries, ten semantic and ten exact-token. Score each lane separately, then the fusion. Ship the mix that wins both halves, not the lane with the louder vendor.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Users search by ticket ID plus by symptom description. Design retrieval. <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> When does keyword search beat vectors outright? <span class="q-seen">Seen at: search plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Users search by ticket ID and by symptom description. Design retrieval. <span class="q-seen">Seen at: AI engineering loops.</span></p>
+            <p><strong>Q2.</strong> When does keyword search beat vectors outright? <span class="q-seen">Seen at: search and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Two lanes merged. Now spend wisely on the final ordering. <a href="#lesson-5">Lesson 05: Rerank budget →</a></p>
         </section>
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Reranking · Precision with a meter</div>
           <h2>Rerank With a Budget</h2>
-          <p class="lesson-story">Friday. Fusion returns twenty candidates. The cross-encoder reranker reads all twenty slowly plus bills every one. Top-3 accuracy jumps. P99 doubles. Reranking is the most honest trade in retrieval: named precision for metered milliseconds. Spend it where answers matter.</p>
+          <p class="lesson-story">Friday. Fusion returns twenty candidates. The cross-encoder reranker reads all twenty slowly and bills every one. Top-3 accuracy jumps. P99 doubles. Reranking is the most honest trade in retrieval: named precision for metered milliseconds. Spend it where answers matter.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Twenty candidates entering a reranker with only the top five passing to generation while cost accumulates">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">top 20</text>
             <rect class="boxhot" x="140" y="55" width="130" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">rerank: slow</text>
@@ -284,7 +284,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Rerank depth trades milliseconds for placement. Measure the curve, then pick the knee, not the max.</li>
-            <li>Skip reranking for cached plus navigational queries. Precision you already own needs no second opinion.</li>
+            <li>Skip reranking for cached and navigational queries. Precision you already own needs no second opinion.</li>
             <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, where every stage carries a price.</li>
           </ul>
           <p>Your artifact: a rerank curve, depth versus accuracy versus p99, drawn from your own golden set. Follow the packet above: twenty in, five out, the meter running between. Chosen depth is architecture. Default depth is a donation.</p>
@@ -296,9 +296,9 @@
           <p class="lesson-hook">Ordering bought. Now count what the shelves cost. <a href="#lesson-6">Lesson 06: Index bill →</a></p>
         </section>
         <section class="lesson" id="lesson-6">
-          <div class="lesson-kicker">Lesson 06 · Economics · Storage plus serving</div>
+          <div class="lesson-kicker">Lesson 06 · Economics · Storage and serving</div>
           <h2>The Index Has a Bill</h2>
-          <p class="lesson-story">Monday. Three million chunks times fifteen hundred dimensions times four bytes lands near eighteen gigabytes before replicas plus overhead. Nobody priced the serving fleet either. The index is a database with a GPU habit. Model it like one.</p>
+          <p class="lesson-story">Monday. Three million chunks times fifteen hundred dimensions times four bytes lands near eighteen gigabytes before replicas and overhead. Nobody priced the serving fleet either. The index is a database with a GPU habit. Model it like one.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cost waterfall from chunk count through vector bytes and replicas to queries per second">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">3M chunks</text>
             <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">18 GB vec</text>
@@ -309,13 +309,13 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Size vectors from chunk math, not vibes. Chunks times dimensions times bytes times replicas is the floor.</li>
-            <li>Quantize deliberately. Smaller vectors cost less plus recall slightly less. Measure the recall you sell.</li>
+            <li>Quantize deliberately. Smaller vectors cost less and recall slightly less. Measure the recall you sell.</li>
             <li>Scale the serving fleet with the <a href="../calculators.html#rps-bill">RPS envelope calculator</a> before launch, not after the invoice.</li>
           </ul>
-          <p>Your artifact: an index price card, storage plus replicas plus serving fleet, then the monthly total beside it. Follow the waterfall above to the red box. That box is your quarter.</p>
+          <p>Your artifact: an index price card, storage and replicas and serving fleet, then the monthly total beside it. Follow the waterfall above to the red box. That box is your quarter.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size a vector index for ten million chunks with replicas. <span class="q-seen">Seen at: AI infra plus startup loops.</span></p>
+            <p><strong>Q1.</strong> Size a vector index for ten million chunks with replicas. <span class="q-seen">Seen at: AI infra and startup loops.</span></p>
             <p><strong>Q2.</strong> Cut index cost 40 percent without touching recall. <span class="q-seen">Seen at: FinOps-flavored AI loops.</span></p>
           </div>
           <p class="lesson-hook">Shelves priced. Now stop paying for repeats. <a href="#lesson-7">Lesson 07: Cache repeat →</a></p>
@@ -323,7 +323,7 @@
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Caching · Same question twice</div>
           <h2>Cache the Repeat</h2>
-          <p class="lesson-story">Tuesday. A voice service bills every hello at 75 milliseconds of GPU while the cached hello answers in 5. Retrieval repeats the same way: the same ten questions arrive all day, each one re-searched plus re-ranked plus re-billed. Same question twice should cost once.</p>
+          <p class="lesson-story">Tuesday. A voice service bills every hello at 75 milliseconds of GPU while the cached hello answers in 5. Retrieval repeats the same way: the same ten questions arrive all day, each one re-searched and re-ranked and re-billed. Same question twice should cost once.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Repeat query hitting a semantic cache for an instant answer while novel queries take the full pipeline">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">query</text>
             <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">repeat: 5ms</text>
@@ -333,15 +333,15 @@
             <g stroke-width="2"><line x1="98" y1="68" x2="130" y2="40"/><line x1="98" y1="82" x2="130" y2="102"/><line x1="280" y1="102" x2="312" y2="82"/><line x1="432" y1="75" x2="464" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Cache at three levels: exact query, near-duplicate embedding, plus hot passages. Each level catches a different repeat.</li>
+            <li>Cache at three levels: exact query, near-duplicate embedding, and hot passages. Each level catches a different repeat.</li>
             <li>Expire by document change, not by clock alone. Stale citations spend like real answers.</li>
-            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a> plus <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>.</li>
+            <li>Deep dives: <a href="elevenlabs-voice-scale-postmortem.html">The Voice That Bills Per Hello</a> and <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>.</li>
           </ul>
-          <p>Your artifact: a cache dashboard, hit rate per level plus dollars skipped per day. Watch repeats take the green path above, then measure your own skip rate. Uncached loops answer fast. Cached loops answer free.</p>
+          <p>Your artifact: a cache dashboard, hit rate per level and dollars skipped per day. Watch repeats take the green path above, then measure your own skip rate. Uncached loops answer fast. Cached loops answer free.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Design a semantic cache for support questions with invalidation. <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> Hit rate falls from 60 to 10 percent overnight. Debug it live. <span class="q-seen">Seen at: SRE plus AI loops.</span></p>
+            <p><strong>Q2.</strong> Hit rate falls from 60 to 10 percent overnight. Debug it live. <span class="q-seen">Seen at: SRE and AI loops.</span></p>
           </div>
           <p class="lesson-hook">Repeats skipped. Now make the answers trustworthy. <a href="#lesson-8">Lesson 08: Grounding →</a></p>
         </section>
@@ -384,22 +384,22 @@
             <circle class="pkt" r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M63,75 L215,75 L340,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Treat every retrieved passage as untrusted input. Documents, pages, plus uploads can all carry instructions.</li>
-            <li>Scope secrets so theft buys little. Short TTLs plus least privilege turn breaches into footnotes.</li>
+            <li>Treat every retrieved passage as untrusted input. Documents, pages, and uploads can all carry instructions.</li>
+            <li>Scope secrets so theft buys little. Short TTLs and least privilege turn breaches into footnotes.</li>
             <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the document that downloaded keys.</li>
           </ul>
-          <p>Your artifact: three poisoned-document cases, one injection plus one exfil plus one instruction override, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
+          <p>Your artifact: three poisoned-document cases, one injection and one exfil and one instruction override, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> A retrieved page tells the model to ignore policy. Walk through the defense. <span class="q-seen">Seen at: AI safety loops.</span></p>
-            <p><strong>Q2.</strong> Who can write to your index, plus what stops them? <span class="q-seen">Seen at: security-minded AI loops.</span></p>
+            <p><strong>Q2.</strong> Who can write to your index, and what stops them? <span class="q-seen">Seen at: security-minded AI loops.</span></p>
           </div>
           <p class="lesson-hook">Attackers welcomed. Now wall off the tenants. <a href="#lesson-10">Lesson 10: Tenant walls →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Isolation · Shared index, separate truths</div>
           <h2>Tenants Share Nothing</h2>
-          <p class="lesson-story">Friday. Your retriever serves two companies from one index. A query from tenant A returns a passage stamped tenant B, quoted word for word. Memory never says it is unsure. Indexes never say whose. Ground every recall plus isolate every namespace or bill the apology.</p>
+          <p class="lesson-story">Friday. Your retriever serves two companies from one index. A query from tenant A returns a passage stamped tenant B, quoted word for word. Memory never says it is unsure. Indexes never say whose. Ground every recall and isolate every namespace or bill the apology.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Two tenant queries filtered by namespace into separate index partitions with a shared passage rejected at the gate">
             <rect class="box" x="8" y="20" width="110" height="34" rx="8"/><text x="63" y="42" font-size="11" text-anchor="middle">tenant A</text>
             <rect class="box" x="8" y="60" width="110" height="34" rx="8"/><text x="63" y="82" font-size="11" text-anchor="middle">tenant B</text>
@@ -410,7 +410,7 @@
             <g stroke-width="2"><line x1="118" y1="50" x2="180" y2="55"/><line x1="118" y1="77" x2="180" y2="65"/><line x1="300" y1="55" x2="362" y2="40"/><line x1="300" y1="65" x2="362" y2="77"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Filter by tenant before ranking, never after. Post-filtering leaks through scores plus snippets.</li>
+            <li>Filter by tenant before ranking, never after. Post-filtering leaks through scores and snippets.</li>
             <li>Test isolation with adversarial queries monthly. One tenant recall must never answer another tenant question.</li>
             <li>Deep dive: <a href="chatgpt-cross-account-channel-postmortem.html">Cross-Account Channel</a>, the isolation failure with a receipt.</li>
           </ul>
@@ -440,11 +440,11 @@
             <li>Delete deliberately. Removed documents must vanish from retrieval, not linger as ghosts with citations.</li>
             <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion Warehouse</a>, streaming change capture at block scale.</li>
           </ul>
-          <p>Your artifact: a freshness SLO, edit-to-searchable latency with a dashboard plus an alert. Follow the green path above, then measure your own lag. Fresh indexes answer today. Rebuilt ones answer last week.</p>
+          <p>Your artifact: a freshness SLO, edit-to-searchable latency with a dashboard and an alert. Follow the green path above, then measure your own lag. Fresh indexes answer today. Rebuilt ones answer last week.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> A policy changes at noon. When do answers change? Prove it. <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> Deleted documents still surface in answers. Diagnose live. <span class="q-seen">Seen at: backend plus AI loops.</span></p>
+            <p><strong>Q2.</strong> Deleted documents still surface in answers. Diagnose live. <span class="q-seen">Seen at: backend and AI loops.</span></p>
           </div>
           <p class="lesson-hook">Index fresh. Now prove it retrieves. <a href="#lesson-12">Lesson 12: Eval retriever →</a></p>
         </section>
@@ -462,7 +462,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" path="M63,75 L210,75 L357,108 L480,80"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Gate every chunking plus ranking change on recall at fixed depths. Green suite ships, red suite waits, no exceptions.</li>
+            <li>Gate every chunking and ranking change on recall at fixed depths. Green suite ships, red suite waits, no exceptions.</li>
             <li>Judge answers separately from retrieval. A good retriever feeding a loose generator still hallucinates.</li>
             <li>Bridge course: <a href="learn-ai-evals.html">AI Evals That Hold</a>, where gates become a full program.</li>
           </ul>
@@ -470,14 +470,14 @@
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> A chunking change drops answer quality silently. How does CI catch it? <span class="q-seen">Seen at: AI engineering loops.</span></p>
-            <p><strong>Q2.</strong> Recall is high plus answers are wrong. Where is the fault? <span class="q-seen">Seen at: evals-minded AI loops.</span></p>
+            <p><strong>Q2.</strong> Recall is high and answers are wrong. Where is the fault? <span class="q-seen">Seen at: evals-minded AI loops.</span></p>
           </div>
           <p class="lesson-hook">Retriever gated. Now count what passages cost the window. <a href="#lesson-13">Lesson 13: Context budget →</a></p>
         </section>
         <section class="lesson" id="lesson-13">
           <div class="lesson-kicker">Lesson 13 · Context · Passages crowd the window</div>
           <h2>Retrieval Eats Context</h2>
-          <p class="lesson-story">Wednesday. Your pipeline stuffs twelve passages into the window, then the model forgets the question. A coding agent once hit a paywall at 11:47 AM because compaction plus re-reading billed the same tokens twice. Retrieved tokens crowd out reasoning the same way. Budget the window like money.</p>
+          <p class="lesson-story">Wednesday. Your pipeline stuffs twelve passages into the window, then the model forgets the question. A coding agent once hit a paywall at 11:47 AM because compaction and re-reading billed the same tokens twice. Retrieved tokens crowd out reasoning the same way. Budget the window like money.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Context window split between question, five passages and reasoning space with overflow spilling past the edge">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">question</text>
             <rect class="box" x="130" y="55" width="140" height="40" rx="8"/><text x="200" y="79" font-size="11" text-anchor="middle">5 passages</text>
@@ -487,11 +487,11 @@
             <text class="lbl" x="8" y="130" font-size="11">five passages in, reasoning squeezed out</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Cap passages per query plus compress the rest. Five cited passages beat twelve skimmed ones.</li>
-            <li>Price the window with the <a href="../calculators.html#compaction">compaction calculator</a> plus the <a href="../calculators.html#token-bill">token bill calculator</a>. Long prompts bill twice.</li>
+            <li>Cap passages per query and compress the rest. Five cited passages beat twelve skimmed ones.</li>
+            <li>Price the window with the <a href="../calculators.html#compaction">compaction calculator</a> and the <a href="../calculators.html#token-bill">token bill calculator</a>. Long prompts bill twice.</li>
             <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Exhaustion</a>, the paywall with a timestamp.</li>
           </ul>
-          <p>Your artifact: a per-query token budget, passages plus reasoning plus headroom, written down before tuning. Watch reasoning squeeze at the red box above, then set your cap where answers stay sharp. Chosen caps are architecture. Surprise caps are incidents.</p>
+          <p>Your artifact: a per-query token budget, passages and reasoning and headroom, written down before tuning. Watch reasoning squeeze at the red box above, then set your cap where answers stay sharp. Chosen caps are architecture. Surprise caps are incidents.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> More passages help recall but hurt answers. Find the sweet spot live. <span class="q-seen">Seen at: applied AI loops.</span></p>
@@ -500,9 +500,9 @@
           <p class="lesson-hook">Window budgeted. Now rehearse the interview. <a href="#lesson-14">Lesson 14: Interview bench →</a></p>
         </section>
         <section class="lesson" id="lesson-14">
-          <div class="lesson-kicker">Lesson 14 · Interviews · Draw plus price plus confess</div>
+          <div class="lesson-kicker">Lesson 14 · Interviews · Draw and price and confess</div>
           <h2>The Interview Bench</h2>
-          <p class="lesson-story">Thursday. The panel asks for a support copilot over two million tickets. The candidate who draws the pipeline, prices one query out loud, plus confesses a poisoning incident passes. The candidate who names three vector databases does not. Builders draw. Tourists describe.</p>
+          <p class="lesson-story">Thursday. The panel asks for a support copilot over two million tickets. The candidate who draws the pipeline, prices one query out loud, and confesses a poisoning incident passes. The candidate who names three vector databases does not. Builders draw. Tourists describe.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Interview answer flow from drawn pipeline through priced math and a failure story to an offer">
             <rect class="boxlime" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">draw pipe</text>
             <rect class="box" x="150" y="55" width="110" height="40" rx="8"/><text x="205" y="79" font-size="11" text-anchor="middle">price query</text>
@@ -516,16 +516,16 @@
             <li>Price one million queries out loud with the <a href="../calculators.html#token-bill">token bill calculator</a>. Panels score math over adjectives.</li>
             <li>Close with your poisoning story. Attacks you survived beat features you shipped.</li>
           </ul>
-          <p>Rehearse three answers this week: a chunking design, a hybrid retrieval plan with rerank math, plus a tenant-isolation proof with adversarial tests. Bring diagrams. Builders draw. Tourists describe.</p>
+          <p>Rehearse three answers this week: a chunking design, a hybrid retrieval plan with rerank math, and a tenant-isolation proof with adversarial tests. Bring diagrams. Builders draw. Tourists describe.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Design RAG over two million tickets end to end in 45 minutes. <span class="q-seen">Seen at: AI product plus startup loops.</span></p>
-            <p><strong>Q2.</strong> Tell me about a retrieval failure you caused plus fixed. <span class="q-seen">Seen at: behavioral plus AI loops.</span></p>
+            <p><strong>Q1.</strong> Design RAG over two million tickets end to end in 45 minutes. <span class="q-seen">Seen at: AI product and startup loops.</span></p>
+            <p><strong>Q2.</strong> Tell me about a retrieval failure you caused and fixed. <span class="q-seen">Seen at: behavioral and AI loops.</span></p>
           </div>
           <p class="lesson-hook">Answers rehearsed. Now assemble everything into one ship. <a href="#lesson-15">Lesson 15: Ship pipeline →</a></p>
         </section>
         <section class="lesson" id="lesson-15">
-          <div class="lesson-kicker">Lesson 15 · Capstone · Chunk plus ground plus price</div>
+          <div class="lesson-kicker">Lesson 15 · Capstone · Chunk and ground and price</div>
           <h2>Ship One Pipeline</h2>
           <p class="lesson-story">Sunday. Pick one corpus from your own work: support tickets, runbooks, or policy docs. Chunk it, index it, fuse the lanes, hang the rerank budget, cache the repeats, gate the citations, scan the poisons, wall the tenants, stream the freshness, eval the recall, budget the window. Then ship it to five users, not five thousand.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Capstone flow from chunked corpus through gates and caches to a priced five-user pilot">
@@ -539,17 +539,17 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Ship the artifacts from lessons 1 through 13 in one folder. Gaps are visible at a glance.</li>
-            <li>Pilot with five users plus a kill switch. Small blast radius, full telemetry, honest notes.</li>
+            <li>Pilot with five users and a kill switch. Small blast radius, full telemetry, honest notes.</li>
             <li>Close with the invoice. Queries per month times modeled unit price, labeled as estimates.</li>
           </ul>
-          <p class="lesson-hook">Course complete. Price the meter next: <a href="learn-inference-economics.html">LLM Inference Economics</a>, then browse <a href="course.html">all courses</a> plus <a href="index.html">all case studies</a>. New corpora ship weekly. So will new questions.</p>
+          <p class="lesson-hook">Course complete. Price the meter next: <a href="learn-inference-economics.html">LLM Inference Economics</a>, then browse <a href="course.html">all courses</a> and <a href="index.html">all case studies</a>. New corpora ship weekly. So will new questions.</p>
           <p>The demo answered. Production is the exam. You just built the study guide. Earn the grade.</p>
         </section>
       </div>
     </div>
     <section class="sec" style="margin-top:28px;">
-      <h2 class="sec-title">Sources plus method</h2>
-      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Perplexity inference bills, Cursor token economics, Notion warehouse plus vector tiering, AgentFlayer exfiltration, cross-account isolation, plus the agent eval program. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
+      <h2 class="sec-title">Sources and method</h2>
+      <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: Perplexity inference bills, Cursor token economics, Notion warehouse and vector tiering, AgentFlayer exfiltration, cross-account isolation, and the agent eval program. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>

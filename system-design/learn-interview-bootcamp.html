@@ -34,7 +34,7 @@
     "description":"A free system design interview course with 15 practice rounds covering clarification, diagramming, workload math, storage, caching, queues, sharding, consistency, failure analysis, cost, APIs, behavioral examples and mock interviews.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
-    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-17",
+    "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},"dateModified":"2026-10-23",
     "syllabusSections":[{"@type":"Syllabus","name":"Clarify First"},{"@type":"Syllabus","name":"Boxes Before Arrows"},{"@type":"Syllabus","name":"Numbers Out Loud"},{"@type":"Syllabus","name":"Storage Choices"},{"@type":"Syllabus","name":"Cache Math"},{"@type":"Syllabus","name":"Queue Versus Sync"},{"@type":"Syllabus","name":"Sharding Keys"},{"@type":"Syllabus","name":"Consistency Tradeoffs"},{"@type":"Syllabus","name":"Failure Drills"},{"@type":"Syllabus","name":"Cost Close"},{"@type":"Syllabus","name":"API Round"},{"@type":"Syllabus","name":"Deep Dive Round"},{"@type":"Syllabus","name":"Behavioral With Receipts"},{"@type":"Syllabus","name":"Mock Loop"},{"@type":"Syllabus","name":"Offer Week"}]}
   </script>
   <script type="application/ld+json">
@@ -104,7 +104,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Interview Bootcamp: 15 Rounds From the Whiteboard</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">A strong system-design answer makes its reasoning visible: clarify first, draw second, size the workload, test failure, and defend the cost. Each round uses published postmortems or clearly labeled scenarios with arithmetic readers can rerun.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen practice rounds with diagrams, from clarification and RPS math to failure drills and cost estimates. Published incident findings and modeled inputs are identified separately.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated October 17, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Interview course · Updated October 23, 2026</p>
     </header>
     <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-interview-bootcamp-meme.svg" alt="Five-step system design interview flow: clarify, sketch, size, stress-test, and decide" width="1200" height="680"><figcaption class="fl-desc">A strong answer is a visible chain: clear assumptions, a readable request path, measured scale, tested failure, and a defended decision.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
@@ -243,7 +243,7 @@
           <ul class="lesson-ideas">
             <li>Separate hot reads from cold archives. Tiers decide cost more than engines.</li>
             <li>Name the index per hot query. Unindexed hot paths fail the deep dive.</li>
-            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, 2M databases behind one promise.</li>
+            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, 44M+ databases managed behind one promise.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
@@ -414,7 +414,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Size rate limits from capacity: RPS per client times clients plus headroom.</li>
+            <li>Size rate limits from capacity: RPS per client times clients and headroom.</li>
             <li>Replay webhooks inside windows with signatures. Unsigned retries invite forgery.</li>
             <li>Deep dive: <a href="learn-api-design.html">API Design Course</a>, fifteen gateway lessons.</li>
           </ul>

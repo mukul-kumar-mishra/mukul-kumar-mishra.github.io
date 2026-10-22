@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A free Postgres course in 15 forensic lessons from Mukul. WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning plus backup math, priced from production postmortems.">
+  <meta name="description" content="A free Postgres course in 15 forensic lessons from Mukul. WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning and backup math, priced from production postmortems.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/learn-postgres-production.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Postgres in Production: 15 Lessons From the Write Path">
-  <meta property="og:description" content="WAL plus vacuum plus indexes priced. Fifteen forensic Postgres lessons with live diagrams plus calculators from the write path.">
+  <meta property="og:description" content="WAL, vacuum, indexes priced. Fifteen forensic Postgres lessons with live diagrams, and calculators from the write path.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/learn-postgres-wal-meme.png">
-  <meta property="og:image:alt" content="Three panels showing WAL write plus checkpoint plus index cost">
+  <meta property="og:image:alt" content="Three panels showing WAL write, checkpoint, and index cost">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,9 +18,9 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Postgres in Production: 15 Lessons From the Write Path">
-  <meta name="twitter:description" content="WAL plus vacuum plus indexes priced. Fifteen forensic Postgres lessons with live diagrams plus calculators from the write path.">
+  <meta name="twitter:description" content="WAL, vacuum, indexes priced. Fifteen forensic Postgres lessons with live diagrams, and calculators from the write path.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-postgres-wal-meme.png">
-  <meta name="twitter:image:alt" content="Three panels showing WAL write plus checkpoint plus index cost">
+  <meta name="twitter:image:alt" content="Three panels showing WAL write, checkpoint, and index cost">
   <title>Postgres in Production: 15 Lessons From the Write Path | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,11 +34,11 @@
     "@context":"https://schema.org",
     "@type":"Course",
     "name":"Postgres in Production: 15 Lessons From the Write Path",
-    "description":"A free Postgres course in 15 forensic lessons covering WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning, planner stats, locking, backups, extensions, cost math plus a capstone migration.",
+    "description":"A free Postgres course in 15 forensic lessons covering WAL, checkpoints, vacuum, bloat, indexes, pooling, replication, partitioning, planner stats, locking, backups, extensions, cost math and a capstone migration.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
-    "syllabusSections":[{"@type":"Syllabus","name":"WAL Is the Database"},{"@type":"Syllabus","name":"Checkpoints Are Priced Flushes"},{"@type":"Syllabus","name":"Vacuum Keeps the Dead Moving"},{"@type":"Syllabus","name":"Bloat Is Slow Storage Rent"},{"@type":"Syllabus","name":"Indexes Bill Per Write"},{"@type":"Syllabus","name":"Connections Are Finite"},{"@type":"Syllabus","name":"Pooling With PgBouncer Math"},{"@type":"Syllabus","name":"Replication Lag Is a Queue"},{"@type":"Syllabus","name":"Partitioning Splits the Hot Path"},{"@type":"Syllabus","name":"Planner Stats Decide the Plan"},{"@type":"Syllabus","name":"Locks Queue Behind Each Other"},{"@type":"Syllabus","name":"Backups Plus PITR Are the Contract"},{"@type":"Syllabus","name":"Extensions Without Regret"},{"@type":"Syllabus","name":"The Postgres Bill"},{"@type":"Syllabus","name":"Ship One Postgres"}]
+    "syllabusSections":[{"@type":"Syllabus","name":"WAL Is the Database"},{"@type":"Syllabus","name":"Checkpoints Are Priced Flushes"},{"@type":"Syllabus","name":"Vacuum Keeps the Dead Moving"},{"@type":"Syllabus","name":"Bloat Is Slow Storage Rent"},{"@type":"Syllabus","name":"Indexes Bill Per Write"},{"@type":"Syllabus","name":"Connections Are Finite"},{"@type":"Syllabus","name":"Pooling With PgBouncer Math"},{"@type":"Syllabus","name":"Replication Lag Is a Queue"},{"@type":"Syllabus","name":"Partitioning Splits the Hot Path"},{"@type":"Syllabus","name":"Planner Stats Decide the Plan"},{"@type":"Syllabus","name":"Locks Queue Behind Each Other"},{"@type":"Syllabus","name":"Backups and PITR Are the Contract"},{"@type":"Syllabus","name":"Extensions Without Regret"},{"@type":"Syllabus","name":"The Postgres Bill"},{"@type":"Syllabus","name":"Ship One Postgres"}]
   }
   </script>
   <script type="application/ld+json">
@@ -112,21 +112,21 @@
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Course</span><span class="chip">15 lessons</span><span class="chip">Live diagrams</span><span class="chip">Mukul</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Postgres in Production: 15 Lessons From the Write Path</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Postgres under write pressure taught me one discipline: WAL first, pages later, plus receipts for every index. Each lesson starts from a real production postmortem, states its assumptions up front, plus ends in math you can re-run. The bill hides in the boundary.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Postgres lessons with live diagrams, from WAL to vacuum plus pooling plus backup math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Database course · Updated October 17, 2026</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">Nine years of Postgres under write pressure taught me one discipline: WAL first, pages later, and receipts for every index. Each lesson starts from a real production postmortem, states its assumptions up front, and ends in math you can re-run. The bill hides in the boundary.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen forensic Postgres lessons with live diagrams, from WAL to vacuum and pooling and backup math. Built from production postmortems with calculators for the math.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Database course · Updated October 23, 2026</p>
     </header>
-    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-postgres-wal-meme.svg" alt="Three panels showing WAL write plus checkpoint plus index cost" width="1200" height="680"><figcaption>Course cover. WAL first plus checkpoints priced plus indexes billed per write.</figcaption></figure>
+    <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-postgres-wal-meme.svg" alt="Three panels showing WAL write, checkpoint, and index cost" width="1200" height="680"><figcaption>Course cover. WAL first, checkpoints priced, and indexes billed per write.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
-        <li>Size WAL plus checkpoints for peak writes, feed autovacuum before bloat rents the cache, plus tax every index per write.</li>
-        <li>Cap connections plus pool the fleet with PgBouncer math, meter replication lag in bytes plus seconds, plus split hot tables with partitions.</li>
-        <li>Keep planner stats fresh, hold locks briefly with timeouts, plus sign the backup contract with timed restores.</li>
-        <li>Total cost per million writes monthly, extend with pinned versions, plus answer database interviews with math out loud.</li>
-        <li>Ship one tuned Postgres in four weeks with dashboards plus runbooks plus a bill that falls.</li>
+        <li>Size WAL and checkpoints for peak writes, feed autovacuum before bloat rents the cache, and tax every index per write.</li>
+        <li>Cap connections and pool the fleet with PgBouncer math, meter replication lag in bytes and seconds, and split hot tables with partitions.</li>
+        <li>Keep planner stats fresh, hold locks briefly with timeouts, and sign the backup contract with timed restores.</li>
+        <li>Total cost per million writes monthly, extend with pinned versions, and answer database interviews with math out loud.</li>
+        <li>Ship one tuned Postgres in four weeks with dashboards and runbooks and a bill that falls.</li>
       </ul>
-      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: WAL plus pool math out loud first, incident stories with timelines second, tradeoff pricing third. Lesson 15 ships the proof.</p>
+      <p class="fl-desc" style="margin:8px 0 0;">How interviews test this course: WAL and pool math out loud first, incident stories with timelines second, tradeoff pricing third. Lesson 15 ships the proof.</p>
     </section>
     <section class="sec" id="newsletter" style="margin-bottom:32px;">
       <div class="newsletter-band">
@@ -164,7 +164,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · Durability first</div>
           <h2>WAL Is the Database</h2>
-          <p class="lesson-story">Assumption first: the heap is a cache with confidence. The write-ahead log is the database. Every commit lands in WAL before touching heap pages. Crash recovery replays WAL, not wishes. Size WAL for peak write bursts plus archive it before recycling. Durability without WAL math is optimism with a port number.</p>
+          <p class="lesson-story">Assumption first: the heap is a cache with confidence. The write-ahead log is the database. Every commit lands in WAL before touching heap pages. Crash recovery replays WAL, not wishes. Size WAL for peak write bursts and archive it before recycling. Durability without WAL math is optimism with a port number.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="wal arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">commit in</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -181,15 +181,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> What WAL rate fits 20K writes per second with 2KB rows? <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Archive lag hits 30 minutes. What breaks first? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+            <p><strong>Q1.</strong> What WAL rate fits 20K writes per second with 2KB rows? <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Archive lag hits 30 minutes. What breaks first? <span class="q-seen">Seen at: SRE and data loops.</span></p>
           </div>
           <p class="lesson-hook">WAL secured. Now price the flush. <a href="#lesson-2">Lesson 02: Checkpoints →</a></p>
         </section>
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Checkpoints · Flushes with invoices</div>
           <h2>Checkpoints Are Priced Flushes</h2>
-          <p class="lesson-story">Checkpoints push dirty pages to disk plus bound recovery time. Frequent checkpoints shorten recovery while spiking write IO. Rare checkpoints smooth IO while stretching replay past SLO. Tune checkpoint timeout plus max WAL size together. The flush schedule is a recovery budget.</p>
+          <p class="lesson-story">Checkpoints push dirty pages to disk and bound recovery time. Frequent checkpoints shorten recovery while spiking write IO. Rare checkpoints smooth IO while stretching replay past SLO. Tune checkpoint timeout and max WAL size together. The flush schedule is a recovery budget.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="checkpoint arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">dirty pages</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">checkpoint</text>
@@ -200,19 +200,19 @@
           <ul class="lesson-ideas">
             <li>Spread checkpoints with completion targets near 0.9. Clumped flushes stall p99.</li>
             <li>Watch checkpoint sync time in logs. Rising sync means storage ceiling, not query drift.</li>
-            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, pool math plus flush discipline.</li>
+            <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, pool math and flush discipline.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Recovery must finish in 5 minutes. What checkpoint knobs deliver it? <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Checkpoint warnings flood logs weekly. What do you change? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Recovery must finish in 5 minutes. What checkpoint knobs deliver it? <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Checkpoint warnings flood logs weekly. What do you change? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Flushes priced. Now clear the dead. <a href="#lesson-3">Lesson 03: Vacuum →</a></p>
         </section>
         <section class="lesson" id="lesson-3">
           <div class="lesson-kicker">Lesson 03 · Vacuum · The dead must move</div>
           <h2>Vacuum Keeps the Dead Moving</h2>
-          <p class="lesson-story">Updates plus deletes leave dead tuples behind. Autovacuum reclaims them plus freezes old transaction IDs before wraparound. Starved vacuum bloats tables plus slows every scan. Feed autovacuum workers plus cost limits for write-heavy tables. Dead rows compound like unpaid bills.</p>
+          <p class="lesson-story">Updates and deletes leave dead tuples behind. Autovacuum reclaims them and freezes old transaction IDs before wraparound. Starved vacuum bloats tables and slows every scan. Feed autovacuum workers and cost limits for write-heavy tables. Dead rows compound like unpaid bills.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="vacuum arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">dead tuples</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">autovacuum</text>
@@ -223,20 +223,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Track oldest transaction age per table. Past 200M demands attention before the 2B ceiling.</li>
-            <li>Raise workers plus cost limits on hot tables. Global defaults starve the busiest writes.</li>
+            <li>Raise workers and cost limits on hot tables. Global defaults starve the busiest writes.</li>
             <li>Deep dive: <a href="moengage-eventstore-hardware-postmortem.html">MoEngage Millisecond</a>, write-heavy deu00e9 discipline, priced.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Oldest XID passes 500M on the orders table. What runs tonight? <span class="q-seen">Seen at: database plus backend loops.</span></p>
-            <p><strong>Q2.</strong> Autovacuum cannot keep up at peak. What knobs move first? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+            <p><strong>Q1.</strong> Oldest XID passes 500M on the orders table. What runs tonight? <span class="q-seen">Seen at: database and backend loops.</span></p>
+            <p><strong>Q2.</strong> Autovacuum cannot keep up at peak. What knobs move first? <span class="q-seen">Seen at: SRE and data loops.</span></p>
           </div>
           <p class="lesson-hook">Dead moving. Now measure the rent. <a href="#lesson-4">Lesson 04: Bloat →</a></p>
         </section>
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Bloat · Rent on dead pages</div>
           <h2>Bloat Is Slow Storage Rent</h2>
-          <p class="lesson-story">Bloat is dead space between live rows. Bloated tables waste cache plus inflate IO plus slow index scans. Measure bloat per table monthly. Rebuild with concurrent methods during low windows. Storage without bloat math rents the same page twice.</p>
+          <p class="lesson-story">Bloat is dead space between live rows. Bloated tables waste cache and inflate IO and slow index scans. Measure bloat per table monthly. Rebuild with concurrent methods during low windows. Storage without bloat math rents the same page twice.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="bloat arithmetic">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
 <text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
@@ -257,15 +257,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Orders table reads 3x pages per live row. What is the fix window? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Cache hit ratio falls while queries stay constant. What do you inspect? <span class="q-seen">Seen at: database plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Orders table reads 3x pages per live row. What is the fix window? <span class="q-seen">Seen at: backend and data loops.</span></p>
+            <p><strong>Q2.</strong> Cache hit ratio falls while queries stay constant. What do you inspect? <span class="q-seen">Seen at: database and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Rent measured. Now tax the writes. <a href="#lesson-5">Lesson 05: Indexes →</a></p>
         </section>
         <section class="lesson" id="lesson-5">
           <div class="lesson-kicker">Lesson 05 · Indexes · Reads borrow, writes pay</div>
           <h2>Indexes Bill Per Write</h2>
-          <p class="lesson-story">Every index speeds reads plus taxes writes. Five indexes on a hot table multiply write amplification plus WAL volume plus vacuum load. Index the queried path, drop the hopeful one, plus measure hit ratios per index. Unused indexes are payroll for no staff.</p>
+          <p class="lesson-story">Every index speeds reads and taxes writes. Five indexes on a hot table multiply write amplification and WAL volume and vacuum load. Index the queried path, drop the hopeful one, and measure hit ratios per index. Unused indexes are payroll for no staff.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="index arithmetic">
             <text class="lbl" x="10" y="52" font-size="10">before</text>
             <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">hot writes</text>
@@ -277,20 +277,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Audit index scans monthly. Zero-scan indexes on write tables are pure cost.</li>
-            <li>Prefer composite order that matches filters plus sort. One composite beats three singles.</li>
+            <li>Prefer composite order that matches filters and sort. One composite beats three singles.</li>
             <li>Deep dive: <a href="sharechat-feature-store-cost-postmortem.html">ShareChat Assignment</a>, store requested-together data together.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Write p99 doubles after adding two indexes. What proves the cause? <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Which indexes survive a 10x write season? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Write p99 doubles after adding two indexes. What proves the cause? <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Which indexes survive a 10x write season? <span class="q-seen">Seen at: data and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Writes taxed. Now count the doors. <a href="#lesson-6">Lesson 06: Connections →</a></p>
         </section>
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Connections · Finite doors</div>
           <h2>Connections Are Finite</h2>
-          <p class="lesson-story">Each Postgres connection forks a backend with dedicated memory. Thousands of direct connections exhaust RAM plus context-switch the host into stillness. Cap connections near a few hundred per primary. Queue plus pool above that line. Connections scale with pooling, not hope.</p>
+          <p class="lesson-story">Each Postgres connection forks a backend with dedicated memory. Thousands of direct connections exhaust RAM and context-switch the host into stillness. Cap connections near a few hundred per primary. Queue and pool above that line. Connections scale with pooling, not hope.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="connection arithmetic">
 <polygon class="box" points="80.0,10 480.0,10 460.0,34 100.0,34"/>
 <text x="280" y="26" font-size="11" text-anchor="middle">app fleet</text>
@@ -303,20 +303,20 @@
 </svg>
           <ul class="lesson-ideas">
             <li>Size max connections from RAM per backend. Past the line, latency climbs faster than throughput.</li>
-            <li>Set statement timeouts plus idle timeouts. Leaked idle connections are slow eviction.</li>
+            <li>Set statement timeouts and idle timeouts. Leaked idle connections are slow eviction.</li>
             <li>Deep dive: <a href="discord-messaging-system-design.html">Discord Messages Scale</a>, trillions of rows behind finite doors.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Fleet needs 5K concurrent sessions on one primary. What architecture holds? <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Idle connections climb nightly. What reaps them safely? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Fleet needs 5K concurrent sessions on one primary. What architecture holds? <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Idle connections climb nightly. What reaps them safely? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Doors counted. Now pool them. <a href="#lesson-7">Lesson 07: Pooling →</a></p>
         </section>
         <section class="lesson" id="lesson-7">
           <div class="lesson-kicker">Lesson 07 · Pooling · Multiplex the fleet</div>
           <h2>Pooling With PgBouncer Math</h2>
-          <p class="lesson-story">PgBouncer multiplexes thousands of app sessions onto tens of real backends. Transaction mode suits stateless apps. Session mode suits prepared flows with state. Pool at the edge of each region plus size for peak plus bursts. Pooling turns connection storms into queues with numbers.</p>
+          <p class="lesson-story">PgBouncer multiplexes thousands of app sessions onto tens of real backends. Transaction mode suits stateless apps. Session mode suits prepared flows with state. Pool at the edge of each region and size for peak and bursts. Pooling turns connection storms into queues with numbers.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="pooler arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">5K sessions</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">pooler set</text>
@@ -326,21 +326,21 @@
             <circle class="pkt" r="4"><animateMotion dur="2.8s" repeatCount="indefinite" path="M58,75 L190,75 L322,75 L478,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Little Law prices the pool: backends equal arrival rate times hold time plus headroom.</li>
+            <li>Little Law prices the pool: backends equal arrival rate times hold time and headroom.</li>
             <li>Pin transaction mode for stateless APIs. Audit prepared statements before switching modes.</li>
             <li>Deep dive: <a href="supabase-postgres-scale-postmortem.html">Supabase Postgres Scale</a>, pool math at fleet scale.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Size a pool for 8K RPS with 25ms hold time. Show the math. <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> P99 spikes while backends idle. What pool knob lies? <span class="q-seen">Seen at: SRE plus data loops.</span></p>
+            <p><strong>Q1.</strong> Size a pool for 8K RPS with 25ms hold time. Show the math. <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> P99 spikes while backends idle. What pool knob lies? <span class="q-seen">Seen at: SRE and data loops.</span></p>
           </div>
           <p class="lesson-hook">Fleet pooled. Now watch the lag. <a href="#lesson-8">Lesson 08: Replication →</a></p>
         </section>
         <section class="lesson" id="lesson-8">
           <div class="lesson-kicker">Lesson 08 · Replication · Lag is a queue</div>
           <h2>Replication Lag Is a Queue</h2>
-          <p class="lesson-story">Streaming replication ships WAL to standbys plus replays in order. Lag equals queued bytes divided by replay rate. Long transactions plus heavy DDL stretch the queue. Monitor lag in bytes plus seconds together. Promotion without lag math promotes yesterday.</p>
+          <p class="lesson-story">Streaming replication ships WAL to standbys and replays in order. Lag equals queued bytes divided by replay rate. Long transactions and heavy DDL stretch the queue. Monitor lag in bytes and seconds together. Promotion without lag math promotes yesterday.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="replication arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">WAL shipped</text>
@@ -355,15 +355,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Lag holds at 2GB during peak. When is promotion safe? <span class="q-seen">Seen at: database plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Replica serves stale reads at noon daily. What scheduled job causes it? <span class="q-seen">Seen at: data plus backend loops.</span></p>
+            <p><strong>Q1.</strong> Lag holds at 2GB during peak. When is promotion safe? <span class="q-seen">Seen at: database and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Replica serves stale reads at noon daily. What scheduled job causes it? <span class="q-seen">Seen at: data and backend loops.</span></p>
           </div>
           <p class="lesson-hook">Lag metered. Now split the heat. <a href="#lesson-9">Lesson 09: Partitioning →</a></p>
         </section>
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Partitioning · Split the hot path</div>
           <h2>Partitioning Splits the Hot Path</h2>
-          <p class="lesson-story">Range plus list partitioning prune cold data from hot queries. Time partitions age out cleanly with detach instead of delete. Hash partitions spread writes across files. Partition for pruning plus retention, not fashion. Unpruned partitions are decoration with DDL.</p>
+          <p class="lesson-story">Range and list partitioning prune cold data from hot queries. Time partitions age out cleanly with detach instead of delete. Hash partitions spread writes across files. Partition for pruning and retention, not fashion. Unpruned partitions are decoration with DDL.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="partition arithmetic">
             <text class="lbl" x="10" y="52" font-size="10">before</text>
             <rect class="boxhot" x="90" y="28" width="200" height="36" rx="8"/><text x="190" y="51" font-size="11" text-anchor="middle">hot range</text>
@@ -375,20 +375,20 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Verify partition pruning with explain plans. Missing constraint exclusion means full scans in costume.</li>
-            <li>Detach plus archive old partitions monthly. Delete loops bloat while detach frees instantly.</li>
+            <li>Detach and archive old partitions monthly. Delete loops bloat while detach frees instantly.</li>
             <li>Deep dive: <a href="stripe-ledger-scale-postmortem.html">Stripe's Idempotency and Modeled Scale Teardown</a>, with the reported volume separated from modeled workload.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Queries scan all 60 monthly partitions. What constraint restores pruning? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Retention needs 13 months online. What partition scheme holds? <span class="q-seen">Seen at: data plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Queries scan all 60 monthly partitions. What constraint restores pruning? <span class="q-seen">Seen at: backend and data loops.</span></p>
+            <p><strong>Q2.</strong> Retention needs 13 months online. What partition scheme holds? <span class="q-seen">Seen at: data and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Heat split. Now feed the planner. <a href="#lesson-10">Lesson 10: Planner →</a></p>
         </section>
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Planner · Statistics choose plans</div>
           <h2>Planner Stats Decide the Plan</h2>
-          <p class="lesson-story">The planner picks joins plus scans from table statistics. Stale stats choose nested loops for million-row joins. Analyze hot tables after bulk loads plus schema shifts. Targeted stats plus expression indexes fix skewed columns. Plans without fresh stats are guesses with cost labels.</p>
+          <p class="lesson-story">The planner picks joins and scans from table statistics. Stale stats choose nested loops for million-row joins. Analyze hot tables after bulk loads and schema shifts. Targeted stats and expression indexes fix skewed columns. Plans without fresh stats are guesses with cost labels.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="planner arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">stats fresh</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">plan chosen</text>
@@ -404,15 +404,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Plan estimates 100 rows, executes 2M. What runs first? <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Bulk load finishes Sunday. What runs before Monday traffic? <span class="q-seen">Seen at: data plus SRE loops.</span></p>
+            <p><strong>Q1.</strong> Plan estimates 100 rows, executes 2M. What runs first? <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Bulk load finishes Sunday. What runs before Monday traffic? <span class="q-seen">Seen at: data and SRE loops.</span></p>
           </div>
           <p class="lesson-hook">Plans honest. Now order the queue. <a href="#lesson-11">Lesson 11: Locks →</a></p>
         </section>
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Locking · Queues with teeth</div>
           <h2>Locks Queue Behind Each Other</h2>
-          <p class="lesson-story">Row locks serialize writers. Table locks serialize deploys. Long transactions hold both while the queue grows. Keep transactions short plus move DDL to concurrent forms plus timeout lock waits. Lock graphs without timeouts are outage schedules.</p>
+          <p class="lesson-story">Row locks serialize writers. Table locks serialize deploys. Long transactions hold both while the queue grows. Keep transactions short and move DDL to concurrent forms and timeout lock waits. Lock graphs without timeouts are outage schedules.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="locking arithmetic">
 <rect class="box" x="130" y="10" width="300" height="22" rx="8"/><text x="280" y="25" font-size="11" text-anchor="middle">short xacts</text>
 <g stroke-width="2"><line x1="280" y1="32" x2="280" y2="42"/></g>
@@ -424,20 +424,20 @@
 </svg>
           <ul class="lesson-ideas">
             <li>Log lock waits past 1 second. One holder with 500 waiters is the incident before the incident.</li>
-            <li>Use concurrent index builds plus short migrations. Single giant migration locks the quarter.</li>
+            <li>Use concurrent index builds and short migrations. Single giant migration locks the quarter.</li>
             <li>Deep dive: <a href="salesforce-dreamforce-login-queue-postmortem.html">Salesforce Dreamforce Login Stall</a>, a reported shared-service disruption with an unpublished internal queue design.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Deploy adds an index with exclusive lock at noon. What is the safe form? <span class="q-seen">Seen at: backend plus SRE loops.</span></p>
-            <p><strong>Q2.</strong> Five hundred sessions wait on one row. What holder do you hunt? <span class="q-seen">Seen at: database plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Deploy adds an index with exclusive lock at noon. What is the safe form? <span class="q-seen">Seen at: backend and SRE loops.</span></p>
+            <p><strong>Q2.</strong> Five hundred sessions wait on one row. What holder do you hunt? <span class="q-seen">Seen at: database and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Queue thinned. Now sign the contract. <a href="#lesson-12">Lesson 12: Backups →</a></p>
         </section>
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Backups · The restore contract</div>
-          <h2>Backups Plus PITR Are the Contract</h2>
-          <p class="lesson-story">Base backups plus WAL archives define point-in-time recovery. Untested restores are fiction with retention labels. Restore quarterly to staging plus time the replay plus verify checksums. Recovery objectives without restore drills are marketing with cron.</p>
+          <h2>Backups and PITR Are the Contract</h2>
+          <p class="lesson-story">Base backups and WAL archives define point-in-time recovery. Untested restores are fiction with retention labels. Restore quarterly to staging and time the replay and verify checksums. Recovery objectives without restore drills are marketing with cron.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="backup arithmetic">
             <g stroke-width="2"><line x1="50" y1="78" x2="510" y2="78"/></g>
             <circle class="dot" cx="60" cy="78" r="5"/><text x="60" y="52" font-size="11" text-anchor="middle">base taken</text>
@@ -446,21 +446,21 @@
             <circle class="dot" cx="480" cy="78" r="5"/><text x="480" y="108" font-size="11" text-anchor="middle">RPO met</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Time full restore plus WAL replay quarterly. RTO equals measured replay, not hoped replay.</li>
+            <li>Time full restore and WAL replay quarterly. RTO equals measured replay, not hoped replay.</li>
             <li>Retain archives across regions. Single-region archives share fate with the fire.</li>
             <li>Deep dive: <a href="doltgres-data-loss-postmortem.html">Doltgres Data Loss</a>, backups must hold data.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> RPO demands 5 minutes. What archive cadence proves it? <span class="q-seen">Seen at: SRE plus database loops.</span></p>
-            <p><strong>Q2.</strong> Restore drill fails twice. What changes before the third run? <span class="q-seen">Seen at: platform plus data loops.</span></p>
+            <p><strong>Q1.</strong> RPO demands 5 minutes. What archive cadence proves it? <span class="q-seen">Seen at: SRE and database loops.</span></p>
+            <p><strong>Q2.</strong> Restore drill fails twice. What changes before the third run? <span class="q-seen">Seen at: platform and data loops.</span></p>
           </div>
           <p class="lesson-hook">Contract signed. Now extend wisely. <a href="#lesson-13">Lesson 13: Extensions →</a></p>
         </section>
         <section class="lesson" id="lesson-13">
           <div class="lesson-kicker">Lesson 13 · Extensions · Power with receipts</div>
           <h2>Extensions Without Regret</h2>
-          <p class="lesson-story">pgvector plus PostGIS plus pg_stat_statements extend Postgres into search plus geo plus observability. Each extension adds upgrade plus backup plus replication surface. Pin versions plus test upgrades on replicas first. Extensions without upgrade plans are lock-in with docs.</p>
+          <p class="lesson-story">pgvector and PostGIS and pg_stat_statements extend Postgres into search and geo and observability. Each extension adds upgrade and backup and replication surface. Pin versions and test upgrades on replicas first. Extensions without upgrade plans are lock-in with docs.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="extension arithmetic">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">need proven</text>
             <rect class="box" x="140" y="55" width="100" height="40" rx="8"/><text x="190" y="79" font-size="11" text-anchor="middle">version pinned</text>
@@ -476,15 +476,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> pgvector upgrade blocks Postgres 17. What unblocks the quarter? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Which extensions ride the primary versus the warehouse copy? <span class="q-seen">Seen at: platform plus data loops.</span></p>
+            <p><strong>Q1.</strong> pgvector upgrade blocks Postgres 17. What unblocks the quarter? <span class="q-seen">Seen at: backend and data loops.</span></p>
+            <p><strong>Q2.</strong> Which extensions ride the primary versus the warehouse copy? <span class="q-seen">Seen at: platform and data loops.</span></p>
           </div>
           <p class="lesson-hook">Power metered. Now total the month. <a href="#lesson-14">Lesson 14: Bill →</a></p>
         </section>
         <section class="lesson" id="lesson-14">
           <div class="lesson-kicker">Lesson 14 · Economics · The month totaled</div>
           <h2>The Postgres Bill</h2>
-          <p class="lesson-story">Postgres bills in IO plus storage plus replicas plus backup retention. Provisioned IOPS dominate write-heavy months. Replicas double steady state before traffic. Retention stretches archives linearly. Total cost per million writes monthly. The bill hides in the boundary between provisioned peaks plus average days.</p>
+          <p class="lesson-story">Postgres bills in IO and storage and replicas and backup retention. Provisioned IOPS dominate write-heavy months. Replicas double steady state before traffic. Retention stretches archives linearly. Total cost per million writes monthly. The bill hides in the boundary between provisioned peaks and average days.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="billing arithmetic">
 <rect class="box" x="90" y="40.0" width="80" height="78.0" rx="6"/>
 <text x="130" y="34.0" font-size="11" text-anchor="middle">100</text>
@@ -505,15 +505,15 @@
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Write volume doubles next quarter. Which line item moves first? <span class="q-seen">Seen at: backend plus data loops.</span></p>
-            <p><strong>Q2.</strong> Replica fleet costs more than primary. What topology trims it? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Write volume doubles next quarter. Which line item moves first? <span class="q-seen">Seen at: backend and data loops.</span></p>
+            <p><strong>Q2.</strong> Replica fleet costs more than primary. What topology trims it? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Month totaled. Now prove it aloud. <a href="#lesson-15">Lesson 15: Capstone →</a></p>
         </section>
         <section class="lesson" id="lesson-15">
           <div class="lesson-kicker">Lesson 15 · Capstone · Ship one Postgres</div>
           <h2>Ship One Postgres</h2>
-          <p class="lesson-story">Capstone: migrate one workload onto tuned Postgres in four weeks. Week one measures WAL plus bloat plus pool math. Week two tunes vacuum plus checkpoints plus indexes. Week three rehearses backup restore plus replica promotion. Week four ships with dashboards plus runbooks. Graduates carry numbers, not certificates.</p>
+          <p class="lesson-story">Capstone: migrate one workload onto tuned Postgres in four weeks. Week one measures WAL and bloat and pool math. Week two tunes vacuum and checkpoints and indexes. Week three rehearses backup restore and replica promotion. Week four ships with dashboards and runbooks. Graduates carry numbers, not certificates.</p>
 <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="capstone arithmetic">
             <rect class="box" x="60" y="20" width="150" height="36" rx="8"/><text x="135" y="43" font-size="11" text-anchor="middle">measure set</text>
             <rect class="box" x="350" y="20" width="150" height="36" rx="8"/><text x="425" y="43" font-size="11" text-anchor="middle">tune shipped</text>
@@ -522,14 +522,14 @@
             <g stroke-width="2"><line x1="210" y1="38" x2="350" y2="38"/><line x1="500" y1="56" x2="500" y2="94"/><line x1="350" y1="112" x2="210" y2="112"/><line x1="60" y1="94" x2="60" y2="56"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Exit criteria: p99 halved plus bloat under 10 percent plus restore timed plus pool sized with math shown.</li>
-            <li>Present the bill per million writes before plus after. Savings fund the next migration.</li>
+            <li>Exit criteria: p99 halved, bloat under 10 percent, restore timed, and pool sized with math shown.</li>
+            <li>Present the bill per million writes before and after. Savings fund the next migration.</li>
             <li>Deep dive: <a href="learn-system-design.html">System Design Course</a>, the 15-lesson companion from real outages.</li>
           </ul>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
-            <p><strong>Q1.</strong> Walk me through sizing WAL plus pools for 30K writes per second. <span class="q-seen">Seen at: backend plus database loops.</span></p>
-            <p><strong>Q2.</strong> Your restore drill missed RTO by 2x. What ships Monday? <span class="q-seen">Seen at: SRE plus platform loops.</span></p>
+            <p><strong>Q1.</strong> Walk me through sizing WAL and pools for 30K writes per second. <span class="q-seen">Seen at: backend and database loops.</span></p>
+            <p><strong>Q2.</strong> Your restore drill missed RTO by 2x. What ships Monday? <span class="q-seen">Seen at: SRE and platform loops.</span></p>
           </div>
           <p class="lesson-hook">Course complete. Start the companion. <a href="learn-system-design.html">System Design Course →</a></p>
         </section>

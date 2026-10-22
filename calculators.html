@@ -36,7 +36,7 @@
     "mainEntity":[
       {"@type":"Question","name":"How much does 1M agent turns cost with token caching?","acceptedAnswer":{"@type":"Answer","text":"Enter input tokens, cache hit rate and output price in the Token Bill calculator. It prices one turn then scales to one million turns. At 80k input tokens with 87.5 percent cache hits the example shows the monthly bill in seconds."}},
       {"@type":"Question","name":"What is the difference between token cost and RPS envelope?","acceptedAnswer":{"@type":"Answer","text":"Token cost prices per turn with cache. RPS envelope prices events per second at 1M RPS for a month. Use Token Bill for agent cost and RPS Envelope for infrastructure cost."}},
-      {"@type":"Question","name":"How many minutes of downtime does a 99.9 percent SLO allow?","acceptedAnswer":{"@type":"Answer","text":"A 99.9 percent SLO over a 30-day month allows 43.2 minutes of downtime. Enter the SLO plus burned minutes in the Error Budget calculator to see what is left and how fast the current burn rate exhausts it."}},
+      {"@type":"Question","name":"How many minutes of downtime does a 99.9 percent SLO allow?","acceptedAnswer":{"@type":"Answer","text":"A 99.9 percent SLO over a 30-day month allows 43.2 minutes of downtime. Enter the SLO and burned minutes in the Error Budget calculator to see what is left and how fast the current burn rate exhausts it."}},
       {"@type":"Question","name":"How does the Kubernetes HPA decide replica count?","acceptedAnswer":{"@type":"Answer","text":"This basic CPU estimate rounds up current replicas times utilization over target, then clamps between minReplicas and maxReplicas. CPU utilization is relative to the pod CPU request. It assumes at least one replica and does not model tolerance, stabilization windows, scale-to-zero or multiple metrics."}},
       {"@type":"Question","name":"How do I estimate a database connection pool?","acceptedAnswer":{"@type":"Answer","text":"The Pool Sizer uses a conservative heuristic: peak RPS times p99 latency, then a safety factor. Formal Little's Law uses mean time in system. Enter peak load and pod count to estimate total and per-pod connections."}}
     ]
@@ -99,7 +99,7 @@
         <h2 class="sec-title"><i data-lucide="coins"></i> Token Bill Calculator</h2>
         <a class="sec-link" href="tools/llm-token-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits plus 1.5k output tokens.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price one agent turn from context mix, then scale to a month. Starts from a heavy agent session: 80k input tokens at 87.5 percent cache hits and 1.5k output tokens.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -148,7 +148,7 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">Cost per turn</div>
               <div class="radar-trend-value" id="tk-perturn">$0.0735 / turn</div>
-              <div class="radar-trend-sub">cached plus fresh plus output</div>
+              <div class="radar-trend-sub">cached and fresh and output</div>
             </div>
           </div>
         </div>
@@ -161,13 +161,13 @@
         <h2 class="sec-title"><i data-lucide="activity"></i> RPS Envelope Estimator</h2>
         <a class="sec-link" href="tools/edge-request-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, plus fixed platform spend.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Turn events per second into a monthly envelope: edge rate times seconds per month at a blended price, and fixed platform spend.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly envelope</span>
-              <span class="radar-count-description"> · Edge throughput plus fixed platform, priced for a full month.</span>
+              <span class="radar-count-description"> · Edge throughput and fixed platform, priced for a full month.</span>
             <div class="radar-filters" aria-label="Throughput presets">
               <button class="radar-filter" data-set="rps-rps:100000">100K RPS</button>
               <button class="radar-filter active" data-set="rps-rps:1000000">1M RPS</button>
@@ -345,7 +345,7 @@
         <h2 class="sec-title"><i data-lucide="shield-alert"></i> Error Budget Burn Calculator</h2>
         <a class="sec-link" href="tools/error-budget-calculator.html">Open dedicated calculator page →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned plus the current burn multiple to see when the budget runs dry.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Turn an SLO into minutes. A 99.9 percent objective leaves 43.2 minutes a month. Enter what is already burned and the current burn multiple to see when the budget runs dry.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -542,7 +542,7 @@
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Pool size</span>
-              <span class="radar-count-description"> · p99-based concurrency estimate plus safety factor.</span>
+              <span class="radar-count-description"> · p99-based concurrency estimate and safety factor.</span>
             <div class="radar-filters" aria-label="Latency presets">
               <button class="radar-filter" data-set="pool-lat:20">20MS P99</button>
               <button class="radar-filter active" data-set="pool-lat:45">45MS P99</button>
@@ -592,7 +592,7 @@
           </div>
         </div>
       </section>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Payment Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka: 3,000 Connections Too Many</a></h3><p class="fl-desc">Partition and connector issues, plus the IAM connection limit Razorpay says it encountered during an Asia Cup surge.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Payment Infrastructure</span></div><h3><a class="feature-link-title" href="system-design/razorpay-upi-kafka-postmortem.html">Razorpay Kafka: 3,000 Connections Too Many</a></h3><p class="fl-desc">Partition and connector issues, and the IAM connection limit Razorpay says it encountered during an Asia Cup surge.</p></article>
     </section>
 
     <section class="sec" id="downtime-cost">
@@ -600,13 +600,13 @@
         <h2 class="sec-title"><i data-lucide="coins"></i> Downtime Cost Calculator</h2>
         <a class="sec-link" href="tools/downtime-cost-calculator.html">Open dedicated calculator page →</a>
       </div>
-      <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, plus the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Minutes down times revenue per minute, and the SLA credit on the cloud bill. Assumes a 43,800-minute month. Defaults model a four-hour outage against $4M monthly revenue at risk.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Total exposure</span>
-              <span class="radar-count-description"> · Revenue gone plus the credit you owe.</span>
+              <span class="radar-count-description"> · Revenue gone and the credit you owe.</span>
             <div class="radar-filters" aria-label="Downtime presets">
               <button class="radar-filter" data-set="dt-mins:30">30 MIN</button>
               <button class="radar-filter active" data-set="dt-mins:240">4 HOURS</button>
@@ -681,7 +681,7 @@
         <a class="calc-directory-card" href="tools/aws-s3-storage-cost-calculator.html" data-calculator-card data-search="aws s3 pricing calculator s3 pricing aws storage pricing aws storage cost s3 cost calculator object storage bucket request get put retrieval gb">
           <span class="calc-directory-category">Cloud storage</span>
           <h3>AWS S3 Storage Cost Calculator</h3>
-          <p>Estimate S3 storage, PUT and GET request fees plus retrieval with editable rates.</p>
+          <p>Estimate S3 storage, PUT and GET request fees and retrieval with editable rates.</p>
           <span class="calc-directory-open">Open calculator →</span>
         </a>
         <a class="calc-directory-card" href="tools/ec2-compute-cost-calculator.html" data-calculator-card data-search="ec2 cost calculator ec2 pricing calculator aws ec2 cost calculator ec2 instance price calculator calculator ec2 ec2 compute instance hourly running utilization commitment discount aws">
@@ -699,7 +699,7 @@
         <a class="calc-directory-card" href="tools/downtime-cost-calculator.html" data-calculator-card data-search="downtime cost calculator cost of downtime calculator downtime outage cost revenue lost sla credits reliability">
           <span class="calc-directory-category">Reliability</span>
           <h3>Downtime Cost Calculator</h3>
-          <p>Estimate revenue loss plus SLA credits during an outage.</p>
+          <p>Estimate revenue loss and SLA credits during an outage.</p>
           <span class="calc-directory-open">Open calculator →</span>
         </a>
         <a class="calc-directory-card" href="tools/kubernetes-cluster-cost-calculator.html" data-calculator-card data-search="kubernetes cluster cost calculator eks cluster cost eks cost calculator aks cost calculator kubernetes cost calculator nodes control plane persistent volume storage">
@@ -739,7 +739,7 @@
           <a class="calc-directory-card" href="tools/managed-postgres-cost-calculator.html" data-calculator-card data-search="managed postgres database rds cloud sql aurora instance storage backup">
             <span class="calc-directory-category">Database</span>
             <h3>Managed Postgres Cost Calculator</h3>
-            <p>Estimate instance hours plus provisioned storage and backup charges.</p>
+            <p>Estimate instance hours and provisioned storage and backup charges.</p>
             <span class="calc-directory-open">Open calculator →</span>
           </a>
           <a class="calc-directory-card" href="tools/observability-cost-calculator.html" data-calculator-card data-search="observability datadog new relic monitoring hosts logs ingest telemetry">
@@ -757,7 +757,7 @@
           <a class="calc-directory-card" href="tools/vector-database-cost-calculator.html" data-calculator-card data-search="vector database pgvector pinecone embeddings dimensions index storage pods">
             <span class="calc-directory-category">AI data</span>
             <h3>Vector Database Cost Calculator</h3>
-            <p>Estimate vector storage overhead plus the serving fleet.</p>
+            <p>Estimate vector storage overhead and the serving fleet.</p>
             <span class="calc-directory-open">Open calculator →</span>
           </a>
           <a class="calc-directory-card" href="tools/edge-request-cost-calculator.html" data-calculator-card data-search="rps envelope edge request throughput million events monthly cost">

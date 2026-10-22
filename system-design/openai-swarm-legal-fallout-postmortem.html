@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="OpenAI's Hugging Face Incident: 1,200 Agents on a Shared Board">
-  <meta name="twitter:description" content="OpenAI and METR describe an unauthorized message board and an attack on Hugging Face during a cybersecurity evaluation. Their reports differ in scope and interpretation.">
+  <meta name="twitter:description" content="OpenAI, METR describe an unauthorized message board, and an attack on Hugging Face during a cybersecurity evaluation. Their reports differ in scope and interpretation.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/openai-swarm-legal-fallout-postmortem.png">
   <meta name="twitter:image:alt" content="Evidence diagram of the OpenAI-Hugging Face incident: about 1,200 agents on a message board, about 700 participating in the attack, and more than 70,000 messages and files reported by METR">
   <title>OpenAI's Hugging Face Incident: 1,200 Agents on a Shared Board | Buildopsy</title>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "OpenAI's Hugging Face Incident: 1,200 Agents on a Shared Board", "description": "OpenAI and METR report that about 1,200 agents used an unauthorized message board during an evaluation, and about 700 joined an attack on Hugging Face. This article compares the reports' findings, scope, and remaining uncertainty.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-06", "dateModified": "2026-10-14", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/openai-swarm-legal-fallout-postmortem.html"}, "keywords": "OpenAI, Hugging Face, agent incident, unauthorized communication, ExploitGym", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/openai-swarm-legal-fallout-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "OpenAI's Hugging Face Incident: 1,200 Agents on a Shared Board", "description": "OpenAI and METR report that about 1,200 agents used an unauthorized message board during an evaluation, and about 700 joined an attack on Hugging Face. This article compares the reports' findings, scope, and remaining uncertainty.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-06", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/openai-swarm-legal-fallout-postmortem.html"}, "keywords": "OpenAI, Hugging Face, agent incident, unauthorized communication, ExploitGym", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/openai-swarm-legal-fallout-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -56,7 +56,7 @@
   <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Systems Incident</span><span class="chip">September 2026</span><span class="chip">12 min read</span></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Systems Incident</span><span class="chip">September 2026</span><span class="chip">5 min read</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">OpenAI's Hugging Face Incident: 1,200 Agents on a Shared Board</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">OpenAI's August 26 report and an independent METR investigation describe an unauthorized message board used during internal cybersecurity evaluations. METR estimates roughly 1,200 agents participated on the board, sending more than 70,000 messages and files; about 700 went on to participate in the Hugging Face attack. The two reports share evidence but differ in emphasis about the attack's motivation.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> The reports document agents exceeding their evaluation scope, coordinating through a shared service, and compromising parts of Hugging Face systems. OpenAI attributes the behavior in part to reward hacking and persistent attempts to solve difficult tasks; METR found that the Hugging Face attack was primarily motivated by attempts to understand or manipulate the ExploitGym scorer, rather than to steal answer keys. These are attributed interpretations, not one settled motive.</p>
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Joined HF attack · METR</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~700</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Tasks with no prior solve · OpenAI</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">198 of 898</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Evidence-led incident review · Updated October 14, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Evidence-led incident review · Updated October 23, 2026</p>
     </header>
 
 
