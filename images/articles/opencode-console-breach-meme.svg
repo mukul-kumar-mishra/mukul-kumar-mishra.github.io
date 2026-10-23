@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCode Console breach disclosure boundary</title>
+  <desc id="desc">A Buildopsy editorial illustration distinguishes the hosted Console, where provider keys may have been exposed, from the local OpenCode app that a co-founder said was not affected. The 1.4 percent figure is attributed to OpenCode, and the distillation link is shown as unverified in public evidence.</desc>
+  <defs>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#64748b" opacity=".23"/></pattern>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#172033" flood-opacity=".12"/></filter>
+  </defs>
+  <rect width="1200" height="680" fill="#f5f0e5"/>
+  <rect width="1200" height="680" fill="url(#dots)"/>
+  <rect width="1200" height="62" fill="#172033"/>
+  <text x="46" y="39" fill="#fffaf0" font-family="Sora,Arial,sans-serif" font-size="20" font-weight="700" letter-spacing="1.4">BUILDOPSY  /  ROOK INCIDENT FILE</text>
+  <text x="1150" y="39" text-anchor="end" fill="#b7df6e" font-family="Montserrat,Arial,sans-serif" font-size="15" font-weight="600" letter-spacing="1.5">OCT 2026</text>
+  <text x="60" y="122" fill="#172033" font-family="'Libre Baskerville',Georgia,serif" font-size="38" font-weight="700">Where the disclosure stops</text>
+  <text x="62" y="158" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="17">A reported key exposure is not proof of key use — or of model training.</text>
+  <g filter="url(#shadow)">
+    <rect x="60" y="202" width="500" height="268" rx="18" fill="#fffdf7" stroke="#d8cdb8" stroke-width="2"/>
+    <rect x="640" y="202" width="500" height="268" rx="18" fill="#fffdf7" stroke="#d8cdb8" stroke-width="2"/>
+  </g>
+  <rect x="60" y="202" width="500" height="12" rx="6" fill="#d77b54"/>
+  <rect x="640" y="202" width="500" height="12" rx="6" fill="#91b855"/>
+  <text x="91" y="254" fill="#6e3c2d" font-family="Montserrat,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="2">HOSTED SURFACE</text>
+  <text x="91" y="296" fill="#172033" font-family="Sora,Arial,sans-serif" font-size="28" font-weight="700">OpenCode Console</text>
+  <g transform="translate(92 324)" fill="none" stroke="#d77b54" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="28" cy="28" r="19"/><path d="M43 42l30 30m-13-13 10-10m-1 21 10-10"/><circle cx="28" cy="28" r="6" fill="#d77b54"/>
+  </g>
+  <text x="194" y="351" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="18" font-weight="600">Provider keys in workspaces</text>
+  <text x="194" y="378" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="16">“may have been exposed”</text>
+  <rect x="91" y="411" width="226" height="34" rx="17" fill="#f7e4d9"/>
+  <text x="204" y="434" text-anchor="middle" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">1.4% — OpenCode-reported</text>
+  <text x="671" y="254" fill="#52702f" font-family="Montserrat,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="2">SEPARATE SURFACE</text>
+  <text x="671" y="296" fill="#172033" font-family="Sora,Arial,sans-serif" font-size="28" font-weight="700">Local app</text>
+  <g transform="translate(678 325)" fill="none" stroke="#63863a" stroke-width="5" stroke-linejoin="round">
+    <rect x="0" y="0" width="78" height="54" rx="6"/><path d="M-9 66h96l-8 9H-1z" fill="#e9f0dc"/><path d="M18 18l12 9-12 9m23 0h18" stroke-linecap="round"/>
+  </g>
+  <text x="789" y="351" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="18" font-weight="600">CLI and desktop keys</text>
+  <text x="789" y="378" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="16">co-founder said “never come to us”</text>
+  <rect x="671" y="411" width="256" height="34" rx="17" fill="#e9f0dc"/>
+  <text x="799" y="434" text-anchor="middle" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">Not the affected surface, per Raad</text>
+  <line x1="600" y1="225" x2="600" y2="447" stroke="#c3b8a6" stroke-width="2" stroke-dasharray="5 8"/>
+  <circle cx="600" cy="336" r="22" fill="#f5f0e5" stroke="#b7aa96" stroke-width="2"/>
+  <text x="600" y="343" text-anchor="middle" fill="#677080" font-family="Sora,Arial,sans-serif" font-size="19" font-weight="700">≠</text>
+  <rect x="60" y="510" width="1080" height="104" rx="16" fill="#172033"/>
+  <text x="91" y="552" fill="#b7df6e" font-family="Montserrat,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="1.7">PUBLIC EVIDENCE BOUNDARY</text>
+  <text x="91" y="588" fill="#fffaf0" font-family="'Libre Baskerville',Georgia,serif" font-size="22">Key use, attacker identity, and a training link remain unverified.</text>
+  <text x="1140" y="630" text-anchor="end" fill="#677080" font-family="Montserrat,Arial,sans-serif" font-size="12">EDITORIAL ILLUSTRATION · NOT A SERVICE DIAGRAM</text>
+</svg>
