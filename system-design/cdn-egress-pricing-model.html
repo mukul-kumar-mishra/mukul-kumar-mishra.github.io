@@ -69,6 +69,7 @@
         <p>Third, count egress per path per month and alert on slope. Gigabytes per day times tier rate, tracked against commit, turns the tollbooth into a metric the on-call owns — the same ingest-slope discipline as log pipelines.</p>
         <p>Fourth, negotiate or migrate with the toll itemized, not bundled. A renewal conversation that names the egress line separately gets a different answer than one that waves at the total. And a migration plan that amortizes the exit toll across months beats one that pays it upfront.</p>
         <p>Fifth, design multi-cloud reads, not multi-cloud writes. One authoritative copy and cheap or free reads everywhere beats two writable copies syncing across tolled links. Data gravity is just egress with patience.</p>
+        <p>If the line you need to price is CDN bandwidth and request charges rather than cloud egress, run the <a href="../tools/cdn-cost-calculator.html">CDN Cost Calculator</a>.</p>
       </section>
       <section><h2>6. The Postmortem Verdict</h2>
         <p>Three clocks ran in this story: the 2021 announcement named the tax, the 2022 general availability proved customers would switch for it, and every invoice since has confirmed the tollbooth is load-bearing for provider margins. Treating egress as a pass-through cost misses the mechanism — it is the mechanism, the single line that converts stored bytes into switching costs.</p>

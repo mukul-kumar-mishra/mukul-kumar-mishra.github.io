@@ -36,9 +36,13 @@
     "mainEntity":[
       {"@type":"Question","name":"How is the monthly CDN estimate calculated?","acceptedAnswer":{"@type":"Answer","text":"The model adds monthly bandwidth times its entered price per GB to requests in groups of 10,000 times the entered request price. With the example inputs, the estimate is $925 before plan fees or free-tier allowances."}},
       {"@type":"Question","name":"Is bandwidth or request volume the bigger cost in this example?","acceptedAnswer":{"@type":"Answer","text":"Bandwidth is about 92 percent of this example bill and requests about 8 percent. The mix changes when traffic volume, object size or the unit rates change."}},
-      {"@type":"Question","name":"Does this include CDN free tiers or plan fees?","acceptedAnswer":{"@type":"Answer","text":"No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan."}}
+      {"@type":"Question","name":"Does this include CDN free tiers or plan fees?","acceptedAnswer":{"@type":"Answer","text":"No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan."}},
+      {"@type":"Question","name":"How much does a CDN cost per GB?","acceptedAnswer":{"@type":"Answer","text":"It depends on the pricing model. CloudFront pay-as-you-go US/Europe charges $0.085 per GB after the 1 TB monthly free allowance, covering the next 9 TB before the $0.080 per GB tier. Flat-rate plans and committed contracts do not map to a single per-GB rate. Use the calculator with your contracted rate."}}
     ]
   }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"CDN Cost Calculator","url":"https://buildopsy.com/tools/cdn-cost-calculator.html","applicationCategory":"BusinessApplication","operatingSystem":"Any","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"}}
   </script>
 </head>
 <body class="site">
@@ -72,6 +76,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">CDN Cost Calculator</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">This two-line estimate adds bandwidth charges to request charges. The example inputs price 10,000 GB at $0.085 per GB and 100 million requests at $0.0075 per ten thousand, for $925 before free tiers or fixed plan fees. Enter your provider's billable volume and rates.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
+      <p class="fl-desc" style="margin-top:12px;">The defaults follow a CloudFront-style US/Europe usage shape. CloudFront also sells flat-rate plans, and Cloudflare or Fastly price by plan or commitment; this model covers usage-based per-GB and per-request bills. Read the <a href="../system-design/cdn-egress-pricing-model.html">CDN egress pricing teardown</a> or check the <a href="https://aws.amazon.com/cloudfront/pricing/" target="_blank" rel="noopener noreferrer">CloudFront pricing page</a>.</p>
     </header>
 
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
@@ -128,7 +133,35 @@
           </div>
         </div>
       </section>
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/cloudflare-edge-outage-postmortem.html">Cloudflare's 2025 Outage: How a Bot-Feature File Broke the Proxy</a></h3><p class="fl-desc">Cloudflare traced the incident to duplicate Bot Management feature rows exceeding a proxy runtime limit, with impact differing by proxy version.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Pricing teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/cdn-egress-pricing-model.html">The $0.09 Toll: Why Egress Is the Cloud's Real Lock-In</a></h3><p class="fl-desc">How providers buy transit by capacity and sell it by volume, with a worked 10 TB egress model and the R2 zero-egress comparison.</p></article>
+    </section>
+
+    <section class="sec" id="cdn-pricing-models">
+      <h2 class="sec-title">CDN pricing models</h2>
+      <p class="fl-desc">CDN bills generally follow usage-based pricing or a flat-rate/committed plan. This calculator models the first shape; the reference table shows why a single per-GB number does not fit every provider.</p>
+      <div style="overflow-x:auto;">
+        <table class="claimtable">
+          <thead><tr><th>Model</th><th>Example</th><th>How it bills</th></tr></thead>
+          <tbody>
+            <tr><td>Usage-based</td><td>AWS CloudFront pay-as-you-go, US/Europe</td><td>The first 1 TB each month is free. The next 9 TB is $0.085/GB, the next 40 TB is $0.080/GB and the next 100 TB is $0.060/GB. HTTP requests are $0.0075 per 10,000 and HTTPS requests are $0.01 per 10,000 after the first 10 million requests each month.</td></tr>
+            <tr><td>Flat-rate plan</td><td>AWS CloudFront plans</td><td>Free $0, Pro $15, Business $200 and Premium $1,000 per distribution per month, each with a usage allowance and no overage charges.</td></tr>
+            <tr><td>Plan or commitment</td><td>Cloudflare, Fastly</td><td>Priced by plan or committed volume. A per-GB model does not map directly; check the provider's current pricing.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fl-desc">CloudFront rates and plan prices checked October 23, 2026 against the <a href="https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/" target="_blank" rel="noopener noreferrer">pay-as-you-go pricing page</a> and the <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html" target="_blank" rel="noopener noreferrer">flat-rate plan documentation</a>. Provider prices change; confirm before budgeting.</p>
+    </section>
+
+    <section class="sec" id="cdn-faq">
+      <h2 class="sec-title">Frequently Asked Questions</h2>
+      <h3>How is the monthly CDN estimate calculated?</h3>
+      <p class="fl-desc">The model adds monthly bandwidth times its entered price per GB to requests in groups of 10,000 times the entered request price. With the example inputs, the estimate is $925 before plan fees or free-tier allowances.</p>
+      <h3>Is bandwidth or request volume the bigger cost in this example?</h3>
+      <p class="fl-desc">Bandwidth is about 92 percent of this example bill and requests about 8 percent. The mix changes when traffic volume, object size or the unit rates change.</p>
+      <h3>Does this include CDN free tiers or plan fees?</h3>
+      <p class="fl-desc">No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan.</p>
+      <h3>How much does a CDN cost per GB?</h3>
+      <p class="fl-desc">It depends on the pricing model. CloudFront pay-as-you-go US/Europe charges $0.085 per GB after the 1 TB monthly free allowance, covering the next 9 TB before the $0.080 per GB tier. Flat-rate plans and committed contracts do not map to a single per-GB rate. Use the calculator with your contracted rate.</p>
     </section>
 
     <section class="sec" id="more-tools">
