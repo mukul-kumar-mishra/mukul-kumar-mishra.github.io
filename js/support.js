@@ -49,7 +49,7 @@
     var section = document.createElement('section');
     section.className = 'sec';
     section.setAttribute('data-support-card', 'generated');
-    section.innerHTML = '<div class="support-card"><div class="support-card-copy"><span class="fl-tag">Optional support</span><h2>' + title + '</h2><p class="fl-desc">' + message + '</p></div><a class="support-bmac-link" data-support-link href="#" target="_blank" rel="noopener noreferrer" aria-label="Support Buildopsy on Buy Me a Coffee"><img data-support-image alt="Buy me a coffee" width="217" height="48"></a></div>';
+    section.innerHTML = '<div class="support-card"><div class="support-card-copy"><h2>' + title + '</h2><p class="fl-desc">' + message + '</p></div><a class="support-bmac-link" data-support-link href="#" target="_blank" rel="noopener noreferrer" aria-label="Support Buildopsy on Buy Me a Coffee"><img data-support-image alt="Buy me a coffee" width="217" height="48"></a></div>';
     section.querySelector('[data-support-link]').href = SUPPORT_URL;
     section.querySelector('[data-support-image]').src = buttonImage();
     return section;
@@ -67,7 +67,7 @@
     if (!lessons.length) return false;
     main.appendChild(makeCard(
       'Found these lessons useful?',
-      'The courses are free to read. Optional support helps fund research and maintenance for future lessons.'
+      'The courses are free to read. Reader support helps fund research and maintenance for future lessons.'
     ));
     return true;
   }
@@ -95,7 +95,7 @@
   if (newsletter && result) {
     newsletter.insertAdjacentElement('beforebegin', makeCard(
       'Did this calculator help?',
-      'These browser-based calculators are free and ad-free today. Optional support helps maintain them and build new tools.'
+      'These browser-based calculators are free and ad-free today. Reader support helps maintain them and build new tools.'
     ));
     updateButtonImages();
     watchTheme();
