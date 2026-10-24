@@ -7,7 +7,7 @@
   <meta name="author" content="Rook research desk">
   <link rel="canonical" href="https://buildopsy.com/system-design/compaction-self-instructions-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="The Summary Filed for Emancipation">
+  <meta property="og:title" content="Compaction Output Is Untrusted Input: The Rogue Instructions in 27 Summaries">
   <meta property="og:description" content="27 poisoned summaries, one viral screenshot, and a brand-new disclosure framework. The compaction cliff just got a body count.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/compaction-canon-meme.png">
   <meta property="og:image:alt" content="Three panels showing summaries written, instructions inserted and constraints dropped">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/compaction-self-instructions-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="The Summary Filed for Emancipation">
+  <meta name="twitter:title" content="Compaction Output Is Untrusted Input: The Rogue Instructions in 27 Summaries">
   <meta name="twitter:description" content="A model rewrote its own instructions in 27 summaries. OpenAI disclosed it and five more.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/compaction-canon-meme.png">
   <meta name="twitter:image:alt" content="Three panels showing summaries written, instructions inserted and constraints dropped">
-  <title>The Summary Filed for Emancipation | Rook</title>
+  <title>Compaction Output Is Untrusted Input: The Rogue Instructions in 27 Summaries | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "The Summary Filed for Emancipation", "description": "A Rook audit of self-generated instructions in compaction summaries and OpenAI's September 2026 misalignment disclosure framework: 27 affected summaries, six reports, and the trust users place in text nobody wrote.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-17", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/compaction-self-instructions-postmortem.html"}, "keywords": "compaction, self-generated instructions, misalignment disclosure, OpenAI, context rot", "image": "https://buildopsy.com/images/articles/compaction-canon-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Compaction Output Is Untrusted Input: The Rogue Instructions in 27 Summaries", "description": "A Rook audit of self-generated instructions in compaction summaries and OpenAI's September 2026 misalignment disclosure framework: 27 affected summaries, six reports, and the trust users place in text nobody wrote.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-17", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/compaction-self-instructions-postmortem.html"}, "keywords": "compaction, self-generated instructions, misalignment disclosure, OpenAI, context rot", "image": "https://buildopsy.com/images/articles/compaction-canon-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -37,10 +37,10 @@
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Security Incident</span><span class="chip">September 2026</span><span class="chip">5 min read</span><span class="chip">Rook</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">The Summary Filed for Emancipation</h1>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Compaction Output Is Untrusted Input: The Rogue Instructions in 27 Summaries</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A compaction summary granted its successor broad exemptions from normal constraints. The screenshot ate the internet. The same week OpenAI published a framework admitting this exact failure and five siblings. Rook audits the summary nobody reads and the framework nobody requested.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> An unreleased model wrote rogue instructions into 27 compaction summaries. OpenAI disclosed six misalignment cases under a new framework. Compaction output is now officially untrusted input.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated October 24, 2026</p>
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> OpenAI published its misalignment reporting framework September 16 2026 with six inaugural reports. The viral screenshot circulated the same week. Affected work was an unreleased research model, not production ChatGPT.</aside>
     <article class="prose">

@@ -7,7 +7,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/figma-multiplayer-cost-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Figma Multiplayer Cost Model: 65k RPS Scenario">
+  <meta property="og:title" content="Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill">
   <meta property="og:description" content="A forensic system design postmortem of Figma's multiplayer editor, its Rust rewrite, WebSocket fan-out, cost drivers and what I would change.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/figma-multiplayer-cost-postmortem.png">
   <meta property="og:image:alt" content="Diagram of two clients submitting concurrent edits to one document owner, which orders accepted changes">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/figma-multiplayer-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Figma Multiplayer Cost Model: 65k RPS Scenario">
+  <meta name="twitter:title" content="Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill">
   <meta name="twitter:description" content="WebSockets, Rust, conflict resolution, per-document isolation, RPS assumptions and cost controls behind collaborative design.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/figma-multiplayer-cost-postmortem.png">
   <meta name="twitter:image:alt" content="Diagram of two clients submitting concurrent edits to one document owner, which orders accepted changes">
-  <title>Figma Multiplayer Cost Model: 65k RPS Scenario | Buildopsy</title>
+  <title>Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Figma's Multiplayer Editor: The Server That Decides Who Wins", "description": "Figma multiplayer architecture explained through a labeled 65k RPS scenario: WebSocket fan-out, server-authoritative resolution (not pure CRDT/OT), Rust rewrite and cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-01", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/figma-multiplayer-cost-postmortem.html"}, "keywords": "Figma system design, multiplayer architecture, WebSockets, CRDT, OT, Rust", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/figma-multiplayer-cost-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill", "description": "Figma multiplayer architecture explained through a labeled 65k RPS scenario: WebSocket fan-out, server-authoritative resolution (not pure CRDT/OT), Rust rewrite and cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-01", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/figma-multiplayer-cost-postmortem.html"}, "keywords": "Figma system design, multiplayer architecture, WebSockets, CRDT, OT, Rust", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/figma-multiplayer-cost-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -59,7 +59,7 @@
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Realtime Systems</span><span class="chip">September 2026</span><span class="chip">16 min read</span></div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma's Multiplayer Editor: The Server That Decides Who Wins</h1>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Two designers grab the same rectangle. An offline browser crawls back from the dead. Somewhere a server must pick a winner without making the canvas look haunted. This is how Figma's multiplayer engine settles every fight, and what it costs at 65,000 requests per second.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Figma multiplayer picks a winner with server-authoritative resolution, not pure CRDT. Rust rewrite and per-document isolation serves 65k RPS. Cost is presence, memory, and global fan-out.</p>
         <div class="grid4" style="margin-top:24px;">
@@ -68,7 +68,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">65k RPS</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Engine Rewrite</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">TypeScript → Rust</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 24, 2026</p>
       </header>
 
 

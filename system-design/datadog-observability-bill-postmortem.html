@@ -7,7 +7,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/datadog-observability-bill-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Coinbase's $65M Datadog Bill: Three Meters, One Invoice">
+  <meta property="og:title" content="Coinbase's $65M Datadog Bill: Per-Host, Per-GB and Per-Event Meters">
   <meta property="og:description" content="Per-host, per-GB, and per-event meters compounded into a $65M invoice. How Coinbase's 2021 observability bill happened, why they stayed, and the guardrails.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/datadog-observability-bill.png">
   <meta property="og:image:alt" content="Datadog observability bill waterfall: host fleet, log ingest, and indexed events combine into the monthly meter">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/datadog-observability-bill-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Coinbase's $65M Datadog Bill: Three Meters, One Invoice">
+  <meta name="twitter:title" content="Coinbase's $65M Datadog Bill: Per-Host, Per-GB and Per-Event Meters">
   <meta name="twitter:description" content="$65M is about 235,000 host-years at $23 a month. The meters behind Coinbase's Datadog bill, and the guardrails.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/datadog-observability-bill.png">
   <meta name="twitter:image:alt" content="Datadog observability meters combining into a monthly bill, with the $65M Coinbase invoice as scale">
-  <title>Coinbase's $65M Datadog Bill: Three Meters, One Invoice | Buildopsy</title>
+  <title>Coinbase's $65M Datadog Bill: Per-Host, Per-GB and Per-Event Meters | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Coinbase's $65M Datadog Bill: Three Meters, One Invoice","description":"A source-led cost teardown of Coinbase's 2021 Datadog observability bill: per-host, per-GB, and per-event meters, the build-vs-buy math, and the guardrails that price metering down.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},"datePublished":"2026-10-11","dateModified":"2026-10-23","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/datadog-observability-bill-postmortem.html"},"keywords":"Datadog bill, observability costs, Coinbase, log ingest pricing, host monitoring costs, APM pricing","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/datadog-observability-bill.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Coinbase's $65M Datadog Bill: Per-Host, Per-GB and Per-Event Meters","description":"A source-led cost teardown of Coinbase's 2021 Datadog observability bill: per-host, per-GB, and per-event meters, the build-vs-buy math, and the guardrails that price metering down.","author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},"datePublished":"2026-10-11","dateModified":"2026-10-24","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/datadog-observability-bill-postmortem.html"},"keywords":"Datadog bill, observability costs, Coinbase, log ingest pricing, host monitoring costs, APM pricing","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/datadog-observability-bill.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -37,11 +37,11 @@
     <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Observability</span><span class="chip">October 2026</span><span class="chip">7 min read</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Coinbase's $65M Datadog Bill: Three Meters, One Invoice</h1>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Coinbase's $65M Datadog Bill: Per-Host, Per-GB and Per-Event Meters</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">In May 2023, one line on a Datadog earnings call priced an entire industry's blind spot. A single customer's upfront bill had not recurred, and an analyst did the subtraction live: about $65 million. The customer was Coinbase. The year was 2021. No one watching the meter stopped it.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Datadog's Q1 2023 earnings call surfaced an upfront bill of about $65M; reporting identifies it as Coinbase's 2021 observability spend, settled in Q1 2022. Per-host, per-GB, and per-event meters explain how growth-mode instrumentation compounds. A ten-engineer in-house team pencils under $5M a year. Coinbase stayed after a renegotiation; its current spend is undisclosed. Rerun the small-scale math in the <a href="../tools/observability-cost-calculator.html">Observability Cost Calculator</a>.</p>
       <div class="grid4" style="margin-top:24px;"><div class="stat" style="padding:14px;"><div class="lbl">Datadog bill</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">~$65M</div></div><div class="stat" style="padding:14px;"><div class="lbl">Spend year</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">2021</div></div><div class="stat" style="padding:14px;"><div class="lbl">Bill settled</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Q1 2022</div></div><div class="stat" style="padding:14px;"><div class="lbl">In-house team math</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">&lt;$5M/yr</div></div></div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led cost teardown · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led cost teardown · Updated October 24, 2026</p>
     </header>
     <article class="prose">
       <section><h2>1. The Line on the Earnings Call That Priced an Industry</h2>

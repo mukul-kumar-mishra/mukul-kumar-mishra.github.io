@@ -7,7 +7,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost">
+  <meta property="og:title" content="Opus 5.5 Price Cut: The Per-Task Bill Depends on Cache Hits">
   <meta property="og:description" content="Two vendors shipped within the hour. List prices fell up to half. Cache reads fell further. The per-task bill moved differently than the price list.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/opus-price-war-meme.png">
   <meta property="og:image:alt" content="Bar chart comparing input price per million tokens across four frontier models">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost">
+  <meta name="twitter:title" content="Opus 5.5 Price Cut: The Per-Task Bill Depends on Cache Hits">
   <meta name="twitter:description" content="The price list fell. The cache read fell further. The task bill follows neither. It follows the hit rate.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/opus-price-war-meme.png">
   <meta name="twitter:image:alt" content="Bar chart comparing input price per million tokens across four frontier models">
-  <title>Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost | Buildopsy</title>
+  <title>Opus 5.5 Price Cut: The Per-Task Bill Depends on Cache Hits | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost", "description": "Anthropic cut Opus to $4 input and $20 output on Sep 22. OpenAI halved GPT-6 an hour later. A sourced teardown with list prices and cache math and per-task estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html"}, "keywords": "Claude Opus 5.5, GPT-6 pricing, inference cost, prompt caching, price war, system design", "image": "https://buildopsy.com/images/articles/opus-price-war-meme.png"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Opus 5.5 Price Cut: The Per-Task Bill Depends on Cache Hits", "description": "Anthropic cut Opus to $4 input and $20 output on Sep 22. OpenAI halved GPT-6 an hour later. A sourced teardown with list prices and cache math and per-task estimates.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/opus-price-war-inference-cost-postmortem.html"}, "keywords": "Claude Opus 5.5, GPT-6 pricing, inference cost, prompt caching, price war, system design", "image": "https://buildopsy.com/images/articles/opus-price-war-meme.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -61,7 +61,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">7 min read</span></div>
-        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Claude Opus 5.5 Price War System Design: How September 22 Halved Inference Cost</h1>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Opus 5.5 Price Cut: The Per-Task Bill Depends on Cache Hits</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">On Sep 22 2026 Anthropic shipped Opus 5.5 at twenty percent below Opus 5. About an hour later OpenAI shipped GPT-6 Sol and Luna at half their predecessors. Grok had undercut both the day before. Three price lists moved inside twenty four hours. The task bill moved on a fourth variable nobody lists.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> List prices fell up to half on Sep 22. Cache reads fell further. Long agent runs bill more than 90 percent at cached rates, so hit rate and tokens per task decide the invoice. Model it per task, not per token.</p>
         <div class="grid4" style="margin-top:24px;">

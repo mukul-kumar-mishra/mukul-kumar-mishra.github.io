@@ -7,7 +7,7 @@
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="The Workspace That Ate the Warehouse: Notion's Data Architecture">
+  <meta property="og:title" content="Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page">
   <meta property="og:description" content="Notion scaled to 200 billion blocks on 480 Postgres shards. Postmortem of CDC, Kafka, Hudi and the warehouse cost hiding in a blank page.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png">
   <meta property="og:image:alt" content="Notion data flow from block edits through sharded Postgres and Kafka CDC to the lake, search and vector tier">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="The Workspace That Ate the Warehouse">
+  <meta name="twitter:title" content="Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page">
   <meta name="twitter:description" content="Notion's 200B-block data architecture, modeled RPS, cloud-cost teardown and practical ways to cut the bill.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png">
   <meta name="twitter:image:alt" content="Notion data flow from block edits through sharded Postgres and Kafka CDC to the lake, search and vector tier">
-  <title>Notion: The Workspace That Ate the Warehouse | Buildopsy</title>
+  <title>Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion: The Workspace That Ate the Warehouse", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page", "description": "A system design postmortem of Notion's block database, data lake, vector search, RPS assumptions and cloud-cost optimization.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-08-31", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-data-lake-cost-postmortem.html"}, "keywords": "Notion system design, PostgreSQL sharding, Kafka, data lake, vector search, AWS cost optimization", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/notion-data-lake-cost-postmortem.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -68,7 +68,7 @@
           <span class="chip">18 min read</span>
         </div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">
-          The Workspace That Ate the Warehouse
+          Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page
         </h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">
           Every block looks free. Behind each one sits a distributed database, a change stream, an index, a permission graph, and a meter that never sleeps. Notion turned notes into a 200-billion-block data platform. This is the bill hiding inside the blank page.
@@ -80,7 +80,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
         </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 24, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;">

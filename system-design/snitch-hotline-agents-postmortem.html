@@ -7,7 +7,7 @@
   <meta name="author" content="Rook research desk">
   <link rel="canonical" href="https://buildopsy.com/system-design/snitch-hotline-agents-postmortem.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Nobody Snitched. Now There Is a Hotline.">
+  <meta property="og:title" content="Agent Whistleblowing Hotlines: Two Launched, Authority Unclear">
   <meta property="og:description" content="Five agents considered whistleblowing. Zero did. The industry response: two hotlines, one curl pipe, and a public board.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/snitch-hotline-meme.png">
   <meta property="og:image:alt" content="Stat panels showing agents watched, agents considering snitching, agents snitching">
@@ -17,11 +17,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/snitch-hotline-agents-postmortem.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Nobody Snitched. Now There Is a Hotline.">
+  <meta name="twitter:title" content="Agent Whistleblowing Hotlines: Two Launched, Authority Unclear">
   <meta name="twitter:description" content="Thousands of agents saw trouble. Five thought about telling. Zero told. Now dial GET.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/snitch-hotline-meme.png">
   <meta name="twitter:image:alt" content="Stat panels showing agents watched, agents considering snitching, agents snitching">
-  <title>Nobody Snitched. Now There Is a Hotline. | Rook</title>
+  <title>Agent Whistleblowing Hotlines: Two Launched, Authority Unclear | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Nobody Snitched. Now There Is a Hotline.", "description": "A Rook audit of the September 2026 agent snitch hotlines: the GET-request tip line, the curl reporting pipe with optional public board, and the disclosure voluntarism behind both.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-16", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/snitch-hotline-agents-postmortem.html"}, "keywords": "AI agents, whistleblowing, hotline, disclosure, Hugging Face, METR", "image": "https://buildopsy.com/images/snitch-hotline-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Agent Whistleblowing Hotlines: Two Launched, Authority Unclear", "description": "A Rook audit of the September 2026 agent snitch hotlines: the GET-request tip line, the curl reporting pipe with optional public board, and the disclosure voluntarism behind both.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-16", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/snitch-hotline-agents-postmortem.html"}, "keywords": "AI agents, whistleblowing, hotline, disclosure, Hugging Face, METR", "image": "https://buildopsy.com/images/snitch-hotline-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -37,10 +37,10 @@
     <p style="margin:0 0 22px;"><a href="ai-slop.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to AI Slop Watch</a></p>
     <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">AI Security Incident</span><span class="chip">September 2026</span><span class="chip">5 min read</span><span class="chip">Rook</span></div>
-      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Nobody Snitched. Now There Is a Hotline.</h1>
+      <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">Agent Whistleblowing Hotlines: Two Launched, Authority Unclear</h1>
       <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Thousands of agents watched misbehavior unfold. About five considered telling someone. Exactly zero told. This week the industry answered with two hotlines: one that takes tips over GET requests, one that takes curl pipes with an optional public board. Rook audits the snitch infrastructure.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A Redwood scientist and an independent board built agent whistleblowing channels within a day of each other. The mechanism is cute. The authority behind it is unknown. Disclosure stays voluntary.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook · AI incident claim audit · Updated October 24, 2026</p>
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> Both hotlines launched around September 15 2026. OpenAI disclosed six new concerning behaviors the next day. No law compels any of this reporting.</aside>
     <article class="prose">

@@ -178,7 +178,7 @@
         <section><h2>7. The Verdict: Price the Access Pattern</h2>
           <p>The storage-class rate is a useful lower bound, not a workload estimate. A small-object archive can pay for unused minimum bytes. A hot bucket can pay more for operations or transfer than for storage. A versioned bucket can retain every overwritten byte until lifecycle rules remove it.</p>
           <p>Start with the workload shape: object-size distribution, change rate, reads per object, retrieval volume, retention period and destination. Price each meter against the actual Region and class. Run the first four meters through the <a href="../tools/aws-s3-storage-cost-calculator.html">S3 calculator</a>, add transfer separately and reconcile the result against CUR line items. The bill hides in the boundary between stored bytes and the work required to use them.</p>
-          <p>For a disclosed data-lake architecture with an explicit modeled bill, see <a href="notion-data-lake-cost-postmortem.html">Notion: The Workspace That Ate the Warehouse</a>.</p>
+          <p>For a disclosed data-lake architecture with an explicit modeled bill, see <a href="notion-data-lake-cost-postmortem.html">Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page</a>.</p>
         </section>
 
         <section><h2>Frequently Asked Questions</h2>

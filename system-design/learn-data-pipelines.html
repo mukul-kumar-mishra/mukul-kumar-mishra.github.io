@@ -181,7 +181,7 @@
           <ul class="lesson-ideas">
             <li>Batch promises freshness by a clock time, not by an event. Name the hour in the contract before naming the tool.</li>
             <li>Windows shrink as data grows. Measure transform minutes per gigabyte now so growth never surprises the morning.</li>
-            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>, where CDC and hourly flows serve a calm product.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page</a>, where CDC and hourly flows serve a calm product.</li>
           </ul>
           <p>Batch fits when the business can wait until morning. While that freshness contract holds, it avoids paying for always-on processing. Once it stops holding, tune the contract or choose a streaming path.</p>
           <div class="lesson-questions">
@@ -305,7 +305,7 @@
           <ul class="lesson-ideas">
             <li>CDC turns one edit into six downstream jobs. Count the readers per write before adding another index.</li>
             <li>Partition by query pattern and compact small files so scans do not inflate the monthly bill.</li>
-            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">The Workspace That Ate the Warehouse</a>, the 200B-block lake with modeled cost.</li>
+            <li>Deep dive: <a href="notion-data-lake-cost-postmortem.html">Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page</a>, the 200B-block lake with modeled cost.</li>
           </ul>
           <p>Partitioning should follow query patterns and retention needs. For a modeled warehouse workload, measure bytes scanned and compaction work before changing engines; a full scan is not automatically an error if the freshness contract permits it.</p>
           <div class="lesson-questions">
