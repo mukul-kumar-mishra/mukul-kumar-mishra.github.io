@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
-  <title id="title">OpenCode Console breach evidence timeline, October 16–19, 2026</title>
-  <desc id="desc">A four-date timeline distinguishes public posts by OpenCode and provider representatives, customer-notice wording and user-reported charges, and unresolved questions about the entry method, affected account count, credential use, and the claimed connection to model training. The customer notice timestamp is explicitly an earliest-possible exposure, not a confirmed intrusion start.</desc>
+  <title id="title">OpenCode Console breach evidence timeline, October 16–21, 2026</title>
+  <desc id="desc">A four-panel timeline distinguishes public posts by OpenCode and provider representatives from customer-email wording, and marks unresolved questions about the entry method, affected account count, credential use, and the claimed connection to model training. The follow-up email timestamp is explicitly an earliest-possible exposure, not a confirmed intrusion start. The final panel adds October 20–21 posts on pending Anthropic credit restoration and continuing daily attempts, which describe response work rather than the original intrusion.</desc>
   <defs>
     <pattern id="paperDots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#64748b" opacity=".18"/></pattern>
   </defs>
@@ -12,7 +12,7 @@
   <text x="54" y="108" fill="#172033" font-family="'Libre Baskerville',Georgia,serif" font-size="31" font-weight="700">What the dates establish — and what they do not</text>
   <g font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">
     <rect x="57" y="130" width="16" height="16" rx="4" fill="#8eaa56"/><text x="82" y="143" fill="#35452b">DIRECT PUBLIC STATEMENT / ACTION</text>
-    <rect x="372" y="130" width="16" height="16" rx="4" fill="#d77b54"/><text x="397" y="143" fill="#733f30">CUSTOMER NOTICE, REPRODUCED BY REPORTING</text>
+    <rect x="372" y="130" width="16" height="16" rx="4" fill="#d77b54"/><text x="397" y="143" fill="#733f30">CUSTOMER EMAILS, REPRODUCED BY REPORTING</text>
     <rect x="738" y="130" width="16" height="16" rx="4" fill="none" stroke="#697386" stroke-width="2" stroke-dasharray="4 3"/><text x="763" y="143" fill="#566174">UNRESOLVED IN PUBLIC EVIDENCE</text>
   </g>
   <line x1="115" y1="187" x2="1085" y2="187" stroke="#b9ad98" stroke-width="3"/>
@@ -23,51 +23,53 @@
     <circle cx="1030" cy="187" r="11" stroke="#8eaa56"/>
   </g>
   <g font-family="Sora,Arial,sans-serif" font-size="19" font-weight="700" fill="#172033" text-anchor="middle">
-    <text x="160" y="220">OCT 16–17</text><text x="450" y="220">OCT 17</text><text x="740" y="220">OCT 17–18</text><text x="1030" y="220">OCT 18–19</text>
+    <text x="160" y="220">OCT 16–17</text><text x="450" y="220">OCT 17</text><text x="740" y="220">OCT 17–19</text><text x="1030" y="220">OCT 18–21</text>
   </g>
   <g>
-    <rect x="53" y="239" width="244" height="220" rx="14" fill="#fffaf4" stroke="#d77b54" stroke-width="2"/>
+    <rect x="53" y="239" width="244" height="232" rx="14" fill="#fffaf4" stroke="#d77b54" stroke-width="2"/>
     <rect x="53" y="239" width="244" height="9" rx="4" fill="#d77b54"/>
-    <text x="72" y="278" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.1">REPORTED NOTICE</text>
+    <text x="72" y="278" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.1">CUSTOMER EMAILS</text>
     <text x="72" y="312" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="15" font-weight="600">Older system access</text>
-    <text x="72" y="339" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">Notice reportedly says keys</text>
+    <text x="72" y="339" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">Initial email says keys</text>
     <text x="72" y="361" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">may have been exposed.</text>
-    <rect x="70" y="386" width="210" height="53" rx="9" fill="#f7e4d9"/>
-    <text x="82" y="407" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">00:30 UTC, Oct 17</text>
-    <text x="82" y="427" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="11">earliest possible, not start</text>
+    <rect x="70" y="398" width="210" height="55" rx="9" fill="#f7e4d9"/>
+    <text x="82" y="419" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">00:30 UTC, Oct 17</text>
+    <text x="82" y="439" fill="#733f30" font-family="Montserrat,Arial,sans-serif" font-size="11">earliest possible, not start</text>
   </g>
   <g>
-    <rect x="343" y="239" width="244" height="220" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
+    <rect x="343" y="239" width="244" height="232" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
     <rect x="343" y="239" width="244" height="9" rx="4" fill="#8eaa56"/>
     <text x="362" y="278" fill="#52702f" font-family="Montserrat,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.1">OPENCODE POST</text>
     <text x="362" y="312" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="15" font-weight="600">1.4% of Console users</text>
     <text x="362" y="339" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">External providers linked;</text>
     <text x="362" y="361" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">incident described as ongoing.</text>
-    <rect x="360" y="386" width="210" height="53" rx="9" fill="#e9f0dc"/>
-    <text x="372" y="407" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">“Distillation” label</text>
-    <text x="372" y="427" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">no supporting chain published</text>
+    <rect x="360" y="398" width="210" height="55" rx="9" fill="#e9f0dc"/>
+    <text x="372" y="419" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">“Distillation” label</text>
+    <text x="372" y="439" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">no supporting chain published</text>
   </g>
   <g>
-    <rect x="633" y="239" width="244" height="220" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
+    <rect x="633" y="239" width="244" height="232" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
     <rect x="633" y="239" width="244" height="9" rx="4" fill="#8eaa56"/>
     <text x="652" y="278" fill="#52702f" font-family="Montserrat,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.1">PROVIDER POSTS</text>
     <text x="652" y="312" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="14" font-weight="600">Anthropic revoked keys</text>
-    <text x="652" y="339" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="13">it believed affected.</text>
-    <text x="652" y="361" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="13">Google blocked exposed keys.</text>
-    <rect x="650" y="386" width="210" height="53" rx="9" fill="#e9f0dc"/>
-    <text x="662" y="407" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">Actions are documented</text>
-    <text x="662" y="427" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">not a forensic account of use</text>
+    <text x="652" y="337" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="13">it believed affected.</text>
+    <text x="652" y="360" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="13">Google blocked exposed keys.</text>
+    <text x="652" y="383" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="13">OpenAI restored access.</text>
+    <rect x="650" y="398" width="210" height="55" rx="9" fill="#e9f0dc"/>
+    <text x="662" y="419" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">Actions are documented</text>
+    <text x="662" y="439" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">not a forensic account of use</text>
   </g>
   <g>
-    <rect x="923" y="239" width="244" height="220" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
+    <rect x="923" y="239" width="244" height="232" rx="14" fill="#fffdf7" stroke="#8eaa56" stroke-width="2"/>
     <rect x="923" y="239" width="244" height="9" rx="4" fill="#8eaa56"/>
     <text x="942" y="278" fill="#52702f" font-family="Montserrat,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.1">FOLLOW-UP POSTS</text>
     <text x="942" y="312" fill="#172033" font-family="Montserrat,Arial,sans-serif" font-size="15" font-weight="600">Raad: 48-hour targeting</text>
-    <text x="942" y="339" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">OpenAI: access and credits</text>
-    <text x="942" y="361" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="14">reported restored/refunded.</text>
-    <rect x="940" y="386" width="210" height="53" rx="9" fill="#e9f0dc"/>
-    <text x="952" y="407" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">Public statements</text>
-    <text x="952" y="427" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">underlying claims attributed</text>
+    <text x="942" y="337" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="12">Oct 20: Anthropic credits pending.</text>
+    <text x="942" y="360" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="12">Oct 21: hundreds of attempts/day,</text>
+    <text x="942" y="383" fill="#566174" font-family="Montserrat,Arial,sans-serif" font-size="12">incl. a rigged OAuth link.</text>
+    <rect x="940" y="398" width="210" height="55" rx="9" fill="#e9f0dc"/>
+    <text x="952" y="419" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700">Public statements</text>
+    <text x="952" y="439" fill="#3e5c23" font-family="Montserrat,Arial,sans-serif" font-size="11">underlying claims attributed</text>
   </g>
   <rect x="53" y="493" width="1114" height="132" rx="14" fill="#172033"/>
   <text x="78" y="527" fill="#b7df6e" font-family="Montserrat,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1.6">STILL UNRESOLVED AT THE OCT 24 CUTOFF</text>
