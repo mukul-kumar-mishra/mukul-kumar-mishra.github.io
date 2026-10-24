@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-labelledby="sm-title sm-desc">
+  <title id="sm-title">PHP2Shell SAPI matrix: affected scope versus demonstrated exploit and demonstrated remote code execution</title>
+  <desc id="sm-desc">A matrix of five PHP server APIs. Apache mod_php: RCE demonstrated for both CVE-2026-109618 and CVE-2026-109619, including the pre-application path. PHP-FPM: RCE demonstrated through application paths for 109618, without a complete FPM exploit for the pre-application path, and through the session lifecycle for 109619; the fatal-backtrace path needs a PHP 8.5 setting. php-cgi is in scope but not separately demonstrated. FrankenPHP is likely susceptible by analogy, unvalidated. LiteSpeed LSAPI is application-specific and unvalidated. The legend separates demonstrated RCE, conditional or likely, and in-scope but not demonstrated.</desc>
+  <defs>
+    <linearGradient id="sm-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a101c"/>
+      <stop offset="1" stop-color="#111a2b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" fill="url(#sm-bg)"/>
+
+  <text x="60" y="58" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">Affected is not the same as demonstrated</text>
+  <text x="60" y="84" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="12">PHP lists every web-serving SAPI as in scope. The demonstrated paths are narrower.</text>
+
+  <!-- header -->
+  <rect x="60" y="108" width="1080" height="42" rx="6" fill="#162034"/>
+  <text x="80" y="134" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.2">SAPI</text>
+  <text x="330" y="128" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="700">CVE-2026-109618</text>
+  <text x="330" y="142" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9.5">OOM corruption</text>
+  <text x="580" y="128" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="700">CVE-2026-109619</text>
+  <text x="580" y="142" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9.5">Stale global state</text>
+  <text x="840" y="134" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.2">WHAT THE ADVISORY ESTABLISHES</text>
+
+  <!-- Row 1 mod_php -->
+  <rect x="60" y="156" width="1080" height="84" fill="#101827"/>
+  <text x="80" y="184" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Apache mod_php</text>
+  <text x="80" y="202" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10">Highest-risk SAPI</text>
+  <text x="330" y="180" fill="#b6f36c" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">RCE demonstrated</text>
+  <text x="330" y="198" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">pre-application, default settings</text>
+  <text x="330" y="214" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">confirmed over HTTP</text>
+  <text x="580" y="180" fill="#b6f36c" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">RCE demonstrated</text>
+  <text x="580" y="198" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">fatal-backtrace and session paths</text>
+  <text x="840" y="180" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">Request shutdown runs even when startup failed.</text>
+  <text x="840" y="198" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">One unauthenticated request can reach the path</text>
+  <text x="840" y="214" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">before application code runs.</text>
+
+  <!-- Row 2 FPM -->
+  <rect x="60" y="240" width="1080" height="84" fill="#0d1523"/>
+  <text x="80" y="268" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">PHP-FPM</text>
+  <text x="80" y="286" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10">Conditional</text>
+  <text x="330" y="264" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">RCE via app paths</text>
+  <text x="330" y="282" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">no complete FPM exploit</text>
+  <text x="330" y="298" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">for the pre-app path</text>
+  <text x="580" y="264" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">RCE via session lifecycle</text>
+  <text x="580" y="282" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">fatal-backtrace path needs</text>
+  <text x="580" y="298" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">the PHP 8.5 setting</text>
+  <text x="840" y="264" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">FPM exits the child when startup fails, so the</text>
+  <text x="840" y="282" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">pre-application sequence does not survive. The</text>
+  <text x="840" y="298" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">validated path needs an application consumer.</text>
+
+  <!-- Row 3 php-cgi -->
+  <rect x="60" y="324" width="1080" height="84" fill="#101827"/>
+  <text x="80" y="352" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">php-cgi</text>
+  <text x="80" y="370" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10">In scope</text>
+  <text x="330" y="348" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">In scope; not demonstrated</text>
+  <text x="330" y="366" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">no public SAPI-specific RCE</text>
+  <text x="580" y="348" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">In scope; not demonstrated</text>
+  <text x="580" y="366" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">no public SAPI-specific RCE</text>
+  <text x="840" y="348" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">PHP and CERT-EU list it as affected. The public</text>
+  <text x="840" y="366" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">advisories do not demonstrate a cgi-specific</text>
+  <text x="840" y="382" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">exploit.</text>
+
+  <!-- Row 4 FrankenPHP -->
+  <rect x="60" y="408" width="1080" height="84" fill="#0d1523"/>
+  <text x="80" y="436" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">FrankenPHP</text>
+  <text x="80" y="454" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10">Likely</text>
+  <text x="330" y="432" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">Likely susceptible</text>
+  <text x="330" y="450" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">unvalidated</text>
+  <text x="580" y="432" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">Likely susceptible</text>
+  <text x="580" y="450" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">unvalidated</text>
+  <text x="840" y="432" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">The advisory calls it likely susceptible because it</text>
+  <text x="840" y="450" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">calls request shutdown unconditionally, analogous</text>
+  <text x="840" y="466" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">to mod_php. No complete exploit was shown.</text>
+
+  <!-- Row 5 LSAPI -->
+  <rect x="60" y="492" width="1080" height="84" fill="#101827"/>
+  <text x="80" y="520" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">LiteSpeed LSAPI</text>
+  <text x="80" y="538" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="10">Application-specific</text>
+  <text x="330" y="516" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">Likely; application-specific</text>
+  <text x="330" y="534" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">unvalidated</text>
+  <text x="580" y="516" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700">Likely; application-specific</text>
+  <text x="580" y="534" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">unvalidated</text>
+  <text x="840" y="516" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">The advisory says LSAPI models FPM, making</text>
+  <text x="840" y="534" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">application-specific exploits likely, but none</text>
+  <text x="840" y="550" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">was validated.</text>
+
+  <!-- legend -->
+  <rect x="60" y="584" width="12" height="12" fill="#b6f36c"/>
+  <text x="80" y="595" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">Demonstrated RCE</text>
+  <rect x="230" y="584" width="12" height="12" fill="#ffc857"/>
+  <text x="250" y="595" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">Conditional / likely</text>
+  <rect x="410" y="584" width="12" height="12" fill="#93a4bd"/>
+  <text x="430" y="595" fill="#c9d5e6" font-family="Segoe UI, Arial, sans-serif" font-size="10.5">In scope, not separately demonstrated</text>
+  <text x="840" y="595" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="600">“In scope” is not a claim of equal exploitability.</text>
+
+  <text x="60" y="612" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9">Sources: GHSA-w8hw-w9fx-j79w; GHSA-6wmf-4rv5-p3rp; PHP.net Oct 21 advisory; CERT-EU 2026-018; PHP Foundation (Oct 21).</text>
+  <text x="60" y="625" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9">CVE-2026-115560 affects patched 8.5.12 under an unusual session configuration and is treated separately in the article.</text>
+</svg>

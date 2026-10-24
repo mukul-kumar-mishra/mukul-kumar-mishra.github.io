@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-labelledby="tw-title tw-desc">
+  <title id="tw-title">PHP2Shell timeline: ten weeks from AI-assisted discovery to release, and an eighteen-hour public defender window</title>
+  <desc id="tw-desc">Two-lane ordinal timeline. Top lane: a 2024 audit finds the first sign of the out-of-memory flaw; Calif begins auditing on July 30, 2026; Calif and OpenAI report on August 11; Wiz discovers on August 19 and reports on August 24; PHP acknowledges on September 21; patches ship on October 21. Bottom lane: AWS records a honeypot attempt on October 17; CVE identifiers leak on October 20 at 15:00 UTC; PHP pre-announces at 19:30; a Calif proof-of-concept video appears around 20:00; Cloudflare's WAF is live at 03:02 on October 21; Chainguard publishes images with the fix at 07:41; the coordinated release is 13:30 to 14:00. A shaded band marks the roughly eighteen-hour public window and the six-hour nineteen-minute gap after Chainguard.</desc>
+  <defs>
+    <linearGradient id="tw-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a101c"/>
+      <stop offset="1" stop-color="#111a2b"/>
+    </linearGradient>
+    <marker id="tw-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6fe3ff"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="url(#tw-bg)"/>
+  <g stroke="#1c2940" stroke-width="1">
+    <line x1="60" y1="100" x2="1140" y2="100"/>
+  </g>
+
+  <text x="60" y="62" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">Ten weeks to a fix, hours to a leak</text>
+  <text x="60" y="88" fill="#93a4bd" font-family="Segoe UI, Arial, sans-serif" font-size="12">PHP2Shell disclosure and exploitation window, UTC. Ordinal spacing; not to scale.</text>
+
+  <!-- 71-day bracket -->
+  <g fill="#6fe3ff">
+    <line x1="410" y1="118" x2="1050" y2="118" stroke="#6fe3ff" stroke-width="1.5" marker-end="url(#tw-arrow)"/>
+    <line x1="410" y1="112" x2="410" y2="124" stroke="#6fe3ff" stroke-width="1.5"/>
+    <text x="730" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">71 days: first AI-assisted report to release</text>
+  </g>
+
+  <!-- Lane A -->
+  <text x="60" y="152" fill="#b6f36a" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.6">FIX AND DISCLOSURE</text>
+  <line x1="60" y1="215" x2="1140" y2="215" stroke="#2a3a55" stroke-width="2"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <!-- Aug 11 to release bracket -->
+    <line x1="410" y1="215" x2="1050" y2="215" stroke="#b6f36a" stroke-width="3" opacity="0.55"/>
+
+    <circle cx="90" cy="215" r="6" fill="#93a4bd"/>
+    <text x="90" y="183" text-anchor="start" fill="#93a4bd" font-size="11" font-weight="700">2024</text>
+    <text x="90" y="199" text-anchor="start" fill="#c9d5e6" font-size="11">Audit finds first sign</text>
+
+    <circle cx="250" cy="215" r="6" fill="#93a4bd"/>
+    <text x="250" y="183" text-anchor="middle" fill="#93a4bd" font-size="11" font-weight="700">Jul 30</text>
+    <text x="250" y="199" text-anchor="middle" fill="#c9d5e6" font-size="11">Calif audit begins</text>
+
+    <circle cx="410" cy="215" r="7" fill="#6fe3ff"/>
+    <text x="410" y="183" text-anchor="middle" fill="#6fe3ff" font-size="11" font-weight="700">Aug 11</text>
+    <text x="410" y="199" text-anchor="middle" fill="#c9d5e6" font-size="11">Calif reports; OpenAI confirms</text>
+
+    <circle cx="570" cy="215" r="7" fill="#6fe3ff"/>
+    <text x="570" y="183" text-anchor="middle" fill="#6fe3ff" font-size="11" font-weight="700">Aug 19</text>
+    <text x="570" y="199" text-anchor="middle" fill="#c9d5e6" font-size="11">Wiz discovers</text>
+
+    <circle cx="730" cy="215" r="6" fill="#93a4bd"/>
+    <text x="730" y="183" text-anchor="middle" fill="#93a4bd" font-size="11" font-weight="700">Aug 24</text>
+    <text x="730" y="199" text-anchor="middle" fill="#c9d5e6" font-size="11">Wiz reports</text>
+
+    <circle cx="890" cy="215" r="6" fill="#93a4bd"/>
+    <text x="890" y="183" text-anchor="middle" fill="#93a4bd" font-size="11" font-weight="700">Sep 21</text>
+    <text x="890" y="199" text-anchor="middle" fill="#c9d5e6" font-size="11">PHP acknowledges</text>
+
+    <circle cx="1050" cy="215" r="8" fill="#b6f36a"/>
+    <text x="1050" y="183" text-anchor="end" fill="#b6f36a" font-size="11" font-weight="700">Oct 21</text>
+    <text x="1050" y="199" text-anchor="end" fill="#e8eef8" font-size="11" font-weight="600">Patches ship</text>
+  </g>
+
+  <!-- Lane B -->
+  <text x="60" y="325" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.6">LEAK AND EXPLOITATION WINDOW</text>
+  <line x1="60" y1="392" x2="1140" y2="392" stroke="#2a3a55" stroke-width="2"/>
+
+  <!-- shaded defender window -->
+  <rect x="570" y="375" width="480" height="112" fill="#ffc857" opacity="0.08" rx="4"/>
+  <line x1="570" y1="375" x2="570" y2="487" stroke="#ffc857" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
+  <line x1="1050" y1="375" x2="1050" y2="487" stroke="#ffc857" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
+  <text x="810" y="372" text-anchor="middle" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1">PUBLIC DEFENDER WINDOW ~18 HOURS</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <circle cx="90" cy="392" r="6" fill="#ff7a7a"/>
+    <text x="90" y="420" text-anchor="start" fill="#ff7a7a" font-size="11" font-weight="700">Oct 17</text>
+    <text x="90" y="437" text-anchor="start" fill="#c9d5e6" font-size="11">AWS honeypot attempt</text>
+
+    <circle cx="250" cy="392" r="6" fill="#ffc857"/>
+    <text x="250" y="420" text-anchor="middle" fill="#ffc857" font-size="11" font-weight="700">Oct 20 15:00</text>
+    <text x="250" y="437" text-anchor="middle" fill="#c9d5e6" font-size="11">CVE IDs circulate</text>
+
+    <circle cx="410" cy="392" r="6" fill="#ffc857"/>
+    <text x="410" y="420" text-anchor="middle" fill="#ffc857" font-size="11" font-weight="700">Oct 20 19:30</text>
+    <text x="410" y="437" text-anchor="middle" fill="#c9d5e6" font-size="11">Pre-announcement</text>
+
+    <circle cx="570" cy="392" r="7" fill="#ffc857"/>
+    <text x="570" y="420" text-anchor="middle" fill="#ffc857" font-size="11" font-weight="700">Oct 20 ~20:00</text>
+    <text x="570" y="437" text-anchor="middle" fill="#c9d5e6" font-size="11">Calif PoC video</text>
+
+    <circle cx="730" cy="392" r="6" fill="#6fe3ff"/>
+    <text x="730" y="420" text-anchor="middle" fill="#6fe3ff" font-size="11" font-weight="700">Oct 21 03:02</text>
+    <text x="730" y="437" text-anchor="middle" fill="#c9d5e6" font-size="11">Cloudflare WAF live</text>
+
+    <circle cx="890" cy="392" r="7" fill="#ff7a7a"/>
+    <text x="890" y="420" text-anchor="middle" fill="#ff7a7a" font-size="11" font-weight="700">Oct 21 07:41</text>
+    <text x="890" y="437" text-anchor="middle" fill="#c9d5e6" font-size="11">Chainguard images</text>
+
+    <circle cx="1050" cy="392" r="8" fill="#b6f36a"/>
+    <text x="1032" y="455" text-anchor="end" fill="#b6f36a" font-size="11" font-weight="700">Oct 21 · 13:30–14:00</text>
+    <text x="1032" y="472" text-anchor="end" fill="#e8eef8" font-size="11" font-weight="600">Coordinated release</text>
+  </g>
+
+  <text x="970" y="503" text-anchor="middle" fill="#ff9a9a" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600">6h19m from Chainguard to release</text>
+
+  <!-- callout -->
+  <rect x="60" y="520" width="1080" height="58" rx="10" fill="#162034" stroke="#2a3a55"/>
+  <text x="84" y="545" fill="#b6f36a" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">THE CONSTRAINT</text>
+  <text x="84" y="564" fill="#e8eef8" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="600">The fix existed before most of the shutdowns. The warning did not.</text>
+
+  <text x="60" y="610" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9.5">Sources: PHP Foundation (Oct 21, 2026); PHP.net advisories; AWS MadPot (Oct 21); Cloudflare (Oct 21); CERT-EU 2026-018; The Register (Oct 22–23).</text>
+  <text x="60" y="624" fill="#6f8098" font-family="Segoe UI, Arial, sans-serif" font-size="9.5">CERT-EU records the release at 13:30 UTC; PHP and AWS use 14:00 UTC. The bar shows the window, not a single instant.</text>
+</svg>
