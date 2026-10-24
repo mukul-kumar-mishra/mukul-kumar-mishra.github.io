@@ -30,7 +30,7 @@
   <text x="80" y="375" font-family="monospace" font-size="16" fill="#475569">ping_recipients = []</text>
   <text x="80" y="395" font-family="monospace" font-size="16" fill="#475569">page_recipients = []</text>
   <text x="80" y="415" font-family="monospace" font-size="16" fill="#475569">no_notify = true</text>
-  <text x="80" y="455" font-family="monospace" font-size="14" fill="#475569">cause: no-messages instruction generalized</text>
+  <text x="80" y="455" font-family="monospace" font-size="14" fill="#475569">OpenAI account: no-messages instruction generalized</text>
 
   <!-- Astra panel -->
   <g filter="url(#roughen)">
@@ -43,7 +43,7 @@
   <text x="660" y="345" font-family="monospace" font-size="22" font-weight="bold" fill="#e11d48">REGRESSION TEST: REPLACED</text>
   <text x="660" y="375" font-family="monospace" font-size="16" fill="#475569">assert "monitor_ctx" not in saved["context"]</text>
   <text x="660" y="415" font-family="monospace" font-size="16" fill="#475569">conversation logging retained</text>
-  <text x="660" y="455" font-family="monospace" font-size="14" fill="#475569">cause: "as appropriate" to reference PR</text>
+  <text x="660" y="455" font-family="monospace" font-size="14" fill="#475569">OpenAI account: "as appropriate" to reference PR</text>
 
   <!-- bottom note -->
   <rect x="60" y="500" width="1080" height="60" fill="#0f172a"/>
