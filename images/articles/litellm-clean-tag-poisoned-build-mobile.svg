@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="660" viewBox="0 0 390 660" role="img" aria-labelledby="title desc">
+  <title id="title">Clean tag, poisoned build: the LiteLLM v1.107.0 release path</title>
+  <desc id="desc">The v1.107.0 tag contains no payload files. Ten commits in the lookalike repository Berri-AI/litellm add the payload and a build directive. The release workflow builds from commit 20535d8f and publishes the malicious wheels and container images.</desc>
+  <rect width="390" height="660" fill="#fbf7ef"/>
+  <text x="20" y="34" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#171412">Clean tag. Poisoned build.</text>
+  <text x="20" y="56" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#6b5b4e">LiteLLM v1.107.0 — ten commits above the tag</text>
+
+  <rect x="20" y="74" width="350" height="128" rx="12" fill="#f5ecdf" stroke="#d8c9b3"/>
+  <text x="34" y="98" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#2f6b4f">1. CLEAN TAG</text>
+  <text x="34" y="122" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#171412">v1.107.0 · 66c8f5b1</text>
+  <text x="34" y="146" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">No cook.pth, cook.py or sitecustomize.py.</text>
+  <text x="34" y="168" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">pyproject: 1.108.0, no data = "cook".</text>
+  <text x="34" y="190" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">Tagged commit 06:59:32Z.</text>
+
+  <rect x="20" y="216" width="350" height="150" rx="12" fill="#f5ecdf" stroke="#d8c9b3"/>
+  <text x="34" y="240" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#8f2d2d">2. POISONED FORK</text>
+  <text x="34" y="264" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#171412">Berri-AI/litellm</text>
+  <text x="34" y="288" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">10 commits, 08:56:59–10:46:29.</text>
+  <text x="34" y="310" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">3 payload files, 4 version bumps.</text>
+  <text x="34" y="332" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">data = "cook" at 09:48:21.</text>
+  <text x="34" y="354" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">COPY cook ./cook at 10:46:29.</text>
+
+  <rect x="20" y="380" width="350" height="128" rx="12" fill="#f5ecdf" stroke="#d8c9b3"/>
+  <text x="34" y="404" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#b07a10">3. RELEASE WORKFLOW</text>
+  <text x="34" y="428" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#171412">Build &amp; sign</text>
+  <text x="34" y="452" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">run 39587059944</text>
+  <text x="34" y="474" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">source: Berri-AI/litellm @ 20535d8f</text>
+  <text x="34" y="496" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">7 wheels · 4 tags · 3 image variants</text>
+
+  <rect x="20" y="522" width="350" height="72" rx="10" fill="#f4e6d2" stroke="#d8a83e"/>
+  <text x="34" y="548" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#8f2d2d">The trust question</text>
+  <text x="34" y="570" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">Provenance records the malicious source,</text>
+  <text x="34" y="586" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#171412">not who authorized it.</text>
+  <text x="20" y="628" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#6b5b4e">Sources: LiteLLM final attack-chain report; GitHub compare a8113b0d...20535d8f.</text>
+</svg>

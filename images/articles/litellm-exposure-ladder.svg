@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">LiteLLM 1.107.0 registry windows and the evidence ladder</title>
+  <desc id="desc">PyPI served the malicious release from 11:39:51 to 13:23 UTC, GHCR until 13:51, and Docker Hub until 14:20. Publication is not installation, installation is not execution, and execution is not confirmed exfiltration. About 49,000 PyPI downloads is a third-party download estimate, not a host count.</desc>
+  <rect width="1200" height="680" fill="#fbf7ef"/>
+  <text x="50" y="62" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#171412">Publication is not execution</text>
+  <text x="50" y="94" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#6b5b4e">Registry windows and the evidence ladder · October 21, 2026 · UTC</text>
+
+  <rect x="50" y="130" width="620" height="380" rx="16" fill="#f5ecdf" stroke="#d8c9b3"/>
+  <text x="72" y="166" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#171412">Registry windows</text>
+  <text x="72" y="190" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#6b5b4e">Bars begin at first publication and end at removal or repoint.</text>
+
+  <text x="55" y="236" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">PyPI</text>
+  <rect x="119" y="216" width="310" height="30" rx="6" fill="#8f2d2d"/>
+  <text x="440" y="237" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#6b5b4e">1h43m09s</text>
+
+  <text x="55" y="305" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">GHCR</text>
+  <rect x="141" y="286" width="372" height="30" rx="6" fill="#b07a10"/>
+  <text x="523" y="307" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#6b5b4e">2h04m04s</text>
+
+  <text x="55" y="374" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Docker Hub</text>
+  <rect x="141" y="354" width="459" height="30" rx="6" fill="#2f6b4f"/>
+  <text x="610" y="375" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#6b5b4e">2h33m04s</text>
+
+  <line x1="90" y1="410" x2="640" y2="410" stroke="#6b5b4e" stroke-width="1"/>
+  <line x1="119" y1="410" x2="119" y2="418" stroke="#6b5b4e"/>
+  <text x="108" y="436" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#6b5b4e">11:30</text>
+  <line x1="269" y1="410" x2="269" y2="418" stroke="#6b5b4e"/>
+  <text x="258" y="436" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#6b5b4e">12:00</text>
+  <line x1="419" y1="410" x2="419" y2="418" stroke="#6b5b4e"/>
+  <text x="408" y="436" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#6b5b4e">12:30</text>
+  <line x1="569" y1="410" x2="569" y2="418" stroke="#6b5b4e"/>
+  <text x="558" y="436" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#6b5b4e">13:00</text>
+  <line x1="640" y1="410" x2="640" y2="418" stroke="#6b5b4e"/>
+  <text x="628" y="436" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#6b5b4e">13:30</text>
+
+  <line x1="420" y1="198" x2="420" y2="410" stroke="#8f2d2d" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="408" y="470" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#8f2d2d">PyPI removal 13:20–13:23</text>
+  <line x1="513" y1="198" x2="513" y2="410" stroke="#b07a10" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="480" y="490" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#b07a10">GHCR 13:51</text>
+  <line x1="600" y1="198" x2="600" y2="410" stroke="#2f6b4f" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="576" y="510" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#2f6b4f">Docker Hub 14:20</text>
+
+  <rect x="700" y="130" width="450" height="380" rx="16" fill="#f5ecdf" stroke="#d8c9b3"/>
+  <text x="722" y="166" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#171412">Evidence ladder</text>
+  <text x="722" y="190" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#6b5b4e">Each step needs different evidence.</text>
+
+  <circle cx="738" cy="222" r="12" fill="#2f6b4f"/>
+  <text x="734" y="227" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#fbf7ef">1</text>
+  <text x="760" y="218" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Published</text>
+  <text x="760" y="238" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">Registry timestamps.</text>
+
+  <circle cx="738" cy="286" r="12" fill="#b07a10"/>
+  <text x="734" y="291" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#fbf7ef">2</text>
+  <text x="760" y="282" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Downloaded / installed</text>
+  <text x="760" y="302" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">~49k PyPI downloads; not a host count.</text>
+
+  <circle cx="738" cy="350" r="12" fill="#8f2d2d"/>
+  <text x="734" y="355" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#fbf7ef">3</text>
+  <text x="760" y="346" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Executed</text>
+  <text x="760" y="366" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">Interpreter or container start.</text>
+
+  <circle cx="738" cy="414" r="12" fill="#8f2d2d"/>
+  <text x="734" y="419" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#fbf7ef">4</text>
+  <text x="760" y="410" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Exfiltrated</text>
+  <text x="760" y="430" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">Marker or cloud audit logs; Wiz observed AWS use.</text>
+
+  <circle cx="738" cy="478" r="12" fill="#6b5b4e"/>
+  <text x="734" y="483" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#fbf7ef">5</text>
+  <text x="760" y="474" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#171412">Confirmed compromise</text>
+  <text x="760" y="494" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b5b4e">Host-level forensics; no public count.</text>
+
+  <rect x="50" y="540" width="1100" height="78" rx="14" fill="#f4e6d2" stroke="#d8a83e"/>
+  <text x="72" y="570" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#8f2d2d">~49,000 downloads is a download count, not a host count.</text>
+  <text x="72" y="600" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#171412">The article uses the estimate once, with its label, and does not convert it into a victim count.</text>
+  <text x="50" y="656" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#6b5b4e">Sources: LiteLLM incident post for windows; Wiz for the download estimate and post-exploitation observation; independent registry probes.</text>
+</svg>
