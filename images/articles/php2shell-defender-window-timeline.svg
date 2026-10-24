@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-labelledby="tw-title tw-desc">
-  <title id="tw-title">PHP2Shell timeline: ten weeks from AI-assisted discovery to release, and an eighteen-hour public defender window</title>
-  <desc id="tw-desc">Two-lane ordinal timeline. Top lane: a 2024 audit finds the first sign of the out-of-memory flaw; Calif begins auditing on July 30, 2026; Calif and OpenAI report on August 11; Wiz discovers on August 19 and reports on August 24; PHP acknowledges on September 21; patches ship on October 21. Bottom lane: AWS records a honeypot attempt on October 17; CVE identifiers leak on October 20 at 15:00 UTC; PHP pre-announces at 19:30; a Calif proof-of-concept video appears around 20:00; Cloudflare's WAF is live at 03:02 on October 21; Chainguard publishes images with the fix at 07:41; the coordinated release is 13:30 to 14:00. A shaded band marks the roughly eighteen-hour public window and the six-hour nineteen-minute gap after Chainguard.</desc>
+  <title id="tw-title">PHP2Shell timeline: ten weeks from AI-assisted discovery to release, and three warning intervals before disclosure</title>
+  <desc id="tw-desc">Two-lane ordinal timeline. Top lane: a first sign of the out-of-memory flaw is found during work on the 2024 audit; Calif begins auditing on July 30, 2026; Calif and OpenAI report on August 11; Wiz discovers on August 19 and reports on August 24; PHP acknowledges on September 21; patches ship on October 21. Bottom lane: AWS records a honeypot attempt on October 17; CVE identifiers leak on October 20 at 15:00 UTC; PHP pre-announces at 19:30; a Calif proof-of-concept video appears around 20:00; Cloudflare's WAF is live at 03:02 on October 21; Chainguard publishes images with the fix at 07:41; the coordinated release is 13:30 to 14:00. A shaded band marks the Calif-video-to-release interval of about eighteen hours, one of three warning intervals; the CVE identifiers gave about 22.5 to 23 hours and Chainguard's images gave 6 hours 19 minutes.</desc>
   <defs>
     <linearGradient id="tw-bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0a101c"/>
@@ -34,7 +34,7 @@
 
     <circle cx="90" cy="215" r="6" fill="#93a4bd"/>
     <text x="90" y="183" text-anchor="start" fill="#93a4bd" font-size="11" font-weight="700">2024</text>
-    <text x="90" y="199" text-anchor="start" fill="#c9d5e6" font-size="11">Audit finds first sign</text>
+    <text x="90" y="199" text-anchor="start" fill="#c9d5e6" font-size="11">Audit fix finds first sign</text>
 
     <circle cx="250" cy="215" r="6" fill="#93a4bd"/>
     <text x="250" y="183" text-anchor="middle" fill="#93a4bd" font-size="11" font-weight="700">Jul 30</text>
@@ -69,7 +69,7 @@
   <rect x="570" y="375" width="480" height="112" fill="#ffc857" opacity="0.08" rx="4"/>
   <line x1="570" y1="375" x2="570" y2="487" stroke="#ffc857" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
   <line x1="1050" y1="375" x2="1050" y2="487" stroke="#ffc857" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
-  <text x="810" y="372" text-anchor="middle" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1">PUBLIC DEFENDER WINDOW ~18 HOURS</text>
+  <text x="810" y="372" text-anchor="middle" fill="#ffc857" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="0.8">CALIF VIDEO → RELEASE ~18H (ONE OF THREE)</text>
 
   <g font-family="Segoe UI, Arial, sans-serif">
     <circle cx="90" cy="392" r="6" fill="#ff7a7a"/>
@@ -101,7 +101,7 @@
     <text x="1032" y="472" text-anchor="end" fill="#e8eef8" font-size="11" font-weight="600">Coordinated release</text>
   </g>
 
-  <text x="970" y="503" text-anchor="middle" fill="#ff9a9a" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600">6h19m from Chainguard to release</text>
+  <text x="60" y="503" text-anchor="start" fill="#ff9a9a" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600">Intervals: CVE IDs → release ~22.5–23h · Calif video → release ~18h · Chainguard → release 6h19m</text>
 
   <!-- callout -->
   <rect x="60" y="520" width="1080" height="58" rx="10" fill="#162034" stroke="#2a3a55"/>
