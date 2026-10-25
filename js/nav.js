@@ -58,6 +58,9 @@
 (function () {
   var SUB_KEY = 'buildopsy-newsletter-subscribed';
   var POP_KEY = 'buildopsy-newsletter-popup';
+  var imageRoot = (function () {
+    try { return new URL('../images/', document.currentScript.src).href; } catch (err) { return '../images/'; }
+  })();
 
   document.addEventListener('submit', function (e) {
     var form = e.target;
@@ -134,11 +137,18 @@
       '<div class="newsletter-modal-backdrop"></div>' +
       '<div class="newsletter-modal-card" role="dialog" aria-modal="true" aria-labelledby="buildopsy-newsletter-title" aria-describedby="buildopsy-newsletter-copy">' +
         '<button type="button" class="newsletter-modal-close" data-newsletter-close aria-label="Close newsletter signup">&times;</button>' +
-        '<span class="fl-tag">Buildopsy notes</span>' +
+        '<span class="fl-tag">Reader support</span>' +
         '<h2 class="newsletter-modal-title" id="buildopsy-newsletter-title">No ads. No sponsors. Just the receipts.</h2>' +
-        '<p class="newsletter-modal-copy" id="buildopsy-newsletter-copy">Get the next Buildopsy teardown by email: primary sources, the arithmetic, and the limits of the record.</p>' +
+        '<div class="newsletter-modal-coffee">' +
+          '<p class="newsletter-modal-copy" id="buildopsy-newsletter-copy">Buildopsy stays free and ad-free on reader support. <strong>10 coffees and you pick a future postmortem topic</strong> — the research and the verdict stay independent.</p>' +
+          '<a class="support-bmac-link newsletter-modal-bmac" href="https://buymeacoffee.com/buildopsy" target="_blank" rel="noopener noreferrer" aria-label="Support Buildopsy on Buy Me a Coffee">' +
+            '<img class="bmac-dark" src="' + imageRoot + 'buymeacoffee-button-yellow.png" alt="Buy me a coffee" width="217" height="48">' +
+            '<img class="bmac-light" src="' + imageRoot + 'buymeacoffee-button-black.png" alt="" aria-hidden="true" width="217" height="48">' +
+          '</a>' +
+        '</div>' +
+        '<div class="newsletter-modal-divider"><span>or get the next one free, by email</span></div>' +
         '<form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">' +
-          '<input type="email" name="email" required placeholder="you@company.com" class="field-input" aria-label="Email address" autocomplete="email">' +
+          '<input type="email" name="email" required placeholder="you@example.com" class="field-input" aria-label="Email address" autocomplete="email">' +
           '<input type="hidden" name="embed" value="1">' +
           '<button class="btn btn-primary" type="submit">Get the next teardown</button>' +
         '</form>' +

@@ -131,21 +131,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 .brand:hover { color: var(--heading); }
 .brand .acc { color: var(--lime); }
-/* Image wordmark: theme-aware pill. Dark pill + logo.png in dark mode,
-   white pill + logo-white.png in light mode. Fixed 45px height preserves
-   the 60px topbar in all viewports. */
+/* Image wordmark: bare logo on the topbar, no pill chrome. Fixed 45px
+   height preserves the 60px topbar in all viewports. */
 .brand-logo {
   display: inline-flex;
   align-items: center;
-  background: #101a2c;
+  background: transparent;
   border: 0;
-  border-radius: 10px;
-  padding: 5px 10px;
+  padding: 0;
   line-height: 0;
-}
-:root:not(.dark) .brand-logo {
-  background: #ffffff;
-  border: 1px solid var(--line);
 }
 .brand-logo img {
   height: 45px;
@@ -620,6 +614,17 @@ section[data-support-card] { margin-top: 16px; }
 .newsletter-modal .field-input { width: 100%; }
 .newsletter-modal .btn { width: 100%; min-height: 44px; }
 .newsletter-modal-note { margin: 10px 0 0; font-family: var(--font-body); font-size: 0.75rem; line-height: 1.5; color: var(--mist); }
+.newsletter-modal-coffee { margin-top: 16px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--lime) 30%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--lime) 6%, var(--card)); }
+.newsletter-modal-coffee p { margin: 0 0 12px; }
+.newsletter-modal-coffee strong { color: var(--heading); }
+.newsletter-modal-bmac { display: inline-flex; border-radius: 8px; overflow: hidden; line-height: 0; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.newsletter-modal-bmac:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+.newsletter-modal-bmac img { width: 180px; height: auto; display: block; }
+.newsletter-modal-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 4px; color: var(--mist); font-size: 0.75rem; }
+.newsletter-modal-divider::before, .newsletter-modal-divider::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.newsletter-modal-bmac .bmac-light { display: none; }
+:root:not(.dark) .newsletter-modal-bmac .bmac-light { display: block; }
+:root:not(.dark) .newsletter-modal-bmac .bmac-dark { display: none; }
 body.newsletter-modal-open { overflow: hidden; }
 @keyframes newsletter-pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
 @media (max-width: 520px) { .newsletter-modal { padding: 14px; } .newsletter-modal-card { padding: 22px 18px; } .newsletter-modal-title { font-size: 1.3rem; } }
@@ -888,6 +893,10 @@ body.newsletter-modal-open { overflow: hidden; }
 .footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .footer a { color: var(--mist); }
 .footer a:hover { color: var(--lime); }
+.footer-links { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px; }
+.footer-social { display: inline-flex; align-items: center; gap: 4px; margin-left: 14px; }
+.footer-social a { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin: -10px 0; }
+.footer-social a svg { width: 16px; height: 16px; }
 
 /* ---------- Popup ---------- */
 .popup-overlay {

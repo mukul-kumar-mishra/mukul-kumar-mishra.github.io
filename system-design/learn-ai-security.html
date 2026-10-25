@@ -144,7 +144,7 @@
           <p class="fl-desc" style="margin:0;">One email when a new audit ships: primary sources, the arithmetic, and the limits of the record. No fixed schedule. Unsubscribe anytime.</p>
         </div>
         <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
-          <input type="email" name="email" required placeholder="you@company.com" class="field-input" style="min-width:220px;" aria-label="Email address">
+          <input type="email" name="email" required placeholder="you@example.com" class="field-input" style="min-width:220px;" aria-label="Email address">
           <input type="hidden" name="embed" value="1">
           <button class="btn btn-primary" type="submit">Subscribe</button>
         </form>
@@ -556,7 +556,12 @@
       <p class="fl-desc" style="margin:0;">This course teaches from published Buildopsy postmortems linked under each lesson: egress checklists, zero-click exfiltration, sandbox escapes, Artifactory covert channels, simulation breaches, cross-account channels, compaction poison, slopsquatting ghosts, snitch failures, and disclosure audits. Incident details follow those accounts. Cost framing is modeled from public list prices.</p>
     </section>
   </main>
-  <footer class="footer"><div class="wrap"><span>&copy; <span id="year"></span> Buildopsy</span><span><a href="../about.html">About</a> · <a href="../about.html#work-with-me">Contact</a></span></div></footer>
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span class="footer-links"><a href="../about.html">About</a> &middot; <a href="../pricing.html">Pricing</a> &middot; <a href="../contact.html">Contact</a> &middot; <a href="../privacy.html">Privacy</a><span class="footer-social"><a class="brand-social-link" href="https://x.com/BuildOpsy" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on X" title="Buildopsy on X"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.901 1.153h3.68l-8.038 9.189L24 22.846h-7.406l-5.804-7.584-6.64 7.584H.47l8.6-9.831L0 1.153h7.594l5.247 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a><a class="brand-social-link" href="https://www.linkedin.com/company/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on LinkedIn" title="Buildopsy on LinkedIn"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.09 2.09 0 1 0 0 4.18 2.09 2.09 0 0 0 0-4.18zM3 9h3.96v12H3zM9 9h3.8v1.64h.05c.53-1.01 1.83-2.08 3.76-2.08 4.02 0 4.77 2.65 4.77 6.1V21h-3.96v-5.62c0-1.34-.03-3.07-1.87-3.07-1.88 0-2.17 1.47-2.17 2.98V21H9z"/></svg></a><a class="brand-social-link" href="https://www.instagram.com/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on Instagram" title="Buildopsy on Instagram"><svg class="brand-icon-outline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.25" y="2.25" width="19.5" height="19.5" rx="5.25"/><circle cx="12" cy="12" r="4.25"/><circle class="brand-icon-dot" cx="18.1" cy="5.9" r="0.8"/></svg></a></span></span>
+    </div>
+  </footer>
   <script>document.getElementById('year').textContent = new Date().getFullYear();var root = document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
   (function(){
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
