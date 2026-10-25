@@ -93,7 +93,7 @@
     if (isSubscribed()) return true;
     var state = readState();
     var now = Date.now();
-    return (state.dismissedUntil && now < state.dismissedUntil) || (state.shownUntil && now < state.shownUntil);
+    return !!(state.dismissedUntil && now < state.dismissedUntil);
   }
 
   function closeModal() {
@@ -110,11 +110,6 @@
   }
 
   function onKeydown(e) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      closeModal();
-      return;
-    }
     if (e.key !== 'Tab' || !modal) return;
     var focusable = modal.querySelectorAll('button, input, a[href]');
     if (!focusable.length) return;
@@ -136,7 +131,7 @@
     modal.id = 'buildopsy-newsletter-modal';
     modal.hidden = true;
     modal.innerHTML =
-      '<div class="newsletter-modal-backdrop" data-newsletter-close></div>' +
+      '<div class="newsletter-modal-backdrop"></div>' +
       '<div class="newsletter-modal-card" role="dialog" aria-modal="true" aria-labelledby="buildopsy-newsletter-title" aria-describedby="buildopsy-newsletter-copy">' +
         '<button type="button" class="newsletter-modal-close" data-newsletter-close aria-label="Close newsletter signup">&times;</button>' +
         '<span class="fl-tag">Buildopsy notes</span>' +
@@ -168,9 +163,6 @@
     modal.hidden = false;
     document.body.classList.add('newsletter-modal-open');
     document.addEventListener('keydown', onKeydown, true);
-    var state = readState();
-    state.shownUntil = Date.now() + 7 * 24 * 60 * 60 * 1000;
-    writeState(state);
     var input = modal.querySelector('input[type="email"]');
     if (input) {
       window.setTimeout(function () { input.focus(); }, 60);
@@ -183,7 +175,7 @@
     if (suppressed()) return;
     if (window.scrollY < 80) return;
     var rect = secondParagraph.getBoundingClientRect();
-    if (rect.bottom < window.innerHeight * 0.6) openModal();
+    if (rect.bottom < window.innerHeight - 40) openModal();
   }
 
   function onScroll() {
