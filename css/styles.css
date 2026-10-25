@@ -1099,3 +1099,10 @@ html.ads-live .ad-slot {
   .correction-head, .correction-row { padding-left: 16px; padding-right: 16px; }
   .correction-sub h3 { padding-left: 16px; padding-right: 16px; }
 }
+
+/* ---------- Icon-only share row ---------- */
+.share-row a.chip { width: 40px; min-width: 40px; height: 40px; min-height: 40px; padding: 0; }
+.share-row a.chip svg { width: 18px; height: 18px; display: block; }
+.share-row a.chip.is-copied svg, .share-row a.chip.is-copy-failed svg { display: none; }
+.share-row a.chip.is-copied::after { content: "\2713"; font-size: 1rem; line-height: 1; }
+.share-row a.chip.is-copy-failed::after { content: "!"; font-size: 1rem; font-weight: 700; line-height: 1; }
