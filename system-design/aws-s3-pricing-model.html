@@ -53,7 +53,7 @@
       {"@type":"Question","name":"How much does S3 Standard storage cost per GB?","acceptedAnswer":{"@type":"Answer","text":"In US East (N. Virginia), S3 Standard lists at $0.023 per GB-month for the first 50 TB, $0.022 for the next 450 TB and $0.021 above 500 TB, per the AWS price list snapshot published October 15, 2026. Request, retrieval and transfer charges are separate."}},
       {"@type":"Question","name":"Does the Buildopsy S3 calculator include data transfer out?","acceptedAnswer":{"@type":"Answer","text":"No. It models storage, entered PUT and GET requests, and entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account."}},
       {"@type":"Question","name":"Why can a cheaper S3 storage class cost more overall?","acceptedAnswer":{"@type":"Answer","text":"Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate."}},
-      {"@type":"Question","name":"How does S3 billing work?","acceptedAnswer":{"@type":"Answer","text":"AWS bills separate meters: storage per billable GB-month, requests per thousand PUT/COPY/POST/LIST and GET calls, retrieval or early-deletion charges on colder classes, and data transfer out. Cost and Usage Reports break the charges down by usage type, operation and Region."}},
+      {"@type":"Question","name":"How does S3 billing work?","acceptedAnswer":{"@type":"Answer","text":"AWS bills separate meters: storage per billable GB-month, requests per thousand PUT/COPY/POST/LIST and GET calls, retrieval or early-deletion charges on colder classes, and data transfer out. Cost and Usage Reports break the charges down by usage type, operation and Region. See the representative S3 usage-type table in Section 6 for the bill-code patterns behind these meters."}},
       {"@type":"Question","name":"How can I estimate my S3 storage cost?","acceptedAnswer":{"@type":"Answer","text":"Enter billable gigabytes, monthly request counts, and retrieval volume into an S3 cost calculator with your region's rates, and model transfer out separately — it often exceeds storage."}}
     ]
   }
@@ -123,6 +123,21 @@
           </div>
           <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">The Standard, Standard-IA, Glacier Instant Retrieval and Glacier Flexible Retrieval list rates come from the Amazon S3 price list, version 20261015173540, published October 15, 2026 at 17:35:40Z, re-checked October 20, 2026. The Deep Archive storage rate comes from the separate Amazon S3 Glacier Deep Archive price list, version 20260911124507, published September 11, 2026. Egress tiers come from the AWSDataTransfer price list, version 20260916132208, published September 16, 2026, and are summarized in the linked teardown. Minimum object sizes and storage durations follow AWS's S3 pricing page and storage-class documentation. List prices exclude tax, credits and negotiated discounts, and vary by Region and volume.</p>
           <p>At these rates, 1,024 billable GB for a full month and 1 million PUTs and 10 million GETs is $23.55 + $5.00 + $4.00 = <strong>$32.55</strong> before retrieval and transfer. <a href="../tools/aws-s3-storage-cost-calculator.html">Run your own inputs in the S3 calculator</a>.</p>
+          <h3>1 TiB storage-only comparison</h3>
+          <p>Using the same US East (N. Virginia) list rates and <strong>1 TiB = 1,024 GiB = 1,024 billable GB</strong>, the storage-only monthly charge is:</p>
+          <div style="overflow-x:auto;">
+            <table class="claimtable">
+              <thead><tr><th>Storage class</th><th>US East list rate</th><th>1 TiB storage-only</th></tr></thead>
+              <tbody>
+                <tr><td>S3 Standard</td><td>$0.023 per GB-month (first 50 TB tier)</td><td>$23.55</td></tr>
+                <tr><td>S3 Standard-IA</td><td>$0.0125 per GB-month</td><td>$12.80</td></tr>
+                <tr><td>S3 Glacier Instant Retrieval</td><td>$0.004 per GB-month</td><td>$4.10</td></tr>
+                <tr><td>S3 Glacier Flexible Retrieval</td><td>$0.0036 per GB-month</td><td>$3.69</td></tr>
+                <tr><td>S3 Glacier Deep Archive</td><td>$0.00099 per GB-month</td><td>$1.01</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Each result is 1,024 × the listed rate, rounded to cents. Unrounded: $23.552, $12.80, $4.096, $3.6864 and $1.01376. The Standard row uses the first 50 TB tier; the other rows use their flat US East storage rates, with Deep Archive from the separate Glacier Deep Archive price list cited above. This is storage only: it excludes requests, retrieval, transfer, minimum-storage-duration charges and additional billable metadata overhead. Actual bills vary by Region, storage class, object size (including the 128 KiB minimum billable size for Standard-IA and Glacier Instant Retrieval), lifecycle, access pattern and billing rules. The table ranks storage-only cost, not total workload cost; the cheapest row is not automatically the cheapest workload.</p>
         </section>
 
         <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-s3-pricing-model.svg" alt="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges" width="1200" height="680"><figcaption>Figure 1. The same inputs used by the Buildopsy S3 calculator. The $32.55 subtotal excludes transfer and other enabled features.</figcaption></figure>
@@ -171,6 +186,22 @@
 
         <section><h2>6. Reconcile the Model With the Bill</h2>
           <p>Use AWS Cost and Usage Reports for billed cost. S3 usage reports can break activity out by operation, usage type, Region, resource, request count and transfer volume. AWS lets you aggregate its S3 usage report hourly, daily or monthly. That is the bridge from application telemetry to the invoice.</p>
+          <h3 id="s3-billing-usage-types" style="scroll-margin-top:90px;">Representative S3 usage types in a bill</h3>
+          <p>These are representative patterns, not a complete or universal mapping. Usage-type labels can vary by Region, storage class, operation and billing configuration. A bucket only incurs the rows its class and usage trigger.</p>
+          <div style="overflow-x:auto;">
+            <table class="claimtable">
+              <thead><tr><th>Usage-type pattern</th><th>Charge</th><th>Meter to reconcile</th></tr></thead>
+              <tbody>
+                <tr><td><code>TimedStorage-*ByteHrs</code></td><td>Storage usage by storage class</td><td>Billable GB-month for the class, including applicable minimum-size rules. Minimum-duration remainders appear under <code>EarlyDelete-*</code>.</td></tr>
+                <tr><td><code>Requests-Tier1</code></td><td>PUT, COPY, POST and LIST requests</td><td>Request count per 1,000 at the class rate; LIST requests use the S3 Standard PUT/COPY/POST rate.</td></tr>
+                <tr><td><code>Requests-Tier2</code></td><td>GET and other applicable requests</td><td>Request count per 1,000; Standard GET has no per-GB retrieval fee, while colder classes can add retrieval.</td></tr>
+                <tr><td><code>Retrieval-SIA</code> / <code>Retrieval-GIR</code></td><td>Standard-IA and Glacier Instant Retrieval retrieval</td><td>Retrieved GB at the class rate; does not apply to S3 Standard.</td></tr>
+                <tr><td><code>DataTransfer-Out-Bytes</code></td><td>Internet data transfer out</td><td>Billable GB leaving S3, after applicable free allowances and tiers.</td></tr>
+                <tr><td><code>EarlyDelete-*</code></td><td>Minimum-storage-duration charges</td><td>Prorated GB-hours when an object leaves a class before its 30-, 90- or 180-day minimum.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Patterns follow AWS's <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report-understand.html" target="_blank" rel="noopener noreferrer">S3 billing and usage-report documentation</a>. The list is illustrative; use the usage types in your own bill and the rates for your Region and class.</p>
           <p>For a data pipeline, retain four separate counters: average billable bytes by storage class, request counts by operation, bytes retrieved from charged classes and bytes transferred by destination. Add object counts for Intelligent-Tiering and archive workloads. Keep lifecycle transitions and retained noncurrent versions visible. A single “bucket size” metric cannot explain every line.</p>
           <p>The Buildopsy calculator models storage, PUT requests, GET requests and entered retrieval. It accepts one editable rate for each line. It does not choose a class, apply volume tiers automatically, inspect an AWS bill, or add transfer. Enter your Region's rates, then model the omitted line items separately. For an account-specific estimate, use the <a href="https://calculator.aws/" target="_blank" rel="noopener noreferrer">AWS Pricing Calculator</a>.</p>
         </section>
@@ -191,7 +222,7 @@
           <h3>Why can a cheaper S3 storage class cost more overall?</h3>
           <p>Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate.</p>
           <h3>How does S3 billing work?</h3>
-          <p>AWS bills separate meters: storage per billable GB-month, requests per thousand PUT/COPY/POST/LIST and GET calls, retrieval or early-deletion charges on colder classes, and data transfer out. <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-billing-reports.html" target="_blank" rel="noopener noreferrer">Cost and Usage Reports</a> break the charges down by usage type, operation and Region.</p>
+          <p>AWS bills separate meters: storage per billable GB-month, requests per thousand PUT/COPY/POST/LIST and GET calls, retrieval or early-deletion charges on colder classes, and data transfer out. <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-billing-reports.html" target="_blank" rel="noopener noreferrer">Cost and Usage Reports</a> break the charges down by usage type, operation and Region. See the <a href="#s3-billing-usage-types">representative S3 usage-type table</a> for the bill-code patterns behind these meters.</p>
           <h3>How can I estimate my S3 storage cost?</h3>
           <p>Enter billable gigabytes, monthly PUT and GET counts, and retrieval volume into the <a href="../tools/aws-s3-storage-cost-calculator.html">S3 cost calculator</a> with your region's rates. Model transfer out separately — it often exceeds storage.</p>
         </section>
@@ -206,7 +237,7 @@
             <li><a href="https://www.devzero.io/blog/aws-s3-pricing" target="_blank" rel="noopener noreferrer">DevZero: US East rates fetched from the AWS Price List API (updated September 28, 2026)</a></li>
             <li><a href="https://aws.amazon.com/s3/faqs/" target="_blank" rel="noopener noreferrer">AWS: S3 billing FAQ and binary storage-unit example</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-billing-reports.html" target="_blank" rel="noopener noreferrer">AWS: Billing reports for Amazon S3</a></li>
-            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report.html" target="_blank" rel="noopener noreferrer">AWS: Usage reports for Amazon S3</a></li><li><a href="cdn-egress-pricing-model.html">Buildopsy: CDN egress pricing — the transfer side of the same bill</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report.html" target="_blank" rel="noopener noreferrer">AWS: Usage reports for Amazon S3</a></li><li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report-understand.html" target="_blank" rel="noopener noreferrer">AWS: Understanding your AWS billing and usage reports for Amazon S3</a></li><li><a href="cdn-egress-pricing-model.html">Buildopsy: CDN egress pricing — the transfer side of the same bill</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" rel="noopener noreferrer">AWS: Understanding S3 storage classes</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html" target="_blank" rel="noopener noreferrer">AWS: How S3 Versioning works</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-expire-general-considerations.html" target="_blank" rel="noopener noreferrer">AWS: Minimum storage duration charges</a></li>
