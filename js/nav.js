@@ -140,7 +140,7 @@
         '<span class="fl-tag">Reader support</span>' +
         '<h2 class="newsletter-modal-title" id="buildopsy-newsletter-title">No ads. No sponsors. Just the receipts.</h2>' +
         '<div class="newsletter-modal-coffee">' +
-          '<p class="newsletter-modal-copy" id="buildopsy-newsletter-copy">Buildopsy stays free and ad-free on reader support. <strong>10 coffees and you pick a future postmortem topic</strong> — the research and the verdict stay independent.</p>' +
+          '<p class="newsletter-modal-copy" id="buildopsy-newsletter-copy">Buildopsy stays free and ad-free on reader support. Every teardown is free to read — <strong>what we cover and conclude is never for sale.</strong></p>' +
           '<a class="support-bmac-link newsletter-modal-bmac" href="https://buymeacoffee.com/buildopsy" target="_blank" rel="noopener noreferrer" aria-label="Support Buildopsy on Buy Me a Coffee">' +
             '<img class="bmac-dark" src="' + imageRoot + 'buymeacoffee-button-yellow.png" alt="Buy me a coffee" width="217" height="48">' +
             '<img class="bmac-light" src="' + imageRoot + 'buymeacoffee-button-black.png" alt="" aria-hidden="true" width="217" height="48">' +
