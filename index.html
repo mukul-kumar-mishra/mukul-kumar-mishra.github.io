@@ -154,6 +154,15 @@
       <p class="fl-desc" style="margin-top:14px;"><a href="tools/unit-economics-calculator.html">Start with cost per successful request →</a></p>
     </section>
 
+    <aside class="tip" id="trustBox" style="display:flex;gap:18px;align-items:flex-start;justify-content:space-between;margin:0 0 24px;">
+      <div>
+        <strong>What you can check before you trust a page.</strong>
+        Primary sources, the math, and the correction history are linked.
+        <a href="corrections.html">Read the corrections log</a>.
+      </div>
+      <button class="chip" id="trustBoxClose" type="button" aria-label="Dismiss this note" style="cursor:pointer;flex:none;min-height:40px;padding:8px 12px;">Dismiss</button>
+    </aside>
+
     <!-- Featured -->
     <section class="sec">
       <div class="sec-head">
@@ -346,11 +355,11 @@
           </div>
         </a>
         <a class="feature-link article-card" data-article-card href="system-design/starlink-core-network-outage-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/starlink-core-outage-meme.png" alt="Starlink core-network failure: healthy satellite constellation, failed ground core services, and 6M users reattaching at once" width="1200" height="630" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="images/articles/starlink-core-outage-meme.png" alt="Starlink core-network failure: satellite constellation not identified as the failed layer, failed ground core services, and the exposed 6M+ user footprint; tens of thousands reported offline" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
           <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Satellite Network</span><span class="chip">October 2026</span></div>
-          <h3>Starlink Core-Network Outage: How 8,000 Satellites Went Dark for 2.5 Hours</h3>
-          <p class="fl-desc">Core software services failed while the constellation stayed healthy. 6M users across 140 countries dropped — ground control-plane fate-sharing.</p>
+          <h3>Starlink's 2.5-Hour Global Outage: The Core Network Failed, Not the Satellites</h3>
+          <p class="fl-desc">Core software services failed while the constellation was not identified as the failed layer. The service's 6M+ users across 140 countries were exposed; tens of thousands reported offline — ground control-plane fate-sharing.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Starlink</span><span class="chip">Control Plane</span><span class="chip">Postmortem</span></div>
           <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
           </div>
@@ -662,5 +671,16 @@
 
   <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 <script src="js/nav.js"></script>
+<script>
+  (function () {
+    var box = document.getElementById('trustBox');
+    if (!box) return;
+    if (localStorage.getItem('buildopsy-trust-box-dismissed') === '1') { box.remove(); return; }
+    document.getElementById('trustBoxClose').addEventListener('click', function () {
+      localStorage.setItem('buildopsy-trust-box-dismissed', '1');
+      box.remove();
+    });
+  })();
+</script>
 </body>
 </html>

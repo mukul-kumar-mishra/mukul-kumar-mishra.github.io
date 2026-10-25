@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800" role="img" aria-labelledby="m-title m-desc">
+<title id="m-title">Starlink outage: 8,000+ satellites launched, one core failed, tens of thousands reported offline.</title>
+<desc id="m-desc">Starlink July 24 2025 mobile diagram: more than 8,000 satellites launched since 2020 with no hardware fault reported; ground core software failed near 3:15pm ET; global connectivity fell to 16 percent of ordinary levels for about 2.5 hours; tens of thousands were reported offline across a 6M+ user footprint. SpaceX disclosed the layer, not a component-level trigger.</desc>
+<rect width="600" height="800" fill="#0b2032"/>
+<rect width="600" height="64" fill="#071727"/>
+<text x="30" y="40" font-size="14" font-weight="700" fill="#6ddbd0" font-family="Inter, Arial, sans-serif" letter-spacing="2">STARLINK / JULY 24, 2025</text>
+<text x="30" y="108" font-size="34" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif">8,000+ launched.</text>
+<text x="30" y="148" font-size="34" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif">One core down.</text>
+<text x="30" y="184" font-size="18" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">Tens of thousands reported offline;</text>
+<text x="30" y="208" font-size="18" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">6M+ user footprint.</text>
+
+<rect x="30" y="236" width="540" height="146" rx="14" fill="#102b41" stroke="#37617a" stroke-width="2"/>
+<rect x="30" y="236" width="6" height="146" rx="3" fill="#91e2c5"/>
+<text x="54" y="266" font-size="14" font-weight="700" fill="#91e2c5" font-family="Inter, Arial, sans-serif" letter-spacing="1.3">1 / SPACE</text>
+<text x="54" y="312" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif">8,000+</text>
+<text x="54" y="344" font-size="18" font-weight="600" fill="#eff8ff" font-family="Inter, Arial, sans-serif">launched since 2020</text>
+<text x="54" y="368" font-size="17" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">no hardware fault reported</text>
+
+<rect x="30" y="398" width="540" height="146" rx="14" fill="#15364d" stroke="#37617a" stroke-width="2"/>
+<rect x="30" y="398" width="6" height="146" rx="3" fill="#ffc078"/>
+<text x="54" y="428" font-size="14" font-weight="700" fill="#ffc078" font-family="Inter, Arial, sans-serif" letter-spacing="1.3">2 / CORE</text>
+<text x="54" y="474" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif">1 core</text>
+<text x="54" y="506" font-size="18" font-weight="600" fill="#eff8ff" font-family="Inter, Arial, sans-serif">key internal software failed</text>
+<text x="54" y="530" font-size="17" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">near 3:15pm ET, global</text>
+
+<rect x="30" y="560" width="540" height="146" rx="14" fill="#102b41" stroke="#37617a" stroke-width="2"/>
+<rect x="30" y="560" width="6" height="146" rx="3" fill="#ffc078"/>
+<text x="54" y="590" font-size="14" font-weight="700" fill="#ffc078" font-family="Inter, Arial, sans-serif" letter-spacing="1.3">3 / BLAST</text>
+<text x="54" y="636" font-size="36" font-weight="750" fill="#eff8ff" font-family="Inter, Arial, sans-serif">16%</text>
+<text x="54" y="668" font-size="18" font-weight="600" fill="#eff8ff" font-family="Inter, Arial, sans-serif">of ordinary connectivity (NetBlocks)</text>
+<text x="54" y="692" font-size="17" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">about 2.5 hours</text>
+
+<text x="30" y="742" font-size="17" font-weight="600" fill="#eff8ff" font-family="Inter, Arial, sans-serif">SpaceX disclosed the layer, not a component-level trigger.</text>
+<text x="30" y="766" font-size="15" font-weight="400" fill="#b5d0df" font-family="Inter, Arial, sans-serif">No SpaceX-published rollout, config, or dependency detail.</text>
+<text x="30" y="788" font-size="15" font-weight="400" fill="#8faac5" font-family="Inter, Arial, sans-serif">Sources: Guardian, ThousandEyes, NetBlocks, The Verge.</text>
+</svg>

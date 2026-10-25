@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search and vector tiers. Includes a source-backed design, modeled 100k RPS workload and cost assumptions.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Notion Architecture: How 200 Billion Blocks Survive Postgres, Kafka and AI Search", "description": "Notion system architecture: 480 Postgres shards, Kafka CDC into Hudi on S3, search and vector tiers. Includes a source-backed design, modeled 100k RPS workload and cost assumptions.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/notion-architecture.html"}, "keywords": "Notion architecture, Notion system design, Notion database, Postgres sharding, CDC Kafka, vector search cost", "image": "https://buildopsy.com/images/articles/notion-architecture-guide.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -79,7 +79,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Stored Blocks</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">200B+</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k RPS</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026 · Updated October 24, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete workload tables and the 1M RPS test: <a href="notion-data-lake-cost-postmortem.html">Notion's 200 Billion Blocks and the Warehouse Bill Behind a Blank Page</a>. This postmortem answers how the system works, where the money goes and what to steal.</aside>
@@ -171,8 +171,7 @@
         </form>
       </div>
     </section>
-
-      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
   <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
   <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
   <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>

@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Figma System Design: How Multiplayer Collaboration Actually Works", "description": "Figma system design explained: WebSocket fan-out, server-authoritative conflict resolution, Rust rewrite, 65k RPS scale math and cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/figma-system-design.html"}, "keywords": "Figma system design, Figma architecture, Figma multiplayer, WebSocket architecture, CRDT versus OT, Rust rewrite", "image": "https://buildopsy.com/images/articles/figma-home-architecture.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Figma System Design: How Multiplayer Collaboration Actually Works", "description": "Figma system design explained: WebSocket fan-out, server-authoritative conflict resolution, Rust rewrite, 65k RPS scale math and cost controls.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-09-18", "dateModified": "2026-10-24", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/figma-system-design.html"}, "keywords": "Figma system design, Figma architecture, Figma multiplayer, WebSocket architecture, CRDT versus OT, Rust rewrite", "image": "https://buildopsy.com/images/articles/figma-home-architecture.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -79,7 +79,7 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Conflict Model</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Server Decides</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled Peak</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">65k RPS</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026 · Updated October 23, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Published September 18, 2026 · Updated October 24, 2026</p>
       </header>
 
       <aside class="tip" style="margin-bottom:30px;"><strong>Companion file:</strong> the full incident teardown carries the complete RPS tables and the 1M RPS thought experiment: <a href="figma-multiplayer-cost-postmortem.html">Figma Multiplayer: Server-Authoritative Edits and a Modeled 65k RPS Bill</a>. This postmortem answers how the system works, what each part costs and what to steal.</aside>
@@ -172,8 +172,7 @@
         </form>
       </div>
     </section>
-
-      <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
   <span class="fl-desc" style="font-weight:700;">Spread the teardown:</span>
   <a class="chip" data-share="x" href="#" rel="noopener" target="_blank">X</a>
   <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank">HN</a>
