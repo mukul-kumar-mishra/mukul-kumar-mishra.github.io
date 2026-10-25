@@ -54,3 +54,145 @@
     if (window.innerWidth > 760) close();
   });
 })();
+
+(function () {
+  var SUB_KEY = 'buildopsy-newsletter-subscribed';
+  var POP_KEY = 'buildopsy-newsletter-popup';
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || !form.matches || !form.matches('form[action*="embed-subscribe"]')) return;
+    try { localStorage.setItem(SUB_KEY, '1'); } catch (err) {}
+  }, true);
+
+  if (!/^\/system-design\//.test(window.location.pathname)) return;
+  var article = document.querySelector('article.prose');
+  if (!article) return;
+  var paragraphs = article.querySelectorAll('section p');
+  if (paragraphs.length < 2) paragraphs = article.querySelectorAll('p');
+  if (paragraphs.length < 2) return;
+
+  var secondParagraph = paragraphs[1];
+  var modal = null;
+  var lastFocus = null;
+  var ticking = false;
+
+  function readState() {
+    try { return JSON.parse(localStorage.getItem(POP_KEY) || '{}'); } catch (err) { return {}; }
+  }
+
+  function writeState(value) {
+    try { localStorage.setItem(POP_KEY, JSON.stringify(value)); } catch (err) {}
+  }
+
+  function isSubscribed() {
+    try { return localStorage.getItem(SUB_KEY) === '1'; } catch (err) { return false; }
+  }
+
+  function suppressed() {
+    if (isSubscribed()) return true;
+    var state = readState();
+    var now = Date.now();
+    return (state.dismissedUntil && now < state.dismissedUntil) || (state.shownUntil && now < state.shownUntil);
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove('newsletter-modal-open');
+    document.removeEventListener('keydown', onKeydown, true);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    lastFocus = null;
+    var state = readState();
+    state.dismissedUntil = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    delete state.shownUntil;
+    writeState(state);
+  }
+
+  function onKeydown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if (e.key !== 'Tab' || !modal) return;
+    var focusable = modal.querySelectorAll('button, input, a[href]');
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  function buildModal() {
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.className = 'newsletter-modal';
+    modal.id = 'buildopsy-newsletter-modal';
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="newsletter-modal-backdrop" data-newsletter-close></div>' +
+      '<div class="newsletter-modal-card" role="dialog" aria-modal="true" aria-labelledby="buildopsy-newsletter-title" aria-describedby="buildopsy-newsletter-copy">' +
+        '<button type="button" class="newsletter-modal-close" data-newsletter-close aria-label="Close newsletter signup">&times;</button>' +
+        '<span class="fl-tag">Buildopsy notes</span>' +
+        '<h2 class="newsletter-modal-title" id="buildopsy-newsletter-title">No ads. No sponsors. Just the receipts.</h2>' +
+        '<p class="newsletter-modal-copy" id="buildopsy-newsletter-copy">Get the next Buildopsy teardown by email: primary sources, the arithmetic, and the limits of the record.</p>' +
+        '<form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">' +
+          '<input type="email" name="email" required placeholder="you@company.com" class="field-input" aria-label="Email address" autocomplete="email">' +
+          '<input type="hidden" name="embed" value="1">' +
+          '<button class="btn btn-primary" type="submit">Get the next teardown</button>' +
+        '</form>' +
+        '<p class="newsletter-modal-note">No fixed schedule. Unsubscribe anytime.</p>' +
+      '</div>';
+    document.body.appendChild(modal);
+    var closeButtons = modal.querySelectorAll('[data-newsletter-close]');
+    for (var i = 0; i < closeButtons.length; i++) {
+      closeButtons[i].addEventListener('click', closeModal);
+    }
+    modal.querySelector('form').addEventListener('submit', function () {
+      try { localStorage.setItem(SUB_KEY, '1'); } catch (err) {}
+      closeModal();
+    });
+    return modal;
+  }
+
+  function openModal() {
+    if (suppressed()) return;
+    buildModal();
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add('newsletter-modal-open');
+    document.addEventListener('keydown', onKeydown, true);
+    var state = readState();
+    state.shownUntil = Date.now() + 7 * 24 * 60 * 60 * 1000;
+    writeState(state);
+    var input = modal.querySelector('input[type="email"]');
+    if (input) {
+      window.setTimeout(function () { input.focus(); }, 60);
+    }
+  }
+
+  function checkTrigger() {
+    ticking = false;
+    if (modal && !modal.hidden) return;
+    if (suppressed()) return;
+    if (window.scrollY < 80) return;
+    var rect = secondParagraph.getBoundingClientRect();
+    if (rect.bottom < window.innerHeight * 0.6) openModal();
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(checkTrigger);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  window.setTimeout(checkTrigger, 700);
+})();

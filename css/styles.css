@@ -607,6 +607,22 @@ section[data-support-card] { margin-top: 16px; }
 .newsletter-band { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 22px; }
 .newsletter-band form { display: flex; gap: 10px; flex-wrap: wrap; }
 @media (max-width: 700px) { .newsletter-band { flex-direction: column; align-items: stretch; } }
+.newsletter-modal[hidden] { display: none; }
+.newsletter-modal { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.newsletter-modal-backdrop { position: absolute; inset: 0; background: rgba(2, 8, 20, 0.72); backdrop-filter: blur(5px); }
+.newsletter-modal-card { position: relative; width: min(440px, 100%); max-height: calc(100vh - 40px); overflow: auto; border: 1px solid var(--line); border-top: 3px solid var(--lime); border-radius: 16px; background: var(--card); padding: 26px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38); animation: newsletter-pop 0.18s ease-out; }
+.newsletter-modal-close { position: absolute; top: 10px; right: 10px; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 999px; background: var(--card-muted); color: var(--mist); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.newsletter-modal-close:hover { color: var(--heading); border-color: var(--lime); }
+.newsletter-modal-title { margin: 10px 0 8px; font-family: var(--font-display); font-size: 1.45rem; line-height: 1.2; color: var(--heading); }
+.newsletter-modal-copy { margin: 0; font-family: var(--font-body); font-size: 0.95rem; line-height: 1.65; color: var(--mist); }
+.newsletter-modal form { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.newsletter-modal .field-input { width: 100%; }
+.newsletter-modal .btn { width: 100%; min-height: 44px; }
+.newsletter-modal-note { margin: 10px 0 0; font-family: var(--font-body); font-size: 0.75rem; line-height: 1.5; color: var(--mist); }
+body.newsletter-modal-open { overflow: hidden; }
+@keyframes newsletter-pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+@media (max-width: 520px) { .newsletter-modal { padding: 14px; } .newsletter-modal-card { padding: 22px 18px; } .newsletter-modal-title { font-size: 1.3rem; } }
+@media (prefers-reduced-motion: reduce) { .newsletter-modal-card { animation: none; } }
 /* Rotating article modules: pull quotes plus claim ledgers. Same chrome,
    different interiors, so long-form pieces stop marching identically. */
 .pullquote { margin: 30px 0; padding: 6px 0 6px 22px; border-left: 3px solid var(--lime); font-family: var(--font-serif); font-size: 1.25rem; line-height: 1.6; color: var(--heading); }
