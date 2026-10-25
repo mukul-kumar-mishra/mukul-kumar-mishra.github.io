@@ -90,7 +90,7 @@
     <div class="wrap">
       <a class="brand brand-logo" href="index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
       <nav class="topnav" id="topnav">
-        
+
         <a href="system-design/index.html">System Design</a>
         <a href="system-design/ai-slop.html">AI Slop Watch</a>
         <a href="calculators.html">Calculators</a><a href="system-design/course.html">Courses</a><a href="pricing.html">Pricing</a>
@@ -166,23 +166,22 @@
     <!-- Featured -->
     <section class="sec">
       <div class="sec-head">
-        <h2 class="sec-title"><i data-lucide="layers"></i> Featured System Architecture</h2>
+        <h2 class="sec-title"><i data-lucide="layers"></i> Featured Analysis</h2>
         <a class="sec-link" href="system-design/index.html">View All RFCs <i data-lucide="chevron-right"></i></a>
       </div>
-      <a class="feature-link article-card featured-article" href="system-design/figma-system-design.html">
-        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/figma-home-architecture.svg" alt="High-resolution Figma multiplayer architecture: browser clients send edits through WebSockets to one document owner, which orders mutations and records durable revisions" width="2400" height="1260" onerror="this.style.display='none'">
+      <a class="feature-link article-card featured-article" href="system-design/starlink-core-network-outage-postmortem.html">
+        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/starlink-core-outage-meme.png" alt="Starlink core-network failure: satellite constellation not identified as the failed layer, failed ground core services, and the exposed 6M+ user footprint; tens of thousands reported offline" width="1200" height="630" onerror="this.style.display='none'">
         <div class="article-card-body">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-tag">Featured Architecture</span>
-          <span class="chip">Realtime Systems</span>
+          <span class="fl-tag">Featured Postmortem</span>
+          <span class="chip">Satellite Network</span>
         </div>
-        <h3>Figma System Design: How Multiplayer Collaboration Actually Works</h3>
-        <p class="fl-desc">
-          How document ownership orders edits, WebSockets fan out changes, and cursor presence stays on a separate path. </p>
+        <h3>Starlink's 2.5-Hour Global Outage: The Core Network Failed, Not the Satellites</h3>
+        <p class="fl-desc">Core software services failed while the constellation was not identified as the failed layer. The service's 6M+ users across 140 countries were exposed; tens of thousands reported offline — ground control-plane fate-sharing.</p>
         <div style="display:flex;gap:8px;margin-top:14px;">
-          <span class="chip">WebSockets</span><span class="chip">Rust</span><span class="chip">Realtime</span>
+          <span class="chip">Starlink</span><span class="chip">Control Plane</span><span class="chip">Postmortem</span>
         </div>
-        <span class="article-read">Read the system design <span aria-hidden="true">→</span></span>
+        <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
         </div>
       </a>
     </section>
@@ -194,6 +193,26 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/tesla-roadster-thruster-claims-audit.html">
+          <img loading="lazy" decoding="async" src="images/articles/roadster-boost-budget.png" alt="Illustrative x-ray sketch of a Roadster-style coupe with the reported cold-gas components called out — external nitrogen fill, COPV tanks, regulator and valves, rear nozzles, and a refill loop — with reported durations beside each configuration: about five seconds of boost and a 2–6 hour refill for the 200-liter Thrust, a 6–7 hour refill for the 600-liter Rocket. A dashed panel holds a modeled 80-kilonewton, five-second gas-flow scenario whose inputs come from separate reports." width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Vehicle Engineering</span><span class="chip">October 2026</span></div>
+          <h3>Reported 0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h3>
+          <p class="fl-desc">Road &amp; Track reports the presentation displayed 0.81 seconds to 60 mph. Refill reports give 2–6 hours for 200-liter Thrust and 6–7 hours for 600-liter Rocket; a separate model does not estimate tank inventory.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Tesla</span><span class="chip">Cold Gas</span><span class="chip">Claims Audit</span><span class="chip">Rook</span></div>
+          <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a class="feature-link article-card" data-article-card href="system-design/amazon-ai-book-slop-postmortem.html">
+          <img loading="lazy" decoding="async" src="images/articles/amazon-ai-book-lookalike-meme.png" alt="Reported sequence: suspicious lookalike book listing, author purchase and report, marketplace removal" width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Book Slop Audit</span><span class="chip">October 2026</span></div>
+          <h3>Amazon's AI Book Slop Problem: The Copycat Beside the Real Book</h3>
+          <p class="fl-desc">A reporter bought a suspicious lookalike of his own book. Amazon removed it after his report; the seller and generation method remain unverified.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Amazon</span><span class="chip">Publishing</span><span class="chip">Provenance</span></div>
+          <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/litellm-release-pipeline-compromise-audit.html">
           <img loading="lazy" decoding="async" src="images/articles/litellm-supply-chain-audit-social.png" alt="Editorial card: the LiteLLM v1.107.0 tag was clean, but the build came from a lookalike fork; a Rook supply-chain audit." width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
@@ -254,16 +273,7 @@
           <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
           </div>
         </a>
-        <a class="feature-link article-card" data-article-card href="system-design/tesla-roadster-thruster-claims-audit.html">
-          <img loading="lazy" decoding="async" src="images/articles/roadster-boost-budget.png" alt="Illustrative x-ray sketch of a Roadster-style coupe with the reported cold-gas components called out — external nitrogen fill, COPV tanks, regulator and valves, rear nozzles, and a refill loop — with reported durations beside each configuration: about five seconds of boost and a 2–6 hour refill for the 200-liter Thrust, a 6–7 hour refill for the 600-liter Rocket. A dashed panel holds a modeled 80-kilonewton, five-second gas-flow scenario whose inputs come from separate reports." width="1200" height="630" onerror="this.style.display='none'">
-          <div class="article-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Vehicle Engineering</span><span class="chip">October 2026</span></div>
-          <h3>Reported 0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h3>
-          <p class="fl-desc">Road &amp; Track reports the presentation displayed 0.81 seconds to 60 mph. Refill reports give 2–6 hours for 200-liter Thrust and 6–7 hours for 600-liter Rocket; a separate model does not estimate tank inventory.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Tesla</span><span class="chip">Cold Gas</span><span class="chip">Claims Audit</span><span class="chip">Rook</span></div>
-          <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
-          </div>
-        </a>
+
         <a class="feature-link article-card" data-article-card href="system-design/azure-openai-sweden-central-cache-restart-postmortem.html">
           <img loading="lazy" decoding="async" src="images/articles/azure-openai-cache-restart.png" alt="Azure OpenAI incident flow: cache-clearing deployment, about 20× normal regional-backend traffic, exhausted connections, and database-dependent health-check restarts" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
@@ -404,16 +414,7 @@
           <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
           </div>
         </a>
-        <a class="feature-link article-card" data-article-card href="system-design/amazon-ai-book-slop-postmortem.html">
-          <img loading="lazy" decoding="async" src="images/articles/amazon-ai-book-lookalike-meme.png" alt="Reported sequence: suspicious lookalike book listing, author purchase and report, marketplace removal" width="1200" height="630" onerror="this.style.display='none'">
-          <div class="article-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Book Slop Audit</span><span class="chip">October 2026</span></div>
-          <h3>Amazon's AI Book Slop Problem: The Copycat Beside the Real Book</h3>
-          <p class="fl-desc">A reporter bought a suspicious lookalike of his own book. Amazon removed it after his report; the seller and generation method remain unverified.</p>
-          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Amazon</span><span class="chip">Publishing</span><span class="chip">Provenance</span></div>
-          <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
-          </div>
-        </a>
+
         <a class="feature-link article-card" data-article-card href="system-design/ai-sandbox-escape-architecture.html">
           <img loading="lazy" decoding="async" src="images/articles/agent-egress-controls.png" alt="Reference architecture showing an agent workload behind a kernel isolation boundary and host-controlled default-deny egress gateway, with write-event monitoring" width="1200" height="630">
           <div class="article-card-body">
