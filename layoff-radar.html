@@ -34,7 +34,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Montserrat:wght@400;500;600&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
 
@@ -140,7 +140,7 @@
       margin: 0;
       max-width: 100%;
       overflow-wrap: anywhere;
-      font-family: "Sora", sans-serif;
+      font-family: var(--font-body);
       font-size: clamp(42px, 7vw, 78px);
       line-height: 0.98;
       font-weight: 800;
@@ -206,7 +206,7 @@
 
     .radar-count {
       margin: 10px 0 4px;
-      font-family: "Sora", sans-serif;
+      font-family: var(--font-body);
       font-size: clamp(64px, 11vw, 126px);
       line-height: 0.95;
       font-weight: 800;
@@ -390,7 +390,7 @@
 
     .radar-trend-value {
       margin-top: 6px;
-      font-family: "Sora", sans-serif;
+      font-family: var(--font-body);
       font-size: 26px;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -445,7 +445,7 @@
 
     .radar-section-title {
       margin: 0;
-      font-family: "Sora", sans-serif;
+      font-family: var(--font-body);
       font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.03em;
@@ -554,7 +554,7 @@
     }
 
     .radar-day-count {
-      font-family: "Sora", sans-serif;
+      font-family: var(--font-body);
       font-size: 20px;
       font-weight: 700;
     }
@@ -970,7 +970,7 @@
                     <circle cx="100" cy="100" r="80" stroke="#93a4ba" stroke-dasharray="0.5 502.65" stroke-dashoffset="-490.3"/>
                     <circle cx="100" cy="100" r="80" stroke="rgba(127,127,127,0.35)" stroke-dasharray="11.1 502.65" stroke-dashoffset="-490.7"/>
                   </g>
-                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Sora, sans-serif" font-size="26" font-weight="700" fill="currentColor">92.2%</text>
+                  <text id="donut-center-top" x="100" y="96" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="26" font-weight="700" fill="currentColor">92.2%</text>
                   <text id="donut-center-sub" x="100" y="116" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="11" fill="currentColor" opacity="0.6">India</text>
                 </svg>
               </div>
@@ -1568,7 +1568,7 @@
       ctx.fillStyle = "#a3e635";
       ctx.fillRect(0, 0, W, 10);
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "800 56px Sora, sans-serif";
+      ctx.font = "800 56px Montserrat, sans-serif";
       ctx.fillText("TECH LAYOFF RADAR", 64, 110);
       const periodKick = selectedPeriod === "24h" ? "LAST 24 HOURS"
         : selectedPeriod === "7d" ? "LAST 7 DAYS"
@@ -1577,7 +1577,7 @@
       ctx.font = "700 24px Montserrat, sans-serif";
       ctx.fillText(`LAYOFF HEADLINES · ${periodKick}`, 64, 158);
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "800 150px Sora, sans-serif";
+      ctx.font = "800 150px Montserrat, sans-serif";
       ctx.fillText(formatNumber(total), 60, 330);
       ctx.fillStyle = "#f8fafc";
       ctx.font = "700 28px Montserrat, sans-serif";
@@ -1602,7 +1602,7 @@
         ang += frac * Math.PI * 2;
       });
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "800 44px Sora, sans-serif";
+      ctx.font = "800 44px Montserrat, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(`${topPct.toFixed(1)}%`, cx, cy + 2);
       ctx.fillStyle = "#94a3b8";
