@@ -193,6 +193,16 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/gcp-europe-west2-power-zone-postmortem.html">
+          <img loading="lazy" decoding="async" src="images/articles/gcp-europe-west2-power-zone.png" alt="Schematic of the europe-west2-b power chain: a grid feed, a UPS battery bank marked drained, two generators with both PLC controllers failed, the dark zone rack, and the surviving zone racks taking failover demand while their control-plane calls time out, with 6h 10m, 5h 29m and 41m durations below." width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Cloud Infrastructure</span><span class="chip">October 2026</span><span class="chip">9 min read</span></div>
+          <h3>Google Cloud's London Outage: One Zone Lost Power, the Region Lost Capacity</h3>
+          <p class="fl-desc">Both controllers that start the backup generators failed, one zone went dark, and the region failed in two ways: failover demand saturated the survivors, and control-plane calls still had to reach metadata in the dead zone.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Google Cloud</span><span class="chip">Availability Zones</span><span class="chip">Power</span><span class="chip">Postmortem</span></div>
+          <span class="article-read">Read the postmortem <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/inngest-pool-collapse-postmortem.html">
           <img loading="lazy" decoding="async" src="images/articles/inngest-pool-collapse.png" alt="Cutaway schematic of the Inngest database path: a client row with an expired deadline, a PgBouncer waiting queue, a gate admitting one database connection at a time, and a rack of connection slots marked closed rather than returned, with 44, 48 and 55 minute incident windows below." width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
