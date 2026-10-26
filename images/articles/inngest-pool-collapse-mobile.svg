@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 360 520" role="img" aria-labelledby="figtitle figdesc">
+  <title id="figtitle">Vertical schematic of the Inngest database path: a client deadline, a PgBouncer waiting queue, a gate admitting one database connection at a time, a connection rack with most slots closed rather than returned, and PostgreSQL</title>
+  <desc id="figdesc">Top to bottom: clients, one of which has an expired deadline; a PgBouncer queue with one cancelled entry and a gate labelled one at a time; a rack of eight connection slots, six marked closed; then PostgreSQL. A strip underneath gives 44 minutes on 9 October, and 48 and 55 minutes on 10 October.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a2c"/><stop offset="1" stop-color="#182944"/></linearGradient>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#eaf1fa}
+      .muted{fill:#a8bad0}
+      .kicker{font-size:9.5px;font-weight:700;letter-spacing:1.3px;fill:#7dd3c7}
+      .head{font-size:17px;font-weight:700}
+      .band{font-size:11px;font-weight:700;fill:#a8bad0}
+      .big{font-size:13px;font-weight:700}
+      .sm{font-size:9.5px}
+      .mid{font-size:12px;font-weight:700}
+      .box{fill:#ffffff;fill-opacity:.035;stroke:#8faac5;stroke-opacity:.55;stroke-width:1.2}
+      .rule{stroke:#8faac5;stroke-opacity:.42;stroke-width:1}
+      .dash{stroke:#8faac5;stroke-opacity:.42;stroke-width:1;stroke-dasharray:4 4}
+      .live{fill:#7dd3c7;fill-opacity:.20;stroke:#7dd3c7;stroke-width:1.3}
+      .dead{fill:none;stroke:#8faac5;stroke-opacity:.42;stroke-width:1.2;stroke-dasharray:3.5 3.5}
+    </style>
+  </defs>
+  <rect width="360" height="520" rx="14" fill="url(#bg)"/>
+  <text x="14" y="30" class="kicker">INNGEST &#183; 9&#8211;10 OCT 2026</text>
+  <text x="14" y="58" class="head">Connections died faster than</text>
+  <text x="14" y="78" class="head">the pooler could refill them.</text>
+  <image x="260" y="14" width="86" height="31" preserveAspectRatio="xMaxYMid meet" href="data:image/png;base64,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"/>
+  <rect x="14" y="94" width="332" height="64" rx="8" class="box"/>
+  <text x="26" y="111" class="band">clients</text>
+  <rect x="26" y="117" width="308" height="15" rx="4" fill="none" stroke="#8faac5" stroke-opacity=".38" stroke-width="1.1"/>
+  <rect x="34" y="123" width="66" height="4" rx="2" fill="#8faac5" fill-opacity=".30"/>
+  <rect x="26" y="136" width="308" height="15" rx="4" fill="#ed9b55" fill-opacity=".12" stroke="#ed9b55" stroke-width="1.3"/>
+  <text x="34" y="147" class="sm" fill="#ed9b55" font-weight="700">deadline</text>
+  <rect x="92" y="141" width="158" height="5" rx="2.5" fill="#ed9b55" fill-opacity=".26"/>
+  <rect x="92" y="141" width="38" height="5" rx="2.5" fill="#ed9b55"/>
+  <path d="M180 158 V172" fill="none" stroke="#eaf1fa" stroke-width="1.6"/>
+  <path d="M176 167 L180 172 L184 167" fill="none" stroke="#eaf1fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="14" y="172" width="332" height="100" rx="8" class="box"/>
+  <text x="26" y="192" class="big">PgBouncer</text>
+  <line x1="26" y1="200" x2="334" y2="200" class="dash"/>
+  <circle cx="36" cy="216" r="6" fill="#8faac5" fill-opacity=".32" stroke="#8faac5" stroke-opacity=".75" stroke-width="1.1"/>
+  <circle cx="60" cy="216" r="6" fill="#ed9b55" fill-opacity=".55" stroke="#ed9b55" stroke-width="1.3"/>
+  <path d="M57.6 213.6 L62.4 218.4 M62.4 213.6 L57.6 218.4" stroke="#101a2c" stroke-width="1.3" stroke-linecap="round"/>
+  <circle cx="84" cy="216" r="6" fill="#8faac5" fill-opacity=".32" stroke="#8faac5" stroke-opacity=".75" stroke-width="1.1"/>
+  <circle cx="108" cy="216" r="6" fill="#8faac5" fill-opacity=".32" stroke="#8faac5" stroke-opacity=".75" stroke-width="1.1"/>
+  <circle cx="132" cy="216" r="6" fill="#8faac5" fill-opacity=".32" stroke="#8faac5" stroke-opacity=".75" stroke-width="1.1"/>
+  <text x="150" y="220" class="sm muted">waiting</text>
+  <path d="M116 250 H138" fill="none" stroke="#eaf1fa" stroke-width="1.5"/>
+  <path d="M134 247 L138 250 L134 253" fill="none" stroke="#eaf1fa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="150" y1="238" x2="150" y2="262" stroke="#7dd3c7" stroke-width="1.6"/>
+  <line x1="172" y1="238" x2="172" y2="262" stroke="#7dd3c7" stroke-width="1.6"/>
+  <path d="M180 250 H226" fill="none" stroke="#7dd3c7" stroke-width="1.6"/>
+  <path d="M222 247 L226 250 L222 253" fill="none" stroke="#7dd3c7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="234" y="253" class="sm" fill="#7dd3c7" font-weight="700">1 at a time</text>
+  <path d="M180 272 V288" fill="none" stroke="#eaf1fa" stroke-width="1.6"/>
+  <path d="M176 283 L180 288 L184 283" fill="none" stroke="#eaf1fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="14" y="288" width="332" height="84" rx="8" class="box"/>
+  <text x="26" y="305" class="band">connections</text>
+  <rect x="26" y="311" width="52" height="26" rx="5" class="live"/>
+  <rect x="88" y="311" width="52" height="26" rx="5" class="dead"/>
+  <path d="M108 321 L116 328 M116 321 L108 328" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="150" y="311" width="52" height="26" rx="5" class="dead"/>
+  <path d="M170 321 L178 328 M178 321 L170 328" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="212" y="311" width="52" height="26" rx="5" class="dead"/>
+  <path d="M232 321 L240 328 M240 321 L232 328" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="26" y="341" width="52" height="26" rx="5" class="dead"/>
+  <path d="M46 351 L54 358 M54 351 L46 358" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="88" y="341" width="52" height="26" rx="5" class="dead"/>
+  <path d="M108 351 L116 358 M116 351 L108 358" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="150" y="341" width="52" height="26" rx="5" class="live"/>
+  <rect x="212" y="341" width="52" height="26" rx="5" class="dead"/>
+  <path d="M232 351 L240 358 M240 351 L232 358" stroke="#8faac5" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round"/>
+  <text x="272" y="330" class="sm" fill="#df5e60" font-weight="700">closed, not</text>
+  <text x="272" y="342" class="sm" fill="#df5e60" font-weight="700">returned</text>
+  <path d="M180 372 V388" fill="none" stroke="#eaf1fa" stroke-width="1.6"/>
+  <path d="M176 383 L180 388 L184 383" fill="none" stroke="#eaf1fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="14" y="388" width="332" height="44" rx="8" class="box"/>
+  <ellipse cx="44" cy="401" rx="11" ry="3.4" class="box"/>
+  <path d="M33 401 V419 A11 3.4 0 0 0 55 419 V401" class="box"/>
+  <text x="196" y="415" class="mid" text-anchor="middle">PostgreSQL</text>
+  <line x1="14" y1="450" x2="346" y2="450" class="rule"/>
+  <text x="14" y="474" class="mid" fill="#7dd3c7">44 min &#183; 9 Oct</text>
+  <line x1="114" y1="456" x2="114" y2="482" class="rule"/>
+  <text x="126" y="474" class="mid" fill="#7dd3c7">48 min, 55 min &#183; 10 Oct</text>
+</svg>
