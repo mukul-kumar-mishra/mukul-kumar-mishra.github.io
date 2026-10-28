@@ -9,8 +9,8 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="System Design & Architecture Case Studies | Buildopsy">
   <meta property="og:description" content="Source-linked system design case studies that separate evidence, inference, and modeled costs, with free tools to rerun assumptions.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
-  <meta property="og:image:alt" content="System design postmortems and cost teardowns">
+  <meta property="og:image" content="https://buildopsy.com/images/og/system-design-index.png">
+  <meta property="og:image:alt" content="System Design &amp; Architecture Case Studies — system design shelf on Buildopsy">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,8 +18,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="System Design Case Studies & Postmortems">
   <meta name="twitter:description" content="Source-linked system design case studies with explicit assumptions and free calculators to rerun the cost models.">
-  <meta name="twitter:image:alt" content="System design postmortems and cost teardowns">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/elevenlabs-voice-meme.png">
+  <meta name="twitter:image:alt" content="System Design &amp; Architecture Case Studies — system design shelf on Buildopsy">
+  <meta name="twitter:image" content="https://buildopsy.com/images/og/system-design-index.png">
   <title>System Design Case Studies & Postmortems | Buildopsy</title>
   <script type="application/ld+json">
   {
@@ -79,7 +79,8 @@
       {"@type":"ListItem","position":48,"url":"https://buildopsy.com/system-design/openrouter-cache-thundering-herd-postmortem.html","name":"OpenRouter's February 2026 Outages: How a Cold Cache Overwhelmed the Database"},
       {"@type":"ListItem","position":49,"url":"https://buildopsy.com/system-design/opencode-console-breach-disclosure-audit.html","name":"OpenCode Console Breach: The Missing Link in the Distillation Claim"},
       {"@type":"ListItem","position":50,"url":"https://buildopsy.com/system-design/litellm-release-pipeline-compromise-audit.html","name":"Ten Attacker Commits Above the Last Clean Commit: The LiteLLM 1.107.0 Supply-Chain Audit"},
-      {"@type":"ListItem","position":51,"url":"https://buildopsy.com/system-design/php2shell-patch-window-audit.html","name":"PHP2Shell: The Fix Was Ready. The Shutdowns Happened Anyway."}
+      {"@type":"ListItem","position":51,"url":"https://buildopsy.com/system-design/php2shell-patch-window-audit.html","name":"PHP2Shell: The Fix Was Ready. The Shutdowns Happened Anyway."},
+      {"@type":"ListItem","position":52,"url":"https://buildopsy.com/system-design/prompt-caching-economics.html","name":"Prompt Caching Economics: How Many Reuses a Cache Write Has to Earn"}
     ]
   }
   </script>
@@ -147,6 +148,7 @@
         <p style="margin:0;display:flex;gap:8px;flex-wrap:wrap;"><button class="chip" id="clearSearchBtn" type="button" style="cursor:pointer;">Clear search</button><a class="chip" href="ai-slop.html">Browse AI Slop Watch</a></p>
       </div>
       <div id="articleList" style="display:grid;gap:16px;">
+        <article class="feature-link"><div><span class="fl-tag">AI Infrastructure</span> <span class="chip">8 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="prompt-caching-economics.html">Prompt Caching Economics: How Many Reuses a Cache Write Has to Earn</a></h3><p class="fl-desc">A cache write is billed at 1.25x or 2.5x input while reads cost 0.10x, so the saving is a reuse count: 1.28 passes on the 30-minute TTL, 2.67 on the 12-hour one.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Cloud Infrastructure</span> <span class="chip">11 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="gcp-europe-west2-power-zone-postmortem.html">Google Cloud's London Outage: One Zone Lost Power, the Region Lost Capacity</a></h3><p class="fl-desc">Both generator controllers failed, one zone went dark, and the region failed through demand and cross-zone validation. Google's preliminary report, with the phase arithmetic recomputed.</p></article>
         <article class="feature-link"><div><span class="fl-tag">Durable Execution</span> <span class="chip">16 min read</span> <span class="chip">October 2026</span></div><h3><a class="feature-link-title" href="inngest-pool-collapse-postmortem.html">Inngest Postmortem: Connections Died Faster Than the Pooler Could Replace Them</a></h3><p class="fl-desc">Short query deadlines cancelled connections inside PgBouncer faster than the pooler could refill them, and runs were left stranded in a Running state.</p></article>
         <article class="feature-link"><div><span class="fl-tag">AI Supply Chain Incident</span> <span class="chip">13 min read</span> <span class="chip">October 2026</span> <span class="chip">Rook</span></div><h3><a class="feature-link-title" href="litellm-release-pipeline-compromise-audit.html">Ten Attacker Commits Above the Last Clean Commit: The LiteLLM 1.107.0 Supply-Chain Audit</a></h3><p class="fl-desc">The v1.107.0 tag was clean; the release workflow built from a lookalike fork. LiteLLM's final report traces the credentials to a master key committed in May and two throwaway CI jobs in October.</p></article>
@@ -262,6 +264,7 @@
       var noBox = document.getElementById('noResults');
       var clearBtn = document.getElementById('clearSearchBtn');
       var embeddedArticles = [
+                {"title": "Prompt Caching Economics: How Many Reuses a Cache Write Has to Earn", "url": "prompt-caching-economics.html", "tag": "AI Infrastructure", "dateLabel": "October 2026", "readTime": "8 min read", "desc": "A cache write is billed at 1.25x or 2.5x input while reads cost 0.10x, so the saving is a reuse count: 1.28 passes on the 30-minute TTL, 2.67 on the 12-hour one.", "tags": ["Prompt Caching", "LLM Costs", "Pricing"]},
         {"title":"Google Cloud's London Outage: One Zone Lost Power, the Region Lost Capacity","url":"gcp-europe-west2-power-zone-postmortem.html","tag":"Cloud Infrastructure","dateLabel":"October 2026","readTime":"11 min read","desc":"Both generator controllers failed, one zone went dark, and the region failed through failover demand and cross-zone validation.","tags":["Google Cloud","Availability Zones","Power","Postmortem"]},
         {"title":"Inngest Postmortem: Connections Died Faster Than the Pooler Could Replace Them","url":"inngest-pool-collapse-postmortem.html","tag":"Durable Execution","dateLabel":"October 2026","readTime":"16 min read","desc":"Short query deadlines cancelled connections inside PgBouncer faster than the pooler could refill them, and runs were left stranded in a Running state.","tags":["Inngest","PgBouncer","PostgreSQL","Postmortem"]},
         {"title":"Ten Attacker Commits Above the Last Clean Commit: The LiteLLM 1.107.0 Supply-Chain Audit","url":"litellm-release-pipeline-compromise-audit.html","tag":"AI Supply Chain Incident","dateLabel":"October 2026","readTime":"13 min read","desc":"The v1.107.0 tag was clean; the release workflow built from a lookalike fork. LiteLLM's final report traces the credentials to a master key committed in May and two throwaway CI jobs in October.","tags":["LiteLLM","Supply Chain","CI/CD","Rook"]},

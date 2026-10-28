@@ -193,6 +193,16 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/prompt-caching-economics.html">
+          <img loading="lazy" decoding="async" src="images/articles/prompt-caching-economics.png" alt="Break-even chart comparing the cost of repeating a prompt prefix with no cache, a 30-minute cache write, and a 12-hour cache write" width="1200" height="630">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">8 min read</span></div>
+          <h3>Prompt Caching Economics: How Many Reuses a Cache Write Has to Earn</h3>
+          <p class="fl-desc">A cache write is billed at 1.25x or 2.5x input while reads cost 0.10x, so the saving is a reuse count: 1.28 passes on the 30-minute TTL, 2.67 on the 12-hour one.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Prompt Caching</span><span class="chip">LLM Costs</span><span class="chip">Pricing</span></div>
+          <span class="article-read">Read the teardown <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/gcp-europe-west2-power-zone-postmortem.html">
           <img loading="lazy" decoding="async" src="images/articles/gcp-europe-west2-power-zone.png" alt="Schematic of the europe-west2-b power chain: a grid feed, a UPS battery bank marked drained, two generators with both PLC controllers failed, the dark zone rack, and the surviving zone racks taking failover demand while their control-plane calls time out, with 6h 10m, 5h 29m and 41m durations below." width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
