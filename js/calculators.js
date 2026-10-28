@@ -168,16 +168,50 @@
     },
     /* S3 storage bill. Storage GB-month plus request fees priced per
        thousand plus retrieval GB. Defaults: 1 TiB (1,024 billable GB)
-       Standard, 1M PUTs, 10M GETs, no retrieval. */
+       Standard, 1M PUTs, 10M GETs, no retrieval.
+
+       Three class-specific rules are modeled because they move the
+       number more than the rate does:
+       1. Volume tiers. S3 Standard is tiered: 0-50 TB, 50-500 TB, >500 TB.
+       2. Minimum billable object size. Standard-IA, One Zone-IA and
+          Glacier Instant Retrieval bill every object at 128 KiB minimum.
+       3. Minimum storage duration. 30 days (Standard-IA, One Zone-IA),
+          90 (Glacier Instant Retrieval, Glacier Flexible Retrieval),
+          180 (Glacier Deep Archive). Deleting earlier is charged pro rata
+          to the minimum. */
     s3Cost: function (o) {
-      var storage = nonneg(o.gb) * nonneg(o.price);
-      var requests = nonneg(o.puts) / 1000 * nonneg(o.putPrice) +
-        nonneg(o.gets) / 1000 * nonneg(o.getPrice);
+      var gbIn = nonneg(o.gb);
+      var objs = nonneg(o.objects || 0);
+      var objKib = nonneg(o.objKib || 0);
+      var minObjKib = nonneg(o.minObjKib || 0);
+      var billableGb = gbIn;
+      var objectFloor = false;
+      if (objs > 0 && minObjKib > 0) {
+        billableGb = objs * Math.max(objKib, minObjKib) / 1048576;
+        objectFloor = true;
+      }
+      var p1 = nonneg(o.price);
+      var t1Gb = Math.min(billableGb, 51200);
+      var t2Gb = Math.min(Math.max(billableGb - 51200, 0), 460800);
+      var t3Gb = Math.max(billableGb - 512000, 0);
+      var storage = t1Gb * p1 +
+        t2Gb * nonneg(o.price2 || 0) +
+        t3Gb * nonneg(o.price3 || 0);
+      var retention = nonneg(o.retention || 0);
+      var minDur = nonneg(o.minDur || 0);
+      var durFactor = (retention > 0 && minDur > retention) ? minDur / retention : 1;
+      storage = storage * durFactor;
+      var putCost = nonneg(o.puts) / 1000 * nonneg(o.putPrice);
+      var getCost = nonneg(o.gets) / 1000 * nonneg(o.getPrice);
+      var requests = putCost + getCost;
       var retrieval = nonneg(o.retGb) * nonneg(o.retPrice);
       var monthly = storage + requests + retrieval;
       return {
+        billableGb: billableGb, objectFloor: objectFloor,
+        tier1Gb: t1Gb, tier2Gb: t2Gb, tier3Gb: t3Gb,
+        durFactor: durFactor, putCost: putCost, getCost: getCost,
         storage: storage, requests: requests, retrieval: retrieval,
-        monthly: monthly, perGb: nonneg(o.gb) > 0 ? monthly / nonneg(o.gb) : NaN
+        monthly: monthly, perGb: billableGb > 0 ? monthly / billableGb : NaN
       };
     },
     /* Cloud egress bill. Billable gigabytes above the free allowance,
@@ -189,12 +223,32 @@
     },
     /* EC2 instance usage is billed while running, even when CPU-idle. The
        running percentage models powered-on time; discount is an editable
-       effective-rate scenario, not a Reserved Instance/Savings Plan quote. */
+       effective-rate scenario, not a Reserved Instance/Savings Plan quote.
+
+       Two meters sit outside the instance price and are modeled here
+       because they surprise people:
+       1. Per-second billing with a 60-second minimum. A launch that lasts
+          under a minute still bills a full minute, so short-lived fleets
+          pay far more hours than they run. AWS states the minimum on the
+          On-Demand pricing page.
+       2. Attached EBS storage is billed by provisioned GB-month, whether
+          the instance is running or stopped. */
     computeCost: function (o) {
-      var onDemand = Math.floor(nonneg(o.count)) * nonneg(o.hr) *
-        nonneg(o.hours) * (clamp(o.runningPct, 0, 100) / 100);
-      var monthly = onDemand * (1 - clamp(o.disc, 0, 100) / 100);
-      return { onDemand: onDemand, monthly: monthly, savings: onDemand - monthly };
+      var count = Math.floor(nonneg(o.count));
+      var baseHours = count * nonneg(o.hours) * (clamp(o.runningPct, 0, 100) / 100);
+      var launches = nonneg(o.launches || 0);
+      var secs = nonneg(o.secs || 0);
+      var burstHours = launches * Math.max(secs, 60) / 3600;
+      var billedHours = baseHours + burstHours;
+      var onDemand = billedHours * nonneg(o.hr);
+      var disc = clamp(o.disc, 0, 100) / 100;
+      var instances = onDemand * (1 - disc);
+      var ebs = count * nonneg(o.ebsGb || 0) * nonneg(o.ebsPrice || 0);
+      return {
+        billedHours: billedHours, burstHours: burstHours,
+        onDemand: onDemand, instances: instances, ebs: ebs,
+        monthly: instances + ebs, savings: onDemand - instances
+      };
     },
     /* GC runtime tune. Collector burn is fleet spend times GC share;
        savings are fleet spend times the overall CPU cut the tune earns.
@@ -257,12 +311,30 @@
         monthly: reqCost + compute
       };
     },
-    /* CDN bill. Bandwidth gigabytes times price plus requests priced per
-       ten thousand. */
+    /* CDN bill. Bandwidth gigabytes across the provider's volume tiers,
+       requests priced per ten thousand, and origin egress on cache misses.
+       A cache miss pulls the object from origin, and that pull may be
+       billed by whoever hosts the origin. CloudFront does not charge for
+       cacheable data pulled from an AWS origin, so the default rate is 0. */
     cdnCost: function (o) {
-      var bandwidth = nonneg(o.gb) * nonneg(o.gbPrice);
+      var gb = nonneg(o.gb);
+      var t1 = Math.min(gb, 10240);
+      var t2 = Math.min(Math.max(gb - 10240, 0), 40960);
+      var t3 = Math.min(Math.max(gb - 51200, 0), 102400);
+      var t4 = Math.max(gb - 153600, 0);
+      var bandwidth = t1 * nonneg(o.gbPrice) +
+        t2 * nonneg(o.gbPrice2 || 0) +
+        t3 * nonneg(o.gbPrice3 || 0) +
+        t4 * nonneg(o.gbPrice4 || 0);
       var requests = nonneg(o.reqM) * 1e6 / 10000 * nonneg(o.reqPrice);
-      return { bandwidth: bandwidth, requests: requests, monthly: bandwidth + requests };
+      var missGb = gb * (1 - clamp(o.hitPct, 0, 100) / 100);
+      var origin = missGb * nonneg(o.originPrice || 0);
+      return {
+        tier1Gb: t1, tier2Gb: t2, tier3Gb: t3, tier4Gb: t4,
+        bandwidth: bandwidth, requests: requests,
+        missGb: missGb, origin: origin,
+        monthly: bandwidth + requests + origin
+      };
     },
     /* Observability bill. Hosts times per-host price plus log ingest
        gigabytes times price per gigabyte. */
@@ -607,13 +679,30 @@
       gb: num('s3-gb', 1024), price: num('s3-price', 0.023),
       puts: num('s3-put', 1000000), putPrice: num('s3-putp', 0.005),
       gets: num('s3-get', 10000000), getPrice: num('s3-getp', 0.0004),
-      retGb: num('s3-ret', 0), retPrice: num('s3-retp', 0)
+      retGb: num('s3-ret', 0), retPrice: num('s3-retp', 0),
+      objects: num('s3-objs', 0), objKib: num('s3-objkib', 100),
+      minObjKib: num('s3-minobj', 0), retention: num('s3-retention', 30),
+      minDur: num('s3-mindur', 30),
+      price2: num('s3-price2', 0.022), price3: num('s3-price3', 0.021)
     };
     var r = Calcs.s3Cost(o);
     set('s3-monthly', money(r.monthly, 2));
     set('s3-storage', money(r.storage, 2) + ' storage');
     set('s3-requests', money(r.requests, 2) + ' requests');
     set('s3-pergb', money(r.perGb, 4) + ' / GB');
+    set('s3-billable', big(r.billableGb, 0) + ' GB');
+    set('s3-billable-note', r.objectFloor
+      ? 'after the per-object minimum'
+      : 'as entered, no object minimum');
+    set('s3-dur', r.durFactor === 1 ? '1.00×' : r.durFactor.toFixed(2) + '×');
+    set('s3-dur-note', r.durFactor === 1
+      ? 'retention meets the minimum'
+      : 'charged up to the minimum duration');
+    set('s3-monthly-2', money(r.monthly, 2));
+    set('s3-li-storage', money(r.storage, 2));
+    set('s3-li-puts', money(r.putCost, 2));
+    set('s3-li-gets', money(r.getCost, 2));
+    set('s3-li-ret', money(r.retrieval, 2));
     donut('s3-donut', [[r.storage, LIME], [r.requests, CYAN], [r.retrieval, ROSE]],
       pct(r.storage, r.monthly));
   }
@@ -635,14 +724,23 @@
     var o = {
       count: num('ec2-count', 10), hr: num('ec2-hr', 0.096),
       hours: num('ec2-hours', 730), runningPct: num('ec2-running', 100),
-      disc: num('ec2-disc', 0)
+      disc: num('ec2-disc', 0), launches: num('ec2-launches', 0),
+      secs: num('ec2-secs', 30), ebsGb: num('ec2-ebsgb', 0),
+      ebsPrice: num('ec2-ebsp', 0.08)
     };
     var r = Calcs.computeCost(o);
     set('ec2-monthly', money(r.monthly, 2));
     set('ec2-ondemand', money(r.onDemand, 2) + ' before discount');
     set('ec2-savings', money(r.savings, 2) + ' saved');
-    donut('ec2-donut', [[r.monthly, CYAN], [r.savings, LIME]],
-      pct(r.monthly, r.onDemand));
+    set('ec2-hours-billed', big(r.billedHours, 1) + ' h');
+    set('ec2-hours-note', r.burstHours > 0
+      ? big(r.burstHours, 1) + ' h from short launches'
+      : 'long-running instances only');
+    set('ec2-ebs', money(r.ebs, 2));
+    set('ec2-ebs-note', r.ebs > 0 ? 'provisioned GB-month' : 'no volumes entered');
+    set('ec2-monthly-2', money(r.monthly, 2));
+    donut('ec2-donut', [[r.instances, CYAN], [r.ebs, LIME]],
+      pct(r.instances, r.monthly));
   }
 
   function renderGcTune() {
@@ -716,13 +814,26 @@
   function renderCdn() {
     var o = {
       gb: num('cdn-gb', 10000), gbPrice: num('cdn-gbp', 0.085),
-      reqM: num('cdn-req', 100), reqPrice: num('cdn-reqp', 0.0075)
+      reqM: num('cdn-req', 100), reqPrice: num('cdn-reqp', 0.01),
+      gbPrice2: num('cdn-gbp2', 0.08), gbPrice3: num('cdn-gbp3', 0.06),
+      gbPrice4: num('cdn-gbp4', 0.04), hitPct: num('cdn-hit', 100),
+      originPrice: num('cdn-originp', 0)
     };
     var r = Calcs.cdnCost(o);
     set('cdn-monthly', money(r.monthly, 0));
     set('cdn-bandwidth', money(r.bandwidth, 0) + ' bandwidth');
     set('cdn-requests', money(r.requests, 0) + ' requests');
-    donut('cdn-donut', [[r.bandwidth, CYAN], [r.requests, LIME]], pct(r.bandwidth, r.monthly));
+    set('cdn-miss', big(r.missGb, 0) + ' GB');
+    set('cdn-miss-note', r.missGb > 0 ? 'pulled from origin' : 'every request is a cache hit');
+    set('cdn-origin', money(r.origin, 0));
+    set('cdn-origin-note', r.origin > 0 ? 'origin egress'
+      : (r.missGb > 0 ? 'origin bills nothing' : 'no origin egress'));
+    set('cdn-monthly-2', money(r.monthly, 0));
+    set('cdn-li-bw', money(r.bandwidth, 0));
+    set('cdn-li-req', money(r.requests, 0));
+    set('cdn-li-origin', money(r.origin, 0));
+    donut('cdn-donut', [[r.bandwidth, CYAN], [r.requests, LIME], [r.origin, ROSE]],
+      pct(r.bandwidth, r.monthly));
   }
 
   function renderObservability() {
@@ -916,15 +1027,18 @@
       bind(['dt-rev', 'dt-mins', 'dt-bill', 'dt-credit'], renderDowntime);
       bind(['ue-rps', 'ue-attempt-cost', 'ue-retries', 'ue-success', 'ue-fixed',
         'ue-target-retries', 'ue-target-success'], renderUnitEconomics);
-      bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp'], renderS3);
+      bind(['s3-gb', 's3-price', 's3-put', 's3-putp', 's3-get', 's3-getp', 's3-ret', 's3-retp',
+        's3-objs', 's3-objkib', 's3-minobj', 's3-retention', 's3-mindur', 's3-price2', 's3-price3'], renderS3);
       bind(['eg-gb', 'eg-price', 'eg-free'], renderEgress);
-      bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-running', 'ec2-disc'], renderCompute);
+      bind(['ec2-count', 'ec2-hr', 'ec2-hours', 'ec2-running', 'ec2-disc',
+        'ec2-launches', 'ec2-secs', 'ec2-ebsgb', 'ec2-ebsp'], renderCompute);
       bind(['gc-spend', 'gc-before', 'gc-after', 'gc-cut'], renderGcTune);
       bind(['k8s-nodes', 'k8s-node', 'k8s-cp', 'k8s-pv', 'k8s-pvp'], renderK8s);
       bind(['dw-credits', 'dw-creditp', 'dw-tb', 'dw-tbp'], renderWarehouse);
       bind(['rds-count', 'rds-hr', 'rds-hours', 'rds-storage', 'rds-storagep', 'rds-backup', 'rds-backupp'], renderRds);
       bind(['lm-req', 'lm-dur', 'lm-mem', 'lm-reqp', 'lm-gbs', 'lm-free-req', 'lm-free-gbs'], renderLambda);
-      bind(['cdn-gb', 'cdn-gbp', 'cdn-req', 'cdn-reqp'], renderCdn);
+      bind(['cdn-gb', 'cdn-gbp', 'cdn-req', 'cdn-reqp', 'cdn-gbp2', 'cdn-gbp3',
+        'cdn-gbp4', 'cdn-hit', 'cdn-originp'], renderCdn);
       bind(['ob-hosts', 'ob-hostp', 'ob-loggb', 'ob-loggbp'], renderObservability);
       bind(['vec-count', 'vec-dim', 'vec-overhead', 'vec-storagep', 'vec-pods', 'vec-podp'], renderVector);
       bind(['qb-peak', 'qb-service', 'qb-duration', 'qb-steady'], renderQueue);

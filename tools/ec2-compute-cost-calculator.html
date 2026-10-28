@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free EC2 instance cost calculator. Price running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
+  <meta name="description" content="Free EC2 cost calculator: instance-hours at your rate, the 60-second billing minimum for short launches, and attached EBS storage. Edit every rate.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy">
-  <meta property="og:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
+  <meta property="og:description" content="Price EC2 instance-hours at your rate, the 60-second billing minimum for short launches, and attached EBS storage. CPU utilization does not reduce the charge.">
   <meta property="og:url" content="https://buildopsy.com/tools/ec2-compute-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/og/tools-ec2-compute-cost-calculator.png">
   <meta property="og:image:alt" content="EC2 Compute Cost Calculator — free calculator on Buildopsy">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy">
-  <meta name="twitter:description" content="Price EC2 running instance-hours using an editable hourly rate and optional discount. CPU utilization does not reduce the instance charge.">
+  <meta name="twitter:description" content="Price EC2 instance-hours at your rate, the 60-second billing minimum for short launches, and attached EBS storage. CPU utilization does not reduce the charge.">
   <meta name="twitter:image:alt" content="EC2 Compute Cost Calculator — free calculator on Buildopsy">
   <meta name="twitter:image" content="https://buildopsy.com/images/og/tools-ec2-compute-cost-calculator.png">
   <title>EC2 Compute Cost Calculator: Running Hours and Discounts | Buildopsy</title>
@@ -34,8 +34,10 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How are EC2 instance charges estimated?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours. This modeled example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount."}},
+      {"@type":"Question","name":"How are EC2 instance charges estimated?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours. This modeled example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount. Attached EBS storage and short-lived launches are added separately when you enter them."}},
       {"@type":"Question","name":"Does CPU utilization reduce the EC2 instance charge?","acceptedAnswer":{"@type":"Answer","text":"No. EC2 instance usage is billed while the instance is running, even if it is idle. The running-time input models powered-on time as a share of the entered hours, not CPU load."}},
+      {"@type":"Question","name":"Why does a 30-second launch bill a full minute?","acceptedAnswer":{"@type":"Answer","text":"AWS bills On-Demand usage by the second with a 60-second minimum, so any launch shorter than a minute is charged for the full minute. The calculator applies that floor, which is why ten thousand 30-second launches bill 166.7 instance-hours instead of 83.3. SUSE Linux Enterprise Server is the exception: AWS bills SLES instances as a full hour."}},
+      {"@type":"Question","name":"Does a stopped instance still cost money?","acceptedAnswer":{"@type":"Answer","text":"The instance charge stops when it is stopped, but attached EBS volumes keep billing by provisioned GB-month until you delete them, and any Elastic IP or snapshot charges continue. The EBS field models the storage part of that."}},
       {"@type":"Question","name":"Does this calculator reproduce Reserved Instance or Savings Plan billing?","acceptedAnswer":{"@type":"Answer","text":"No. The discount field applies an effective percentage to modeled running usage. Reserved Instances and Savings Plans are commitments that can be billed even when matching usage is absent, and actual discounts depend on terms and usage."}}
     ]
   }
@@ -78,14 +80,14 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="compute-bill">
-      <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = instances × hourly rate × hours × running share × (1 − discount). The defaults give 10 × $0.096 × 730 = <strong>$700.80</strong> before discount. CPU utilization does not change the instance charge; only powered-on time does.</aside>
-      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate and the fraction of the month it is running. Apply an optional effective discount scenario.</p>
+      <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = (instance-hours + short-launch hours) × hourly rate × (1 − discount) + EBS GB-month. The defaults give 10 × $0.096 × 730 = <strong>$700.80</strong> before discount, with no short launches and no volumes. CPU utilization does not change the instance charge; only powered-on time does.</aside>
+      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate and the fraction of the month it is running, then add short-launch billing and attached EBS storage. Apply an optional effective discount scenario.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
             <div class="radar-hero-left">
               <span class="radar-count-label">Live result · Monthly compute bill</span>
-              <span class="radar-count-description"> · Running instance-hours times the effective rate.</span>
+              <span class="radar-count-description"> · Instance-hours at the effective rate and attached EBS storage.</span>
             <div class="calc-inputs">
               <div style="margin:0 0 12px;"><label class="field-label" for="ec2-count">Instances</label><input type="number" id="ec2-count" value="10" min="0" step="1" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="ec2-hr">Price ($ / instance-hour)</label><input type="number" id="ec2-hr" value="0.096" min="0" step="0.001" class="field-input"></div>
@@ -98,16 +100,16 @@
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly bill</div>
                 <div class="calc-result-value" id="ec2-monthly">$700.80</div>
-                <div class="radar-count-description">per month · running hours × rate after discount</div>
+                <div class="radar-count-description">per month · instances + EBS</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Spend mix</div>
-                  <div class="calc-donut" id="ec2-donut" role="img" aria-label="Share of on-demand value across what you pay and what the discount saves" style="background:conic-gradient(#38bdf8 0.0% 100.0%,#a3e635 100.0% 100.0%)"><div class="calc-donut-center"><span id="ec2-mix-top">100.0%</span><small>paid</small></div></div>
+                  <div class="calc-donut" id="ec2-donut" role="img" aria-label="Share of the monthly EC2 bill across instances after discount and attached EBS storage" style="background:conic-gradient(#38bdf8 0.0% 100.0%,#a3e635 100.0% 100.0%)"><div class="calc-donut-center"><span id="ec2-mix-top">100.0%</span><small>instances</small></div></div>
                 </div>
                 <ul class="radar-legend">
-                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Paid</span></li>
-                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">Saved</span></li>
+                  <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Instances</span></li>
+                  <li><span class="dot" style="background:#a3e635"></span><span class="lname">EBS</span></li>
                 </ul>
               </div>
             </div>
@@ -131,7 +133,75 @@
           </div>
         </div>
       </section>
+
+      <section class="radar-card" style="margin-top:18px;">
+        <div class="radar-main">
+          <div style="padding:20px 22px 8px;">
+            <h2 class="sec-title" style="font-size:1.05rem;margin:0 0 8px;">Billing realism checks</h2>
+            <p class="fl-desc" style="margin:0 0 16px;">Two meters sit outside the instance price. Per-second billing carries a 60-second minimum, so a launch shorter than a minute still bills a full minute. Attached EBS storage bills by provisioned GB-month whether the instance runs or is stopped. Both default to zero, so the total above does not change until you edit them.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+              <div><label class="field-label" for="ec2-launches">Short launches / month</label><input type="number" id="ec2-launches" value="0" min="0" step="1" class="field-input"></div>
+              <div><label class="field-label" for="ec2-secs">Seconds per launch</label><input type="number" id="ec2-secs" value="30" min="0" step="1" class="field-input"></div>
+              <div><label class="field-label" for="ec2-ebsgb">EBS GB per instance</label><input type="number" id="ec2-ebsgb" value="0" min="0" step="1" class="field-input"></div>
+              <div><label class="field-label" for="ec2-ebsp">EBS price ($/GB-month)</label><input type="number" id="ec2-ebsp" value="0.08" min="0" step="0.001" class="field-input"></div>
+            </div>
+            <p class="fl-desc" style="margin:14px 0 0;">A launch below 60 seconds is billed as 60. Ten thousand 30-second launches run 83.3 hours but bill 166.7, doubling the hours on that line. SUSE Linux Enterprise Server is the exception: AWS bills SLES instances as a full hour, so the 60-second floor does not apply. The $0.08 EBS rate is the gp3 example AWS publishes for its pricing walkthrough; check your Region.</p>
+          </div>
+          <div class="radar-trend" style="padding:0 22px 18px;">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Billed instance-hours</div>
+              <div class="radar-trend-value" id="ec2-hours-billed">7,300.0 h</div>
+              <div class="radar-trend-sub" id="ec2-hours-note">long-running instances only</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">EBS storage</div>
+              <div class="radar-trend-value" id="ec2-ebs">$0.00</div>
+              <div class="radar-trend-sub" id="ec2-ebs-note">no volumes entered</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Monthly bill</div>
+              <div class="radar-trend-value" id="ec2-monthly-2">$700.80</div>
+              <div class="radar-trend-sub">with these settings</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card);">
+        <p style="margin:0 0 10px;font-family:var(--font-body);font-size:0.88rem;color:var(--paper);"><strong>What this estimate includes, and what it leaves out</strong></p>
+        <div style="overflow-x:auto;">
+          <table class="claimtable" style="margin:0;">
+            <thead><tr><th>Meter</th><th>Modeled here</th></tr></thead>
+            <tbody>
+              <tr><td>Instance-hours, on-demand</td><td>Yes — running share of the month and short launches at the 60-second minimum</td></tr>
+              <tr><td>Attached EBS volume storage</td><td>Yes — provisioned GB-month at the rate you enter</td></tr>
+              <tr><td>Data transfer out</td><td>No — priced separately by the <a href="cloud-egress-cost-calculator.html">egress calculator</a></td></tr>
+              <tr><td>EBS snapshots, provisioned IOPS and throughput</td><td>No</td></tr>
+              <tr><td>Elastic IPs, load balancers, NAT gateways</td><td>No</td></tr>
+              <tr><td>Reserved Instance and Savings Plan billing</td><td>No — the discount field is a scenario, not a quote</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fl-desc" style="margin:10px 0 0;">Per-second billing with a 60-second minimum is stated on the AWS On-Demand pricing page. EBS per-second billing and the gp3 example rate come from the Amazon EBS pricing page, re-checked October 28, 2026.</p>
+      </div>
+
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/zomato-gomemlimit-cost-teardown.html">One Soft Limit, $30K a Month: Zomato's GOMEMLIMIT Teardown</a></h3><p class="fl-desc">GC CPU fell from up to 60% to under 2% across 250+ Go services. The runtime-sizing loop behind this calculator's CPU math.</p></article>
+    </section>
+
+    <section class="sec" id="ec2-faq">
+      <h2 class="sec-title">Frequently Asked Questions</h2>
+      <h3>How are EC2 instance charges estimated?</h3>
+      <p class="fl-desc">Multiply instance count by the hourly rate and billable running hours. This modeled example uses $0.096 per hour for 730 hours, or $70.08 per instance before any user-entered discount. Attached EBS storage and short-lived launches are added separately when you enter them.</p>
+      <h3>Does CPU utilization reduce the EC2 instance charge?</h3>
+      <p class="fl-desc">No. EC2 instance usage is billed while the instance is running, even if it is idle. The running-time input models powered-on time as a share of the entered hours, not CPU load.</p>
+      <h3>Why does a 30-second launch bill a full minute?</h3>
+      <p class="fl-desc">AWS bills On-Demand usage by the second with a 60-second minimum, so any launch shorter than a minute is charged for the full minute. The calculator applies that floor, which is why ten thousand 30-second launches bill 166.7 instance-hours instead of 83.3. SUSE Linux Enterprise Server is the exception: AWS bills SLES instances as a full hour.</p>
+      <h3>Does a stopped instance still cost money?</h3>
+      <p class="fl-desc">The instance charge stops when it is stopped, but attached EBS volumes keep billing by provisioned GB-month until you delete them, and any Elastic IP or snapshot charges continue. The EBS field models the storage part of that.</p>
+      <h3>Does this calculator reproduce Reserved Instance or Savings Plan billing?</h3>
+      <p class="fl-desc">No. The discount field applies an effective percentage to modeled running usage. Reserved Instances and Savings Plans are commitments that can be billed even when matching usage is absent, and actual discounts depend on terms and usage.</p>
     </section>
 
     <section class="sec" id="more-tools">

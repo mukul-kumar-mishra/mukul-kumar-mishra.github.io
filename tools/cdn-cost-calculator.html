@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
+  <meta name="description" content="Estimate a CDN bill from bandwidth across volume tiers, HTTPS request volume and origin egress on cache misses. Free tiers and plan fees are excluded.">
   <meta name="author" content="Buildopsy">
   <link rel="canonical" href="https://buildopsy.com/tools/cdn-cost-calculator.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="CDN Cost Calculator: Bandwidth and Requests | Buildopsy">
-  <meta property="og:description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
+  <meta property="og:description" content="Estimate a CDN bill from bandwidth across volume tiers, HTTPS request volume and origin egress on cache misses. Free tiers and plan fees are excluded.">
   <meta property="og:url" content="https://buildopsy.com/tools/cdn-cost-calculator.html">
   <meta property="og:image" content="https://buildopsy.com/images/og/tools-cdn-cost-calculator.png">
   <meta property="og:image:alt" content="CDN Cost Calculator — free calculator on Buildopsy">
@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CDN Cost Calculator: Bandwidth and Requests | Buildopsy">
-  <meta name="twitter:description" content="Estimate a CDN bill from monthly bandwidth, request volume and your own unit rates. Free tiers, plan fees and regional price differences are excluded.">
+  <meta name="twitter:description" content="Estimate a CDN bill from bandwidth across volume tiers, HTTPS request volume and origin egress on cache misses. Free tiers and plan fees are excluded.">
   <meta name="twitter:image:alt" content="CDN Cost Calculator — free calculator on Buildopsy">
   <meta name="twitter:image" content="https://buildopsy.com/images/og/tools-cdn-cost-calculator.png">
   <title>CDN Cost Calculator: Bandwidth and Requests | Buildopsy</title>
@@ -34,8 +34,9 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"How is the monthly CDN estimate calculated?","acceptedAnswer":{"@type":"Answer","text":"The model adds monthly bandwidth times its entered price per GB to requests in groups of 10,000 times the entered request price. With the example inputs, the estimate is $925 before plan fees or free-tier allowances."}},
-      {"@type":"Question","name":"Is bandwidth or request volume the bigger cost in this example?","acceptedAnswer":{"@type":"Answer","text":"Bandwidth is about 92 percent of this example bill and requests about 8 percent. The mix changes when traffic volume, object size or the unit rates change."}},
+      {"@type":"Question","name":"How is the monthly CDN estimate calculated?","acceptedAnswer":{"@type":"Answer","text":"The model adds monthly bandwidth across the provider's volume tiers to requests in groups of 10,000 times the entered request price, then adds origin egress for the share of traffic that misses the cache. With the example inputs, the estimate is $950 before plan fees or free-tier allowances."}},
+      {"@type":"Question","name":"Is bandwidth or request volume the bigger cost in this example?","acceptedAnswer":{"@type":"Answer","text":"Bandwidth is about 89 percent of this example bill and requests about 11 percent. The mix changes when traffic volume, object size, the unit rates or the cache hit ratio change."}},
+      {"@type":"Question","name":"Does a cache miss cost extra?","acceptedAnswer":{"@type":"Answer","text":"It depends on the origin. A cache miss pulls the object from your origin, and that transfer may be billed by whoever hosts the origin rather than by the CDN. CloudFront does not charge for cacheable data pulled from an AWS origin such as S3. At 100 TB delivered and a 90 percent hit ratio, 10,240 GB still leaves origin; at $0.09 per GB that is about $922, and an origin that bills nothing adds nothing."}},
       {"@type":"Question","name":"Does this include CDN free tiers or plan fees?","acceptedAnswer":{"@type":"Answer","text":"No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan."}},
       {"@type":"Question","name":"How much does a CDN cost per GB?","acceptedAnswer":{"@type":"Answer","text":"It depends on the pricing model. CloudFront pay-as-you-go US/Europe charges $0.085 per GB after the 1 TB monthly free allowance, covering the next 9 TB before the $0.080 per GB tier. Flat-rate plans and committed contracts do not map to a single per-GB rate. Use the calculator with your contracted rate."}}
     ]
@@ -74,7 +75,7 @@
     <header style="padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:32px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Free Tool</span><span class="chip">Client-side</span><span class="chip">Runs locally</span><span class="chip">No signup</span></div>
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">CDN Cost Calculator</h1>
-      <p class="page-lede" style="font-family:var(--font-serif);">This two-line estimate adds bandwidth charges to request charges. The example inputs price 10,000 GB at $0.085 per GB and 100 million requests at $0.0075 per ten thousand, for $925 before free tiers or fixed plan fees. Enter your provider's billable volume and rates.</p>
+      <p class="page-lede" style="font-family:var(--font-serif);">This estimate prices 10,000 GB at $0.085 per GB and 100 million HTTPS requests at $0.0100 per ten thousand, for $950 before free tiers and fixed plan fees, with no origin egress at the default 100% hit ratio. Add the volume tiers, a cache hit ratio and an origin rate to see what a cache miss really costs.</p>
       <p class="fl-desc" style="margin-top:12px;">Every result is pre-rendered with the default inputs, so the numbers are readable with JavaScript off. Results update as you type and nothing leaves your browser. Part of the <a href="../calculators.html">Buildopsy engineering calculators</a>.</p>
       <p class="fl-desc" style="margin-top:12px;">The defaults follow a CloudFront-style US/Europe usage shape. CloudFront also sells flat-rate plans, and Cloudflare or Fastly price by plan or commitment; this model covers usage-based per-GB and per-request bills. Read the <a href="../system-design/cdn-egress-pricing-model.html">CDN egress pricing teardown</a> or check the <a href="https://aws.amazon.com/cloudfront/pricing/" target="_blank" rel="noopener noreferrer">CloudFront pricing page</a>.</p>
     </header>
@@ -82,7 +83,7 @@
     <noscript><p class="fl-desc">Live recalculation needs JavaScript. The default results above and below are already filled in. Every formula is documented in the linked teardown.</p></noscript>
 
     <section class="sec" id="cdn-bill">
-      <p class="fl-desc" style="margin:0 0 14px;">Price an edge delivery bill from transfer volume, the price per gigabyte and the request count. Starts from 10 TB and 100 million requests.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price an edge delivery bill from transfer volume across its tiers, HTTPS request volume and cache-miss origin egress. Starts from 10 TB and 100 million requests.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -93,23 +94,24 @@
               <div style="margin:0 0 12px;"><label class="field-label" for="cdn-gb">Bandwidth (GB / month)</label><input type="number" id="cdn-gb" value="10000" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="cdn-gbp">Bandwidth price ($ / GB)</label><input type="number" id="cdn-gbp" value="0.085" step="0.001" class="field-input"></div>
               <div style="margin:0 0 12px;"><label class="field-label" for="cdn-req">Requests (millions / month)</label><input type="number" id="cdn-req" value="100" class="field-input"></div>
-              <div style="margin:0 0 12px;"><label class="field-label" for="cdn-reqp">Request price ($ / 10k)</label><input type="number" id="cdn-reqp" value="0.0075" step="0.0001" class="field-input"></div>
+              <div style="margin:0 0 12px;"><label class="field-label" for="cdn-reqp">Request price ($ / 10k, HTTPS)</label><input type="number" id="cdn-reqp" value="0.01" step="0.0001" class="field-input"></div>
             </div>
             </div>
             <div class="calc-side">
               <div class="calc-result-box">
                 <div class="radar-trend-label">Monthly bill</div>
-                <div class="calc-result-value" id="cdn-monthly">$925</div>
-                <div class="radar-count-description">per month · bandwidth + requests</div>
+                <div class="calc-result-value" id="cdn-monthly">$950</div>
+                <div class="radar-count-description">per month · bandwidth + requests + origin</div>
               </div>
               <div class="calc-donut-wrap">
                 <div>
                   <div class="radar-donut-title">Cost mix</div>
-                  <div class="calc-donut" id="cdn-donut" role="img" aria-label="Share of CDN cost across bandwidth and requests" style="background:conic-gradient(#38bdf8 0.0% 91.9%,#a3e635 91.9% 100.0%)"><div class="calc-donut-center"><span id="cdn-mix-top">91.9%</span><small>bandwidth</small></div></div>
+                  <div class="calc-donut" id="cdn-donut" role="img" aria-label="Share of CDN cost across bandwidth, requests and origin egress" style="background:conic-gradient(#38bdf8 0.0% 89.5%,#a3e635 89.5% 100.0%,#fb7185 100.0% 100.0%)"><div class="calc-donut-center"><span id="cdn-mix-top">89.5%</span><small>bandwidth</small></div></div>
                 </div>
                 <ul class="radar-legend">
                   <li><span class="dot" style="background:#38bdf8"></span><span class="lname">Bandwidth</span></li>
                   <li><span class="dot" style="background:#a3e635"></span><span class="lname">Requests</span></li>
+                  <li><span class="dot" style="background:#fb7185"></span><span class="lname">Origin</span></li>
                 </ul>
               </div>
             </div>
@@ -122,17 +124,69 @@
             <div class="radar-trend-block">
               <div class="radar-trend-label">Bandwidth cost</div>
               <div class="radar-trend-value" id="cdn-bandwidth">$850 bandwidth</div>
-              <div class="radar-trend-sub">gigabytes times price</div>
+              <div class="radar-trend-sub">after volume tiers</div>
             </div>
             <div class="radar-trend-divider"></div>
             <div class="radar-trend-block">
               <div class="radar-trend-label">Request cost</div>
-              <div class="radar-trend-value" id="cdn-requests">$75 requests</div>
+              <div class="radar-trend-value" id="cdn-requests">$100 requests</div>
               <div class="radar-trend-sub">per ten thousand</div>
             </div>
           </div>
         </div>
       </section>
+
+      <section class="radar-card" style="margin-top:18px;">
+        <div class="radar-main">
+          <div style="padding:20px 22px 8px;">
+            <h2 class="sec-title" style="font-size:1.05rem;margin:0 0 8px;">Billing realism checks</h2>
+            <p class="fl-desc" style="margin:0 0 16px;">Two things decide a real CDN bill. Transfer is priced in volume tiers, so the rate falls as volume rises. And every cache miss pulls the object from your origin, which may bill that transfer again. CloudFront does not charge for cacheable data pulled from an AWS origin such as S3, so the origin rate starts at 0. Both are neutral at the defaults: 10,000 GB sits inside the first tier, and a 100% hit ratio pulls nothing.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+              <div><label class="field-label" for="cdn-gbp2">Tier 2 rate ($/GB, 10–50 TB)</label><input type="number" id="cdn-gbp2" value="0.08" step="0.001" class="field-input"></div>
+              <div><label class="field-label" for="cdn-gbp3">Tier 3 rate ($/GB, 50–150 TB)</label><input type="number" id="cdn-gbp3" value="0.06" step="0.001" class="field-input"></div>
+              <div><label class="field-label" for="cdn-gbp4">Tier 4 rate ($/GB, 150–500 TB)</label><input type="number" id="cdn-gbp4" value="0.04" step="0.001" class="field-input"></div>
+              <div><label class="field-label" for="cdn-hit">Cache hit ratio (percent)</label><input type="number" id="cdn-hit" value="100" min="0" max="100" step="1" class="field-input"></div>
+              <div><label class="field-label" for="cdn-originp">Origin egress ($/GB, 0 if waived)</label><input type="number" id="cdn-originp" value="0" step="0.001" class="field-input"></div>
+            </div>
+            <p class="fl-desc" style="margin:14px 0 0;">At 100 TB delivered, tiered bandwidth comes to $7,219 a month against $8,704 at a flat $0.085. A 90% hit ratio on that volume still pulls 10,240 GB from origin. If your origin bills egress at $0.09/GB, that adds about $922; behind CloudFront, an AWS origin is not charged for it.</p>
+          </div>
+          <div class="radar-trend" style="padding:0 22px 18px;">
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Origin transfer</div>
+              <div class="radar-trend-value" id="cdn-miss">0 GB</div>
+              <div class="radar-trend-sub" id="cdn-miss-note">every request is a cache hit</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Origin egress</div>
+              <div class="radar-trend-value" id="cdn-origin">$0</div>
+              <div class="radar-trend-sub" id="cdn-origin-note">no origin egress</div>
+            </div>
+            <div class="radar-trend-divider"></div>
+            <div class="radar-trend-block">
+              <div class="radar-trend-label">Monthly bill</div>
+              <div class="radar-trend-value" id="cdn-monthly-2">$950</div>
+              <div class="radar-trend-sub">with these settings</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card);">
+        <p style="margin:0 0 10px;font-family:var(--font-body);font-size:0.88rem;color:var(--paper);"><strong>Which bill line item is this?</strong> Each modeled meter maps to a usage type in the AWS CloudFront price list, which is the name that appears on a cost and usage report.</p>
+        <div style="overflow-x:auto;">
+          <table class="claimtable" style="margin:0;">
+            <thead><tr><th>Price-list usage type</th><th>Meter</th><th>Modeled cost</th></tr></thead>
+            <tbody>
+              <tr><td><code>US-DataTransfer-Out-Bytes</code></td><td>Delivery to viewers, across tiers</td><td id="cdn-li-bw">$850</td></tr>
+              <tr><td><code>US-Requests-Tier2-HTTPS</code></td><td>HTTPS requests, per 10,000</td><td id="cdn-li-req">$100</td></tr>
+              <tr><td>Origin pull</td><td>Cache-miss transfer, billed by the origin host if it charges for it</td><td id="cdn-li-origin">$0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fl-desc" style="margin:10px 0 0;">Usage types and tiers come from the AWS CloudFront price list published October 19, 2026 (version 20261019150500). HTTP requests are $0.0075 per 10,000 and HTTPS requests $0.0100, which is why the default uses the HTTPS rate. Origin pull is not a CloudFront charge; it appears on the origin service's bill.</p>
+      </div>
+
       <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Pricing teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/cdn-egress-pricing-model.html">The $0.09 Toll: Why Egress Is the Cloud's Real Lock-In</a></h3><p class="fl-desc">How providers buy transit by capacity and sell it by volume, with a worked 10 TB egress model and the R2 zero-egress comparison.</p></article>
     </section>
 
@@ -149,17 +203,19 @@
           </tbody>
         </table>
       </div>
-      <p class="fl-desc">CloudFront rates and plan prices checked October 23, 2026 against the <a href="https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/" target="_blank" rel="noopener noreferrer">pay-as-you-go pricing page</a> and the <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html" target="_blank" rel="noopener noreferrer">flat-rate plan documentation</a>. Provider prices change; confirm before budgeting.</p>
+      <p class="fl-desc">CloudFront rates and plan prices checked October 23, 2026 against the <a href="https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/" target="_blank" rel="noopener noreferrer">pay-as-you-go pricing page</a> and the <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html" target="_blank" rel="noopener noreferrer">flat-rate plan documentation</a>. Transfer tiers, request rates and usage types also match the AWS CloudFront price list, version 20261019150500, published October 19, 2026. Provider prices change; confirm before budgeting.</p>
     </section>
 
     <section class="sec" id="cdn-faq">
       <h2 class="sec-title">Frequently Asked Questions</h2>
       <h3>How is the monthly CDN estimate calculated?</h3>
-      <p class="fl-desc">The model adds monthly bandwidth times its entered price per GB to requests in groups of 10,000 times the entered request price. With the example inputs, the estimate is $925 before plan fees or free-tier allowances.</p>
+      <p class="fl-desc">The model adds monthly bandwidth across the provider's volume tiers to requests in groups of 10,000 times the entered request price, then adds origin egress for the share of traffic that misses the cache. With the example inputs, the estimate is $950 before plan fees or free-tier allowances.</p>
       <h3>Is bandwidth or request volume the bigger cost in this example?</h3>
-      <p class="fl-desc">Bandwidth is about 92 percent of this example bill and requests about 8 percent. The mix changes when traffic volume, object size or the unit rates change.</p>
+      <p class="fl-desc">Bandwidth is about 89 percent of this example bill and requests about 11 percent. The mix changes when traffic volume, object size, the unit rates or the cache hit ratio change.</p>
       <h3>Does this include CDN free tiers or plan fees?</h3>
       <p class="fl-desc">No. Enter billable bandwidth and requests after any applicable free allowance. Add fixed plan fees or other line items separately; rates differ by provider, region, protocol and plan.</p>
+      <h3>Does a cache miss cost extra?</h3>
+      <p class="fl-desc">It depends on the origin. A cache miss pulls the object from your origin, and that transfer may be billed by whoever hosts the origin rather than by the CDN. CloudFront does not charge for cacheable data pulled from an AWS origin such as S3. At 100 TB delivered and a 90 percent hit ratio, 10,240 GB still leaves origin; at $0.09 per GB that is about $922, and an origin that bills nothing adds nothing.</p>
       <h3>How much does a CDN cost per GB?</h3>
       <p class="fl-desc">It depends on the pricing model. CloudFront pay-as-you-go US/Europe charges $0.085 per GB after the 1 TB monthly free allowance, covering the next 9 TB before the $0.080 per GB tier. Flat-rate plans and committed contracts do not map to a single per-GB rate. Use the calculator with your contracted rate.</p>
     </section>
