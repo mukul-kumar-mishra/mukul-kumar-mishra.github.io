@@ -178,7 +178,7 @@
         </div>
         <h3>Inngest Postmortem: Connections Died Faster Than the Pooler Could Replace Them</h3>
         <p class="fl-desc">A lookup deadline expired while its query waited inside PgBouncer. The driver cancelled and closed the client connection; the pooler later ran the abandoned query and closed that backend connection instead of returning it. Both poolers refill one connection at a time.</p>
-        <div style="display:flex;gap:8px;margin-top:14px;">
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
           <span class="chip">Inngest</span><span class="chip">PgBouncer</span><span class="chip">PostgreSQL</span><span class="chip">Postmortem</span>
         </div>
         <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
@@ -206,7 +206,7 @@
         <a class="feature-link article-card" data-article-card href="system-design/railway-oct21-build-path-postmortem.html">
           <img loading="lazy" decoding="async" src="images/articles/railway-oct21-build-path.png" alt="Cutaway schematic of Railway's build pipeline and secrets path: a repository feeds a third-generation multi-tenant build worker, then CI artifact buckets, then a deploy step; below, a secrets database holds ciphertext rows beside an encrypted data key with KMS, and a dashed attacker path runs from the build worker into the database, with 13:58 on 20 October to 03:32 on 22 October below" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Security Incident</span><span class="chip">October 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Security Incident</span><span class="chip">October 2026</span><span class="chip">16 min read</span><span class="chip">Rook</span></div>
           <h3>Railway's October 2026 Breach: The Build Pipeline Was the Decryption Path</h3>
           <p class="fl-desc">Railway's report has the attacker holding encrypted environment variables it could not read, then reaching the CI environment that could decrypt them. The timestamps, the 1.85% workspace ceiling, and the 27 hours between the first build halt and the security notice.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Railway</span><span class="chip">CI/CD</span><span class="chip">Secrets</span><span class="chip">Rook</span></div>
@@ -216,7 +216,7 @@
         <a class="feature-link article-card" data-article-card href="system-design/prompt-caching-economics.html">
           <img loading="lazy" decoding="async" src="images/articles/prompt-caching-economics.png" alt="Break-even chart comparing the cost of repeating a prompt prefix with no cache, a 30-minute cache write, and a 12-hour cache write" width="1200" height="630">
           <div class="article-card-body">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">8 min read</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">AI Infrastructure</span><span class="chip">October 2026</span><span class="chip">10 min read</span></div>
           <h3>Prompt Caching Economics: How Many Reuses a Cache Write Has to Earn</h3>
           <p class="fl-desc">A cache write is billed at 1.25x or 2.5x input while reads cost 0.10x, so the saving is a reuse count: 1.28 passes on the 30-minute TTL, 2.67 on the 12-hour one.</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Prompt Caching</span><span class="chip">LLM Costs</span><span class="chip">Pricing</span></div>
