@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="S3 Standard in US East: $0.023/GB-month storage, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs. See the full rate table and a worked 1 TiB bill.">
+  <meta name="description" content="S3 rates for all eight storage classes in US East: $0.023/GB-month Standard, per-class request prices, retrieval fees, minimum durations and a four-Region comparison.">
   <meta name="author" content="Mukul Kumar Mishra">
   <link rel="canonical" href="https://buildopsy.com/system-design/aws-s3-pricing-model.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="AWS S3 Pricing and Billing: Storage, Request Fees and Egress Costs Explained">
-  <meta property="og:description" content="Current S3 Standard US East rates: $0.023/GB-month storage, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs. Compare classes and trace a $32.55 worked bill.">
+  <meta property="og:description" content="S3 rates for all eight storage classes in US East, with per-class request prices, retrieval fees and a four-Region comparison. Includes a worked $32.55 bill.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <meta property="og:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
   <meta property="og:image:type" content="image/png">
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AWS S3 Pricing and Billing: Storage, Request Fees and Egress Costs Explained">
-  <meta name="twitter:description" content="Current S3 Standard US East rates: $0.023/GB-month storage, $0.005 per 1,000 PUTs and $0.0004 per 1,000 GETs. Compare classes and trace a $32.55 worked bill.">
+  <meta name="twitter:description" content="S3 rates for all eight storage classes in US East, with per-class request prices, retrieval fees and a four-Region comparison. Includes a worked $32.55 bill.">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-s3-pricing-model.png">
   <meta name="twitter:image:alt" content="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges">
   <title>AWS S3 Pricing and Billing: Storage, Request Fees and Egress Costs Explained | Buildopsy</title>
@@ -38,7 +38,7 @@
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
     "datePublished":"2026-10-09",
-    "dateModified":"2026-10-24",
+    "dateModified":"2026-10-29",
     "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/aws-s3-pricing-model.html"},
     "keywords":"AWS S3 pricing, S3 billing, S3 Standard pricing, S3 storage cost, S3 request pricing, data transfer",
     "image":"https://buildopsy.com/images/articles/aws-s3-pricing-model.png"
@@ -51,6 +51,8 @@
     "mainEntity":[
       {"@type":"Question","name":"How much does 1 TiB of S3 Standard storage cost?","acceptedAnswer":{"@type":"Answer","text":"At the modeled example US East first-50-TB rate of $0.023 per billable GB-month, 1,024 billable GB costs $23.55 for a full month of storage. Requests, retrieval, transfer and other charges are extra."}},
       {"@type":"Question","name":"How much does S3 Standard storage cost per GB?","acceptedAnswer":{"@type":"Answer","text":"In US East (N. Virginia), S3 Standard lists at $0.023 per GB-month for the first 50 TB, $0.022 for the next 450 TB and $0.021 above 500 TB, per the AWS price list snapshot published October 15, 2026. Request, retrieval and transfer charges are separate."}},
+      {"@type":"Question","name":"Is there an S3 free tier?","acceptedAnswer":{"@type":"Answer","text":"The current S3 pricing page does not list a per-service monthly storage and request allowance. It states that, as of July 15, 2025, new AWS customers receive up to $200 in AWS Free Tier credits applicable to eligible services including Amazon S3, and that all Free Tier credits must be used within 12 months of account creation. The Free plan itself runs six months. A 100 GB per month data transfer out allowance remains, aggregated across AWS services and Regions except China and GovCloud."}},
+      {"@type":"Question","name":"Does S3 pricing change by Region?","acceptedAnswer":{"@type":"Answer","text":"Yes, and the storage rate is what moves. US East (N. Virginia), US West (Oregon) and Europe (Ireland) share the same Standard, Standard-IA and Glacier Instant Retrieval rates in the October 15, 2026 price list. Asia Pacific (Mumbai) is 8.7% higher on the first-tier Standard rate at $0.025, 10.4% higher on Standard-IA at $0.0138 and 25% higher on Glacier Instant Retrieval at $0.005. Request prices for those three classes are identical in all four Regions; the Glacier and Deep Archive request meters differ."}},
       {"@type":"Question","name":"Does the Buildopsy S3 calculator include data transfer out?","acceptedAnswer":{"@type":"Answer","text":"No. It models storage, entered PUT and GET requests, and entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account."}},
       {"@type":"Question","name":"Why can a cheaper S3 storage class cost more overall?","acceptedAnswer":{"@type":"Answer","text":"Less-frequent classes can add minimum billable object sizes, minimum storage durations, retrieval fees, restore requests or lifecycle transition charges. Compare the expected access and retention pattern, not only the per-GB rate."}},
       {"@type":"Question","name":"How does S3 billing work?","acceptedAnswer":{"@type":"Answer","text":"AWS bills separate meters: storage per billable GB-month, requests per thousand PUT/COPY/POST/LIST and GET calls, retrieval or early-deletion charges on colder classes, and data transfer out. Cost and Usage Reports break the charges down by usage type, operation and Region. See the representative S3 usage-type table in Section 6 for the bill-code patterns behind these meters."}},
@@ -85,7 +87,7 @@
       <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
 
       <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Storage Cost Model</span><span class="chip">October 2026</span><span class="chip">11 min read</span></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Storage Cost Model</span><span class="chip">October 2026</span><span class="chip">19 min read</span></div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS S3 Pricing and Billing: Storage, Request Fees and Egress Costs Explained</h1>
         <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">I start with the storage rate because it is the easiest line to quote. Then I price requests, retrieval, transfer, object size and retention as separate meters. This worked model uses 1 TiB in S3 Standard to show what one million PUTs and ten million GETs add.</p>
         <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> 1,024 billable GB and one million PUTs and ten million GETs produce a $32.55 modeled monthly subtotal at the example US East rates. It excludes transfer, management features, replication, tax, account credits and negotiated pricing. Rerun the inputs in the <a href="../tools/aws-s3-storage-cost-calculator.html">AWS S3 Storage Cost Calculator</a>.</p>
@@ -95,34 +97,76 @@
           <div class="stat" style="padding:14px;"><div class="lbl">Read volume</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10M GETs</div></div>
           <div class="stat" style="padding:14px;"><div class="lbl">Modeled subtotal</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">$32.55 / month</div></div>
         </div>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Data infrastructure cost model · Published October 9, 2026 · Updated October 24, 2026</p>
+        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Data infrastructure cost model · Published October 9, 2026 · Updated October 29, 2026</p>
       </header>
 
       <p style="margin:0 0 24px;"><a class="btn btn-primary" href="../tools/aws-s3-storage-cost-calculator.html">Calculate your S3 bill</a> <span class="fl-desc" style="margin-left:10px;">Free, runs in your browser.</span></p>
 
-      <aside class="tip" style="margin-bottom:30px;"><strong>Scope:</strong> General-purpose S3 Standard in US East (N. Virginia), public example rates, USD, a full billing month. The $0.023/GB-month input is the first 50 TB tier. This is a modeled estimate, not an AWS quote. AWS measures storage in binary GB. Here 1 TiB is represented as 1,024 billable GB. Check the <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">live S3 pricing page</a> before budgeting.</aside>
+      <aside class="tip" style="margin-bottom:30px;"><strong>Scope:</strong> The worked model is S3 Standard in US East (N. Virginia) over a full billing month; the rate tables cover the eight classes AWS prices on its S3 page and four Regions. Rates are public list prices in USD. This is a modeled estimate, not an AWS quote. AWS measures storage in binary GB, so 1 TiB is represented as 1,024 billable GB. Check the <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">live S3 pricing page</a> before budgeting.</aside>
 
       <article class="prose">
         <section id="s3-rates" style="scroll-margin-top:90px;">
           <h2>S3 Rates at a Glance</h2>
-          <p>These are the US East list rates behind the worked example and the class comparison. The worked model uses S3 Standard; the other rows show why a lower per-GB rate can carry minimums and retrieval fees.</p>
+          <p>Every rate in the first two tables is a US East (N. Virginia) list price from the AWS price list snapshot published October 15, 2026; the Deep Archive row comes from the separate list noted at the end of this section, and the four-Region table uses each Region's own index at the same version. The worked model in this article uses S3 Standard. The other classes matter because the storage rate alone misleads: Glacier Instant Retrieval stores at 17% of the Standard rate ($0.004 ÷ $0.023) and then charges $0.03 for every gigabyte read back.</p>
+
+          <h3>Storage: the eight classes AWS prices on the S3 page</h3>
           <div style="overflow-x:auto;">
             <table class="claimtable">
-              <thead><tr><th>Meter</th><th>US East list rate</th><th>What it covers</th></tr></thead>
+              <thead><tr><th>Storage class</th><th>Storage per GB-month</th><th>Retrieval per GB</th><th>Object-size rule</th><th>Minimum duration</th></tr></thead>
               <tbody>
-                <tr><td>S3 Standard storage, first 50 TB</td><td>$0.023 per GB-month</td><td>Next 450 TB at $0.022; above 500 TB at $0.021 per GB-month.</td></tr>
-                <tr><td>PUT, COPY, POST and LIST requests</td><td>$0.005 per 1,000 requests</td><td>Writes and listing calls; priced by request count, not payload size.</td></tr>
-                <tr><td>GET and all other requests</td><td>$0.0004 per 1,000 requests</td><td>Reads; S3 Standard has no per-GB retrieval fee.</td></tr>
-                <tr><td>Standard-IA</td><td>$0.0125 per GB-month</td><td>128 KiB minimum object size, 30-day minimum storage, $0.01/GB retrieval.</td></tr>
-                <tr><td>Glacier Instant Retrieval</td><td>$0.004 per GB-month</td><td>128 KiB minimum, 90-day minimum, $0.03/GB retrieval.</td></tr>
-                <tr><td>Glacier Flexible Retrieval</td><td>$0.0036 per GB-month</td><td>40 KiB metadata overhead per object; 90-day minimum.</td></tr>
-                <tr><td>Deep Archive</td><td>$0.00099 per GB-month</td><td>40 KiB metadata overhead per object; 180-day minimum.</td></tr>
-                <tr><td>Internet data transfer out</td><td>About $0.09 per GB</td><td>First 10 TB/month after the 100 GB free allowance; tiers step down above that. <a href="cdn-egress-pricing-model.html">Full egress teardown</a>.</td></tr>
+                <tr><td>S3 Standard</td><td>$0.023 first 50 TB; $0.022 next 450 TB; $0.021 above 500 TB</td><td>None</td><td>None</td><td>None</td></tr>
+                <tr><td>S3 Intelligent-Tiering</td><td>$0.023 / $0.022 / $0.021 Frequent Access; $0.0125 Infrequent Access; $0.004 Archive Instant Access; $0.0036 Archive Access; $0.00099 Deep Archive Access</td><td>None for standard and bulk; expedited from Archive Access bills at the expedited rate</td><td>None; objects under 128 KiB stay in Frequent Access and are not monitored</td><td>None</td></tr>
+                <tr><td>S3 Standard-IA</td><td>$0.0125</td><td>$0.01</td><td>128 KiB minimum billable</td><td>30 days</td></tr>
+                <tr><td>S3 One Zone-IA</td><td>$0.01</td><td>$0.01</td><td>128 KiB minimum billable</td><td>30 days</td></tr>
+                <tr><td>S3 Glacier Instant Retrieval</td><td>$0.004</td><td>$0.03</td><td>128 KiB minimum billable</td><td>90 days</td></tr>
+                <tr><td>S3 Glacier Flexible Retrieval</td><td>$0.0036</td><td>$0.01 standard; $0.03 expedited; bulk free</td><td>40 KiB overhead per object</td><td>90 days</td></tr>
+                <tr><td>S3 Glacier Deep Archive</td><td>$0.00099</td><td>$0.02 standard; $0.0025 bulk</td><td>40 KiB overhead per object</td><td>180 days</td></tr>
+                <tr><td>S3 Express One Zone</td><td>$0.11</td><td>$0.0006</td><td>None</td><td>None</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">The Standard, Standard-IA, Glacier Instant Retrieval and Glacier Flexible Retrieval list rates come from the Amazon S3 price list, version 20261015173540, published October 15, 2026 at 17:35:40Z, re-checked October 20, 2026. The Deep Archive storage rate comes from the separate Amazon S3 Glacier Deep Archive price list, version 20260911124507, published September 11, 2026. Egress tiers come from the AWSDataTransfer price list, version 20260916132208, published September 16, 2026, and are summarized in the linked teardown. Minimum object sizes and storage durations follow AWS's S3 pricing page and storage-class documentation. List prices exclude tax, credits and negotiated discounts, and vary by Region and volume.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Intelligent-Tiering bills a separate monitoring and automation charge of $0.0025 per 1,000 objects per month. Among the classes in this table, Express One Zone is the only one priced above Standard per stored GB, at 4.8 times the first-tier rate ($0.11 ÷ $0.023). Three per-GB meters sit outside the table. Reduced Redundancy is still listed in the same price list at $0.024 for the first TB and above Standard at every tier, and AWS's storage-class documentation marks it not recommended, so it is excluded here rather than ranked. S3 Vectors and S3 Files appear on the same pricing page as separate products with their own meters, not as storage classes.</p>
+
+          <h3>Requests: the price moves with the class</h3>
+          <p>A PUT into Standard and a PUT into Glacier Instant Retrieval are not the same meter. The per-request rate changes by class, and for the archive classes the write path changes too.</p>
+          <div style="overflow-x:auto;">
+            <table class="claimtable">
+              <thead><tr><th>Storage class</th><th>PUT, COPY, POST per 1,000</th><th>GET and all other requests per 1,000</th></tr></thead>
+              <tbody>
+                <tr><td>S3 Standard</td><td>$0.005</td><td>$0.0004</td></tr>
+                <tr><td>S3 Intelligent-Tiering</td><td>$0.005</td><td>$0.0004</td></tr>
+                <tr><td>S3 Standard-IA</td><td>$0.01</td><td>$0.001</td></tr>
+                <tr><td>S3 One Zone-IA</td><td>$0.01</td><td>$0.001</td></tr>
+                <tr><td>S3 Glacier Instant Retrieval</td><td>$0.02</td><td>$0.01</td></tr>
+                <tr><td>S3 Glacier Flexible Retrieval</td><td>$0.03</td><td>$0.0004</td></tr>
+                <tr><td>S3 Glacier Deep Archive</td><td>$0.05, the same rate as a lifecycle transition in</td><td>$0.0004</td></tr>
+                <tr><td>S3 Express One Zone</td><td>$0.00113</td><td>$0.00003</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">LIST requests are the exception: AWS charges them at the S3 Standard PUT rate on every class, so a LIST costs $0.005 per 1,000 even where a PUT costs $0.02 or $0.03. On the write meters the spread is wide enough to change a design. A PUT costs 4 times more in Glacier Instant Retrieval than in Standard ($0.02 ÷ $0.005) and a GET costs 25 times more ($0.01 ÷ $0.0004). Express One Zone inverts it: its requests are cheaper than Standard's by 4.4 times for writes and 13.3 times for reads, which is why the $0.11 storage rate is not the whole comparison. Multipart upload parts to Glacier Flexible Retrieval bill at $0.005 per 1,000, separate from the $0.03 per 1,000 object-level writes, and Deep Archive parts bill at $0.005 per 1,000 against its $0.05 object-level write.</p>
+
+          <h3>How the rate moves across four Regions</h3>
+          <p>All four Regions below are published under the same price list version, so this is a like-for-like comparison rather than a snapshot mismatch.</p>
+          <div style="overflow-x:auto;">
+            <table class="claimtable">
+              <thead><tr><th>Region</th><th>Standard first 50 TB</th><th>Standard 50–500 TB</th><th>Standard above 500 TB</th><th>Standard-IA</th><th>Glacier Instant Retrieval</th></tr></thead>
+              <tbody>
+                <tr><td>US East (N. Virginia), <code>us-east-1</code></td><td>$0.023</td><td>$0.022</td><td>$0.021</td><td>$0.0125</td><td>$0.004</td></tr>
+                <tr><td>US West (Oregon), <code>us-west-2</code></td><td>$0.023</td><td>$0.022</td><td>$0.021</td><td>$0.0125</td><td>$0.004</td></tr>
+                <tr><td>Europe (Ireland), <code>eu-west-1</code></td><td>$0.023</td><td>$0.022</td><td>$0.021</td><td>$0.0125</td><td>$0.004</td></tr>
+                <tr><td>Asia Pacific (Mumbai), <code>ap-south-1</code></td><td>$0.025</td><td>$0.024</td><td>$0.023</td><td>$0.0138</td><td>$0.005</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Moving the same bucket from US East to Mumbai raises the first-tier Standard rate by 8.7% ($0.025 ÷ $0.023 = 1.087), Standard-IA by 10.4% ($0.0138 ÷ $0.0125 = 1.104) and Glacier Instant Retrieval by 25% ($0.005 ÷ $0.004 = 1.25). Request prices for these three classes are identical in all four Regions: $0.005 and $0.0004 per 1,000 for Standard, $0.01 and $0.001 for Standard-IA, $0.02 and $0.01 for Glacier Instant Retrieval. The colder request meters are not identical. A Glacier Flexible Retrieval PUT is $0.03 per 1,000 in US East and US West, $0.033 in Ireland and $0.036 in Mumbai, and a Deep Archive lifecycle transition is $0.05, $0.055 and $0.07 per 1,000 in the same order. So the storage rate is the only Regional difference among the three classes in this table, not across every S3 meter. Four Regions are a sample, not a rule; check the price list for the Region you deploy in.</p>
+
           <p>At these rates, 1,024 billable GB for a full month and 1 million PUTs and 10 million GETs is $23.55 + $5.00 + $4.00 = <strong>$32.55</strong> before retrieval and transfer. <a href="../tools/aws-s3-storage-cost-calculator.html">Run your own inputs in the S3 calculator</a>.</p>
+
+          <h3>What the free tier actually covers</h3>
+          <p>The shape of this changed in 2025. AWS's S3 pricing page states that, as of July 15, 2025, new AWS customers receive up to $200 in AWS Free Tier credits applicable to eligible services including Amazon S3, and that all Free Tier credits must be used within 12 months of account creation. The Free plan itself runs for six months: AWS's Free Tier page says the account closes six months after it is opened, or when the credits run out, whichever comes first. Either way it is a credit balance rather than a permanent monthly storage and request allowance, so a bucket does not reset to free each month once the credits are spent.</p>
+          <p>The one standing allowance is on transfer: 100 GB per month of data transfer out to the internet, which AWS aggregates across all AWS services and Regions except China and GovCloud. Storage, requests and retrieval are billed at the rates above from the first byte; the transfer allowance does not offset them.</p>
+
           <h3>1 TiB storage-only comparison</h3>
           <p>Using the same US East (N. Virginia) list rates and <strong>1 TiB = 1,024 GiB = 1,024 billable GB</strong>, the storage-only monthly charge is:</p>
           <div style="overflow-x:auto;">
@@ -131,13 +175,16 @@
               <tbody>
                 <tr><td>S3 Standard</td><td>$0.023 per GB-month (first 50 TB tier)</td><td>$23.55</td></tr>
                 <tr><td>S3 Standard-IA</td><td>$0.0125 per GB-month</td><td>$12.80</td></tr>
+                <tr><td>S3 One Zone-IA</td><td>$0.01 per GB-month</td><td>$10.24</td></tr>
                 <tr><td>S3 Glacier Instant Retrieval</td><td>$0.004 per GB-month</td><td>$4.10</td></tr>
                 <tr><td>S3 Glacier Flexible Retrieval</td><td>$0.0036 per GB-month</td><td>$3.69</td></tr>
                 <tr><td>S3 Glacier Deep Archive</td><td>$0.00099 per GB-month</td><td>$1.01</td></tr>
+                <tr><td>S3 Express One Zone</td><td>$0.11 per GB-month</td><td>$112.64</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Each result is 1,024 × the listed rate, rounded to cents. Unrounded: $23.552, $12.80, $4.096, $3.6864 and $1.01376. The Standard row uses the first 50 TB tier; the other rows use their flat US East storage rates, with Deep Archive from the separate Glacier Deep Archive price list cited above. This is storage only: it excludes requests, retrieval, transfer, minimum-storage-duration charges and additional billable metadata overhead. Actual bills vary by Region, storage class, object size (including the 128 KiB minimum billable size for Standard-IA and Glacier Instant Retrieval), lifecycle, access pattern and billing rules. The table ranks storage-only cost, not total workload cost; the cheapest row is not automatically the cheapest workload.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Each result is 1,024 × the listed rate, rounded to cents. Unrounded: $23.552, $12.80, $10.24, $4.096, $3.6864, $1.01376 and $112.64. The Standard row uses the first 50 TB tier, and the Intelligent-Tiering Frequent Access tier is identical at $0.023 and is omitted rather than repeated. The remaining rows use their flat US East storage rates, with Deep Archive from the separate Glacier Deep Archive price list cited below. This is storage only: it excludes requests, retrieval, transfer, minimum-storage-duration charges and additional billable metadata overhead. Actual bills vary by Region, storage class, object size (including the 128 KiB minimum billable size for Standard-IA, One Zone-IA and Glacier Instant Retrieval), lifecycle, access pattern and billing rules. The table ranks storage-only cost, not total workload cost; the cheapest row is not automatically the cheapest workload.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.8rem;line-height:1.7;">Storage, retrieval and request rates come from the Amazon S3 price list, version 20261015173540, published October 15, 2026 at 17:35:40Z, re-checked October 28, 2026. The Deep Archive storage rate comes from the separate Amazon S3 Glacier Deep Archive price list, version 20260911124507, published September 11, 2026. The regional table uses the same S3 version for <code>us-west-2</code>, <code>eu-west-1</code> and <code>ap-south-1</code>, all of which are published at 20261015173540, so the four columns share one snapshot date. Object-size rules, minimum storage durations, the Intelligent-Tiering monitoring charge, the LIST pricing rule and the 100 GB transfer allowance follow AWS's S3 pricing page as read on October 28, 2026; the Free plan window follows the AWS Free Tier page read the same day. Egress tiers come from the AWSDataTransfer price list, version 20260916132208, published September 16, 2026, and are summarized in the linked teardown. List prices exclude tax, credits and negotiated discounts, and vary by Region and volume.</p>
         </section>
 
         <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-s3-pricing-model.svg" alt="Worked S3 Standard estimate: $23.55 storage, $5 PUT and $4 GET requests total $32.55 before transfer and management charges" width="1200" height="680"><figcaption>Figure 1. The same inputs used by the Buildopsy S3 calculator. The $32.55 subtotal excludes transfer and other enabled features.</figcaption></figure>
@@ -217,6 +264,10 @@
           <p>At the modeled example US East first-50-TB rate of $0.023 per billable GB-month, 1,024 billable GB costs $23.55 for a full month of storage. Requests, retrieval, transfer and other charges are extra.</p>
           <h3>How much does S3 Standard storage cost per GB?</h3>
           <p>In US East (N. Virginia), S3 Standard lists at $0.023 per GB-month for the first 50 TB, $0.022 for the next 450 TB and $0.021 above 500 TB, per the AWS price list snapshot published October 15, 2026. Request, retrieval and transfer charges are separate.</p>
+          <h3>Is there an S3 free tier?</h3>
+          <p>The current S3 pricing page does not list a per-service monthly storage and request allowance. It states that, as of July 15, 2025, new AWS customers receive up to $200 in AWS Free Tier credits applicable to eligible services including Amazon S3, and that all Free Tier credits must be used within 12 months of account creation. The Free plan itself runs six months. A 100 GB per month data transfer out allowance remains, aggregated across AWS services and Regions except China and GovCloud.</p>
+          <h3>Does S3 pricing change by Region?</h3>
+          <p>Yes, and the storage rate is what moves. US East (N. Virginia), US West (Oregon) and Europe (Ireland) share the same Standard, Standard-IA and Glacier Instant Retrieval rates in the October 15, 2026 price list. Asia Pacific (Mumbai) is 8.7% higher on the first-tier Standard rate at $0.025, 10.4% higher on Standard-IA at $0.0138 and 25% higher on Glacier Instant Retrieval at $0.005. Request prices for those three classes are identical in all four Regions; the Glacier and Deep Archive request meters differ.</p>
           <h3>Does the Buildopsy S3 calculator include data transfer out?</h3>
           <p>No. It models storage, entered PUT and GET requests, and entered retrieval. Use the Cloud Egress Cost Calculator separately with the rate and allowance that apply to your account.</p>
           <h3>Why can a cheaper S3 storage class cost more overall?</h3>
@@ -228,10 +279,14 @@
         </section>
 
         <section><h2>Sources and Method</h2>
-          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The rate table above combines the Amazon S3 price list, version 20261015173540 (published 2026-10-15 at 17:35:40Z, re-checked 2026-10-20), with the separate Amazon S3 Glacier Deep Archive price list, version 20260911124507 (published 2026-09-11), for the Deep Archive row. The S3 snapshot lists S3 Standard storage at $0.023/GB-month for the first 50 TB, PUT/COPY/POST/LIST at $0.005 per 1,000 requests, and GET/other requests at $0.004 per 10,000, equivalent to $0.0004 per 1,000. Egress tiers come from the AWSDataTransfer price list, version 20260916132208 (published 2026-09-16), as summarized in the linked teardown. AWS prices vary by Region, class, volume tier and enabled feature. The examples are estimates, not a customer invoice. AWS's live price page and billing documentation control for real budgets.</p>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The rate tables above combine the Amazon S3 price list, version 20261015173540 (published 2026-10-15 at 17:35:40Z, re-checked 2026-10-28), with the separate Amazon S3 Glacier Deep Archive price list, version 20260911124507 (published 2026-09-11), for the Deep Archive row. That S3 snapshot lists S3 Standard storage at $0.023/GB-month for the first 50 TB, PUT/COPY/POST/LIST at $0.005 per 1,000 requests, and GET/other requests at $0.004 per 10,000, equivalent to $0.0004 per 1,000. The same version supplies the per-class request rates, and the four-Region table is built from each Region's own index at that version rather than from a multiplier applied to US East. Free Tier terms and the 100 GB transfer allowance were read from AWS's S3 pricing page and AWS Free Tier page on 2026-10-28. Egress tiers come from the AWSDataTransfer price list, version 20260916132208 (published 2026-09-16), as summarized in the linked teardown. AWS prices vary by Region, class, volume tier and enabled feature. The examples are estimates, not a customer invoice. AWS's live price page and billing documentation control for real budgets.</p>
           <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
             <li><a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">AWS: Amazon S3 pricing</a></li>
             <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/20261015173540/us-east-1/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: Amazon S3, version 20261015173540 for US East (N. Virginia), published 2026-10-15T17:35:40Z</a></li>
+            <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/20261015173540/us-west-2/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: Amazon S3, version 20261015173540 for US West (Oregon)</a></li>
+            <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/20261015173540/eu-west-1/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: Amazon S3, version 20261015173540 for Europe (Ireland)</a></li>
+            <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/20261015173540/ap-south-1/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: Amazon S3, version 20261015173540 for Asia Pacific (Mumbai)</a></li>
+            <li><a href="https://aws.amazon.com/free/" target="_blank" rel="noopener noreferrer">AWS: Free Tier terms, including the credit model effective July 15, 2025</a></li>
             <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3GlacierDeepArchive/20260911124507/us-east-1/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: Amazon S3 Glacier Deep Archive, version 20260911124507 for US East (N. Virginia), published 2026-09-11T12:45:07Z</a></li>
             <li><a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSDataTransfer/20260916132208/us-east-1/index.json" target="_blank" rel="noopener noreferrer">AWS Price List API: AWSDataTransfer, version 20260916132208 for US East (N. Virginia), published 2026-09-16T13:22:08Z</a></li>
             <li><a href="https://www.devzero.io/blog/aws-s3-pricing" target="_blank" rel="noopener noreferrer">DevZero: US East rates fetched from the AWS Price List API (updated September 28, 2026)</a></li>
