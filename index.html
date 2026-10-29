@@ -193,6 +193,26 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/github-august-capacity-failure-postmortem.html">
+          <img loading="lazy" decoding="async" src="images/articles/github-aug17-flow-table.png" alt="Component schematic of GitHub's 17 August 2026 capacity failure: a service-mesh sidecar with its concurrency gauge pinned at 100 percent, four HAProxy nodes with all four flow tables full, and a Copilot Token Service rising from 7 to 9 thousand requests per second to between 70 and 100 thousand through a retry loop, with 13:28 to 21:15 UTC below" width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Capacity Failure</span><span class="chip">October 2026</span><span class="chip">23 min read</span></div>
+          <h3>GitHub's August 2026 Capacity Failure: Four Load Balancers Ran Out of Flow Room</h3>
+          <p class="fl-desc">An Istio sidecar hit its concurrency limit and did not scale, because the autoscaler watched the host and not the proxy. Four HAProxy nodes filled their flow tables, the shared authentication path degraded, and a latent VS Code retry bug multiplied one service's traffic roughly tenfold.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">GitHub</span><span class="chip">HAProxy</span><span class="chip">Retry Storm</span><span class="chip">Postmortem</span></div>
+          <span class="article-read">Read the postmortem <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
+        <a class="feature-link article-card" data-article-card href="system-design/railway-oct21-build-path-postmortem.html">
+          <img loading="lazy" decoding="async" src="images/articles/railway-oct21-build-path.png" alt="Cutaway schematic of Railway's build pipeline and secrets path: a repository feeds a third-generation multi-tenant build worker, then CI artifact buckets, then a deploy step; below, a secrets database holds ciphertext rows beside an encrypted data key with KMS, and a dashed attacker path runs from the build worker into the database, with 13:58 on 20 October to 03:32 on 22 October below" width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Security Incident</span><span class="chip">October 2026</span><span class="chip">14 min read</span><span class="chip">Rook</span></div>
+          <h3>Railway's October 2026 Breach: The Build Pipeline Was the Decryption Path</h3>
+          <p class="fl-desc">Railway's report has the attacker holding encrypted environment variables it could not read, then reaching the CI environment that could decrypt them. The timestamps, the 1.85% workspace ceiling, and the 27 hours between the first build halt and the security notice.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Railway</span><span class="chip">CI/CD</span><span class="chip">Secrets</span><span class="chip">Rook</span></div>
+          <span class="article-read">Read the audit <span aria-hidden="true">&rarr;</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/prompt-caching-economics.html">
           <img loading="lazy" decoding="async" src="images/articles/prompt-caching-economics.png" alt="Break-even chart comparing the cost of repeating a prompt prefix with no cache, a 30-minute cache write, and a 12-hour cache write" width="1200" height="630">
           <div class="article-card-body">

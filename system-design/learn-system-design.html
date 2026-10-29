@@ -221,7 +221,7 @@
           <ul class="lesson-ideas">
             <li>Scope every key to one surface and one permission set. Least privilege is a blast-radius budget.</li>
             <li>Short TTLs and rotation beat long-lived secrets. Stolen keys should die alone.</li>
-            <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a Document. It Downloaded Your API Keys.</a></li>
+            <li>Deep dives: <a href="agentflayer-zero-click-postmortem.html">You Uploaded a Document. It Downloaded Your API Keys.</a> and <a href="railway-oct21-build-path-postmortem.html">Railway's build pipeline as a decryption path</a>.</li>
           </ul>
           <p>Lesson 2 taught safe retries. Keys decide who retries as whom. A leaked admin token turns every retry endpoint into an attacker tool, which is why signing and verification belong beside idempotency in every API design.</p>
           <div class="lesson-questions">
@@ -361,7 +361,7 @@
           <ul class="lesson-ideas">
             <li>Exponential backoff and jitter and a hard stop. Miss any of the three and retries amplify.</li>
             <li>Circuit breakers convert repeated failure into fast failure. Fast failure is a feature.</li>
-            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit retries</a> and the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
+            <li>Deep dives: <a href="replit-agent-runtime-postmortem.html">Replit retries</a>, <a href="github-august-capacity-failure-postmortem.html">GitHub's flow-table retry storm</a>, and the <a href="../calculators.html#retry-storm">retry storm calculator</a>.</li>
           </ul>
                     <p>Idempotency from Lesson 2 is what makes retries safe to attempt. Without it, backoff only spaces out the damage. The two lessons compose. Design them together.</p>
 <div class="lesson-questions">
