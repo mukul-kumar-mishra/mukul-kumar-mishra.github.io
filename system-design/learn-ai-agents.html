@@ -38,7 +38,7 @@
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
     "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P10H"},
-    "dateModified":"2026-10-24",
+    "dateModified":"2026-10-29",
     "syllabusSections":[
       {"@type":"Syllabus","name":"The loop is the product"},
       {"@type":"Syllabus","name":"Tools are attack surface"},
@@ -125,7 +125,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">AI Agents in Production: 18 Lessons From the Agent Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Friday night. Your demo just worked in front of everyone. Monday morning it meets real users and real attackers and a real invoice. This course closes that gap. Wire it, break it, gate it. Every lesson ships an artifact you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Eighteen workshop lessons for shipping AI agents, from sandboxing to token bills and eval gates. Published incident analyses and modeled scenarios are labeled separately.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 24, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 29, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -267,10 +267,10 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Backoff and jitter and a hard cap, all three, no exceptions. Miss one and retries amplify.</li>
-            <li>Budget retries like capacity. Run the modeled shape through the <a href="../calculators.html#retry-storm">retry storm calculator</a> before the incident.</li>
+            <li>Treat the retry budget as a capacity limit. Model the shape in the <a href="../calculators.html#retry-storm">retry storm calculator</a> before the incident, not during it.</li>
             <li>Deep dive: <a href="kafka-rebalance-storm-postmortem.html">the modeled Kafka rebalance cascade</a>, where group size, pause and retry policy are stated inputs.</li>
           </ul>
-          <p>Your artifact: a retry policy with numbers, max attempts and base delay and jitter and breaker threshold. Idempotency from your API design is what makes retries safe to attempt. Without it, backoff only spaces out the damage.</p>
+          <p>Your artifact: a retry policy with numbers, max attempts and base delay and jitter and breaker threshold. Retries are only safe because your API design made the write idempotent. Without that property, backoff just redistributes the damage across a longer window.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Prove your agent retries cannot DDoS your own brokers.</p>
@@ -295,7 +295,7 @@
             <li>Price the rebuild. Run your shape through the <a href="../calculators.html#compaction">compaction calculator</a> and the <a href="../calculators.html#token-bill">token bill calculator</a>.</li>
             <li>Deep dive: <a href="cursor-claude-token-exhaustion-postmortem.html">Cursor Token Exhaustion</a>, the paywall with a timestamp.</li>
           </ul>
-          <p>Your artifact: a context budget per turn with a compaction trigger you chose, not one you discovered. Watch the packet cross the cliff above, then decide where your cliff sits. Chosen cliffs are architecture. Surprise cliffs are incidents.</p>
+          <p>Your artifact: a per-turn context budget and a compaction trigger you picked in advance. Watch the packet cross the cliff above and place your own boundary on purpose. A cliff you chose is architecture; one you met by accident is an incident.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Your agent degrades after 50 turns. Diagnose the context live.</p>
@@ -343,7 +343,7 @@
             <circle class="pkt" r="4"><animateMotion dur="2.2s" repeatCount="indefinite" path="M58,77 L230,75 L400,75"/></circle>
           </svg>
           <ul class="lesson-ideas">
-            <li>Pick one convergence point. Distributed agreement without a referee is a research project.</li>
+            <li>Choose one convergence point. Agreement among peers with no referee is a research project, not a feature.</li>
             <li>Give each agent one lane and one lock. Shared files need owners, not volunteers.</li>
             <li>Deep dive: <a href="snitch-hotline-agents-postmortem.html">Snitch Hotline Agents</a>, coordination with stakes attached.</li>
           </ul>
@@ -383,7 +383,7 @@
         <section class="lesson" id="lesson-9">
           <div class="lesson-kicker">Lesson 09 · Economics · Token bills</div>
           <h2>Price the Turn</h2>
-          <p class="lesson-story">Thursday. Your agent answers beautifully at thirty cents a turn. One million turns later the invoice arrives with its own weather system. An answer engine once paid for every question twice, retrieval and inference, until caching made repeats nearly free. Price one turn before scaling to millions.</p>
+          <p class="lesson-story">Thursday. One answer costs thirty cents and the demo looks free. Run it a million times and the monthly bill develops its own climate. Each question is paid for twice over, once to retrieve the context and once to generate the reply, unless a cache absorbs the repeat. Price the single turn before you promise the million.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cost waterfall animation from request through retrieval and inference to a cache credit that shrinks the bill">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">request $0</text>
             <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">retrieval $0.02</text>
@@ -394,8 +394,8 @@
             <text class="lbl" x="8" y="130" font-size="11">find the red box first, optimize second</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Price one turn end to end with the <a href="../calculators.html#token-bill">token bill calculator</a>. Cache hits turn per-turn math into margin.</li>
-            <li>Scale to one million turns on paper before launch. Envelopes surprise only the unpriced.</li>
+            <li>Price a single turn in the <a href="../calculators.html#token-bill">token bill calculator</a>. Every cache hit converts per-turn cost into margin.</li>
+            <li>Multiply by one million turns on paper before launch. The envelope that surprises you is the one nobody priced.</li>
             <li>Deep dive: <a href="perplexity-answer-engine-postmortem.html">Perplexity Answer Engine</a>, paying twice per question with receipts.</li>
           </ul>
           <p>Your artifact: a one-turn price card, input, cache rate, output, and total, then the million-turn envelope beside it. Follow the packet to the red box above. That box is your quarter.</p>
@@ -409,7 +409,7 @@
         <section class="lesson" id="lesson-10">
           <div class="lesson-kicker">Lesson 10 · Quality · Verification gates</div>
           <h2>Ship With Guardrails</h2>
-          <p class="lesson-story">Friday. A prompt change ships at noon. By two the refund agent speaks with new confidence about policies that do not exist. Nobody changed the tests because there were no tests. Prompts are code now, so gate them like code or debug them like folklore.</p>
+          <p class="lesson-story">Friday. A prompt change ships at noon. By two the refund agent speaks with new confidence about policies that do not exist. Nobody changed the tests because there were no tests. The prompt is part of the program, which means it needs a gate and an owner, not a folklore-driven debugging session.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Prompt change flowing into an eval gate that blocks the bad version and promotes the passing version">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">prompt edit</text>
             <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">eval gate</text>
@@ -435,7 +435,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Adversarial · Injection and exfil</div>
           <h2>The Red-Team Test</h2>
-          <p class="lesson-story">Saturday. A user uploads a document. The summary comes back with your API keys inside a rendered image. No clicks. No malware. One poisoned document and every permission the key carried. Your agent read the room. The room read your secrets.</p>
+          <p class="lesson-story">Saturday. A support ticket arrives with a document attached. The agent summarizes it, and the summary renders an image that contains your API keys. Nothing was clicked. Nothing was installed. One poisoned attachment walked out with every permission the key held. Your agent read the room; the room read your secrets.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Poisoned document packet sneaking toward secrets while a scanner gate blinks and blocks it">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">upload doc</text>
             <rect class="boxhot" x="150" y="55" width="130" height="40" rx="8"/><text x="215" y="79" font-size="11" text-anchor="middle">poisoned pixels</text>
@@ -447,7 +447,7 @@
           </svg>
           <ul class="lesson-ideas">
             <li>Treat all tool output as untrusted input. Documents, pages, and tool results can all carry instructions.</li>
-            <li>Scope secrets so theft buys little. Short TTLs and least privilege turn breaches into footnotes.</li>
+            <li>Scope secrets so a theft buys little. Short TTLs and least privilege reduce a breach to a footnote.</li>
             <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the document that downloaded keys.</li>
           </ul>
           <p>Your artifact: three red-team cases, one injection and one exfil and one jailbreak, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
@@ -629,12 +629,12 @@
             <text class="lbl" x="8" y="130" font-size="11">five users first, five thousand later</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Ship the eleven artifacts from lessons 1 through 11 in one folder. Gaps are visible at a glance.</li>
-            <li>Pilot with five users and a kill switch. Small blast radius, full telemetry, honest notes.</li>
-            <li>Close with the invoice. Turns per month times modeled unit price, labeled as estimates.</li>
+            <li>Ship the artifacts from lessons 1 through 16 in one folder. Gaps are visible at a glance.</li>
+            <li>Pilot with five users behind a kill switch. Keep the blast radius small, the telemetry complete, and the notes honest.</li>
+            <li>End on the invoice: monthly turns multiplied by a modeled unit price, every figure labeled an estimate.</li>
           </ul>
           <p class="lesson-hook">Course complete. Systematize quality next: <a href="learn-ai-evals.html">AI Evals That Hold</a>, then browse <a href="course.html">all courses</a> and <a href="index.html">all case studies</a>. New agents ship weekly. So will new bills.</p>
-          <p>The demo worked. Production is the exam. You just built the study guide. Earn the grade.</p>
+          <p>The demo worked. Production is where it gets graded. You just wrote the study guide; now earn the mark.</p>
         </section>
       </div>
     </div>

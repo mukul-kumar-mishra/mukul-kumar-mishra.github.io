@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">RAG in Production: 15 Lessons From the Retrieval Bench</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Your demo answers from three perfect documents. Production answers from three million messy ones, half stale, one poisoned. This course builds the pipeline between those worlds. Chunk it, ground it, price it. Every lesson ships an artifact you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for shipping retrieval pipelines, from chunking to eval gates and tenant isolation. Built from production postmortems with live diagrams and calculators.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 29, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -389,7 +389,7 @@
             <li>Scope secrets so theft buys little. Short TTLs and least privilege turn breaches into footnotes.</li>
             <li>Deep dive: <a href="agentflayer-zero-click-postmortem.html">AgentFlayer Zero-Click</a>, the document that downloaded keys.</li>
           </ul>
-          <p>Your artifact: three poisoned-document cases, one injection and one exfil and one instruction override, run monthly. Watch the packet stop at the scanner above, then make your scanner earn the same blink. Attackers read your docs too.</p>
+          <p>Your artifact: three poisoned-document cases, one injection and one exfil and one instruction override, run monthly. Follow the packet to the scanner above, then hold that scanner to the standard you already hold your retrievers to. Your documents are public reading material to an attacker.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> A retrieved page tells the model to ignore policy. Walk through the defense. <span class="q-seen">Seen at: AI safety loops.</span></p>
@@ -452,7 +452,7 @@
         <section class="lesson" id="lesson-12">
           <div class="lesson-kicker">Lesson 12 · Evaluation · Golden sets for retrieval</div>
           <h2>Eval the Retriever</h2>
-          <p class="lesson-story">Tuesday. A prompt change ships at noon. By two the refund pipeline cites with new confidence about policies that do not exist. Nobody changed the tests because there were no tests. Retrieval changes are code changes now, so gate them like code or debug them like folklore.</p>
+          <p class="lesson-story">Tuesday. A prompt change goes out at noon. By two the refund pipeline is quoting policies that were never written, in a tone of total assurance. Nothing broke in the test suite, because the test suite never covered the prompt. Retrieval changes are code changes now, so gate them like code or debug them like folklore.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Index change flowing into a recall gate that blocks regressions and promotes passing versions">
             <rect class="box" x="8" y="55" width="110" height="40" rx="8"/><text x="63" y="79" font-size="11" text-anchor="middle">index edit</text>
             <rect class="boxlime" x="150" y="55" width="120" height="40" rx="8"/><text x="210" y="79" font-size="11" text-anchor="middle">recall gate</text>
@@ -539,7 +539,7 @@
             <text class="lbl" x="8" y="130" font-size="11">five users first, five thousand later</text>
           </svg>
           <ul class="lesson-ideas">
-            <li>Ship the artifacts from lessons 1 through 13 in one folder. Gaps are visible at a glance.</li>
+            <li>Collect every artifact from lessons 1 through 13 into a single folder. A missing one is obvious at a glance.</li>
             <li>Pilot with five users and a kill switch. Small blast radius, full telemetry, honest notes.</li>
             <li>Close with the invoice. Queries per month times modeled unit price, labeled as estimates.</li>
           </ul>

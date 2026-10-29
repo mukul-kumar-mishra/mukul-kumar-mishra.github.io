@@ -36,7 +36,7 @@
     "name":"System Design Course: 15 Real-Outage Lessons",
     "description":"A free end-to-end system design course in 15 story-driven lessons covering requests, APIs, auth, databases, queues, scaling, resilience, consistency, caching, storage, cost, observability and the interview playbook.",
     "provider":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":"https://buildopsy.com/images/logo.png"},
-    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/slimdestro","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/slimdestro"]},
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul","jobTitle":"Tech Lead and Site Reliability Engineer","worksFor":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/"},"knowsAbout":["Golang","AWS","Distributed Systems","Kubernetes","Microservices","Site Reliability Engineering"],"sameAs":["https://github.com/mukul-kumar-mishra","https://www.linkedin.com/in/mukul-kumar-b9b33b428/","https://dev.to/mukul-kumar-mishra"]},
     "hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"P12H"},
     "syllabusSections":[
       {"@type":"Syllabus","name":"A request's 14-hop journey"},
@@ -116,7 +116,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">System Design Course: 15 Lessons From Real Outages</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Forget hundred-link reading lists. Each lesson starts from a real production failure, teaches three ideas that prevent the next one, and points at one calculator to feel the math. Work top to bottom. Every lesson ends where the next begins.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen story-driven system design lessons with diagrams, from request paths to interview playbooks. Built from production postmortems, with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · System design course · Updated October 29, 2026</p>
     </header>
     <section class="sec" id="newsletter" style="margin-bottom:32px;">
       <div class="newsletter-band">
@@ -385,7 +385,7 @@
             <li>Cells bound failure. One dark cell is an incident. One dark region is a disaster.</li>
             <li>Deep dives: <a href="aws-thermal-outage-postmortem.html">AWS thermal</a>, <a href="nats-outage-postmortem.html">NATS flight-data incident</a> and <a href="cell-based-control-plane.html">cell design</a>.</li>
           </ul>
-                    <p>Test the dark cell on purpose. Game days that kill one zone prove the other two carry load. Untested failover is a rumor with runbooks.</p>
+                    <p>Test the dark cell on purpose. Until a drill takes a zone away, the claim that the other two carry the load is a paragraph in a runbook.</p>
 <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> One cloud region dies during checkout peak. Now what? <span class="q-seen">Seen at: Amazon-style loops.</span></p>
@@ -430,7 +430,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Performance · Caching that pays</div>
           <h2>Never Pay Twice for Hello</h2>
-          <p class="lesson-story">Voice AI bills every hello at 75 milliseconds of GPU. The cached hello answers in 5. Same word, 15× lower latency. The linked ElevenLabs teardown assumes 40% repeats in its cost model; its separate 1M RPS scenario assumes a 60% cache hit.</p>
+          <p class="lesson-story">The best cache answers before the model wakes up. A voice agent spends 75 milliseconds of GPU on a greeting; the same greeting served from cache returns in 5, which is 15× less latency for identical output. The ElevenLabs teardown linked below prices that at 40% repeats, and its 1M RPS scenario assumes a 60% hit rate.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cache hit path answering in 5 milliseconds beside a miss path billing 75 milliseconds of GPU">
             <rect class="box" x="8" y="55" width="90" height="40" rx="8"/><text x="53" y="79" font-size="11" text-anchor="middle">request</text>
             <rect class="boxlime" x="130" y="20" width="150" height="40" rx="8"/><text x="205" y="44" font-size="11" text-anchor="middle">hit: 5ms, $0</text>
@@ -549,7 +549,7 @@
             <g stroke-width="2"><line x1="88" y1="75" x2="120" y2="75"/><line x1="200" y1="68" x2="232" y2="40"/><line x1="200" y1="82" x2="232" y2="102"/><line x1="362" y1="75" x2="394" y2="75"/></g>
           </svg>
           <ul class="lesson-ideas">
-            <li>Clarify scope first. Pastebin for 100 users is a weekend project. For 100 million it is lessons 1 through 11.</li>
+            <li>Clarify scope first. Pastebin for 100 users is a weekend project. For 100 million it is lessons 1 through 13.</li>
             <li>Estimate out loud. Writes per second, storage per year, bandwidth per day. Interviewers score the math.</li>
             <li>Close by breaking it. Name three failures and their fixes before they ask. That is the hire signal.</li>
           </ul>

@@ -29,7 +29,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Lovable: The $6.6B Preview Button Problem", "description": "A system design postmortem of Lovable vibe coding scale, preview sandboxes, Supabase MCP and token routing at 1M RPS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-09", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/lovable-vibe-coding-scale-postmortem.html"}, "keywords": "Lovable, vibe coding, Supabase MCP, preview sandbox, LLM routing", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/lovable-preview-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Lovable: The $6.6B Preview Button Problem", "description": "A system design postmortem of Lovable vibe coding scale, preview sandboxes, Supabase MCP and token routing at 1M RPS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-09-09", "dateModified": "2026-10-29", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/lovable-vibe-coding-scale-postmortem.html"}, "keywords": "Lovable, vibe coding, Supabase MCP, preview sandbox, LLM routing", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "image": "https://buildopsy.com/images/articles/lovable-preview-meme.png"}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -66,7 +66,7 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Daily Projects</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100k+</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Tokens per min</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">1B+</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Research-led architecture teardown · Updated October 29, 2026</p>
     </header>
 
 
@@ -129,7 +129,7 @@
       </section>
 
       <section id="one-million-rps"><h2>7. The One Million RPS Thought Experiment</h2>
-        <p>Normalize to one million preview requests per second for one month. A month holds 2,592,000 seconds. Assume each preview request carries one kilobyte inbound and two kilobytes outbound for diff and logs. Logical data crossing the edge is roughly three million kilobytes per second or about 7.2 petabytes per month before replication.</p>
+        <p>Normalize to one million preview requests per second across a month of 2,592,000 seconds. Assume each preview request carries one kilobyte inbound and two kilobytes outbound for diff and logs. Traffic crossing the edge reaches roughly three million kilobytes a second, about 7.2 petabytes per month before replication.</p>
         <p>In the current shaped builder, assume origin cost of $0.0000016 per preview request for full sandbox and reinstall and LLM turn and Supabase check. Current shaped bill is <strong>1,000,000 times 2,592,000 times $0.0000016 equals $4.15M per month</strong>.</p>
         <p>My proposed builder caches aggressively. Layer cache node modules by lockfile hash, reuse Vite build via persistent filesystem snapshots, keep sandboxes warm for five minutes per project and serve eighty percent of preview control events from edge without a rebuild. Assume forty percent of requests reach origin and origin rate falls to $0.0000011 after diff only patches and Supabase connection reuse via my Supabase postmortem pool. Core origin work becomes <strong>400,000 times 2,592,000 times $0.0000011 equals $1.14M per month</strong>. Add four hundred thousand dollars for layer cache and warm pool and Supabase MCP and hosting buffer. Proposed envelope is about <strong>$1.54M per month</strong>.</p>
         <table><thead><tr><th>At 1M RPS</th><th>Reinstall everything</th><th>Cached preview builder</th></tr></thead><tbody>

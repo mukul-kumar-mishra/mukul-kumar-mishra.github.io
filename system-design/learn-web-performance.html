@@ -121,7 +121,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Web Performance Economics: 17 Lessons From the Performance Desk</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Here is my thesis, stated plainly before the evidence: speed is respect. Respect converts. Each lesson fixes one vital at a time, measures it in the field, and prices it in revenue. Work top to bottom. Every millisecond here is a promise. This course audits who keeps it.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Seventeen principled web performance lessons with diagrams, from Core Web Vitals to edge rendering and revenue math. Built from production postmortems with calculators for the math.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Performance desk course · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Performance desk course · Updated October 29, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -173,7 +173,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Thesis · Speed converts</div>
           <h2>Speed Is Respect</h2>
-          <p class="lesson-story">Here is my thesis, stated plainly before the evidence: a slow page tells the visitor their time matters less than your roadmap. A fast page tells the opposite. One European retailer tested the principle with a spreadsheet rather than a slogan. The spreadsheet now opens every review I conduct.</p>
+          <p class="lesson-story">Here is my thesis, stated plainly before the evidence: load time is a message about whose time the business values. A slow page sends one, a fast page sends the other, and visitors read both before they read anything you wrote. One European retailer tested that principle with a spreadsheet rather than a slogan. The spreadsheet now opens every review I conduct.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Load time falling from slow to fast while mobile conversion climbs from twenty-four to thirty-four percent">
             <rect class="boxhot" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">slow: 24pc</text>
             <rect class="box" x="160" y="55" width="120" height="40" rx="8"/><text x="220" y="79" font-size="11" text-anchor="middle">load down 23pc</text>
@@ -187,7 +187,7 @@
             <li>State the thesis as a testable price. Ten points of conversion were purchasable with milliseconds in the published case.</li>
             <li>Deep dive: <a href="swappie-mobile-revenue-postmortem.html">Swappie 23pc Faster</a>, page loads down 23 percent with mobile revenue up 42 percent.</li>
           </ul>
-          <p>The method matters more than the numbers. The team measured conversion against load before changing anything, which turned speed from an engineering complaint into a revenue line executives could read. Measurement first is not a platitude. It is the permit for everything that follows.</p>
+          <p>The method matters more than the numbers. Before touching the stack, the team charted conversion against load, which converted a performance complaint into a number a finance team could act on. Measuring first is not a platitude. It is the permit for everything that follows.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Prove with one chart that speed deserves roadmap time this quarter. <span class="q-seen">Seen at: product-minded frontend loops.</span></p>
@@ -198,7 +198,7 @@
         <section class="lesson" id="lesson-2">
           <div class="lesson-kicker">Lesson 02 · Measurement · Lab versus field</div>
           <h2>The Field Accuses</h2>
-          <p class="lesson-story">Here is my corollary: respect cannot be measured in a simulator. A lab renders one page once on steady hardware with nobody touching it. Visitors scroll and rotate and rage-tap on buses. One platform learned the difference across millions of sites when the lab applauded and real thumbs suffered.</p>
+          <p class="lesson-story">Here is my corollary: a simulator cannot measure respect. One page, rendered once, on steady hardware, with no thumb on the glass, is not the condition your visitors arrive in. They scroll and rotate and rage-tap on buses. One platform learned the difference across millions of sites when the lab applauded and real thumbs suffered.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Lab scores green at seventy-eight and ninety-eight beside a red field score at forty-seven">
             <rect class="boxlime" x="8" y="20" width="150" height="40" rx="8"/><text x="83" y="44" font-size="11" text-anchor="middle">lab paint: 78</text>
             <rect class="boxlime" x="8" y="90" width="150" height="40" rx="8"/><text x="83" y="114" font-size="11" text-anchor="middle">lab delay: 98</text>
@@ -246,7 +246,7 @@
         <section class="lesson" id="lesson-4">
           <div class="lesson-kicker">Lesson 04 · Stability · Cumulative layout shift</div>
           <h2>Stability Is Manners</h2>
-          <p class="lesson-story">Layout shift is the rudest vital because it punishes reading itself. Text jumps under eyes. Buttons dodge thumbs. A published platform measured 0.17 against a 0.10 bar, then steadied millions of storefronts with reserved space and min-height wrappers. Manners, enforced by CSS.</p>
+          <p class="lesson-story">Layout shift is the rudest vital, because it punishes the act of reading. Words move while eyes are on them. Buttons slide away from thumbs. A published platform measured 0.17 against a 0.10 bar, then steadied millions of storefronts with reserved space and min-height wrappers. Manners, enforced by CSS.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Unreserved image shifting content marked rude beside reserved slots and min-height wrappers marked steady">
             <rect class="boxhot" x="8" y="55" width="150" height="40" rx="8"/><text x="83" y="79" font-size="11" text-anchor="middle">late space: 0.17</text>
             <rect class="boxlime" x="190" y="55" width="150" height="40" rx="8"/><text x="265" y="79" font-size="11" text-anchor="middle">reserved slots</text>
@@ -307,7 +307,7 @@
             <li>Rationalize imports and split by route. Ship the handshake code first, the settings page later.</li>
             <li>Deep dives: <a href="swappie-mobile-revenue-postmortem.html">Swappie bundle hygiene</a> and <a href="lovable-vibe-coding-scale-postmortem.html">Lovable preview weight</a>.</li>
           </ul>
-          <p>None of these fixes is clever. All of them compound, which is precisely why undisciplined teams skip them for cleverer projects. Process is the product here. The fixes are commodity. The measurement discipline is the moat.</p>
+          <p>None of these fixes is clever on its own. What compounds is applying all of them, every release, without a launch to celebrate — which is exactly the work that gets deferred for something more interesting. The process is the product, not any single fix. Speed improvements are commodity work. What a team cannot copy overnight is the habit of measuring before and after, every release.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Third-party scripts push interaction past budget. What goes, what stays? <span class="q-seen">Seen at: frontend and growth loops.</span></p>
@@ -405,7 +405,7 @@
             <li>Enforce a budget in review. A gate that never blocks is decor with a dashboard.</li>
             <li>Deep dive: <a href="godaddy-weakest-vital-postmortem.html">GoDaddy field instrumentation</a>, where shipped measurement preceded every fix.</li>
           </ul>
-          <p>Lesson 2 taught jurisdiction. This lesson teaches permanence. Chrome UX data through August 2026 puts 55.7 percent of origins in the green across all three vitals, up from barely half two years earlier. Progress is real and uneven. Budgets keep your origin on the right side of it.</p>
+          <p>Lesson 2 taught jurisdiction. This lesson teaches permanence. As of August 2026, Chrome UX data places 55.7 percent of origins in the green on all three vitals, against barely half two years before. The trend is real and the distribution is not. A budget is how one origin stays on the right side of it.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Design a performance budget for a checkout funnel. Which gates block? <span class="q-seen">Seen at: staff frontend loops.</span></p>

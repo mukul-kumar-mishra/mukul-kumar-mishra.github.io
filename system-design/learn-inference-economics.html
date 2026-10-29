@@ -122,7 +122,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">LLM Inference Economics: 15 Lessons From the Token Meter</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">Your demo answers beautifully at thirty cents a turn. One million turns later the invoice arrives with its own weather system. This course teaches the meter behind the magic. Meter it, batch it, cache it. Every lesson ships an artifact you can run.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen workshop lessons for pricing and taming inference spend, from KV cache to vendor pacts and the RPS envelope. Built from production postmortems with live diagrams and calculators.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · AI engineering course · Updated October 29, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -172,7 +172,7 @@
         <section class="lesson" id="lesson-1">
           <div class="lesson-kicker">Lesson 01 · Foundations · Price one turn</div>
           <h2>The Turn Has a Price</h2>
-          <p class="lesson-story">Friday night. Your agent answers beautifully at thirty cents a turn. One million turns later the invoice arrives with its own weather system. An answer engine once paid for every question twice, retrieval and inference, until caching made repeats nearly free. Price one turn before scaling to millions.</p>
+          <p class="lesson-story">One good answer costs thirty cents. That looks small until you multiply it by one million turns and the monthly total stops resembling a bill. Two lines do most of the damage: retrieval to find the context, generation to use it. Model a single turn at list price before you promise anyone a million of them.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Cost waterfall from request through retrieval and inference to a cache credit that shrinks the bill">
             <rect class="box" x="8" y="55" width="100" height="40" rx="8"/><text x="58" y="79" font-size="11" text-anchor="middle">request $0</text>
             <rect class="box" x="140" y="55" width="110" height="40" rx="8"/><text x="195" y="79" font-size="11" text-anchor="middle">retrieval $0.02</text>
@@ -300,7 +300,7 @@
         <section class="lesson" id="lesson-6">
           <div class="lesson-kicker">Lesson 06 · Context · The double bill</div>
           <h2>Compaction Bills Twice</h2>
-          <p class="lesson-story">Friday. Your coding agent flies all morning, then hits a paywall at 11:47 AM with the sprint half done. Compaction crushed hundreds of thousands of tokens into thousands, then billed dozens of re-reading steps to rebuild what was lost. The meter runs twice. The auditor naps through both.</p>
+          <p class="lesson-story">Six hours into a refactor, the context window is full. Compaction squeezes hundreds of thousands of tokens down to thousands, and the next task pays to read them back: dozens of re-reading steps to rebuild context that was already billed once. Two invoices for one conversation, the squeeze and the rebuild.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="Full context crushing through a compaction cliff into a thin recap that bills rebuild steps">
             <rect class="box" x="8" y="55" width="120" height="40" rx="8"/><text x="68" y="79" font-size="11" text-anchor="middle">context: full</text>
             <rect class="boxhot" x="160" y="55" width="120" height="40" rx="8"/><text x="220" y="79" font-size="11" text-anchor="middle">cliff: crush</text>
@@ -426,7 +426,7 @@
         <section class="lesson" id="lesson-11">
           <div class="lesson-kicker">Lesson 11 · Failure · Failed turns still bill</div>
           <h2>Retries Multiply the Meter</h2>
-          <p class="lesson-story">Friday. Your agents retried failed deploys until retries cost more than features. Every retry is a second billed turn arriving exactly when the system is weakest. At two extra retries per stalled call with no backoff, recovery load lands near three times normal (1 original + 2 retries). Failed turns bill like successful ones.</p>
+          <p class="lesson-story">Friday. A stalled call gets retried twice, then a third time, and the retry line on the invoice outgrows the feature line. Each attempt is a separately billed turn landing at the worst possible moment for the system. At two extra retries per stalled call with no backoff, recovery load lands near three times normal (1 original + 2 retries). Failed turns bill like successful ones.</p>
           <svg class="cdiagram" viewBox="0 0 560 150" role="img" aria-label="One failed turn fanning into retry copies that multiply the billed load before a breaker opens">
             <rect class="box" x="8" y="55" width="80" height="40" rx="8"/><text x="48" y="79" font-size="11" text-anchor="middle">fail $0.33</text>
             <rect class="boxhot" x="120" y="55" width="100" height="40" rx="8"/><text x="170" y="79" font-size="11" text-anchor="middle">retry x2</text>
