@@ -84,6 +84,7 @@
       {"@type":"ListItem","position":53,"url":"https://buildopsy.com/system-design/github-august-capacity-failure-postmortem.html","name":"GitHub's August 2026 Capacity Failure: Four Load Balancers Ran Out of Flow Room"},
       {"@type":"ListItem","position":54,"url":"https://buildopsy.com/system-design/railway-oct21-build-path-postmortem.html","name":"Railway's October 2026 Breach: The Build Pipeline Was the Decryption Path"},
       {"@type":"ListItem","position":55,"url":"https://buildopsy.com/system-design/emudhra-weak-ca-keys-postmortem.html","name":"Why Browsers Stopped Trusting eMudhra's Root"}
+      {"@type":"ListItem","position":56,"url":"https://buildopsy.com/system-design/aws-ec2-pricing-model.html","name":"AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour"}
     ]
   }
   </script>
@@ -270,6 +271,7 @@
       var noBox = document.getElementById('noResults');
       var clearBtn = document.getElementById('clearSearchBtn');
       var embeddedArticles = [
+        {"title":"AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour","url":"aws-ec2-pricing-model.html","tag":"Cloud Compute Cost Model","dateLabel":"October 2026","readTime":"12 min read","desc":"Thirteen verified US East rates, then the meters the hourly price omits: the 60-second floor that doubles short launches, idle Elastic IPs, capacity reservations and unlimited-mode credits.","tags":["AWS","EC2","Billing"]},
         {"title":"Why Browsers Stopped Trusting eMudhra's Root","url":"emudhra-weak-ca-keys-postmortem.html","tag":"PKI Incident","dateLabel":"October 2026","readTime":"17 min read","desc":"Eight intermediate keys were recoverable from an April 2025 ceremony. Chrome blocked them in 100 minutes. Removing the root ten days later is what puts about 30,800 certificates at risk.","tags":["eMudhra","PKI","Certificate Authority","Rook"]},
         {"title":"GitHub's August 2026 Capacity Failure: Four Load Balancers Ran Out of Flow Room","url":"github-august-capacity-failure-postmortem.html","tag":"Capacity Failure","dateLabel":"October 2026","readTime":"23 min read","desc":"A sidecar counted the wrong limit, four HAProxy nodes exhausted their flow tables, and a VS Code retry bug pushed one service from 7–9K to 70–100K requests per second.","tags":["GitHub","HAProxy","Retry Storm","Postmortem"]},
         {"title":"Railway's October 2026 Breach: The Build Pipeline Was the Decryption Path","url":"railway-oct21-build-path-postmortem.html","tag":"Security Incident","dateLabel":"October 2026","readTime":"16 min read","desc":"The attacker held encrypted secrets it could not read. Fifty-nine minutes after that finding revocation began, then the attacker reached the CI environment, while customers were told to rotate credentials they could not redeploy.","tags":["Railway","CI/CD","Secrets","Rook"]},

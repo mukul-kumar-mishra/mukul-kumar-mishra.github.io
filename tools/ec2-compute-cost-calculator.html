@@ -81,7 +81,7 @@
 
     <section class="sec" id="compute-bill">
       <aside class="tip" style="margin:0 0 16px;"><strong>The formula:</strong> monthly bill = (instance-hours + short-launch hours) × hourly rate × (1 − discount) + EBS GB-month. The defaults give 10 × $0.096 × 730 = <strong>$700.80</strong> before discount, with no short launches and no volumes. CPU utilization does not change the instance charge; only powered-on time does.</aside>
-      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate and the fraction of the month it is running, then add short-launch billing and attached EBS storage. Apply an optional effective discount scenario.</p>
+      <p class="fl-desc" style="margin:0 0 14px;">Price a fleet from instance count, hourly rate and the fraction of the month it is running, then add short-launch billing and attached EBS storage. Apply an optional effective discount scenario. The rates, the 60-second floor and the meters this model leaves out are documented in the <a href="../system-design/aws-ec2-pricing-model.html">EC2 pricing and billing teardown</a>.</p>
       <section class="radar-card">
         <div class="radar-main">
           <div class="radar-hero-grid calc-top">
@@ -187,7 +187,7 @@
         <p class="fl-desc" style="margin:10px 0 0;">Per-second billing with a 60-second minimum is stated on the AWS On-Demand pricing page. EBS per-second billing and the gp3 example rate come from the Amazon EBS pricing page, re-checked October 28, 2026.</p>
       </div>
 
-      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/zomato-gomemlimit-cost-teardown.html">One Soft Limit, $30K a Month: Zomato's GOMEMLIMIT Teardown</a></h3><p class="fl-desc">GC CPU fell from up to 60% to under 2% across 250+ Go services. The runtime-sizing loop behind this calculator's CPU math.</p></article>
+      <article class="feature-link" style="margin-top:18px;"><div><span class="fl-tag">Suggested teardown</span> <span class="chip">Cloud Infrastructure</span></div><h3><a class="feature-link-title" href="../system-design/aws-ec2-pricing-model.html">AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour</a></h3><p class="fl-desc">Ten m5.large instances for 730 hours is $700.80. The 60-second floor and the meters around the instance-hour are what the rate omits.</p></article>
     </section>
 
     <section class="sec" id="ec2-faq">

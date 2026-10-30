@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AWS EC2 pricing and cost per hour for thirteen instance types in US East, with monthly cost at 730 hours, then the billing meters the hourly rate omits: the 60-second floor, EBS, idle Elastic IPs, capacity reservations and unlimited-mode credits.">
+  <meta name="author" content="Mukul Kumar Mishra">
+  <link rel="canonical" href="https://buildopsy.com/system-design/aws-ec2-pricing-model.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour">
+  <meta property="og:description" content="AWS EC2 pricing and cost per hour for thirteen instance types in US East, with monthly cost at 730 hours, then the billing meters the hourly rate omits: the 60-second floor, EBS, idle Elastic IPs, capacity reservations and unlimited-mode credits.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/aws-ec2-pricing-model.png">
+  <meta property="og:image:alt" content="EC2 billing schematic: a single instance-hour meter carries $700.80 a month for ten m5.large instances, beside separate EBS, Elastic IP, capacity-reservation and data-transfer meters that add to the same bill">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/aws-ec2-pricing-model.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour">
+  <meta name="twitter:description" content="AWS EC2 pricing and cost per hour for thirteen instance types in US East, with monthly cost at 730 hours, then the billing meters the hourly rate omits: the 60-second floor, EBS, idle Elastic IPs, capacity reservations and unlimited-mode credits.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/aws-ec2-pricing-model.png">
+  <meta name="twitter:image:alt" content="EC2 billing schematic: a single instance-hour meter carries $700.80 a month for ten m5.large instances, beside separate EBS, Elastic IP, capacity-reservation and data-transfer meters that add to the same bill">
+  <title>AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour | Buildopsy</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <style>
+    .pricing-table th { background: color-mix(in srgb, var(--cyan) 12%, transparent); color: var(--heading); }
+    .pricing-table td, .pricing-table th { border: 1px solid var(--line); }
+    .pricing-table tbody tr:hover { background: color-mix(in srgb, var(--cyan) 5%, transparent); }
+    .pricing-table td:nth-child(n+4) { font-variant-numeric: tabular-nums; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour",
+    "description":"AWS EC2 pricing and cost per hour for thirteen instance types in US East, with monthly cost at 730 hours, and the billing meters the hourly rate omits: the 60-second floor, EBS, idle Elastic IPs, capacity reservations and unlimited-mode credits.",
+    "author":{"@type":"Person","name":"Mukul Kumar Mishra","url":"https://buildopsy.com/about.html#author-mukul"},
+    "publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},
+    "datePublished":"2026-10-30",
+    "dateModified":"2026-10-30",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/aws-ec2-pricing-model.html"},
+    "keywords":"AWS EC2 pricing, EC2 billing, EC2 on-demand pricing, EC2 cost calculator, EBS pricing, capacity reservation, unlimited mode",
+    "image":"https://buildopsy.com/images/articles/aws-ec2-pricing-model.png"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How much does an EC2 instance cost per hour?","acceptedAnswer":{"@type":"Answer","text":"In US East (N. Virginia) on Linux On-Demand rates published 2026-10-29, the modelled examples are t3.micro at $0.0104, t4g.small at $0.0168, c7g.large at $0.0725, c5.large at $0.0850, m5.large and m6i.large at $0.0960, r5.large at $0.1260, m5.xlarge at $0.1920, c5.xlarge at $0.1700 and r5.xlarge at $0.2520 per instance-hour. Windows, SQL Server, RHEL and SUSE carry separate rates."}},
+      {"@type":"Question","name":"Is EC2 billed per second or per hour?","acceptedAnswer":{"@type":"Answer","text":"AWS bills partial instance-hours per second for Linux, Windows, Windows with SQL Server, RHEL and Ubuntu Pro, with a 60-second minimum. SUSE Linux Enterprise Server is the exception and bills a full hour."}},
+      {"@type":"Question","name":"Why did a 30-second launch bill a whole minute?","acceptedAnswer":{"@type":"Answer","text":"Per-second billing still carries a 60-second minimum. A launch shorter than a minute bills one full minute, so ten thousand 30-second launches run 83.33 hours of wall-clock time but bill 166.67 instance-hours."}},
+      {"@type":"Question","name":"Does a stopped EC2 instance still cost money?","acceptedAnswer":{"@type":"Answer","text":"The instance charge stops, but attached EBS volumes keep billing by provisioned GB-month, and any Elastic IP address continues to bill whether it is in use or idle. Snapshots and other dependent resources also continue."}},
+      {"@type":"Question","name":"Does this EC2 calculator include EBS, Elastic IP or data transfer?","acceptedAnswer":{"@type":"Answer","text":"It models instance-hours, the 60-second floor and attached EBS volumes. Elastic IP addresses, NAT gateways, load balancers and data transfer are separate meters and are not included."}},
+      {"@type":"Question","name":"What is EC2 Unlimited mode and when is it charged?","acceptedAnswer":{"@type":"Answer","text":"T-family instances in Unlimited mode can burst past their CPU credit balance. Surplus credits are then charged: $0.05 per vCPU-hour for T2 and T3 on Linux, RHEL and SLES, $0.04 for T4g, $0.06 for T8i, and $0.096 for T2 and T3 on Windows."}},
+      {"@type":"Question","name":"Do I pay for a partially used Capacity Reservation?","acceptedAnswer":{"@type":"Answer","text":"Yes. On-Demand Capacity Reservations are priced the same as equivalent On-Demand usage. A fully used reservation bills only instance usage; a partially used one also bills the unused portion of the reservation."}},
+      {"@type":"Question","name":"How much does EC2 cost per month?","acceptedAnswer":{"@type":"Answer","text":"At 730 hours a month, the modelled US East Linux On-Demand rates give $7.59 for one t3.micro, $30.37 for one t3.medium, $70.08 for one m5.large and $183.96 for one r5.xlarge. EBS, addresses and transfer are charged separately, and any commitment discount applies on top."}},
+      {"@type":"Question","name":"How can I estimate my EC2 monthly cost?","acceptedAnswer":{"@type":"Answer","text":"Multiply instance count by the hourly rate and billable running hours, then add the 60-second floor for short launches, attached EBS by provisioned GB-month, and any address or transfer meters. Enter your Region's rates in the connected calculator."}}
+    ]
+  }
+  </script>
+</head>
+
+<body class="site">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a>
+      <nav class="topnav" id="topnav">
+        <a href="index.html" class="on">System Design</a>
+        <a href="ai-slop.html">AI Slop Watch</a>
+        <a href="../calculators.html">Calculators</a><a href="course.html">Courses</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+          <i data-lucide="sun" class="ic-sun"></i>
+          <i data-lucide="moon" class="ic-moon" style="display:none;"></i>
+        </button>
+        <button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:40px;padding-bottom:12px;flex:1;">
+    <div style="max-width:46rem;margin:0 auto;">
+      <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design Index</a></p>
+
+      <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Compute Cost Model</span><span class="chip">October 2026</span><span class="chip">12 min read</span></div>
+        <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">AWS EC2 Pricing and Billing: The Meters Around the Instance-Hour</h1>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">The instance-hour gets the attention and a fraction of the bill. This page prices EC2 cost per hour and monthly cost for thirteen instance types in US East, at the rates AWS published on 29 October 2026, then adds the meters that sit around them: the 60-second floor, attached storage, idle addresses, reservations you did not use and credits you burned.</p>
+        <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Ten <code>m5.large</code> instances running all month bill <strong>$700.80</strong> at $0.0960 per instance-hour across 730 hours. The same ten instances launched ten thousand times for 30 seconds bill <strong>$16.00</strong> for 83.33 hours of wall-clock work, because the 60-second floor doubles the billed hours. A Capacity Reservation for 20 instances with 12 in use charges <strong>$560.64</strong> for capacity nobody touched.</p>
+      </header>
+
+      <figure class="article-figure"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/aws-ec2-pricing-model.svg" alt="EC2 billing schematic: a single instance-hour meter carries $700.80 a month for ten m5.large instances, beside separate EBS, Elastic IP, capacity-reservation and data-transfer meters that add to the same bill" width="1200" height="680"><figcaption>Figure 1. Illustrative schematic. The instance-hour total is one meter, not the bill: storage, addresses, reservations and transfer are billed separately.</figcaption></figure>
+
+        <section><h2>1. What the Hourly Rate Actually Buys</h2>
+          <p>An On-Demand rate is a price for runtime, not for work done. AWS describes it as capacity by the hour or second with no long-term commitment, and it does not fall when the CPU sits idle. A ten-instance fleet that serves nothing for a month costs the same as one under load. Utilization changes how many instance-hours you need. It does not change the rate.</p>
+          <p>The same list separates what the instance charge covers from what it does not. Storage, addressing, load balancing, monitoring and transfer are named as their own products on the same page. That structure is the reason an EC2 line on a bill can be a third of a compute-heavy bill and a rounding error on a storage-heavy one.</p>
+          <div class="callout"><strong>What this excludes:</strong> Rates move by Region, operating system, tenancy, purchase model and instance family. The numbers below are one Region, one operating system and one purchase model, chosen so the arithmetic can be checked.</div>
+        </section>
+
+        <section><h2>2. Thirteen Rates to Anchor Against</h2>
+          <p>These are Linux On-Demand rates for US East (N. Virginia), read from AWS's published EC2 pricing data, file published 29 October 2026 and read on 30 October. Each row is a different shape of workload: burstable, general purpose, compute-heavy and memory-heavy.</p>
+
+          <div style="overflow-x:auto;"><table class="claimtable pricing-table">
+            <thead><tr><th>Instance type</th><th>vCPU</th><th>Memory</th><th>USD per instance-hour</th><th>Monthly at 730 h</th></tr></thead>
+            <tbody>
+              <tr><td>t3.micro</td><td>2</td><td>1 GiB</td><td>$0.0104</td><td>$7.59</td></tr>
+              <tr><td>t4g.small</td><td>2</td><td>2 GiB</td><td>$0.0168</td><td>$12.26</td></tr>
+              <tr><td>t3.small</td><td>2</td><td>2 GiB</td><td>$0.0208</td><td>$15.18</td></tr>
+              <tr><td>t4g.medium</td><td>2</td><td>4 GiB</td><td>$0.0336</td><td>$24.53</td></tr>
+              <tr><td>t3.medium</td><td>2</td><td>4 GiB</td><td>$0.0416</td><td>$30.37</td></tr>
+              <tr><td>c7g.large</td><td>2</td><td>4 GiB</td><td>$0.0725</td><td>$52.93</td></tr>
+              <tr><td>c5.large</td><td>2</td><td>4 GiB</td><td>$0.0850</td><td>$62.05</td></tr>
+              <tr><td>m5.large</td><td>2</td><td>8 GiB</td><td>$0.0960</td><td>$70.08</td></tr>
+              <tr><td>m6i.large</td><td>2</td><td>8 GiB</td><td>$0.0960</td><td>$70.08</td></tr>
+              <tr><td>r5.large</td><td>2</td><td>16 GiB</td><td>$0.1260</td><td>$91.98</td></tr>
+              <tr><td>c5.xlarge</td><td>4</td><td>8 GiB</td><td>$0.1700</td><td>$124.10</td></tr>
+              <tr><td>m5.xlarge</td><td>4</td><td>16 GiB</td><td>$0.1920</td><td>$140.16</td></tr>
+              <tr><td>r5.xlarge</td><td>4</td><td>32 GiB</td><td>$0.2520</td><td>$183.96</td></tr>
+            </tbody>
+          </table></div>
+
+          <p>The monthly column is Buildopsy arithmetic: rate multiplied by 730 hours, the average month at 8,760 hours a year. It is a standing-cost reference, not a quote. Windows, SQL Server, RHEL and SUSE images bill on their own rate cards, and a Region outside US East carries its own table.</p>
+          <p>Two rows are worth comparing. <code>c7g.large</code> and <code>c5.large</code> both offer 2 vCPU and 4 GiB, and the Graviton option lists at $0.0725 against $0.0850, a difference of $9.125 a month per instance, $9.13 rounded. On a hundred instances that is $912.50 a month for the same core count. Whether it is available to you depends on architecture support, which is a migration question rather than a pricing one.</p>
+        </section>
+
+        <section><h2>3. The 60-Second Floor</h2>
+          <p>Partial instance-hours bill by the second, and that sentence usually gets read as "a 30-second job costs 30 seconds". It does not. The <a href="https://aws.amazon.com/ec2/pricing/" target="_blank" rel="noopener noreferrer">EC2 pricing page</a> states a 60-second minimum, so anything shorter bills a full minute. SUSE Linux Enterprise Server is the single exception listed: those instances bill a full hour regardless.</p>
+          <p>The effect compounds faster than most people expect. Take ten thousand short jobs at 30 seconds each on <code>m5.large</code>:</p>
+          <ul>
+            <li>Wall-clock runtime: 10,000 &times; 30 s = 300,000 s = <strong>83.33 hours</strong></li>
+            <li>Billed runtime at the 60-second floor: 10,000 &times; 60 s = 600,000 s = <strong>166.67 hours</strong></li>
+            <li>Cost: 166.67 &times; $0.0960 = <strong>$16.00</strong></li>
+          </ul>
+          <p>The work took 83.33 hours and the bill covers 166.67, exactly double. Had the floor not applied, the same work would have priced at $8.00. That is the whole arithmetic: in this example, half of every launch is a payment for time the job never used. A 45-second launch wastes less of its minute; a 5-second launch wastes almost all of it.</p>
+          <p>The floor is not the enemy of batching, it is the argument for it. Launching once for 600 seconds bills 10 minutes; launching ten times for 60 seconds bills the same 10 minutes; launching twelve times for 30 seconds bills 12 minutes for 6 minutes of work. Where a workload can be packed into fewer, longer runs, the meter rewards it and nothing else has to change.</p>
+        </section>
+
+        <section><h2>4. What Keeps Billing After the Instance Stops</h2>
+          <p>Stopping an instance ends the instance charge. Several things attached to it keep their own meters running, and AWS names them on the same pricing page rather than in a footnote.</p>
+          <p>Attached EBS volumes bill by provisioned GB-month whether the instance is running or not, which is why an idle fleet can still produce a storage line. Provisioned EBS storage also bills in one-second increments with the same 60-second minimum, and per-second billing applies to every purchase option. Every in-use and idle Elastic IP address is charged, and the page points to the VPC pricing table for the rate. Load balancing and CloudWatch sit on their own pages. Auto Scaling is the one piece that carries no separate fee: the service is free, while the instances it launches and the monitoring they enable bill normally.</p>
+          <p>The pattern to look for is a resource that outlives its owner. A stopped instance with a 500 GB volume and a reserved address still produces a small monthly storage and address charge.</p>
+        </section>
+
+        <section><h2>5. Capacity Reservations Bill the Capacity</h2>
+          <p>An On-Demand Capacity Reservation is <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener noreferrer">priced exactly like the equivalent On-Demand usage</a>. The page then makes the part people miss explicit: if the reservation is fully used you pay instance usage and nothing more, and if it is partially used you pay for the unused portion as well.</p>
+          <p>Twenty reserved <code>m5.large</code> instances with twelve running for a full month:</p>
+          <ul>
+            <li>Reservation: 20 &times; 730 &times; $0.0960 = <strong>$1,401.60</strong></li>
+            <li>Used: 12 &times; 730 &times; $0.0960 = <strong>$840.96</strong></li>
+            <li>Idle capacity: 8 &times; 730 &times; $0.0960 = <strong>$560.64</strong></li>
+          </ul>
+          <p>A reservation bills capacity for as long as it is held, whether or not an instance is running in it. That trade is worth making when the capacity has to exist at a moment you cannot predict; otherwise the reservation pays for an option you are not using.</p>
+        </section>
+
+        <section><h2>6. Purchase Options and What "Up To" Means</h2>
+          <p>For the two discount mechanisms this comparison cares about, AWS publishes headline ceilings rather than rates. Savings Plans are described as reducing the bill by up to 72% against On-Demand in exchange for a usage commitment, and Spot capacity as a discount of up to 90% against On-Demand. EC2 has other purchasing routes, including Reserved Instances, Dedicated Hosts, Dedicated Instances and Capacity Blocks, and each carries its own terms.</p>
+          <p>Both phrases are ceilings. A Savings Plan's effective rate depends on the commitment amount, the term and the instance families it covers. A Spot price moves with available capacity. Neither is a figure a budget can be built on without pricing the specific commitment first.</p>
+          <p>At the published ceiling, the arithmetic on a $0.0960 <code>m5.large</code> would be $0.0269 per hour, or $19.62 across 730 hours. That is a ceiling illustration built on AWS's stated maximum, not a quoted rate, and a real plan can land well above it. The gap between the headline and the achievable number is the reason commitments get modelled against actual usage rather than against a discount percentage.</p>
+          <p>A separate path is capacity rather than price. A Dedicated Host is a physical server reserved for one account, bought hourly On-Demand or through Savings Plans, and AWS lists reusing existing server-bound software licences first among the uses it gives for Dedicated Hosts. Capacity Blocks for ML reserve GPU instances ahead of a run. Both change what you are permitted to run, which is a different question from what an instance-hour costs.</p>
+          <p>Spot needs its own warning. A discount that reaches 90% is payment for the risk of interruption, so the workloads that fit are the ones that can be stopped and restarted without a person noticing. A stateful database on Spot has to be priced against its recovery time as well as its discount.</p>
+        </section>
+
+        <section><h2>7. Burstable Instances and the Credit Bill</h2>
+          <p>T-family instances accumulate CPU credits while they idle and spend them when they burst. In Unlimited mode they can keep bursting past the balance, and the surplus is charged. AWS publishes the <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener noreferrer">surplus rate per vCPU-hour</a>, and it does not change with instance size or purchase model.</p>
+          <ul>
+            <li>T2 and T3 on Linux, RHEL and SLES: <strong>$0.05</strong> per vCPU-hour</li>
+            <li>T4g on Linux, RHEL and SLES: <strong>$0.04</strong> per vCPU-hour</li>
+            <li>T8i on Linux, RHEL and SLES: <strong>$0.06</strong> per vCPU-hour</li>
+            <li>T2 and T3 on Windows and Windows with SQL Web: <strong>$0.096</strong> per vCPU-hour</li>
+            <li>T8i on Windows and Windows with SQL Web: <strong>$0.1152</strong> per vCPU-hour</li>
+          </ul>
+          <p>A <code>t3.medium</code> is 2 vCPU, so ten surplus hours across both cores is 20 vCPU-hours and $1.00 at the Linux rate. That is small next to the $30.37 monthly instance price, which is the honest way to read it: the credit meter is rarely the line that breaks a budget, but it is a real charge and it appears without a launch event to explain it.</p>
+        </section>
+
+        <section><h2>8. Licences, and the One Lever That Cuts Them</h2>
+          <p>Windows and SQL Server are licence-included images, so their hourly rate bundles the guest licence into the instance price. AWS exposes a lever here that has no Linux equivalent: Optimize CPUs, which sets a lower vCPU count or disables hyper-threading on an instance while the underlying instance type stays the same.</p>
+          <p>The published savings per vCPU-hour removed are $0.046 for Windows Server, $0.421 for Windows with SQL Enterprise, $0.166 for SQL Standard and $0.063 for SQL Web. An <code>m5.2xlarge</code> has 8 vCPU; dropping to 4 saves 4 &times; 730 &times; $0.046 = <strong>$134.32</strong> a month on the Windows licence component alone. The instance still bills its own rate, and other operating systems are unaffected by the feature.</p>
+          <p>That asymmetry matters when comparing a Windows fleet with a Linux one. The Linux comparison is instance rate against instance rate. The Windows comparison has to add back whatever licence capacity you actually need, because cutting vCPUs below what the workload needs forces more instances or longer runs, and that cost has to be weighed against the licence saving.</p>
+        </section>
+
+        <section><h2>9. Data Transfer Is Aggregated, Not Per-Service</h2>
+          <p>Outbound transfer is the meter most likely to be attributed to the wrong service. AWS states that its rate tiers use aggregate data transfer out to the internet across EC2, S3, Glacier, RDS, Redshift, SageMaker, SES, SimpleDB, SQS, SNS, DynamoDB, Storage Gateway, CloudShell and CloudWatch Logs. A terabyte leaving an EC2 load balancer and a terabyte leaving an S3 bucket land on the same tier ladder.</p>
+          <p>AWS also states that customers receive <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener noreferrer">100 GB of free data transfer out</a> to the internet each month, aggregated across all AWS services and Regions except China and GovCloud. Above that, the per-gigabyte rate is set by the aggregate volume tier, which is why the same transfer can price differently in two months without any change to the workload.</p>
+        </section>
+
+        <section><h2>10. The Verdict</h2>
+          <p>An EC2 bill is a runtime meter surrounded by meters that do not care whether anything ran. The hourly rate is easy to quote and poor for planning, because the three charges that surprise people are structural rather than accidental: a floor that doubles short launches, storage and addresses that outlive a stopped instance, and reservations that bill capacity rather than use.</p>
+          <p>The design question that follows is how many separate meters the workload switches on, and how long each of them stays on. A fleet that launches once and runs for a month is priced on one meter. The same work split into ten thousand short launches is priced on the same meter with twice the hours, then a storage meter and an address meter that never turns off.</p>
+        </section>
+
+        <section><h2>Frequently Asked Questions</h2>
+          <p><strong>How much does an EC2 instance cost per hour?</strong> In US East (N. Virginia) on Linux On-Demand rates published 2026-10-29, the modelled examples run from $0.0104 for <code>t3.micro</code> to $0.2520 for <code>r5.xlarge</code>. Windows, SQL Server, RHEL and SUSE bill on separate rate cards.</p>
+          <p><strong>Is EC2 billed per second or per hour?</strong> Partial instance-hours bill per second for Linux, Windows, Windows with SQL Server, RHEL and Ubuntu Pro, with a 60-second minimum. SUSE Linux Enterprise Server bills a full hour.</p>
+          <p><strong>Why did a 30-second launch bill a whole minute?</strong> The 60-second minimum applies to any launch shorter than a minute, so ten thousand 30-second launches bill 166.67 instance-hours for 83.33 hours of work.</p>
+          <p><strong>Does a stopped instance still cost money?</strong> The instance charge stops. Attached EBS volumes keep billing by provisioned GB-month, Elastic IP addresses bill whether in use or idle, and snapshots and other dependent resources continue.</p>
+          <p><strong>Does the calculator include EBS, Elastic IP or data transfer?</strong> It models instance-hours, the 60-second floor and attached EBS volumes. Addresses, NAT gateways, load balancers and transfer are separate meters and are not included.</p>
+          <p><strong>What is Unlimited mode and when is it charged?</strong> T-family instances can burst past their credit balance in Unlimited mode, and surplus credits bill per vCPU-hour: $0.05 for T2 and T3 on Linux, $0.04 for T4g, $0.06 for T8i, and $0.096 for T2 and T3 on Windows.</p>
+          <p><strong>Do I pay for a partially used Capacity Reservation?</strong> Yes. Reservations are priced like equivalent On-Demand usage, and a partially used one also bills the unused portion.</p>
+          <p><strong>How much does EC2 cost per month?</strong> At 730 hours a month, the modelled US East Linux rates give $7.59 for one <code>t3.micro</code>, $30.37 for one <code>t3.medium</code>, $70.08 for one <code>m5.large</code> and $183.96 for one <code>r5.xlarge</code>. EBS, addresses and transfer are extra.</p>
+          <p><strong>How can I estimate my EC2 monthly cost?</strong> Multiply instance count by hourly rate and billable hours, add the 60-second floor for short launches, then add EBS by provisioned GB-month and any address or transfer meter. Run the figures through the <a href="../tools/ec2-compute-cost-calculator.html">EC2 cost calculator</a> with your Region's rates.</p>
+        </section>
+
+        <section><h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">Every rate in the table is read from AWS's published EC2 On-Demand pricing data for US East (N. Virginia), file published 2026-10-29T17:56:34Z, filtered to Linux with no pre-installed software and no licence model. The per-type rate codes are t3.micro CRAJUW7BTXFMT2UJ, t4g.small 9GWX7R3VJUG9P8Y8, t3.small QA3NBPZEQKZ2K9AR, t4g.medium E2KFUE6DHVS3HDJM, t3.medium NN4EGUUQRWVYP98C, c7g.large 9B39KMDC8628VV55, c5.large 6U6GZ2DN4RFCJ7D9, m5.large 6C86BEPQVG73ZGGR, m6i.large B8JJ44GS8MG4RPR4, r5.large NCTEFNHKJC398BJB, c5.xlarge 35AEEWH98DECPC35, m5.xlarge 5G4TA8Z4MUKE6MJB and r5.xlarge TZG8KMRSS5ASP78Y. Billing mechanics, the 60-second minimum, the SUSE exception, Elastic IP and Capacity Reservation treatment, unlimited-mode credit rates, Optimize CPUs savings, Auto Scaling fee treatment and the 100 GB aggregate transfer allowance were read from the Amazon EC2 On-Demand pricing page on 2026-10-30. The per-second billing rule, its 60-second minimum for provisioned EBS storage and its application to all purchase options were read from the Amazon EC2 pricing page the same day. Monthly figures are Buildopsy arithmetic: rate &times; 730 hours, the mean month at 8,760 hours a year, rounded to the cent. Worked examples use round inputs so a reader can reproduce them. Discounts, Savings Plans, Reserved Instance terms, taxes and Region-specific rates are excluded, and no figure here is a customer invoice.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener noreferrer">AWS: Amazon EC2 On-Demand pricing</a>, read 2026-10-30</li>
+            <li><a href="https://aws.amazon.com/ec2/pricing/" target="_blank" rel="noopener noreferrer">AWS: Amazon EC2 pricing</a> — purchase options and per-second billing, read 2026-10-30</li>
+            <li><a href="https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json" target="_blank" rel="noopener noreferrer">AWS EC2 On-Demand pricing data, US East (N. Virginia), Linux</a>, published 2026-10-29T17:56:34Z</li>
+            <li><a href="https://aws.amazon.com/ec2/instance-types/m5/" target="_blank" rel="noopener noreferrer">AWS: Amazon EC2 M5 instances</a>, for the m5.large specification</li>
+            <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-optimize-cpu.html" target="_blank" rel="noopener noreferrer">AWS documentation: Optimize CPUs</a></li>
+          </ul>
+        </section>
+
+        <section><h2>Run your own numbers</h2>
+          <p>The <a href="../tools/ec2-compute-cost-calculator.html">EC2 compute cost calculator</a> prices instance-hours, the 60-second floor and attached EBS in your browser. It does not choose an instance type, read your bill, or add addresses, load balancers or transfer. Model those separately, and treat every rate as an input rather than a constant.</p>
+        </section>
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div style="min-width:0;">
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> The next teardown, with the source list.</h2>
+          <p class="fl-desc" style="margin:0;">One email when a new audit ships: primary sources, the arithmetic, and the limits of the record. No fixed schedule. Unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@example.com" class="field-input" style="min-width:220px;" aria-label="Email address" autocomplete="email">
+          <input type="hidden" name="embed" value="1">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Mukul Kumar Mishra</span><div class="share-row" data-share-row style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+
+  <a class="chip" data-share="x" href="#" rel="noopener" target="_blank" aria-label="Share on X" title="Share on X"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18.901 1.153h3.68l-8.038 9.189L24 22.846h-7.406l-5.804-7.584-6.64 7.584H.47l8.6-9.831L0 1.153h7.594l5.247 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a>
+  <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank" aria-label="Share on Hacker News" title="Share on Hacker News"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 7.5 12 13l4.5-5.5M12 13v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank" aria-label="Share on Reddit" title="Share on Reddit"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="12.5" r="1.1" fill="currentColor"/><circle cx="15" cy="12.5" r="1.1" fill="currentColor"/><path d="M8.5 16c2.2 1.6 4.8 1.6 7 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 5.5l1.1-2.4 2.4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="3.6" r="1.1" fill="currentColor"/></svg></a>
+  <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank" aria-label="Share on LinkedIn" title="Share on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5a2.09 2.09 0 1 0 0 4.18 2.09 2.09 0 0 0 0-4.18zM3 9h3.96v12H3zM9 9h3.8v1.64h.05c.53-1.01 1.83-2.08 3.76-2.08 4.02 0 4.77 2.65 4.77 6.1V21h-3.96v-5.62c0-1.34-.03-3.07-1.87-3.07-1.88 0-2.17 1.47-2.17 2.98V21H9z"/></svg></a>
+  <a class="chip" data-share="copy" href="#" aria-label="Copy link" title="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+</div>
+<script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){a.classList.add('is-copied');a.setAttribute('aria-label','Link copied');setTimeout(function(){a.classList.remove('is-copied');a.setAttribute('aria-label','Copy link');},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span class="footer-links"><a href="../about.html">About</a> &middot; <a href="../pricing.html">Pricing</a> &middot; <a href="../contact.html">Contact</a> &middot; <a href="../privacy.html">Privacy</a><span class="footer-social"><a class="brand-social-link" href="https://x.com/BuildOpsy" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on X" title="Buildopsy on X"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.901 1.153h3.68l-8.038 9.189L24 22.846h-7.406l-5.804-7.584-6.64 7.584H.47l8.6-9.831L0 1.153h7.594l5.247 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a><a class="brand-social-link" href="https://www.linkedin.com/company/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on LinkedIn" title="Buildopsy on LinkedIn"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.09 2.09 0 1 0 0 4.18 2.09 2.09 0 0 0 0-4.18zM3 9h3.96v12H3zM9 9h3.8v1.64h.05c.53-1.01 1.83-2.08 3.76-2.08 4.02 0 4.77 2.65 4.77 6.1V21h-3.96v-5.62c0-1.34-.03-3.07-1.87-3.07-1.88 0-2.17 1.47-2.17 2.98V21H9z"/></svg></a><a class="brand-social-link" href="https://www.instagram.com/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on Instagram" title="Buildopsy on Instagram"><svg class="brand-icon-outline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.25" y="2.25" width="19.5" height="19.5" rx="5.25"/><circle cx="12" cy="12" r="4.25"/><circle class="brand-icon-dot" cx="18.1" cy="5.9" r="0.8"/></svg></a></span></span>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var root = document.documentElement;
+    if (localStorage.getItem('pf-theme') === 'dark') root.classList.add('dark');
+    function syncIcons() { var dark = root.classList.contains('dark'); document.querySelector('.ic-sun').style.display = dark ? 'none' : ''; document.querySelector('.ic-moon').style.display = dark ? '' : 'none'; }
+    syncIcons();
+    document.getElementById('themeToggle').addEventListener('click', function () { root.classList.toggle('dark'); localStorage.setItem('pf-theme', root.classList.contains('dark') ? 'dark' : 'light'); syncIcons(); });
+    (window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));
+  </script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
