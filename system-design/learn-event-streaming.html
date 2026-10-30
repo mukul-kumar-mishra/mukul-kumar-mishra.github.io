@@ -123,7 +123,7 @@
       <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);">Event Streaming in Production: 15 Lessons From Published Cases</h1>
       <p class="page-lede" style="font-family:var(--font-serif);">A resilient event-streaming design treats the log as a source of truth, expects delivery to repeat, and prices backlog recovery. These lessons draw on published incidents and clearly labeled scenarios, with assumptions and math readers can rerun.</p>
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen streaming lessons with diagrams, from partitions and exactly-once budgets to rebalance drills. Published incident findings and modeled inputs are identified separately.</p>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Event streaming course · Updated October 29, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Event streaming course · Updated October 31, 2026</p>
     </header>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
@@ -217,7 +217,7 @@
             <li>Every partition taxes the broker. Assignment math and metadata grow with the count, not with the data.</li>
             <li>Deep dives: <a href="razorpay-upi-kafka-postmortem.html">Razorpay Kafka</a> and <a href="roblox-kafka-ingestion-postmortem.html">Roblox tiers</a>.</li>
           </ul>
-          <p>Size partitions from peak throughput divided by per-partition headroom, with a stated growth factor. Lesson 4 shows what happens when the count meets a rolling deploy. The ceiling is load-bearing. Read it twice.</p>
+          <p>Size partitions from peak throughput divided by per-partition headroom, with a stated growth factor. Lesson 4 shows what happens when the count meets a rolling deploy. The ceiling is load-bearing.</p>
           <div class="lesson-questions">
             <div class="lesson-questions-title">Interview room</div>
             <p><strong>Q1.</strong> Size partitions for 60,000 events per second with 3x headroom.</p>
