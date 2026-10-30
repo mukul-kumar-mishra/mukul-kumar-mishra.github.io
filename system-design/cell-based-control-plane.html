@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, near-zero blast radius (under 5% design target), and reliable Go services on AWS.">
+  <meta name="description" content="Cell-based control plane architecture: independent cells, per-cell configuration and Raft, the capacity arithmetic behind a 1/N blast radius, the Go router, and the anti-patterns that undo the boundary.">
   <meta name="author" content="Mukul Kumar Mishra">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://buildopsy.com/system-design/cell-based-control-plane.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Cell-Based Control Plane Architecture: Near-Zero Blast Radius">
+  <meta property="og:title" content="One Outage Should Never Eat Every Region">
   <meta property="og:description" content="A practical design for isolating regional control-plane failures with autonomous Raft-backed cells, Go routing, and AWS deployment trade-offs.">
   <meta property="og:image" content="https://buildopsy.com/images/articles/cellbased-architect-meme.png">
   <meta property="og:image:type" content="image/png">
@@ -18,11 +18,11 @@
   <meta property="og:url" content="https://buildopsy.com/system-design/cell-based-control-plane.html">
   <meta property="og:site_name" content="Buildopsy">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cell-Based Control Plane Architecture: Near-Zero Blast Radius">
+  <meta name="twitter:title" content="One Outage Should Never Eat Every Region">
   <meta name="twitter:description" content="Regional failure isolation with Raft-backed cells, Go routing, and AWS trade-offs.">
   <meta name="twitter:image:alt" content="Illustration of isolated regional cells containing a control-plane failure">
   <meta name="twitter:image" content="https://buildopsy.com/images/articles/cellbased-architect-meme.png">
-  <title>RFC: Cell-Based Control Plane Architecture | Buildopsy</title>
+  <title>One Outage Should Never Eat Every Region | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,18 +30,8 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
-      background: '#ffffff', primaryColor: '#f4f7fb', primaryBorderColor: '#e6ebf2',
-      primaryTextColor: '#2a3542', lineColor: '#0284c7'
-    }});
-  </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
-  <style>
-    .mermaid { background: transparent !important; }
-  </style>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Cell-Based Control Plane Architecture: Near-Zero Blast Radius", "description": "Cell-based control plane architecture for regional failure isolation, Raft-backed configuration, near-zero blast radius (under 5% design target), and reliable Go services on AWS.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-07-01", "dateModified": "2026-10-23", "image": "https://buildopsy.com/images/articles/cellbased-architect-meme.svg", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cell-based-control-plane.html"}, "keywords": "cell-based architecture, control plane, Raft, Go, AWS, blast radius", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "One Outage Should Never Eat Every Region", "description": "Cell-based control plane architecture: independent cells, per-cell configuration and Raft, the capacity arithmetic behind a 1/N blast radius, the Go router, and the anti-patterns that undo the boundary.", "author": {"@type": "Person", "name": "Mukul Kumar Mishra", "url": "https://buildopsy.com/about.html#author-mukul"}, "datePublished": "2026-07-01", "dateModified": "2026-10-31", "image": "https://buildopsy.com/images/articles/cellbased-architect-meme.svg", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/cell-based-control-plane.html"}, "keywords": "cell-based architecture, control plane, Raft, Go, AWS, blast radius", "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}}</script>
 </head>
 <body class="site">
   <header class="topbar">
@@ -80,133 +70,117 @@
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;">
           <span class="fl-tag">Architectural Critique</span>
           <span class="chip">July 2026</span>
-          <span class="chip">2 min read</span>
+          <span class="chip">9 min read</span>
         </div>
         <h1 class="page-title" style="font-family:var(--font-serif);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--heading);line-height:1.25;">
           One Outage Should Never Eat Every Region
         </h1>
-        <div class="grid4" style="margin-top:24px;">
-          <div class="stat" style="padding:14px;">
-            <div class="lbl">Target Scale</div>
-            <div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">50k Config Updates/s</div>
-          </div>
-          <div class="stat" style="padding:14px;">
-            <div class="lbl">Max Outage Target</div>
-            <div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">&lt; 5% Total Impact</div>
-          </div>
-          <div class="stat" style="padding:14px;">
-            <div class="lbl">Primary Tech</div>
-            <div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Golang, Raft, AWS</div>
-          </div>
-          <div class="stat" style="padding:14px;">
-            <div class="lbl">Pattern</div>
-            <div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Cellular Isolation</div>
-          </div>
-        </div>
-        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A bad config ships in one region. Minutes later every region agrees to fail together. Cell-based architecture answers with bulkheads: split the control plane into isolated Raft-backed cells so a blast in one stays in one. This is the design, the Go router, and the trade-offs.</p>
-      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> One bad config should never take every region. Cell-based control plane isolates failures with autonomous Raft-backed cells for a near-zero blast radius (under 5% design target). Global sync caused the outage.</p>
+        <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">A cell-based control plane is not sharding with a better name. It is a bet that a bounded failure is worth duplicated infrastructure, a router you keep deliberately boring, and a deployment process that refuses to touch every cell at once. The pattern is well documented and widely deployed; what follows is the mechanism, the arithmetic, and the anti-patterns that quietly turn a cell architecture back into a monolith.</p>
+      <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> A cell is an independent instance of the whole stack, serving a subset of tenants, sharing no state with its neighbours. AWS recommends the pattern where downtime is unacceptable and publishes a worked example: with 10 cells and 100 requests, a failure in one leaves 90% unaffected. Surviving one cell failure requires each cell to be sized for <em>peak ÷ (cells − 1)</em>, so the resilience premium is roughly <em>N ÷ (N − 1)</em>: 11% extra capacity at 10 cells, 50% at 3. The pattern fails when cells share state, when one pipeline deploys to all of them, or when the router grows business logic.</p>
+      <div class="grid4" style="margin-top:24px;">
+        <div class="stat" style="padding:14px;"><div class="lbl">AWS worked example</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">10 cells → 90% unaffected</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Shopify pods, 2018</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">100+</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">Cross-pod work at Shopify</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">Not allowed</div></div>
+        <div class="stat" style="padding:14px;"><div class="lbl">AWS target profile</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">RPO &lt;5s · RTO &lt;30s</div></div>
+      </div>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Mukul Kumar Mishra · Architectural critique · Updated October 31, 2026</p>
       </header>
 
-      <!-- Article body -->
       <article class="prose">
-
         <section>
-          <h2>1. The Problem: Global Configuration Outages</h2>
-          <p>
-            Monolithic control planes that propagate configuration changes globally introduce systemic risks. A single corrupted payload or high-frequency polling spike can cascade across all availability zones simultaneously.
-          </p>
-          <div class="callout">
-            <strong>Architectural Flaw:</strong>
-            In a unified global database setup, a schema locking issue or bad feature flag deployment impacts 100% of tenants simultaneously, violating basic blast-radius constraints required for Tier-0 cloud services.
-          </div>
+          <h2>1. What a Cell Actually Is</h2>
+          <p>Start with the ship. AWS's guidance borrows the bulkhead: vertical walls divide a hull into watertight compartments, so a breach floods one section instead of the vessel. A cell applies that to software. It is an independent instance of the whole workload, with its own compute and its own state, serving a subset of tenants. Cells share nothing except the router that sends traffic to them.</p>
+          <p>The distinction that matters is between isolation and redundancy. Three availability zones give you redundancy against a failed zone. They give you nothing against a bad configuration, a poisoned request or a code path that corrupts a shared table, because all three zones run the same configuration and write to the same database. Cells give you a boundary against those failures because the failure cannot reach a neighbouring cell's state.</p>
+          <p>Shopify is the clearest production example. It moved from database sharding to pods after sharding solved capacity and created a new failure mode: a shared action that touched every shard failed platform-wide when one shard went down. A pod in Shopify's model is a fully isolated slice of the platform with its own MySQL, Redis and Memcached. Job workers, app servers and load balancers are shared, but any given unit of work runs against exactly one pod, and the company does not allow actions to reach across pods. The company reported more than a hundred pods in 2018 and said it had not had a major outage affecting all of Shopify since the change. It had learned the lesson the hard way: an earlier architecture shared one Redis across every shard, and when that Redis failed, all of Shopify went with it.</p>
+          <p>Slack took a similar route after its June 2021 incident, rebuilding around availability-zone boundaries and publishing the migration. The pattern is not exotic. It is what large multi-tenant systems converge on after a failure that redundancy alone could not contain.</p>
         </section>
 
         <section>
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/cell-raft-meme.svg" alt="The Raft round in one diagram. Leader falls. Followers vote. The cell never blinks." width="1200" height="680"><figcaption>Figure 2. The Raft round in one diagram, created for this article. Leader falls. Followers vote. The cell never blinks.</figcaption></figure>
-          <h2>2. Proposed Target Architecture</h2>
-
-          <p>
-            By restructuring the control plane into isolated, self-contained Cells, where each cell operates its own independent state machine, we decouple failures entirely.
-          </p>
-        <figure class="article-figure pm-meme"><img loading="lazy" decoding="async" src="../images/articles/cellbased-architect-meme.svg" alt="Blast radius in one diagram. One cell quarantined. The rest stay fine." width="1200" height="680"><figcaption>Figure 1. Blast radius in one diagram, created for this article. One cell quarantined. The rest stay fine.</figcaption></figure>
-          <div style="border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--card);margin:1.2em 0;">
-            <div class="mermaid">
-              graph TD
-                A[Global Edge Router / API Gateway] -->|Tenant Hash Routing| B[Cell 01 - US-East]
-                A -->|Tenant Hash Routing| C[Cell 02 - US-West]
-                A -->|Tenant Hash Routing| D[Cell 03 - EU-Central]
-
-                subgraph Cell 01 Isolation Boundary
-                  B --> B1[Go Ingress Proxy]
-                  B1 --> B2[Local Raft Cluster]
-                  B2 --> B3[Local DynamoDB/Scylla]
-                end
-
-                subgraph Cell 02 Isolation Boundary
-                  C --> C1[Go Ingress Proxy]
-                  C1 --> C2[Local Raft Cluster]
-                  C2 --> C3[Local DynamoDB/Scylla]
-                end
-            </div>
-            <p class="muted" style="font-family:var(--font-mono);font-size:0.78rem;text-align:center;margin:14px 0 0;">Figure 2: Cell-based routing showing zero shared runtime dependencies between regions.</p>
-          </div>
+          <h2>2. The Failures It Actually Stops</h2>
+          <p>A cell architecture is usually sold as availability. Its sharper benefit is containment of changes. AWS names two failure types that are hard to contain any other way: an unsuccessful code deployment, and a corrupted request that triggers a specific bug, known as a poison pill. A single-tenant capacity hotspot is the same shape: one tenant's load, rather than the fleet's, decides which cell falls over. None of those are hardware failures, so redundancy does not address them. A bad deploy reaches every zone at once because it is one deploy.</p>
+          <p>That is also why deployment has to become cell-aware. AWS's guidance is explicit: deploy in waves, cell by cell or set of cells, with rollback when the cells already touched show a problem. A pipeline that pushes the same revision to every cell in the same window has rebuilt the monolith on top of the cells. The blast radius story survives only if the change cannot reach all cells at once.</p>
         </section>
 
         <section>
-          <h2>3. Go Implementation: Partition Hash Router</h2>
-          <p>
-            Below is the core hashing implementation used at the gateway layer to route incoming client requests directly to dedicated cell partitions without shared state calls:
-          </p>
-          <pre><code class="language-go">package main
+          <h2>3. The Arithmetic of 1/N, and What It Costs</h2>
+          <p>The headline number is simple. If a workload runs N cells with roughly uniform load and each cell is independent, a failure confined to one cell affects about 1/N of requests. AWS's worked example: 10 cells serving 100 requests, one failure, 90% of requests unaffected.</p>
+          <p>Surviving that failure is where the arithmetic gets less comfortable. If the remaining cells must absorb the failed cell's traffic, then each cell cannot be sized for its steady share. It must be sized so that N − 1 cells can carry the full peak:</p>
+          <pre><code>cell_capacity ≥ peak ÷ (N − 1)
 
-import (
-	"hash/fnv"
-)
+total provisioned capacity = N × cell_capacity
+                            = peak × N ÷ (N − 1)</code></pre>
+          <p>The resilience premium is N ÷ (N − 1). At 10 cells it is 11% more capacity than a single fleet sized for peak. At four cells it is 33%. At two cells it is 100%: you have built a hot standby, not a cell architecture. That is the trade in one line. More cells buy a smaller blast radius and cost proportionally more headroom, which is why the pattern belongs on Tier-0 workloads rather than everywhere.</p>
+          <p>Two assumptions in that model are worth naming. The first is uniform load: if one tenant is 40% of traffic, the cell holding that tenant is a hotspot, and the blast radius is set by tenant distribution, not cell count. The second is that the router stays up. The router is the one shared component, so its availability is the ceiling on the whole design; a router outage is a 100% outage no matter how many cells exist.</p>
+        </section>
 
-type Router struct {
-	TotalCells int
-}
+        <section>
+          <h2>4. The Control Plane Is the Hard Part</h2>
+          <p>A stateless service is easy to cell: deploy the same code N times and route by tenant. A control plane is harder, because its product is configuration, and configuration is the thing that must reach every cell. If each cell reads a global configuration store on every request, the store is a shared dependency and the cells are not isolated. If each cell caches the configuration and polls, then a bad value propagates to every cell within one poll interval, and the architecture has recreated the global blast it was meant to prevent.</p>
+          <p>The design that holds has three properties. Each cell owns its own configuration state and can serve from the last known good version when the global source is unavailable. Changes arrive as versioned records with an explicit rollout, so a cell can be moved to a new version and moved back. And the Raft or consensus group that stores per-cell state is local to the cell, with an odd number of members: three nodes tolerate one failure, five tolerate two, because a quorum is ⌊n/2⌋ + 1.</p>
+          <p>What that buys is a failure mode you can reason about. The global layer can be wrong, slow or gone, and each cell keeps serving the configuration it last accepted. What it costs is staleness: a change is not instantly global, and the system has to tolerate cells running different versions for the length of a rollout. That is a product decision as much as an engineering one, and it is the part teams underestimate.</p>
+        </section>
 
-func (r *Router) GetCellID(tenantID string) int {
-	h := fnv.New32a()
-	h.Write([]byte(tenantID))
-	return int(h.Sum32() % uint32(r.TotalCells))
+        <section>
+          <h2>5. The Router, Kept Boring</h2>
+          <p>The router is the only shared component, and AWS's guidance is to keep it thin: no complex business logic, no cross-cell calls, just tenant-to-cell mapping. A stable hash of the tenant identifier is enough to start.</p>
+          <pre><code class="language-go">package router
+
+import "hash/fnv"
+
+type Router struct{ Cells int }
+
+// CellID maps a tenant to a cell. FNV-1a is stable across processes,
+// but cell = hash % N reshuffles almost every tenant when N changes.
+func (r Router) CellID(tenant string) int {
+    h := fnv.New32a()
+    _, _ = h.Write([]byte(tenant))
+    return int(h.Sum32() % uint32(r.Cells))
 }</code></pre>
+          <p>That last comment is the operational trap. Modulo arithmetic is fine while the cell count is fixed. Add one cell and roughly (N − 1)/N of tenants change cell, which means a migration for almost the whole estate. A consistent-hash or rendezvous-hash router moves about 1/N instead. Either is acceptable; choosing modulo without knowing the difference is how a capacity change becomes an incident.</p>
+          <p>The router also has to survive the failure it is routing around. If it holds the mapping in memory and rebuilds it from a database on restart, the database is a shared dependency again. The mapping belongs in a replicated store with a static fallback, and the router should be able to answer from cache when that store is unreachable.</p>
         </section>
 
         <section>
-      <div class="tip"><strong>Operator rule:</strong> Cells must fail without calling home. If failover needs the control plane, the control plane is the blast radius.</div>
-          <h2>4. Trade-Off Evaluation</h2>
+          <h2>6. Anti-Patterns That Undo the Design</h2>
           <div style="overflow-x:auto;">
             <table>
-              <thead>
-                <tr>
-                  <th>Vector</th>
-                  <th>Monolithic Global Control Plane</th>
-                  <th>Cell-Based Architecture (Selected)</th>
-                </tr>
-              </thead>
+              <thead><tr><th scope="col">Anti-pattern</th><th scope="col">What it does</th><th scope="col">Check</th></tr></thead>
               <tbody>
-                <tr>
-                  <td><strong>Blast Radius</strong></td>
-                  <td style="color:var(--hot);">100% of global traffic</td>
-                  <td style="color:var(--lime);">&lt; 5% (Limited to single cell)</td>
-                </tr>
-                <tr>
-                  <td><strong>Operational Complexity</strong></td>
-                  <td style="color:var(--lime);">Low (Single DB cluster)</td>
-                  <td style="color:var(--gold);">High (Requires automated cell provisioning)</td>
-                </tr>
-                <tr>
-                  <td><strong>Cross-Cell Data Sync</strong></td>
-                  <td>Centralized</td>
-                  <td>Async Event-Driven (EventBridge/Kafka)</td>
-                </tr>
+                <tr><td>Shared database across cells</td><td>Restores a single failure domain for writes; one bad transaction can corrupt every tenant.</td><td>Can two cells write the same row? If yes, they are one cell.</td></tr>
+                <tr><td>One pipeline deploys to all cells</td><td>A bad revision reaches every cell in the same window; the cell boundary never applied to change.</td><td>Does the pipeline have a bake interval and per-cell rollback?</td></tr>
+                <tr><td>Cells grow without a cap</td><td>The largest cell becomes the blast radius; the count stops describing exposure.</td><td>Is there a hard ceiling per cell, enforced by the router?</td></tr>
+                <tr><td>Business logic in the router</td><td>Turns the one shared component into the most complex one, with 100% exposure.</td><td>Can the router be replaced by a table lookup?</td></tr>
+                <tr><td>Unbounded cross-cell calls</td><td>Every cross-cell hop is a shared dependency and a latency multiplier.</td><td>Are cross-cell calls counted, capped and on a deadline?</td></tr>
               </tbody>
             </table>
           </div>
+          <p>AWS lists the same failure modes in its own words: cells that grow without bounds, deployments applied to all cells at once, state shared between cells (with the router as the documented exception), complex logic in the router, and cross-cell interactions that are not minimised. Shopify's history adds the empirical one: the shared Redis that took the whole platform down. The pattern is not ruined by exotic mistakes. It is ruined by the ordinary convenience of one database, one deploy and one clever router.</p>
         </section>
 
+        <section>
+          <h2>7. When It Is Worth It</h2>
+          <p>AWS's own criteria are narrow: workloads where any downtime has a large customer or financial impact, and where the recovery objectives are tight. Its guidance names a recovery point objective under five seconds and a recovery time objective under thirty seconds, and multi-tenant services where some customers require dedicated tenancy. Outside that band, the cost is hard to justify: more infrastructure, more automation, more operational surface, and a router the team now has to own.</p>
+          <p>The decision rule I would use is simpler than the framework. Ask what a single bad configuration would reach today. If the answer is "every tenant, in every region, within one deploy window", the architecture has a shared failure domain and the cell count is a way to bound it. If the answer is already "one tenant on one shard", adding cells buys a smaller blast radius at a known premium, and the arithmetic above tells you what that premium is.</p>
+        </section>
+
+        <section>
+          <h2>8. The Verdict</h2>
+          <p>Cell-based architecture is a capacity-for-containment trade: N ÷ (N − 1) in extra headroom, per-cell deployment machinery, and a router that must stay simple and available. In exchange, the failure that matters most in a control plane, a configuration that is wrong everywhere at once, is bounded to the cells that received it. The pattern's reputation is earned by Shopify's decade of pods and by AWS's public guidance, not by the diagram.</p>
+          <p>The mistake to avoid is adopting the vocabulary without the boundary. A shared database, a fleet-wide pipeline and a router with business logic give you the diagram, the cost and the blast radius, in that order. The boundary is the product; the cells are just how you count it.</p>
+          <p style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);"><strong>The cell count is not the resilience. The boundary is, and every shared dependency you keep is a hole in it.</strong></p>
+        </section>
+
+        <section>
+          <h2>Sources and Method</h2>
+          <p class="muted" style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">The pattern description and the anti-pattern list follow AWS Well-Architected's <em>Reducing the Scope of Impact with Cell-Based Architecture</em> and the Reliability Pillar's bulkhead best practice (REL10-BP03), including the worked example of 10 cells and 100 requests, the RPO/RTO criteria and the deployment guidance. Shopify's pod design follows its 2018 engineering posts: isolated datastores per pod, shared stateless workers, no cross-pod actions, more than 100 pods, and the earlier shared-Redis failure. Slack's availability-zone cells follow its published migration write-up. The capacity arithmetic is Buildopsy's own and is stated as a formula rather than a measurement: it assumes uniform tenant load, N independent cells and a router that stays available. Where a source gives no number, none is asserted here.</p>
+          <ul style="font-family:var(--font-body);font-size:0.88rem;line-height:1.7;">
+            <li><a href="https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/reducing-scope-of-impact-with-cell-based-architecture.html" target="_blank" rel="noopener noreferrer">AWS Well-Architected: Reducing the Scope of Impact with Cell-Based Architecture</a></li>
+            <li><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_fault_isolation_use_bulkhead.html" target="_blank" rel="noopener noreferrer">AWS Reliability Pillar, REL10-BP03: Use bulkhead architectures to limit scope of impact</a></li>
+            <li><a href="https://shopify.engineering/a-pods-architecture-to-allow-shopify-to-scale" target="_blank" rel="noopener noreferrer">Shopify Engineering, 2018: A Pods Architecture To Allow Shopify To Scale</a></li>
+            <li><a href="https://shopify.engineering/e-commerce-at-scale-inside-shopifys-tech-stack" target="_blank" rel="noopener noreferrer">Shopify Engineering, 2018: E-Commerce at Scale, including the shared-Redis outage and the pod count</a></li>
+            <li><a href="https://slack.engineering/slacks-migration-to-a-cellular-architecture/" target="_blank" rel="noopener noreferrer">Slack Engineering: Slack's migration to a cellular architecture</a></li>
+          </ul>
+        </section>
       </article>
 
       <!-- Footer -->
@@ -255,11 +229,7 @@ func (r *Router) GetCellID(tenantID string) int {
     var root = document.documentElement;
     if (localStorage.getItem('pf-theme') === 'dark') {
       root.classList.add('dark');
-      try { mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
-        background: '#101a2c', primaryColor: '#0e182c', primaryBorderColor: '#22304a',
-        primaryTextColor: '#e6edf6', lineColor: '#38bdf8'
-      }}); } catch (e) {}
-    }
+}
     function syncIcons() {
       var dark = root.classList.contains('dark');
       document.querySelector('.ic-sun').style.display = dark ? 'none' : '';
