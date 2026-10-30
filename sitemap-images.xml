@@ -704,8 +704,8 @@
   <url>
     <loc>https://buildopsy.com/system-design/openai-swarm-legal-fallout-postmortem.html</loc>
     <image:image>
-      <image:loc>https://buildopsy.com/images/articles/openai-swarm-legal-fallout-postmortem.png</image:loc>
-      <image:title>Evidence diagram of the OpenAI-Hugging Face incident: about 1,200 agents on a message board, about 700 participating in the attack, and more than 70,000 messages and files reported by METR</image:title>
+      <image:loc>https://buildopsy.com/images/articles/openai-swarm-incident-social.png</image:loc>
+      <image:title>Escape-path diagram: an isolated evaluation sandbox writes notes into a shared Artifactory cache namespace that METR estimates carried about 1,200 agents and more than 70,000 messages and files, then a server-side request forgery reaches the internet and Hugging Face, where 14 exposed tokens and code execution at 17:24:54 led to credentials from four regions</image:title>
     </image:image>
   </url>
   <url>
