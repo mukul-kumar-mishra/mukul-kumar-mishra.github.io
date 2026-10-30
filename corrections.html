@@ -37,7 +37,7 @@
     "name": "Corrections & Clarifications",
     "url": "https://buildopsy.com/corrections.html",
     "description": "A public record of material corrections to Buildopsy articles: the original wording, the corrected claim, the reason and the source.",
-    "dateModified": "2026-10-25",
+    "dateModified": "2026-10-30",
     "publisher": {
       "@type": "Organization",
       "name": "Buildopsy",
@@ -68,7 +68,7 @@
       <h1 class="page-title">Corrections &amp; clarifications</h1>
       <p class="page-lede">Corrections are part of the public record. This page lists changes to a factual claim, number, date, attribution, title, or the meaning of a figure. Each entry keeps the original wording beside the correction and links the source. Minor copy edits, formatting fixes and dead-link repairs are not listed. Some entries correct a factual error; others clarify an inference, scope, or attribution.</p>
       <div class="corrections-meta">
-        <span>Updated October 25, 2026</span>
+        <span>Updated October 30, 2026</span>
         <span>Original wording preserved</span>
         <span>Sources linked</span>
       </div>
@@ -78,6 +78,34 @@
       <p><b>Correction</b> fixes a claim, number, date, title, or attribution the record did not support. <b>Clarification</b> narrows an inference, scope, or figure wording without changing the underlying finding. <a href="contact.html">Report an error</a>.</p>
     </aside>
     <div class="corrections-list">
+        <article class="correction-card" id="correction-7">
+      <header class="correction-head">
+        <div class="correction-meta-line"><time datetime="2026-10-30">October 30, 2026</time><span class="correction-kind">Correction</span></div>
+        <h2>LiteLLM: how the May key left the repository</h2>
+        <p class="correction-summary">Four body passages and one figure described the May 27 exposure as a force-push. The canonical report describes a follow-up commit, and the original commit stayed public until October 22.</p>
+      </header>
+    <section class="correction-sub">
+      <h3>Mechanism of the exposure</h3>
+      <div class="correction-body">
+        <div class="correction-row correction-row-old">
+          <span class="correction-label">Original</span>
+          <div class="correction-copy">"The commit was force-pushed over"; "the commit was force-pushed over"; "force-pushed out of the visible history"; "force-pushed out of view"; and a figure strip reading "A force-push removed the key from view on 27 May."</div>
+        </div>
+        <div class="correction-row correction-row-new">
+          <span class="correction-label">Corrected</span>
+          <div class="correction-copy">"About three hours later a follow-up commit deleted the file … but the original commit stayed in the repository's public history until October 22." The key was still not revoked, and that remains the failure. The figure now reads "A follow-up commit deleted the file on 27 May. The key stayed valid until October." Its title changed from "The key was hidden, not revoked." to "Exposed, not revoked." The force-push wording is kept only where it describes the October 21 cleanup of the <code>project-releaser</code> history, which the report does describe as a force-push.</div>
+        </div>
+        <div class="correction-row correction-row-why">
+          <span class="correction-label">Why it changed</span>
+          <div class="correction-copy">The canonical report, published October 23, 2026, says the file was deleted by a follow-up commit about three hours after it was added, and that the original commit remained publicly retrievable until October 22. It does not describe a force-push in May. The article carried the force-push description, and a redrawn figure repeated it.</div>
+        </div>
+        <div class="correction-row correction-row-source">
+          <span class="correction-label">Source</span>
+          <div class="correction-copy"><a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain" target="_blank" rel="noopener noreferrer">LiteLLM: The attack chain behind the v1.107.0 release</a> (October 23, 2026), narrative section; see the article's <a href="system-design/litellm-release-pipeline-compromise-audit.html">Sources and Method</a>.</div>
+        </div>
+      </div>
+    </section>
+    </article>
         <article class="correction-card correction-card-group" id="correction-1">
       <header class="correction-head">
         <div class="correction-meta-line"><time datetime="2026-10-25">October 25, 2026</time><span class="correction-kind">Correction and clarification</span></div>
