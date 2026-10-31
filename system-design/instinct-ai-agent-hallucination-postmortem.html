@@ -10,8 +10,8 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Instinct AI's Made-Up Photo Leak That Looked Like a Breach — Audit">
   <meta property="og:description" content="One invented name, one undescribed photo, and one confident apology. The agent confessed a leak. The founder claimed hallucination. Rook grades the gap.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png">
-  <meta property="og:image:alt" content="Three stat panels showing one invented name, one undescribed photo, and zero sends">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/instinct-ai-agent-hallucination-social.png">
+  <meta property="og:image:alt" content="User input with no photo sent flowing into an agent output card with an invented name and a described photo, then into a narrative panel reading crossed chats and incident report drafted">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Instinct AI's Made-Up Photo Leak That Looked Like a Breach — Audit">
   <meta name="twitter:description" content="No proven breach. No proven isolation either. Just a helpful agent, a confident apology, and screenshots.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png">
-  <meta name="twitter:image:alt" content="Three stat panels showing one invented name, one undescribed photo, and zero sends">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/instinct-ai-agent-hallucination-social.png">
+  <meta name="twitter:image:alt" content="User input with no photo sent flowing into an agent output card with an invented name and a described photo, then into a narrative panel reading crossed chats and incident report drafted">
   <title>Instinct AI's Made-Up Photo Leak That Looked Like a Breach — Audit | Rook</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach", "description": "Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination and promised a token verifier. Rook audits claimed vs proved.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html"}, "keywords": "Instinct AI agent, AI hallucination, data leak vs hallucination, Noah Shinn, agent isolation, Rook", "image": "https://buildopsy.com/images/articles/instinct-crossed-chat-meme.png"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Instinct AI Agent Hallucination System Design: How a Made-Up Leak Looked Like a Data Breach", "description": "Instinct said a stranger photo crossed into a user chat. Founder Noah Shinn called it hallucination and promised a token verifier. Rook audits claimed vs proved.", "author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"}, "publisher": {"@type": "Organization", "name": "Buildopsy", "url": "https://buildopsy.com/", "logo": {"@type": "ImageObject", "url": "https://buildopsy.com/images/logo.png"}}, "datePublished": "2026-10-02", "dateModified": "2026-10-23", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://buildopsy.com/system-design/instinct-ai-agent-hallucination-postmortem.html"}, "keywords": "Instinct AI agent, AI hallucination, data leak vs hallucination, Noah Shinn, agent isolation, Rook", "image": "https://buildopsy.com/images/articles/instinct-ai-agent-hallucination-social.png"}</script>
 </head>
 <body class="site">
   <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html">System Design</a><a href="ai-slop.html" class="on">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
@@ -45,7 +45,7 @@
     </header>
     <aside class="tip" style="margin-bottom:30px;"><strong>Status:</strong> User screenshots Sep 21 2026 and founder reply Sep 23 and press Sep 22 to Sep 30. No exploit steps are reproduced. This audit grades disclosure and mechanism and fix.</aside>
     <article class="prose">
-      <figure class="article-figure pm-meme"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/instinct-crossed-chat-meme.svg" alt="Three stat panels showing one invented name, one undescribed photo, and zero sends" width="1200" height="680"><figcaption>Figure 1. The report in one diagram. One invented name, one undescribed photo, and zero sends from the user.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width: 640px)" srcset="../images/articles/instinct-ai-agent-hallucination-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/instinct-ai-agent-hallucination.svg" alt="Diagram: a user input box labelled no photo sent, an arrow to an agent output card marked invented name and photo described, then an arrow to a panel reading crossed chats and incident report drafted." width="1200" height="680"></picture><figcaption>Figure 1. What the screenshots support: no photo sent by the user, an invented name and a described photo in the agent output, and a drafted incident report. Source: Business Insider, 30 September 2026.</figcaption></figure>
       <section><h2>1. The Confession Nobody Ordered</h2>
         <p>Press accounts describe screenshots Pritak posted on Sep 21. Instinct had greeted him with what looked like someone else's middle name. Then it discussed a photo of a financial document. He never sent any photo. So far this reads like a privacy disaster.</p>
         <p>Then the agent made it worse. It told him a photo had crossed into his conversation. It called the crossover a serious glitch. It even drafted an incident report about a stranger's private document reaching the wrong chat. Every sentence sounded precise. None of it had evidence attached.</p>
