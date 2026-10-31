@@ -10,8 +10,8 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
   <meta property="og:description" content="Layers cached, bytes billed. Fifteen Docker lessons with live diagrams, and registry math from the layer ledger.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
-  <meta property="og:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/learn-docker-layers-social.png">
+  <meta property="og:image:alt" content="A three-layer image stack, a push that bills bytes, and a per-push scan returning a CVE verdict">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="680">
@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker Containers in Production: 15 Lessons From the Layer Ledger">
   <meta name="twitter:description" content="Layers cached, bytes billed. Fifteen Docker lessons with live diagrams, and registry math from the layer ledger.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-docker-ship-meme.png">
-  <meta name="twitter:image:alt" content="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/learn-docker-layers-social.png">
+  <meta name="twitter:image:alt" content="A three-layer image stack, a push that bills bytes, and a per-push scan returning a CVE verdict">
   <title>Docker Containers in Production: 15 Lessons From the Layer Ledger | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,7 +108,7 @@
       <p class="fl-desc" style="margin-top:12px;"><strong>TL;DR:</strong> Fifteen Docker lessons with live diagrams, from layers to registries and scans and the Kubernetes handoff. Built from production postmortems with registry math.</p>
       <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By <a href="../about.html#author-mukul">Mukul Kumar Mishra</a> · Containers course · Updated October 23, 2026</p>
     </header>
-    <figure class="course-hero-wrap"><img class="course-hero" loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Docker release path from ordered Dockerfile layers through cache, pinned registry artifact, and deployment" width="1200" height="680"><figcaption class="fl-desc">A reproducible container release starts with stable layers, scans the pinned artifact, and deploys the same image everywhere.</figcaption></figure>
+    <figure class="article-figure"><picture style="display:block;"><source media="(max-width: 640px)" srcset="../images/articles/learn-docker-ship-meme-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/learn-docker-ship-meme.svg" alt="Diagram: a three-layer image stack feeding a push that bills bytes, then a per-push scan that returns a CVE verdict." width="1200" height="680"></picture><figcaption>Figure 1. Layers are cached and reused; the push bills bytes and the scan runs per push. Illustrative course diagram.</figcaption></figure>
     <section class="sec" style="margin-bottom:32px;">
       <h2 class="sec-title">What you will be able to do</h2>
       <ul class="lesson-ideas">
