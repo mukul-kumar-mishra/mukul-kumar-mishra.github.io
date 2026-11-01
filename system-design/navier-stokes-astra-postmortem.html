@@ -10,8 +10,8 @@
   <meta property="og:type" content="article">
   <meta property="og:title" content="OpenAI's Navier–Stokes Proof: Two Paper-to-Lean Mismatches | Buildopsy">
   <meta property="og:description" content="OpenAI claims a Lean-formalized Navier–Stokes blow-up proof. An Oct 6 arXiv preprint reports mismatches between the paper's estimates and cited Lean results; it does not claim the paper is false.">
-  <meta property="og:image" content="https://buildopsy.com/images/articles/navier-stokes-meme.png">
-  <meta property="og:image:alt" content="Buildopsy illustration of OpenAI's reported agent search and Lean formalization, alongside the October 6 preprint's m+4 versus m+5 estimate discrepancy; not a verdict on the written proof">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/navier-stokes-social.png">
+  <meta property="og:image:alt" content="A paper page carrying the forced Navier–Stokes equation captioned m+4 derivative bound, arrowed to a code block captioned m+5 required, with the note that the preprint does not judge the written proof">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -20,8 +20,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="OpenAI's Navier–Stokes Proof: Two Paper-to-Lean Mismatches | Buildopsy">
   <meta name="twitter:description" content="OpenAI claims a Lean-formalized Navier–Stokes blow-up proof. An Oct 6 preprint reports paper–Lean estimate mismatches but does not say the paper is false.">
-  <meta name="twitter:image" content="https://buildopsy.com/images/articles/navier-stokes-meme.png">
-  <meta name="twitter:image:alt" content="Buildopsy illustration of OpenAI's reported agent search and Lean formalization, alongside the October 6 preprint's m+4 versus m+5 estimate discrepancy; not a verdict on the written proof">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/navier-stokes-social.png">
+  <meta name="twitter:image:alt" content="A paper page carrying the forced Navier–Stokes equation captioned m+4 derivative bound, arrowed to a code block captioned m+5 required, with the note that the preprint does not judge the written proof">
   <title>OpenAI's Navier–Stokes Proof: Two Paper-to-Lean Mismatches | Buildopsy</title>
   <link rel="icon" href="../images/favicon.png" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
   <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"OpenAI's Navier–Stokes Proof: Two Paper-to-Lean Mismatches","description":"OpenAI claims a Lean-formalized Navier–Stokes blow-up proof. An October 6 preprint reports two paper-to-Lean estimate mismatches; its authors do not assess whether the written proof is correct.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-10","dateModified":"2026-10-23","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html"},"keywords":"Navier-Stokes, Lean formalization, paper-to-Lean mismatch, proof verification, OpenAI","image":"https://buildopsy.com/images/articles/navier-stokes-meme.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"OpenAI's Navier–Stokes Proof: Two Paper-to-Lean Mismatches","description":"OpenAI claims a Lean-formalized Navier–Stokes blow-up proof. An October 6 preprint reports two paper-to-Lean estimate mismatches; its authors do not assess whether the written proof is correct.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"},"publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"datePublished":"2026-09-10","dateModified":"2026-11-01","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/navier-stokes-astra-postmortem.html"},"keywords":"Navier-Stokes, Lean formalization, paper-to-Lean mismatch, proof verification, OpenAI","image":"https://buildopsy.com/images/articles/navier-stokes-social.png"}</script>
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -81,13 +81,13 @@
         <div class="stat" style="padding:14px;"><div class="lbl">Output tokens</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">130B</div></div>
         <div class="stat" style="padding:14px;"><div class="lbl">Lean check</div><div style="font-weight:700;color:var(--paper);margin-top:4px;font-size:0.9rem;">17 hours</div></div>
       </div>
-      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook research desk · Research claim audit · Published September 10, 2026 · Updated October 23, 2026</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook research desk · Research claim audit · Published September 10, 2026 · Updated November 1, 2026</p>
     </header>
 
     <aside class="tip" style="margin-bottom:30px;"><strong>Evidence status:</strong> OpenAI published a paper and a Lean repository; it says it does not intend to claim the Millennium Prize. The October 6 arXiv preprint reports specific paper–Lean mismatches but does not conclude that the paper's proof is false. The mathematical claim remains open to independent expert assessment.</aside>
 
     <article class="prose">
-      <figure class="article-figure"><picture style="display:block;"><source media="(max-width: 600px)" srcset="../images/articles/navier-stokes-meme-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/navier-stokes-meme.svg" alt="Buildopsy illustration of OpenAI's reported forced Navier–Stokes claim, agent search and Lean formalization, alongside the October 6 preprint's m+4 versus m+5 estimate discrepancy; not a verdict on the written proof" width="1200" height="680"></picture><figcaption>Figure 1. OpenAI's reported search and formalization beside the m+4 versus m+5 discrepancy reported in the October 6 preprint. The comparison is not a verdict on the natural-language proof.</figcaption></figure>
+      <figure class="article-figure"><picture style="display:block;"><source media="(max-width: 640px)" srcset="../images/articles/navier-stokes-mobile.svg" type="image/svg+xml"><img loading="eager" fetchpriority="high" decoding="async" src="../images/articles/navier-stokes.svg" alt="Diagram: a paper page carrying the forced Navier–Stokes equation and captioned m+4 derivative bound, arrowed to a code block captioned m+5 required, with the note that the preprint does not judge the written proof." width="1200" height="680"></picture><figcaption>Figure 1. Equation (8.19) of the paper uses an m+4 derivative bound; the cited Lean estimate requires m+5. The preprint reports the difference and does not judge the natural-language proof. Source: Bastounis, Circelli and Hansen, arXiv 2610.08144v1, §3.1.</figcaption></figure>
 
       <section><h2>1. OpenAI's Published Claim</h2>
         <p><a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener noreferrer">OpenAI's September 8 announcement</a> says an internal system produced a finite-time blow-up result for the forced three-dimensional incompressible Navier–Stokes equations. It says the construction begins with a fluid at rest, applies a smooth external force, keeps finite total energy and produces unbounded velocity in finite time. OpenAI maps the result to statements C and D in the <a href="https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf#page=2" target="_blank" rel="noopener noreferrer">Clay problem description</a>.</p>
