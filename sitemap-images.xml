@@ -403,8 +403,8 @@
   <url>
     <loc>https://buildopsy.com/system-design/google-oss-vrp-ai-report-pause-audit.html</loc>
     <image:image>
-      <image:loc>https://buildopsy.com/images/articles/oss-vrp-slop-queue-meme.png</image:loc>
-      <image:title>Diagram of AI-generated reports overwhelming a vulnerability triage queue while supply-chain intake stays open</image:title>
+      <image:loc>https://buildopsy.com/images/articles/oss-vrp-slop-queue-social.png</image:loc>
+      <image:title>A grid of report cards feeding a funnel that narrows to a single validation gate with one reviewer, splitting into a valid outcome reading payout, then a fix, and an invalid outcome reading billed in reviewer hours</image:title>
     </image:image>
   </url>
   <url>
@@ -466,8 +466,8 @@
   <url>
     <loc>https://buildopsy.com/system-design/kafka-rebalance-storm-postmortem.html</loc>
     <image:image>
-      <image:loc>https://buildopsy.com/images/articles/kafka-rebalance-meme.png</image:loc>
-      <image:title>Buildopsy diagram of a modeled 120-member Kafka group under classic eager rebalancing, with an assumed 660-second pause, 39.6 million backlog events and three attempts per affected call</image:title>
+      <image:loc>https://buildopsy.com/images/articles/kafka-rebalance-social.png</image:loc>
+      <image:title>Ten member chips labelled 120 members and 40,000 partitions, a restart timeline with a dashed 660-second barrier, and the arithmetic 60,000/s times 660 s equals 39.6M backlog events</image:title>
     </image:image>
   </url>
   <url>
@@ -550,8 +550,8 @@
   <url>
     <loc>https://buildopsy.com/system-design/learn-event-streaming.html</loc>
     <image:image>
-      <image:loc>https://buildopsy.com/images/articles/kafka-rebalance-meme.png</image:loc>
-      <image:title>Diagram of a modeled classic-eager Kafka group with 120 members, 40,000 partitions, an assumed pause, backlog arithmetic and three attempts per affected call</image:title>
+      <image:loc>https://buildopsy.com/images/articles/kafka-rebalance-social.png</image:loc>
+      <image:title>Ten member chips labelled 120 members and 40,000 partitions, a restart timeline with a dashed 660-second barrier, and the arithmetic 60,000/s times 660 s equals 39.6M backlog events</image:title>
     </image:image>
   </url>
   <url>
