@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
   <title id="title">Westminster AI kill-switch and ASI ban proposals</title>
-  <desc id="desc">Diagram of UK Parliament legislative proposals: Lords mandatory kill switch and 70+ MPs ban on artificial superintelligence, facing unilateral enforcement limits.</desc>
+  <desc id="desc">Diagram of UK Parliament legislative proposals: a Lords kill-switch proposal and a 70+ MP and peer ASI ban, each facing jurisdictional and verification limits.</desc>
   <defs><linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#12203A"/><stop offset="1" stop-color="#080F1C"/></linearGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#22385A" stroke-width="1" opacity="0.5"/></pattern><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#F2B263"/></marker><marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#F08A7E"/></marker></defs>
   <rect width="1200" height="680" fill="url(#bg)"/>
   <rect x="15" y="15" width="1170" height="650" rx="17" fill="url(#grid)"/>
@@ -14,8 +14,8 @@
   <text x="84.0" y="254.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="400" fill="#64748B">House of Lords debate (September 2026)</text>
   <text x="84.0" y="298.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Legislative Target:</text>
   <text x="84.0" y="316.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">mandate an off-switch for frontier AI models</text>
-  <text x="84.0" y="340.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Technical Vacuum:</text>
-  <text x="84.0" y="358.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">proposal omitted what gets switched (APIs, datacenters, code)</text>
+  <text x="84.0" y="340.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Unsettled Layer:</text>
+  <text x="84.0" y="358.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">which layer the law acts on is unsettled</text>
   <text x="84.0" y="382.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#F08A7E">Cabinet Office Reply:</text>
   <text x="84.0" y="400.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">'The UK cannot simply turn AI off' unilaterally</text>
   <text x="84.0" y="424.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Enforcement Gap:</text>
@@ -23,15 +23,15 @@
   <rect x="620.0" y="196.0" width="520.0" height="290.0" rx="14" fill="#141F33" stroke="#2F4A6E" stroke-width="1.4"/>
   <text x="644.0" y="230.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#F2B263">proposal 2: ban on artificial superintelligence</text>
   <text x="644.0" y="254.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="400" fill="#64748B">letter signed by 70+ MPs and peers</text>
-  <text x="644.0" y="298.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#F2B263">Definitional Failure:</text>
-  <text x="644.0" y="316.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">bans technology before defining objective threshold</text>
+  <text x="644.0" y="298.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#F2B263">Definition by Outcome:</text>
+  <text x="644.0" y="316.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">damage capability, line at recursive self-improvement</text>
   <text x="644.0" y="340.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Jurisdiction Bound:</text>
   <text x="644.0" y="358.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">domestic bans cannot halt overseas training runs</text>
-  <text x="644.0" y="382.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Judicial Trap:</text>
-  <text x="644.0" y="400.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">hands courts an impossible standard without technical bounds</text>
+  <text x="644.0" y="382.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Adjudication Burden:</text>
+  <text x="644.0" y="400.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">who decides a system meets the test, on what evidence</text>
   <text x="644.0" y="424.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="13" font-weight="700" fill="#EAF1FA">Political Reality:</text>
-  <text x="644.0" y="442.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">legislative reaction following fortnight of agent swarm news</text>
+  <text x="644.0" y="442.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9FB3CC">legislative reaction following a week of rogue agent reports</text>
   <rect x="60.0" y="564.0" width="1080.0" height="54.0" rx="12" fill="#101C2F" stroke="#24344F" stroke-width="1.4"/>
-  <text x="84.0" y="598.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#EAF1FA">A kill switch for models and a ban on superintelligence, neither enforceable from one country.</text>
+  <text x="84.0" y="598.0" font-family="Manrope, Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#EAF1FA">A kill switch for models and a ban on superintelligence, both limited by what one country can verify.</text>
   <text x="60.0" y="654.0" font-family="Consolas, ui-monospace, Menlo, monospace" font-size="12.5" font-weight="400" fill="#64748B">UK Parliament Hansard and Guardian reporting on AI legislation debates, September 2026</text>
 </svg>
