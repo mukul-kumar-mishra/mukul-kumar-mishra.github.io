@@ -13,18 +13,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch stats and write snapshot
+        env:
+          FNA_KEY: ${{ secrets.FNA_KEY }}
         run: |
-          curl -s "https://freenewsapi.ai/v1/stats?q=tech%20layoffs&date=30d&top=100" -o /tmp/stats.json
+          set -euo pipefail
+          if [ -z "${FNA_KEY:-}" ]; then
+            echo "FNA_KEY secret is not set; refusing to write a snapshot without upstream auth" >&2
+            exit 1
+          fi
+          curl -fsS -H "Authorization: Bearer ${FNA_KEY}" "https://freenewsapi.ai/v1/stats?q=tech%20layoffs&date=30d&top=100" -o /tmp/stats.json
           python3 - <<'EOF'
           import json, datetime, sys
           try:
               raw = json.load(open("/tmp/stats.json"))
           except Exception as e:
-              print("API fetch failed, keeping existing snapshot:", e)
-              sys.exit(0)
+              print("API response was not valid JSON:", e)
+              sys.exit(1)
+          if raw.get("error"):
+              print("Upstream returned an error payload:", str(raw)[:500])
+              sys.exit(1)
           if not isinstance(raw.get("total"), int) or not isinstance(raw.get("by_day"), dict):
-              print("API response missing total/by_day, keeping existing snapshot:", str(raw)[:500])
-              sys.exit(0)
+              print("API response missing total/by_day:", str(raw)[:500])
+              sys.exit(1)
           snap = {
               "total": raw["total"],
               "fetchedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
