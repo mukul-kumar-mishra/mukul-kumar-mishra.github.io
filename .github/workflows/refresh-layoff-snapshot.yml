@@ -21,37 +21,58 @@ jobs:
             echo "FNA_KEY secret is not set; refusing to write a snapshot without upstream auth" >&2
             exit 1
           fi
-          curl -fsS -H "Authorization: Bearer ${FNA_KEY}" "https://freenewsapi.ai/v1/stats?q=tech%20layoffs&date=30d&top=100" -o /tmp/stats.json
           python3 - <<'EOF'
-          import json, datetime, sys
-          try:
-              raw = json.load(open("/tmp/stats.json"))
-          except Exception as e:
-              print("API response was not valid JSON:", e)
+          import json, os, sys, datetime, urllib.parse, urllib.request
+
+          key = os.environ.get("FNA_KEY", "").strip()
+          if not key:
+              print("FNA_KEY secret is not set", file=sys.stderr)
               sys.exit(1)
-          if raw.get("error"):
-              print("Upstream returned an error payload:", str(raw)[:500])
-              sys.exit(1)
-          if not isinstance(raw.get("total"), int) or not isinstance(raw.get("by_day"), dict):
-              print("API response missing total/by_day:", str(raw)[:500])
-              sys.exit(1)
-          snap = {
-              "total": raw["total"],
-              "fetchedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-              "query": "tech layoffs",
-              "window": "30d",
-              "countries": raw.get("countries", {}),
-              "by_day": raw.get("by_day", {}),
+
+          BASE = "https://freenewsapi.ai/v1/stats"
+          QUERY = "tech layoffs"
+          now = datetime.datetime.now(datetime.timezone.utc)
+          stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+          specs = {
+              "24h": {"date": "1d"},
+              "7d": {"date": "7d"},
+              "30d": {"date": "30d"},
+              "month": {"from": now.strftime("%Y-%m-01"),
+                        "to": (now + datetime.timedelta(days=1)).strftime("%Y-%m-%d")},
           }
+
+          def fetch(params):
+              query = urllib.parse.urlencode(dict({"q": QUERY, "top": "100"}, **params))
+              request = urllib.request.Request(
+                  BASE + "?" + query,
+                  headers={"Authorization": "Bearer " + key, "Accept": "application/json"},
+              )
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  data = json.load(response)
+              total = data.get("total")
+              by_day = data.get("by_day")
+              if not isinstance(total, int) or not isinstance(by_day, dict):
+                  raise SystemExit("invalid payload for %s: %s" % (params, str(data)[:300]))
+              if sum(by_day.values()) != total:
+                  raise SystemExit("by_day sum %s != total %s for %s"
+                                   % (sum(by_day.values()), total, params))
+              return {"total": total, "countries": data.get("countries", {}), "by_day": by_day}
+
+          windows = {name: fetch(params) for name, params in specs.items()}
+          json.dump({"generatedAt": stamp, "query": QUERY, "windows": windows},
+                    open("data/layoff-stats.json", "w"), indent=2)
+          snap = {"total": windows["30d"]["total"], "fetchedAt": stamp, "query": QUERY,
+                  "window": "30d", "countries": windows["30d"]["countries"],
+                  "by_day": windows["30d"]["by_day"]}
           json.dump(snap, open("data/layoff-count.json", "w"), indent=2)
-          print("snapshot total:", snap["total"])
+          print("windows:", {name: window["total"] for name, window in windows.items()})
           try:
               hist = json.load(open("data/layoff-history.json"))
               if not isinstance(hist, list):
                   hist = []
           except Exception:
               hist = []
-          today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+          today = now.strftime("%Y-%m-%d")
           if not hist or hist[-1].get("d") != today:
               hist.append({"d": today, "total": snap["total"]})
               json.dump(hist[-120:], open("data/layoff-history.json", "w"), indent=2)
@@ -173,6 +194,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/layoff-count.json data/layoff-history.json layoff-radar.html
+          git add data/layoff-stats.json data/layoff-count.json data/layoff-history.json layoff-radar.html
           git diff --staged --quiet || git commit -m "chore: refresh layoff snapshot"
           git push

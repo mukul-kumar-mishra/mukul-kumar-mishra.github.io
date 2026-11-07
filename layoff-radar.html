@@ -4,31 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Tech Layoff Radar: Live Global Layoff Tracker | Buildopsy</title>
+  <title>Tech Layoff Radar: Global Layoff Tracker | Buildopsy</title>
 
-  <meta name="description" content="Live global tracker of publicly reported technology layoff news. Track worldwide coverage, country rankings, daily activity and current-month trends.">
+  <meta name="description" content="Global tracker of publicly reported technology layoff news. Track worldwide coverage, country rankings, daily activity and current-month trends.">
   <meta name="author" content="Mukul Kumar Mishra">
   <meta name="robots" content="index,follow, max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
   <link rel="canonical" href="https://buildopsy.com/layoff-radar.html">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Tech Layoff Radar: Live Global Layoff Tracker">
-  <meta property="og:description" content="Track publicly reported technology layoff news worldwide with live coverage totals, country rankings and daily activity.">
+  <meta property="og:title" content="Tech Layoff Radar: Global Layoff Tracker">
+  <meta property="og:description" content="Track publicly reported technology layoff news worldwide with coverage totals, country rankings and daily activity.">
   <meta property="og:url" content="https://buildopsy.com/layoff-radar.html">
   <meta property="og:site_name" content="Buildopsy">
 
   <meta property="og:image" content="https://buildopsy.com/images/layoff-radar.png">
-  <meta property="og:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
+  <meta property="og:image:alt" content="Tech Layoff Radar global technology layoff tracker">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="627">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Tech Layoff Radar: Live Global Layoff Tracker">
-  <meta name="twitter:description" content="Live global tracker of publicly reported technology layoff news, country coverage and daily activity.">
+  <meta name="twitter:title" content="Tech Layoff Radar: Global Layoff Tracker">
+  <meta name="twitter:description" content="Global tracker of publicly reported technology layoff news, country coverage and daily activity.">
   <meta name="twitter:image" content="https://buildopsy.com/images/layoff-radar.png">
-  <meta name="twitter:image:alt" content="Tech Layoff Radar live global technology layoff tracker">
+  <meta name="twitter:image:alt" content="Tech Layoff Radar global technology layoff tracker">
 
   <link rel="icon" href="images/favicon.png" type="image/png">
 
@@ -47,8 +47,8 @@
     "@context":"https://schema.org",
     "@type":"WebPage",
     "name":"Tech Layoff Radar",
-    "headline":"Tech Layoff Radar: Live Global Layoff Tracker",
-    "description":"Live global tracker of publicly reported technology layoff news.",
+    "headline":"Tech Layoff Radar: Global Layoff Tracker",
+    "description":"Global tracker of publicly reported technology layoff news.",
     "url":"https://buildopsy.com/layoff-radar.html",
     "datePublished":"2026-09-10",
     "dateModified":"2026-09-20",
@@ -933,7 +933,7 @@
       <header class="radar-hero">
         <div class="radar-kicker">
           <span class="radar-kicker-dot"></span>
-          Live from the layoff wire
+          From the layoff wire
         </div>
 
         <h1 class="radar-title">TECH LAYOFF RADAR</h1>
@@ -1036,8 +1036,8 @@
       </section>
 
       <div class="radar-intro">
-        A live tracker of publicly reported technology layoff news from publishers around the world.
-        <br><strong>Updated automatically every hour</strong>
+        A tracker of publicly reported technology layoff news from publishers around the world.
+        <br><strong>Refreshed from a saved snapshot several times a day</strong>
       </div>
 
       <section class="radar-section radar-card">
@@ -1140,49 +1140,29 @@
   </footer>
 
   <script>
-    const API_URL = "https://freenewsapi.ai/v1/stats";
-    const SEARCH_QUERY = "tech layoffs";
+    const STATS_URL = "data/layoff-stats.json";
     const REFRESH_INTERVAL = 60 * 60 * 1000;
+    const PERIODS = ["24h", "7d", "30d", "month"];
 
-    const countryNames = {
-      US: "United States",
-      IN: "India",
-      GB: "United Kingdom",
-      CA: "Canada",
-      AU: "Australia",
-      DE: "Germany",
-      FR: "France",
-      ES: "Spain",
-      IT: "Italy",
-      NL: "Netherlands",
-      SG: "Singapore",
-      JP: "Japan",
-      KR: "South Korea",
-      BR: "Brazil",
-      MX: "Mexico",
-      AE: "United Arab Emirates",
-      IL: "Israel",
-      IE: "Ireland",
-      SE: "Sweden",
-      CH: "Switzerland",
-      NZ: "New Zealand",
-      ZA: "South Africa",
-      HK: "Hong Kong",
-      CN: "China",
-      TW: "Taiwan",
-      PH: "Philippines",
-      MY: "Malaysia",
-      ID: "Indonesia",
-      NG: "Nigeria"
-    };
+    const regionNames = (function () {
+      try {
+        return new Intl.DisplayNames(["en"], { type: "region" });
+      } catch (err) {
+        return null;
+      }
+    })();
 
+    let windows = null;
+    let generatedAt = null;
     let stats = null;
-    let stats30 = null;
     let selectedPeriod = "30d";
     let refreshInProgress = false;
-    const PERIOD_DATE = { "30d": "30d", "7d": "7d", "24h": "1d", "month": "30d" };
-    const DONUT_MIX = { "30d": "30-day mix", "7d": "7-day mix", "24h": "24-hour mix", "month": "30-day mix" };
-    const statsCache = {};
+    const DONUT_MIX = {
+      "30d": "30-day mix",
+      "7d": "7-day mix",
+      "24h": "24-hour mix",
+      "month": "current-month mix"
+    };
 
     const countElement = document.getElementById("layoff-count");
     const countPeriodLabel = document.getElementById("count-period-label");
@@ -1198,7 +1178,14 @@
     }
 
     function getCountryName(code) {
-      return Object.prototype.hasOwnProperty.call(countryNames, code) ? countryNames[code] : String(code);
+      if (code === "Others") return "Others";
+      if (regionNames) {
+        try {
+          const name = regionNames.of(String(code));
+          if (name && name !== code) return name;
+        } catch (err) {}
+      }
+      return String(code);
     }
 
     function escapeHtml(value) {
@@ -1214,13 +1201,6 @@
       }).format(date);
     }
 
-    function getCurrentMonthPrefix() {
-      const now = new Date();
-      const year = now.getUTCFullYear();
-      const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-      return `${year}-${month}`;
-    }
-
     function getPeriodLabel(period) {
       if (period === "24h") return "last 24 hours";
       if (period === "7d") return "last 7 days";
@@ -1228,18 +1208,8 @@
       return "last 30 days";
     }
 
-    function getPeriodTotal(period) {
-      if (period === "month") {
-        if (!stats30) return 0;
-        const prefix = getCurrentMonthPrefix();
-
-        return Object.entries(stats30.by_day || {}).reduce((sum, [date, count]) => {
-          return date.startsWith(prefix) ? sum + count : sum;
-        }, 0);
-      }
-
-      if (!stats) return 0;
-      return stats.total || 0;
+    function getPeriodTotal() {
+      return (stats && stats.total) || 0;
     }
 
     function renderCount() {
@@ -1290,30 +1260,26 @@
     }
 
     function getDailyData() {
-      const source = selectedPeriod === "month" ? stats30 : stats;
-      if (!source?.by_day) return [];
-
-      const entries = Object.entries(source.by_day)
+      if (!stats || !stats.by_day) return [];
+      return Object.entries(stats.by_day)
         .sort(([a], [b]) => a.localeCompare(b));
-
-      if (selectedPeriod === "24h") {
-        return entries.slice(-1);
-      }
-
-      if (selectedPeriod === "7d") {
-        return entries.slice(-7);
-      }
-
-      if (selectedPeriod === "month") {
-        const prefix = getCurrentMonthPrefix();
-        return entries.filter(([date]) => date.startsWith(prefix));
-      }
-
-      return entries.slice(-30);
     }
 
     function renderDaily() {
       const days = getDailyData();
+
+      if (selectedPeriod === "24h") {
+        dailyGrid.innerHTML = `
+          <div class="radar-day">
+            <div class="radar-day-date">Last 24 hours</div>
+            <div class="radar-day-count">${formatNumber(getPeriodTotal())}</div>
+            <div class="radar-day-bar">
+              <div class="radar-day-fill" style="width:100%"></div>
+            </div>
+          </div>
+        `;
+        return;
+      }
 
       if (!days.length) {
         dailyGrid.innerHTML = `
@@ -1348,7 +1314,7 @@
     }
 
     function getWeekWindows() {
-      const source = stats30 || stats;
+      const source = (windows && windows["30d"]) || stats;
       const entries = Object.entries(source?.by_day || {})
         .sort(([a], [b]) => a.localeCompare(b));
       const last7 = entries.slice(-7);
@@ -1362,7 +1328,7 @@
       const trendPrior = document.getElementById("trend-prior");
       const trendDelta = document.getElementById("trend-delta");
       const trendPct = document.getElementById("trend-pct");
-      if (!trendNow || !(stats30 || stats)) return;
+      if (!trendNow || !(stats || (windows && windows["30d"]))) return;
       const { last7, prior7 } = getWeekWindows();
       const delta = last7 - prior7;
       trendNow.textContent = formatNumber(last7);
@@ -1442,40 +1408,20 @@
       renderDaily();
     }
 
-    async function fetchWindow(dateParam) {
-      if (statsCache[dateParam]) return statsCache[dateParam];
-      const params = new URLSearchParams({
-        q: SEARCH_QUERY,
-        date: dateParam,
-        top: "100"
-      });
-
-      const response = await fetch(`${API_URL}?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          "Accept": "application/json"
-        },
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error(`News API returned HTTP ${response.status}`);
-      }
-
+    async function loadSnapshot() {
+      const response = await fetch(STATS_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Snapshot returned HTTP ${response.status}`);
       const data = await response.json();
-
-      if (typeof data.total !== "number" || !data.by_day) {
-        throw new Error("The news API returned an invalid response.");
+      if (!data || !data.windows) throw new Error("Snapshot has no windows");
+      for (const period of PERIODS) {
+        const window = data.windows[period];
+        if (!window || typeof window.total !== "number" || !window.by_day) {
+          throw new Error(`Snapshot is missing the ${period} window`);
+        }
       }
-
-      statsCache[dateParam] = data;
-      return data;
-    }
-
-    async function loadPeriod(period) {
-      const win = PERIOD_DATE[period] || "30d";
-      if (!stats30) stats30 = await fetchWindow("30d");
-      stats = period === "month" ? stats30 : await fetchWindow(win);
+      windows = data.windows;
+      generatedAt = data.generatedAt || null;
+      stats = windows[selectedPeriod] || windows["30d"];
     }
 
     async function fetchStats() {
@@ -1486,34 +1432,13 @@
       errorElement.style.display = "none";
 
       try {
-        delete statsCache["30d"];
-        if (PERIOD_DATE[selectedPeriod] && PERIOD_DATE[selectedPeriod] !== "30d") {
-          delete statsCache[PERIOD_DATE[selectedPeriod]];
+        await loadSnapshot();
+        if (generatedAt) {
+          lastUpdatedElement.textContent = formatDateTime(new Date(generatedAt));
         }
-        await loadPeriod(selectedPeriod);
-        lastUpdatedElement.textContent = formatDateTime(new Date());
-
         render();
       } catch (error) {
-        try {
-          const snap = await fetch("data/layoff-count.json", { cache: "no-store" });
-          if (snap.ok) {
-            const saved = await snap.json();
-            if (typeof saved.total === "number" && saved.by_day) {
-              stats = saved;
-              stats30 = saved;
-              statsCache["30d"] = saved;
-              if (saved.fetchedAt) {
-                lastUpdatedElement.textContent = formatDateTime(new Date(saved.fetchedAt));
-              }
-              render();
-              errorElement.textContent = "Live data could not be refreshed right now. Showing the last saved snapshot instead.";
-              errorElement.style.display = "block";
-              return;
-            }
-          }
-        } catch (ignored) {}
-        errorElement.textContent = "Live data could not be refreshed right now. The previous data has been kept on screen.";
+        errorElement.textContent = "The saved snapshot could not be loaded. The figures on screen are from the last page build.";
         errorElement.style.display = "block";
       } finally {
         refreshInProgress = false;
@@ -1532,12 +1457,12 @@
 
         button.classList.add("active");
 
-        try {
-          await loadPeriod(selectedPeriod);
+        if (windows && windows[selectedPeriod]) {
+          stats = windows[selectedPeriod];
           errorElement.style.display = "none";
           render();
-        } catch (error) {
-          errorElement.textContent = "That time window could not be loaded right now. The previous data has been kept on screen.";
+        } else {
+          errorElement.textContent = "That time window is not available in the saved snapshot.";
           errorElement.style.display = "block";
         }
       });
@@ -1556,7 +1481,7 @@
     }
 
     function drawCard(ctx, W, H, logo) {
-      const src = stats || stats30;
+      const src = stats;
       const total = (src && src.total) || 0;
       const entries = Object.entries((src && src.countries) || {}).slice(0, 5);
       const topSum = entries.reduce((sum, [, count]) => sum + count, 0);
@@ -1585,10 +1510,10 @@
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
       ctx.fillText("publicly reported technology layoff news articles", 64, 420);
-      const now = new Date();
+      const stampTime = generatedAt ? new Date(generatedAt) : new Date();
       ctx.fillStyle = "#94a3b8";
       ctx.font = "400 24px Montserrat, sans-serif";
-      ctx.fillText(`${formatDateTime(now)} - buildopsy.com/layoff-radar.html`, 64, 566);
+      ctx.fillText(`${formatDateTime(stampTime)} - buildopsy.com/layoff-radar.html`, 64, 566);
       const cx = 930, cy = 282, r = 96;
       let ang = -Math.PI / 2;
       rows.forEach(([, count], i) => {
