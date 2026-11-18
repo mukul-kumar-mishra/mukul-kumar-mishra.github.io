@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Microsoft's preliminary report blames a July defect in its Microsoft 365 gateway. The transferable part is the control loop: health checks ejected slow servers, redirection moved their load onto healthy ones, and recovery kept restarting the same failure. Includes a runnable model of the loop.">
+  <meta name="author" content="Rook research desk">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://buildopsy.com/system-design/microsoft-365-gateway-ejection-loop-postmortem.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Ejection Loop: How Microsoft 365's Failover Spread Its Own Outage">
+  <meta property="og:description" content="A latent defect took down Outlook. The recovery controls made it worse. A source-led reconstruction of the 12 November Microsoft 365 cascade, with a model you can run.">
+  <meta property="og:image" content="https://buildopsy.com/images/articles/m365-gateway-ejection-loop.png">
+  <meta property="og:image:alt" content="A gateway host with contended cores and a queue at an internal lock, circled by a four-step loop: probes fail, host ejected, load moves to survivors, the next host trips.">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://buildopsy.com/system-design/microsoft-365-gateway-ejection-loop-postmortem.html">
+  <meta property="og:site_name" content="Buildopsy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Ejection Loop: How Microsoft 365's Failover Spread Its Own Outage">
+  <meta name="twitter:description" content="Health checks ejected slow gateway servers. Redirection handed their load to healthy ones. Recovery restarted the same failure for a day.">
+  <meta name="twitter:image" content="https://buildopsy.com/images/articles/m365-gateway-ejection-loop.png">
+  <meta name="twitter:image:alt" content="Diagram of the four-step ejection loop around a contended gateway host">
+  <title>The Ejection Loop: Microsoft 365's Failover Spread Its Outage | Rook</title>
+  <link rel="icon" href="../images/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>if (localStorage.getItem('pf-theme') !== 'light') document.documentElement.classList.add('dark');</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"The Ejection Loop: How Microsoft 365's Failover Spread Its Own Outage","description":"A source-led reconstruction of the 12 November 2026 Microsoft 365 gateway cascade: the latent lock-contention defect, the Teams failover, the capacity deficit, the ejection feedback loop, and why recovery kept restarting the failure. Includes a runnable model.","author":{"@type":"Organization","name":"Rook research desk","url":"https://buildopsy.com/about.html#author-rook"},"datePublished":"2026-11-18","dateModified":"2026-11-18","mainEntityOfPage":{"@type":"WebPage","@id":"https://buildopsy.com/system-design/microsoft-365-gateway-ejection-loop-postmortem.html"},"keywords":"Microsoft 365 outage, Exchange Online outage, EX1550543, load balancer health checks, fail-slow, ejection loop, cascading failure","publisher":{"@type":"Organization","name":"Buildopsy","url":"https://buildopsy.com/","logo":{"@type":"ImageObject","url":"https://buildopsy.com/images/logo.png"}},"image":"https://buildopsy.com/images/articles/m365-gateway-ejection-loop.png"}</script>
+  <style>
+    .bench{border:1px solid var(--rook-line);border-radius:16px;background:#fbf7ef;padding:16px 16px 12px;margin:22px 0}
+    .bench-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+    .bench-title{font-family:var(--font-display);font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--rook-ink) 62%,transparent);margin:0}
+    .bench-pick{display:flex;flex-wrap:wrap;gap:8px}
+    .bench-pick button{font-family:var(--font-mono);font-size:.78rem;padding:8px 12px;border-radius:999px;border:1px solid var(--rook-line);background:transparent;color:var(--rook-ink);cursor:pointer;min-height:40px}
+    .bench-pick button[aria-pressed="true"]{border-color:#0f6f60;background:color-mix(in srgb,#0f6f60 10%,transparent);color:var(--rook-ink)}
+    .bench svg{display:block;width:100%;height:auto}
+    .bench-read{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+    .bench-read div{padding:9px 11px;border:1px solid var(--rook-line);border-radius:10px;background:#f4eadb}
+    .bench-read span{display:block;font-size:.72rem;color:color-mix(in srgb,var(--rook-ink) 66%,transparent);line-height:1.35}
+    .bench-read strong{font-family:var(--font-mono);font-size:1rem;color:var(--rook-ink)}
+    .bench-note{font-size:.78rem;color:color-mix(in srgb,var(--rook-ink) 70%,transparent);margin:10px 2px 0;line-height:1.55}
+    .bench-legend{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;font-size:.74rem;color:color-mix(in srgb,var(--rook-ink) 70%,transparent);margin:8px 2px 4px}
+    :root.dark .bench{background:#2b211e}
+    :root.dark .bench-read div{background:#332824}
+    :root.dark .bench-pick button[aria-pressed="true"]{border-color:#81d4c5;background:color-mix(in srgb,#81d4c5 14%,transparent)}
+    .bkey{display:inline-block;width:26px;height:0;border-top-width:3px;border-top-style:solid;vertical-align:middle}
+    .bkey-solid{border-top-color:#0f6f60}
+    .bkey-dash{border-top-color:#8f2d2d;border-top-style:dashed;margin-left:8px}
+    :root.dark .bkey-solid{border-top-color:#81d4c5}
+    :root.dark .bkey-dash{border-top-color:#ffb36b}
+    #bench-chart .bgrid{stroke:#d8c9b3;stroke-width:1;opacity:.8}
+    #bench-chart .baxis{fill:#6b5f52}
+    #bench-chart .bghost{fill:none;stroke:#8f2d2d;stroke-width:1.8;stroke-dasharray:5 4;opacity:.55}
+    #bench-chart .bline{fill:none;stroke:#0f6f60;stroke-width:2.6}
+    :root.dark #bench-chart .bgrid{stroke:#405776;opacity:.5}
+    :root.dark #bench-chart .baxis{fill:#8faac5}
+    :root.dark #bench-chart .bghost{stroke:#ffb36b;opacity:.7}
+    :root.dark #bench-chart .bline{stroke:#81d4c5}
+    .sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+    .source-card{padding:13px;border:1px solid var(--rook-line);border-radius:12px;background:#fbf7ef;font-size:.84rem;line-height:1.6}
+    .source-card a{font-weight:600}
+    .source-card p{margin:6px 0 0;color:color-mix(in srgb,var(--rook-ink) 72%,transparent)}
+    :root.dark .source-card{background:#2b211e}
+    .prose th{background:color-mix(in srgb,var(--rook-line) 26%,transparent);color:var(--rook-ink);border-bottom:1px solid var(--rook-line)}
+    .prose td{border-bottom:1px solid color-mix(in srgb,var(--rook-line) 65%,transparent)}
+    .prose table{color:var(--rook-ink)}
+    .pm-meme{background:transparent;border-color:var(--rook-line)}
+    @media(max-width:560px){.bench-read{grid-template-columns:1fr}.sources{grid-template-columns:1fr}}
+  </style>
+</head>
+<body class="site">
+  <header class="topbar"><div class="wrap"><a class="brand brand-logo" href="../index.html"><img loading="eager" fetchpriority="high" decoding="async" class="logo-dark" src="../images/logo.png" alt="Buildopsy" width="2078" height="757"><img loading="eager" decoding="async" class="logo-light" src="../images/logo-white.png" alt="Buildopsy" width="1894" height="548" aria-hidden="true"></a><nav class="topnav" id="topnav"><a href="index.html" class="on">System Design</a><a href="ai-slop.html">AI Slop Watch</a><a href="../calculators.html">Calculators</a><a href="course.html">Courses</a><a href="../pricing.html">Pricing</a></nav><div class="topbar-actions"><button class="iconbtn" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle theme"><i data-lucide="sun" class="ic-sun"></i><i data-lucide="moon" class="ic-moon" style="display:none;"></i></button><button class="iconbtn navToggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button></div></div></header>
+  <main class="wrap rook-article" style="padding-top:40px;padding-bottom:12px;flex:1;"><div style="max-width:46rem;margin:0 auto;">
+    <p style="margin:0 0 22px;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-family:var(--font-mono);text-decoration:none;"><i data-lucide="arrow-left"></i> Back to System Design</a></p>
+    <header style="padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:30px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;"><span class="fl-tag">Cloud Control Plane</span><span class="chip">November 2026</span><span class="chip">12 min read</span><span class="chip">Rook</span></div>
+      <h1 class="page-title" style="font-family:var(--font-serif);color:var(--heading);margin:8px 0 14px;">The Ejection Loop</h1>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.75;color:var(--mist);margin:14px 0 0;">Microsoft's preliminary report blames a defect that sat in its gateway since July. The part worth stealing is what happened after the first server got sick: the machinery that routes around a failing host is also the machinery that hands its work to the neighbours.</p>
+      <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--mist);margin:18px 0 0;">By Rook &middot; cloud incident forensics &middot; November 18, 2026</p>
+    </header>
+
+    <article class="prose">
+    <section>
+      <p>At 01:07 UTC on 12 November, Microsoft's automation moved Teams traffic off the alternative network gateway and onto the primary one, the gateway that also fronts Exchange Online. Nothing failed at that moment. The failover did exactly what it is built to do, and Microsoft describes the move as part of normal operations.</p>
+      <p>Fifteen hours later, mailbox access broke in every region. By the company's own account, more than 80 percent of the gateway fleet was unresponsive within two hours of the first customer-visible failure, and most of the following day went into discovering that restarting servers did not fix anything.</p>
+      <p>The preliminary report lists three causes: a latent defect, a surge in load, and a capacity shortfall. As a list, that reads as bad luck stacked three deep. As a sequence, it reads as a control loop, and the loop is the transferable part. Everything in it exists in your own stack under different names: a readiness probe, a load balancer, a retry budget, a rollback plan.</p>
+    </section>
+
+    <figure class="article-figure pm-meme"><picture><source media="(max-width:640px)" srcset="../images/articles/m365-gateway-ejection-loop-mobile.svg" width="760" height="940"><img loading="lazy" decoding="async" src="../images/articles/m365-gateway-ejection-loop.svg" alt="A gateway host drawn as a chassis with a grid of CPU cores, eight of them highlighted as contended, and a row of queued connection attempts pressed against a padlock. A track around it carries four numbered steps: probes fail, host ejected, load moves to survivors, the next host trips. A strip reads 83 of 103 hosts unresponsive at the low point." width="1200" height="680"></picture><figcaption>Figure 1. The shape of the cascade as Microsoft describes it, and the shape I reproduce with the model below. The host sketch is illustrative; the counted numbers come from the simulation, not from Microsoft telemetry.</figcaption></figure>
+
+    <section>
+      <h2>Two records of one machine</h2>
+      <p>Microsoft published two accounts of the same system. The first arrived as service-health updates while the incident was live. The second is the preliminary post-incident report dated 15 November, summarised publicly by Charles Lamanna, the executive vice president for Copilot, Agents and Platform.</p>
+      <p>The earlier account is not wrong. It is what a probe can see from outside: servers failing checks, a component that processes health looking suspicious, a recent network configuration change that correlates with the start of impact. The later account names the thing underneath. Put side by side, the two records explain why so many operators spent the first day chasing the wrong layer.</p>
+      <table>
+        <thead><tr><th>What the live updates said (12&ndash;13 Nov, UTC)</th><th>What the report says (15 Nov)</th></tr></thead>
+        <tbody>
+          <tr><td>Affected servers were "failing automated health checks, which is causing them to become unavailable".</td><td>Lock contention inside an internal Windows process exhausted CPU and memory, so servers stopped responding under load.</td></tr>
+          <tr><td>Failed checks "may originate from a specific component that's responsible for processing server health".</td><td>The defect came from a fix written for the gateway servers and deployed since July. The health path was where the exhaustion surfaced, not where it started.</td></tr>
+          <tr><td>A network configuration change was "correlated with the start of the impact" and was reverted.</td><td>The report does not cite that change as the cause. It attributes the failure to the latent defect and two load conditions.</td></tr>
+          <tr><td>"The elevated load isn't driven by an overall increase in traffic, but by a large number of servers being unexpectedly unavailable."</td><td>Both, in sequence: the unavailable servers concentrated load, and the concentration is what knocked over the ones still standing.</td></tr>
+        </tbody>
+      </table>
+      <p>If you had read only the first column, you would have concluded that the health-check component was the bug. It was the instrument. A health check is a vote, not a diagnosis: it answers "should I send work here?" and says nothing about why. Every failover system in production is built on that vote, which is why the vote has to be paired with an answer to the next question, and that question is capacity.</p>
+    </section>
+
+    <section>
+      <h2>What 14 percent adds, and what 80 percent takes</h2>
+      <p>Two of the three listed causes are capacity numbers, and they behave completely differently. About 14 percent of gateway server capacity was already out of service from an unrelated problem the day before. Spread the remaining load across what is left and each survivor carries roughly 1.16 times its share. Microsoft says that reduction "had no impact on its own", and the arithmetic agrees: a 16 percent concentration is the kind of thing a fleet with headroom absorbs.</p>
+      <p>The 80 percent number does not behave that way. When more than four in five servers are unresponsive, the survivors are asked to carry the whole load across one fifth of the fleet, which is at least five times their normal share. That is the difference between a subtraction and a division. Fourteen points removed from a hundred is a subtraction on capacity. Redistribution divides the remainder.</p>
+      <p>Worse, the division runs while demand is rising, not fixed. Every request that fails becomes a request that retries. Microsoft describes the recovery phase as servers being "immediately overwhelmed by waiting traffic" and going unresponsive again, which is what a queue looks like when the arrival rate is above the drain rate. The stabilising condition is narrow and unforgiving: service recovers only once the active fleet can serve more than the offered load, and every ejection moves that condition further away.</p>
+    </section>
+
+    <section>
+      <h2>The pool was built for a different failure mode</h2>
+      <p>Health checks, outlier detection and traffic redirection are all designed around fail-stop. A node that is dead serves nothing, contributes nothing, and evicting it costs you exactly its share of capacity. The trade is clean: you lose a server, you keep the request.</p>
+      <p>The failure in this incident was fail-slow. A 2018 USENIX study by Gunawi and colleagues collected 101 reports of fail-slow hardware incidents from large-scale cluster deployments in 12 institutions, and found that disks, SSDs, CPUs, memory and network components can all keep running while performing far below expectation. Two of its observations land on this incident directly. Faults convert from one form to another, and a degraded component can hold work that healthy peers then cannot use: in the paper's example, a degraded network card made jobs on healthy machines hold task slots, so new jobs could not start. Its conclusion concerns the tooling. Today's software is &ldquo;arguably robust at logging and recovering from fail-stop hardware: there is a clear, binary signal that is fairly easy to recognize and interpret&rdquo;, and fail-slow is the harder problem because a degraded node still looks like a node.</p>
+      <p>Evicting a fail-slow node is not the same trade. It was doing some of the work, badly. Removing it does not create capacity anywhere; it relocates a queue onto peers that are, by construction, the machines most likely to share its defect, because they run the same build on the same hardware generation.</p>
+      <p>Load balancers know this. Envoy's outlier detection document states the limit plainly: a host is only ejected if the number already ejected is below a configured maximum, and an ejected host "will not be used during load balancing unless the load balancer is in a panic scenario". Panic mode exists because ejection is a good trade only while the pool is large. Push eviction far enough and the system has to start using the hosts it just decided were broken, because the alternative is using none.</p>
+      <p>Microsoft's fleet appears to have reached that point and kept going. The report also says the gateway is made of thousands of capacity units grouped into regions, and that the bulkheads between those partitions did not stop the cascade, "due to a separate issue" the report does not describe. Isolation is the control that would have kept this regional. It was the one that failed without explanation.</p>
+      <p>There is a second asymmetry in the report that most summaries skip. Teams, OneDrive, SharePoint and the Office apps were able to fail out of the faulty gateway and recovered earlier. Exchange Online could not, for scale reasons: there was nowhere large enough for it to go. A service can only leave a bad path if a destination exists with room for it, which is why the largest service on the path is the one that stays.</p>
+    </section>
+
+    <section>
+      <h2>Restart is a load event</h2>
+      <p>The recovery is the more instructive half of the incident, because recovery is where the loop became visible even to the people inside it. At 23:55 UTC on 12 November, Microsoft reported that servers returned to service "initially remained healthy but then become unresponsive again" once they received traffic. At 01:53 UTC they disabled some of the automated traffic redirection. At 07:20 UTC they began applying an update that returned the connection-handling code path to its previous known-good state, in groups large enough to take more than half a region out of service at a time.</p>
+      <p>Read that sequence as three separate lessons. First, a restart does not repair a defect that is in the code path; it clears the node's state and hands it back to the same code. Second, restoring a node adds capacity and adds demand at the same moment, because the queue that formed while it was gone is still pointed at it. Third, the thing that finally changed the shape of the incident was turning the amplifier down: disabling automatic redirection at 01:53, fourteen hours before the fleet was stable.</p>
+      <p>That ordering is the part worth copying into a runbook. Most teams treat "restore the servers" and "reduce the load" as the same action performed in different directions. They are not. Re-entry has to be throttled to a rate the surviving fleet can absorb, which usually means admitting less traffic than you could serve for a while, and letting the backlog drain against known-good capacity instead of against every node that just came back.</p>
+    </section>
+
+    <section>
+      <h2>The bench</h2>
+      <p>I built a small model of the loop to check whether the described mechanism is sufficient to produce the reported shape. It is not Microsoft's topology, and none of its numbers are Microsoft's. It is 120 hosts at 100 connections per second each, 17 of them already out of service, an offered load at 80 percent of nominal, a two-tick probe window, and a retry term so that unserved demand feeds back as new demand. One hundred of the 120 hosts are exposed to the defect; the other twenty are not, which is the report's observation that contention was worse on newer machines with more cores.</p>
+      <p>Switch between the two control choices and watch what changes. The curve is the same failure in both runs. Only the response differs.</p>
+      <div class="bench">
+        <div class="bench-head">
+          <p class="bench-title">Ejection bench &middot; model output</p>
+          <div class="bench-pick" role="group" aria-label="Choose a recovery policy">
+            <button type="button" id="bench-eject" aria-pressed="true">Eject slow hosts</button>
+            <button type="button" id="bench-shed" aria-pressed="false">Hold pool, shed load</button>
+          </div>
+        </div>
+        <svg id="bench-chart" viewBox="0 0 640 210" role="img" aria-labelledby="bench-t bench-d">
+          <title id="bench-t">Modelled share of offered load served, by recovery policy</title>
+          <desc id="bench-d">Under eject-on-failure the share served falls from about 100 percent to about 21 percent over roughly 88 minutes as 83 of 103 serving hosts become unresponsive. Under hold-and-shed the share served stays flat at about 64 percent and no host becomes unresponsive.</desc>
+        </svg>
+        <p class="bench-legend"><span class="bkey bkey-solid"></span>policy in use<span class="bkey bkey-dash"></span>the alternative</p>
+        <div class="bench-read">
+          <div><span>Hosts still serving, at 88 min</span><strong id="bench-hosts">20</strong></div>
+          <div><span>Share of offered load served</span><strong id="bench-load">21%</strong></div>
+          <div><span>Hosts that went unresponsive</span><strong id="bench-dead">83</strong></div>
+        </div>
+        <p class="bench-note" id="bench-note">Eject-on-failure: probes fail, hosts leave the rotation, and their share lands on the survivors until the survivors fail in turn. The 20 hosts that never trip are the model's immune machines.</p>
+      </div>
+      <noscript><p class="fl-desc">The bench needs JavaScript. The model's computed results, run offline, are 83 of 103 serving hosts unresponsive and 20.8 percent of offered load served under eject-on-failure, against 64.4 percent served with the whole pool held and load shed.</p></noscript>
+      <p>The eject run reproduces the reported numbers closely enough to be interesting: 83 of 103 serving hosts unresponsive, which is 80.6 percent, reached in about 88 minutes if each tick is two minutes. The model does not know Microsoft's probe interval, exposure ratio or retry behaviour; those are mine. What it does show is that the reported mechanism needs no additional cause to produce the reported shape. A defect that only bites under concentration, a balancer that concentrates by design, and a retry pattern that regenerates demand are jointly sufficient.</p>
+    </section>
+
+    <section>
+      <h2>What the record leaves open</h2>
+      <p>Three consequential things in this incident are asserted without explanation. The first is the bulkhead failure. The report says the partitions between capacity units and regions did not contain the cascade "due to a separate issue" and does not say what that issue was, which is the single most important unanswered question in the document, since it is the difference between a regional incident and a global one. The second is the unrelated problem that had already removed 14 percent of capacity; its cause is not described. The third is what prompted the Teams failover fifteen hours before impact. Microsoft calls it normal operations and does not say what triggered it.</p>
+      <p>The preliminary report also promises a final one within five business days, which points at 20 November 2026, and states that it will supersede this document. Any analysis built on the preliminary text is provisional by construction, including this one.</p>
+      <p>What the record does establish: the incident ran from 16:20 UTC on 12 November to 16:10 UTC on 13 November. Microsoft attributes the failure to a latent defect and two load conditions, states that its load testing used weaker hardware than production, and states that no cyberattack or AI involvement was found. What it does not establish is how many customers were affected, how deep the impact went inside individual tenants, or whether the regional isolation controls had ever been tested against an all-region load event.</p>
+    </section>
+
+    <section>
+      <h2>Four dials</h2>
+      <p>The article so far has been diagnosis. The useful output is smaller than a playbook: four settings that change the shape of the curve above, in the order I would reach for them.</p>
+      <ol>
+        <li><strong>Admission control.</strong> In the bench, this is the only dial that changes the outcome rather than the speed. Capping the load each host may accept keeps every host below the threshold that triggers the defect, which costs a third of throughput and saves the fleet. It is also the only control that works while the defect is still deployed, because it does not depend on finding the bug first.</li>
+        <li><strong>An ejection ceiling.</strong> This is Envoy's <code>max_ejection_percent</code>, and it is easy to leave at a default you have never read. A ceiling turns an unbounded cascade into a bounded degradation, and it is the difference between a fleet that serves 60 percent of traffic badly and one that serves none of it.</li>
+        <li><strong>Probe semantics that see slowness.</strong> A liveness check returns one bit. A latency-aware probe returns a distribution, and the distribution is what a fail-slow defect changes first. If your probe cannot distinguish "answers in 20 ms" from "answers in 4 s", your balancer will keep the second host in rotation until it stops answering entirely.</li>
+        <li><strong>A re-entry rate.</strong> Restore capacity in fractions of the surviving fleet, not in fixed batches, and keep automatic redirection disabled until the queue is draining rather than growing. Microsoft turned its redirection down fourteen hours before the service was stable; the ordering is the lesson.</li>
+      </ol>
+      <p>The related arithmetic is in the <a href="../tools/load-balancer-target-capacity-calculator.html">target capacity calculator</a> if you want to size a pool for N-1 rather than for the average case, and in the <a href="../tools/queue-backlog-drain-calculator.html">queue backlog drain calculator</a> if you want to know how long a backlog takes to clear at a given drain rate. Neither tool models a retry storm; add that term yourself.</p>
+      <p>If your service has one component that cannot fail out of a shared path, the thing to rehearse is not the failover. It is the decision to serve less.</p>
+    </section>
+
+    <section>
+      <h2>Sources and method</h2>
+      <div class="sources">
+        <article class="source-card"><a href="https://next.ink/wp-content/uploads/2026/11/PostIncidentReport.pdf" target="_blank" rel="noopener">Microsoft &mdash; Preliminary Post Incident Report, EX1550543 / MO1550821</a><p>Report dated 15 November 2026. Root-cause factors, the incident window, the action log, the 50-percent-of-a-region restoration batches, and the commitment to a final report. Read from a public mirror; the original is distributed in the Microsoft 365 admin center.</p></article>
+        <article class="source-card"><a href="https://x.com/clamanna/status/2122209697226948729" target="_blank" rel="noopener">Charles Lamanna &mdash; abridged report thread, 16 November 2026</a><p>Microsoft's executive vice president for Copilot, Agents and Platform. The public version of the root-cause text, including the 14 percent capacity figure and the 80 percent unresponsive figure.</p></article>
+        <article class="source-card"><a href="https://x.com/MSFT365Status/status/2120938282204688468" target="_blank" rel="noopener">Microsoft 365 Status &mdash; live incident updates, 12&ndash;13 November 2026</a><p>The health-check and network-configuration framing quoted in the comparison table, and the 01:53 UTC redirection disablement and the 23:55 UTC update saying restored servers failed again.</p></article>
+        <article class="source-card"><a href="https://www.usenix.org/conference/fast18/presentation/gunawi" target="_blank" rel="noopener">Gunawi et al. &mdash; Fail-Slow at Scale, FAST '18</a><p>101 fail-slow incident reports from 12 institutions. Used for the failure-mode distinction and for the observation that faults convert and cascades are long.</p></article>
+        <article class="source-card"><a href="https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier" target="_blank" rel="noopener">Envoy &mdash; Outlier detection</a><p>Ejection ceilings, ejection backoff, and the panic behaviour in which ejected hosts are used again when too few healthy hosts remain.</p></article>
+        <article class="source-card"><a href="https://apnews.com/article/apple-marriott-technology-outages-ff097d2a0bec767baf38a1bd8eff5829" target="_blank" rel="noopener">AP &mdash; Apple joins a parade of technology hiccups</a><p>Context only: the same week's unrelated Apple, Marriott, FAA, United and Chase disruptions. None of it is treated here as connected to this incident.</p></article>
+      </div>
+      <p class="fl-desc" style="margin-top:14px">The bench is a deterministic toy model, not a reconstruction. Its inputs are: 120 hosts, 100 connections per second per healthy host, 15 per second per contended host, 17 hosts already out of service, offered load at 80 percent of nominal, a retry coefficient of 1.5 capped at 2.5 times nominal, a two-tick probe window, 100 of 120 hosts exposed to the defect, and a shed rate of 60 connections per second per host in the held-pool policy. Ticks are plotted as two minutes each. Every percentage attributed to Microsoft comes from the report; every percentage attributed to the model is Buildopsy arithmetic over those stated assumptions. The figure on this page is drawn from the model, not from provider data.</p>
+    </section>
+    </article>
+
+    <div class="share-row" data-share-row style="margin:26px 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+      <a class="chip" data-share="x" href="#" rel="noopener" target="_blank" aria-label="Share on X" title="Share on X"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18.901 1.153h3.68l-8.038 9.189L24 22.846h-7.406l-5.804-7.584-6.64 7.584H.47l8.6-9.831L0 1.153h7.594l5.247 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a>
+      <a class="chip" data-share="hn" href="#" rel="noopener" target="_blank" aria-label="Share on Hacker News" title="Share on Hacker News"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 7.5 12 13l4.5-5.5M12 13v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="chip" data-share="reddit" href="#" rel="noopener" target="_blank" aria-label="Share on Reddit" title="Share on Reddit"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="12.5" r="1.1" fill="currentColor"/><circle cx="15" cy="12.5" r="1.1" fill="currentColor"/><path d="M8.5 16c2.2 1.6 4.8 1.6 7 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 5.5l1.1-2.4 2.4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="3.6" r="1.1" fill="currentColor"/></svg></a>
+      <a class="chip" data-share="linkedin" href="#" rel="noopener" target="_blank" aria-label="Share on LinkedIn" title="Share on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5a2.09 2.09 0 1 0 0 4.18 2.09 2.09 0 0 0 0-4.18zM3 9h3.96v12H3zM9 9h3.8v1.64h.05c.53-1.01 1.83-2.08 3.76-2.08 4.02 0 4.77 2.65 4.77 6.1V21h-3.96v-5.62c0-1.34-.03-3.07-1.87-3.07-1.88 0-2.17 1.47-2.17 2.98V21H9z"/></svg></a>
+      <a class="chip" data-share="copy" href="#" aria-label="Copy link" title="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+    </div>
+    <script>(function(){var row=document.currentScript.previousElementSibling;if(!row||!row.hasAttribute||!row.hasAttribute('data-share-row'))return;var c=document.querySelector('link[rel="canonical"]');var u=c?c.getAttribute('href'):location.href;var t=document.title;function q(s){return encodeURIComponent(s);}var links={x:'https://twitter.com/intent/tweet?url='+q(u)+'&text='+q(t),hn:'https://news.ycombinator.com/submitlink?u='+q(u)+'&t='+q(t),reddit:'https://www.reddit.com/submit?url='+q(u)+'&title='+q(t),linkedin:'https://www.linkedin.com/sharing/share-offsite/?url='+q(u)};var as=row.querySelectorAll('a[data-share]');for(var i=0;i<as.length;i++)(function(a){var k=a.getAttribute('data-share');if(k==='copy'){a.addEventListener('click',function(e){e.preventDefault();var done=function(){a.classList.add('is-copied');a.setAttribute('aria-label','Link copied');setTimeout(function(){a.classList.remove('is-copied');a.setAttribute('aria-label','Copy link');},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,done);}else{var ta=document.createElement('textarea');ta.value=u;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}document.body.removeChild(ta);done();}});}else if(links[k]){a.setAttribute('href',links[k]);}})(as[i]);})();</script>
+
+    <section class="sec" id="newsletter">
+      <div class="newsletter-band">
+        <div>
+          <span class="fl-tag">Newsletter</span>
+          <h2 class="sec-title" style="margin:10px 0 6px;"><i data-lucide="mail"></i> New teardowns by email</h2>
+          <p class="fl-desc" style="margin:0;">One email when a new audit ships: primary sources, the arithmetic, and the limits of the record. No fixed schedule. Unsubscribe anytime.</p>
+        </div>
+        <form action="https://buttondown.email/api/emails/embed-subscribe/buildopsy" method="post" target="_blank">
+          <input type="email" name="email" required placeholder="you@example.com" class="field-input" style="min-width:220px;" aria-label="Email address" autocomplete="email">
+          <input type="hidden" name="embed" value="1">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    <footer style="margin-top:44px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-family:var(--font-mono);color:var(--mist);flex-wrap:wrap;gap:8px;"><span>Rook research desk</span><a href="#" style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;min-height:40px;" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"><i data-lucide="arrow-up"></i> Back to Top</a></footer>
+  </div></main>
+  <footer class="footer">
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Buildopsy</span>
+      <span class="footer-links"><a href="../about.html">About</a> &middot; <a href="../pricing.html">Pricing</a> &middot; <a href="../contact.html">Contact</a> &middot; <a href="../privacy.html">Privacy</a><span class="footer-social"><a class="brand-social-link" href="https://x.com/BuildOpsy" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on X" title="Buildopsy on X"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.901 1.153h3.68l-8.038 9.189L24 22.846h-7.406l-5.804-7.584-6.64 7.584H.47l8.6-9.831L0 1.153h7.594l5.247 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a><a class="brand-social-link" href="https://www.linkedin.com/company/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on LinkedIn" title="Buildopsy on LinkedIn"><svg class="brand-icon-solid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.09 2.09 0 1 0 0 4.18 2.09 2.09 0 0 0 0-4.18zM3 9h3.96v12H3zM9 9h3.8v1.64h.05c.53-1.01 1.83-2.08 3.76-2.08 4.02 0 4.77 2.65 4.77 6.1V21h-3.96v-5.62c0-1.34-.03-3.07-1.87-3.07-1.88 0-2.17 1.47-2.17 2.98V21H9z"/></svg></a><a class="brand-social-link" href="https://www.instagram.com/buildopsy/" target="_blank" rel="noopener noreferrer" aria-label="Buildopsy on Instagram" title="Buildopsy on Instagram"><svg class="brand-icon-outline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.25" y="2.25" width="19.5" height="19.5" rx="5.25"/><circle cx="12" cy="12" r="4.25"/><circle class="brand-icon-dot" cx="18.1" cy="5.9" r="0.8"/></svg></a></span></span>
+    </div>
+  </footer>
+  <script>
+  (function(){
+    var N=120,CAP=100,SLOW=15,L=9600,OUTS=17,EXPOSED=100,SHED=60,K=1.5,CAPM=2.5,PROBE=2,TICKS=45;
+    function sim(policy){
+      var st=[],slowt=[],i,t,avail=1,series=[];
+      for(i=0;i<N;i++){st.push('UP');slowt.push(0);}
+      for(i=0;i<OUTS;i++){st[i]='OUT';}
+      for(t=0;t<TICKS;t++){
+        var offered=Math.min(L*(1+K*(1-avail)),L*CAPM);
+        var active=[];
+        for(i=0;i<N;i++){if(st[i]==='UP'||st[i]==='SLOW'){active.push(i);}}
+        var na=Math.max(active.length,1);
+        var admitted=(policy==='shed')?Math.min(offered,na*SHED):offered;
+        var per=admitted/na,served=0,j;
+        for(j=0;j<active.length;j++){served+=Math.min(st[active[j]]==='UP'?CAP:SLOW,per);}
+        avail=served/L;
+        series.push({a:Math.min(avail,1),n:active.length});
+        if(per>0.92*CAP){
+          var ups=[];
+          for(j=0;j<active.length;j++){if(st[active[j]]==='UP'&&active[j]<EXPOSED){ups.push(active[j]);}}
+          if(ups.length){
+            var k=Math.max(1,Math.round(ups.length*0.06));
+            for(j=0;j<k&&j<ups.length;j++){st[ups[j]]='SLOW';slowt[ups[j]]=0;}
+          }
+        }
+        if(policy!=='shed'){
+          for(j=0;j<active.length;j++){
+            if(st[active[j]]==='SLOW'){slowt[active[j]]++;if(slowt[active[j]]>=PROBE){st[active[j]]='DEAD';}}
+          }
+        }
+      }
+      return series;
+    }
+    var base=sim('eject'),held=sim('shed'),current='eject';
+    var W=640,H=210,PL=40,PR=14,PT=16,PB=30;
+    function X(t){return PL+(t/(TICKS-1))*(W-PL-PR);}
+    function Y(v){return PT+(1-v)*(H-PT-PB);}
+    function D(s){var out='',k;
+      for(k=0;k<s.length;k++){out+=(k?'L':'M')+X(k).toFixed(1)+' '+Y(s[k].a).toFixed(1);}
+      return out;}
+    var g='';
+    var grid=[0,0.25,0.5,0.75,1],gi;
+    for(gi=0;gi<grid.length;gi++){
+      g+='<line class="bgrid" x1="'+PL+'" y1="'+Y(grid[gi]).toFixed(1)+'" x2="'+(W-PR)+'" y2="'+Y(grid[gi]).toFixed(1)+'"/>';
+      g+='<text class="baxis" x="'+(PL-8)+'" y="'+(Y(grid[gi])+4).toFixed(1)+'" text-anchor="end" font-size="10" font-family="monospace">'+Math.round(grid[gi]*100)+'%</text>';
+    }
+    g+='<text class="baxis" x="'+PL+'" y="'+(H-8)+'" font-size="10" font-family="monospace">0 min</text>';
+    g+='<text class="baxis" x="'+(W-PR)+'" y="'+(H-8)+'" font-size="10" font-family="monospace" text-anchor="end">88 min</text>';
+    g+='<path id="bench-ghost" class="bghost" d="'+D(held)+'"/>';
+    g+='<path id="bench-line" class="bline" d="'+D(base)+'"/>';
+    var chart=document.getElementById('bench-chart');
+    chart.innerHTML='<title id="bench-t">Modelled share of offered load served, by recovery policy</title><desc id="bench-d">Under eject-on-failure the share served falls from about 100 percent to about 21 percent over roughly 88 minutes as 83 of 103 serving hosts become unresponsive. Under hold-and-shed the share served stays flat at about 64 percent and no host becomes unresponsive.</desc>'+g;
+    var line=document.getElementById('bench-line'), ghost=document.getElementById('bench-ghost');
+    var bE=document.getElementById('bench-eject'),bS=document.getElementById('bench-shed');
+    var eH=document.getElementById('bench-hosts'),eL=document.getElementById('bench-load'),eD=document.getElementById('bench-dead'),eN=document.getElementById('bench-note');
+    function render(){
+      var s=(current==='eject')?base:held, o=(current==='eject')?held:base, last=s[s.length-1];
+      line.setAttribute('d',D(s));
+      ghost.setAttribute('d',D(o));
+      eH.textContent=last.n;
+      eL.textContent=Math.round(last.a*100)+'%';
+      eD.textContent=(current==='eject')?((N-OUTS)-last.n):0;
+      bE.setAttribute('aria-pressed',current==='eject'?'true':'false');
+      bS.setAttribute('aria-pressed',current==='shed'?'true':'false');
+      eN.textContent=(current==='eject')
+        ?'Eject-on-failure: probes fail, hosts leave the rotation, and their share lands on the survivors until the survivors fail in turn. The 20 hosts that never trip are the model\'s immune machines.'
+        :'Hold and shed: no host leaves the rotation, per-host admission is capped at 60 connections per second, and the fleet serves 64 percent of offered load for the whole window with nothing unresponsive.';
+    }
+    bE.addEventListener('click',function(){current='eject';render();});
+    bS.addEventListener('click',function(){current='shed';render();});
+    render();
+  })();
+  </script>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();var root=document.documentElement;function syncIcons(){var dark=root.classList.contains('dark');document.querySelector('.ic-sun').style.display=dark?'none':'';document.querySelector('.ic-moon').style.display=dark?'':'none';}syncIcons();document.getElementById('themeToggle').addEventListener('click',function(){root.classList.toggle('dark');localStorage.setItem('pf-theme',root.classList.contains('dark')?'dark':'light');syncIcons();});(window.lucide?lucide.createIcons():document.addEventListener('DOMContentLoaded',function(){window.lucide&&lucide.createIcons();}));</script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>
