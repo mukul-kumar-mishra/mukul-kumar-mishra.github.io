@@ -1163,4 +1163,11 @@
       <image:title>Vector Database Cost Calculator — free calculator on Buildopsy</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://buildopsy.com/system-design/microsoft-365-gateway-ejection-loop-postmortem.html</loc>
+    <image:image>
+      <image:loc>https://buildopsy.com/images/articles/m365-gateway-ejection-loop.png</image:loc>
+      <image:title>The ejection loop: a gateway host failing health checks, being removed from rotation, and handing its queued work to the surviving hosts until more than 80 percent of the fleet is unresponsive</image:title>
+    </image:image>
+  </url>
 </urlset>

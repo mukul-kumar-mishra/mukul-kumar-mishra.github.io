@@ -169,19 +169,19 @@
         <h2 class="sec-title"><i data-lucide="layers"></i> Featured Analysis</h2>
         <a class="sec-link" href="system-design/index.html">View All RFCs <i data-lucide="chevron-right"></i></a>
       </div>
-      <a class="feature-link article-card featured-article" href="system-design/tesla-roadster-thruster-claims-audit.html">
-        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/roadster-boost-budget.png" alt="Illustrative x-ray sketch of a Roadster-style coupe with the reported cold-gas components called out — external nitrogen fill, COPV tanks, regulator and valves, rear nozzles, and a refill loop — with reported durations beside each configuration: about five seconds of boost and a 2–6 hour refill for the 200-liter Thrust, a 6–7 hour refill for the 600-liter Rocket. A dashed panel holds a modeled 80-kilonewton, five-second gas-flow scenario whose inputs come from separate reports." width="1200" height="630" onerror="this.style.display='none'">
+      <a class="feature-link article-card featured-article" href="system-design/microsoft-365-gateway-ejection-loop-postmortem.html">
+        <img loading="eager" fetchpriority="high" decoding="async" src="images/articles/m365-gateway-ejection-loop.png" alt="Illustrative gateway host sketch with eight contended CPU cores and a queue pressed against a padlock, beside a four-step cycle: probes fail, host ejected, load moves to survivors, the next host trips. A card reads 83 of 103 hosts unresponsive at the low point, a model of the loop rather than Microsoft telemetry." width="1200" height="630" onerror="this.style.display='none'">
         <div class="article-card-body">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <span class="fl-tag">Featured Audit</span>
-          <span class="chip">Vehicle Engineering</span>
+          <span class="fl-tag">Featured Postmortem</span>
+          <span class="chip">Cloud Control Plane</span>
         </div>
-        <h3>Reported 0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h3>
-        <p class="fl-desc">Road &amp; Track reports the presentation displayed 0.81 seconds to 60 mph. Refill reports give 2–6 hours for 200-liter Thrust and 6–7 hours for 600-liter Rocket; a separate model does not estimate tank inventory.</p>
+        <h3>The Ejection Loop: How Microsoft 365's Failover Spread Its Own Outage</h3>
+        <p class="fl-desc">Microsoft's 15 November preliminary report names a latent lock-contention defect, not a network misconfiguration. The health checks that pulled servers out of rotation were the instrument; with more than 80 percent of the gateway fleet unresponsive within two hours, every ejection added load to the neighbours still answering.</p>
         <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
-          <span class="chip">Tesla</span><span class="chip">Cold Gas</span><span class="chip">Claims Audit</span><span class="chip">Rook</span>
+          <span class="chip">Microsoft 365</span><span class="chip">Health Checks</span><span class="chip">Load Balancers</span><span class="chip">Rook</span>
         </div>
-        <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
+        <span class="article-read">Read the postmortem <span aria-hidden="true">→</span></span>
         </div>
       </a>
     </section>
@@ -193,6 +193,16 @@
         <a class="sec-link" href="system-design/index.html">Browse All Articles <i data-lucide="chevron-right"></i></a>
       </div>
       <div class="article-grid" id="articleGrid">
+        <a class="feature-link article-card" data-article-card href="system-design/tesla-roadster-thruster-claims-audit.html">
+          <img loading="lazy" decoding="async" src="images/articles/roadster-boost-budget.png" alt="Illustrative x-ray sketch of a Roadster-style coupe with the reported cold-gas components called out — external nitrogen fill, COPV tanks, regulator and valves, rear nozzles, and a refill loop — with reported durations beside each configuration: about five seconds of boost and a 2–6 hour refill for the 200-liter Thrust, a 6–7 hour refill for the 600-liter Rocket. A dashed panel holds a modeled 80-kilonewton, five-second gas-flow scenario whose inputs come from separate reports." width="1200" height="630" onerror="this.style.display='none'">
+          <div class="article-card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;"><span class="fl-tag">Vehicle Engineering</span><span class="chip">October 2026</span><span class="chip">19 min read</span></div>
+          <h3>Reported 0.81 Seconds to 60, Hours to Refill: The Roadster's Cold-Gas Math</h3>
+          <p class="fl-desc">Road &amp; Track reports the presentation displayed 0.81 seconds to 60 mph. Refill reports give 2–6 hours for 200-liter Thrust and 6–7 hours for 600-liter Rocket; a separate model does not estimate tank inventory.</p>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><span class="chip">Tesla</span><span class="chip">Cold Gas</span><span class="chip">Claims Audit</span><span class="chip">Rook</span></div>
+          <span class="article-read">Read the audit <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
         <a class="feature-link article-card" data-article-card href="system-design/aws-ec2-pricing-model.html">
           <img loading="lazy" decoding="async" src="images/articles/aws-ec2-pricing-model.png" alt="EC2 billing schematic: a single instance-hour meter carries $700.80 a month for ten m5.large instances, beside separate EBS, Elastic IP, capacity-reservation and data-transfer meters that add to the same bill" width="1200" height="630" onerror="this.style.display='none'">
           <div class="article-card-body">
